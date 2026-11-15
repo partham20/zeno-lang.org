@@ -1,0 +1,14 @@
+enum Shape {
+    Circle(radius: float)
+    Rect(width: float, height: float)
+    Dot
+}
+
+function area(shape: Shape) -> float {
+    match shape {
+        case Circle(r) { return 3.14159 * r * r }
+        case Rect(w, h) { return w * h }
+    }
+}
+
+print(area(Rect(2.0, 3.0)))

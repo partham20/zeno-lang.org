@@ -1,0 +1,10 @@
+class Header {
+    sensor: u8          # one byte in the compiled struct
+    value: u16          # two bytes
+}
+
+let total = 200 + 100            # arithmetic gives a full int: nothing wraps by accident
+print(total, u8.wrap(total))     # wrapping is something you ask for
+let flags = 0b1010 << 4 | 0x03   # the operators every datasheet uses
+print(f"{flags:02x}", Header(sensor=3, value=u16(64000)))
+print(u8(total))                 # 300 does not fit in a byte

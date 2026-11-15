@@ -1,0 +1,377 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How generics work · Zeno</title>
+<meta name="description" content="A ring buffer of bytes and a ring buffer of voltages are the same code. So are &quot;the biggest int in a list&quot; and &quot;the biggest float in a list&quot;. Without generics there are two ways to write them: once for each type, by hand, or once with the types left…">
+<meta property="og:title" content="How generics work · Zeno">
+<meta property="og:description" content="A ring buffer of bytes and a ring buffer of voltages are the same code. So are &quot;the biggest int in a list&quot; and &quot;the biggest float in a list&quot;. Without generics there are two ways to write them: once for each type, by hand, or once with the types left…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/generics/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/generics/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/" aria-current="page">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How generics work</h1>
+  <p>A ring buffer of bytes and a ring buffer of voltages are the same code.
+So are "the biggest int in a list" and "the biggest float in a list".
+Without generics there are two ways to write them: once for each type,
+by hand, or once with the types left out, and then the checker can no
+longer say what comes back.</p>
+<p>A <strong>generic</strong> is written once, with a name standing for the type:</p>
+<pre><code class="zeno">function first[T](items: list[T]) -&gt; T {
+    return items[0]
+}
+
+class Stack[T] {
+    items: list[T]
+
+    function push(self, item: T) {
+        self.items.append(item)
+    }
+}</code></pre>
+<p><code>T</code> is a <strong>type parameter</strong>. <code>first([1, 2])</code> gives an <code>int</code>,
+<code>first(["a"])</code> gives a <code>str</code>, and the checker knows which. A
+<code>Stack[int]</code> takes only ints, and what it pops is an int.</p>
+<p><code>examples/generics.zeno</code> is a ring buffer written this way, used for
+bytes from a serial port, for voltages and for text:</p>
+<pre><code>cargo run -- run examples/generics.zeno
+cargo run -- build examples/generics.zeno          # generics.c, and ./generics
+cargo run -- build --llvm examples/generics.zeno   # generics.ll, and ./generics</code></pre>
+<pre><code>bytes: [108, 108, 111, 33] newest 33 dropped 2
+above 0x60: 3
+as hex: ["6c", "6c", "6f", "21"]
+no reading yet: none
+volts: [3.3 V, 2.9 V, 3.2 V] highest 3.3 V
+low: 1
+log: ["sensor ready", "first reading"] last in the alphabet: sensor ready
+lengths: [12, 13]
+Ring(slots=["first reading", "sensor ready"], next=1, count=2, dropped=1)</code></pre>
+<p>The reasons for every choice are in <a href="/decisions/"><code>decisions.md</code></a>:
+3.16 for the language and 5.14 for how it is built.</p>
+<h2 id="the-rules">The rules</h2>
+<ul>
+<li><strong>Type parameters go in square brackets after the name</strong>:
+  <code>function first[T](...)</code>, <code>class Pair[A, B] { ... }</code>. Each starts
+  with a capital letter.</li>
+<li><strong>Inside the generic, the name is a type</strong> like <code>int</code>:
+  <code>var out: list[T] = []</code>, <code>-&gt; T or none</code>, <code>function(T) -&gt; U</code>.</li>
+<li><strong>A generic class with its types filled in is a type</strong>: <code>Stack[int]</code>,
+  <code>Pair[str, list[float]]</code>, <code>list[Stack[int]]</code>.</li>
+<li><strong>The call does not say the types. Zeno works them out</strong>, from three
+  places, in this order:
+  1. the arguments: <code>first([1, 2])</code> has a <code>list[int]</code> where a
+     <code>list[T]</code> goes, so <code>T</code> is <code>int</code>;
+  2. an argument that is a function, once the others have said what it
+     will be called with: in <code>convert(bytes, function(b) { ... })</code> the
+     first argument gives <code>T</code>, and what the function returns gives <code>U</code>;
+  3. the place the result goes, for whatever is still not known:
+     <code>let s: Stack[int] = Stack(items=[])</code>.</li>
+<li><strong>A number that is written out waits for the others.</strong>
+  <code>ring(4, 0)</code> is a <code>Ring[int]</code>, but <code>let bytes: Ring[u8] = ring(4, 0)</code>
+  is a <code>Ring[u8]</code>: the <code>0</code> can be either, and the type beside <code>bytes</code>
+  says which. This is the rule for written numbers from
+  <a href="/docs/sized-ints/"><code>sized-ints.md</code></a>, carried into generics.</li>
+<li><strong>The body is checked for each type it is used with.</strong> <code>largest</code>
+  uses <code>&gt;</code>, so it works for ints, floats, text and quantities, and
+  <code>largest([Point(1, 2)])</code> is an error that says so.</li>
+</ul>
+<h2 id="one-generic-many-copies">One generic, many copies</h2>
+<p>This is the idea the whole stage rests on.</p>
+<p><code>first[T]</code> is not a function. It is a pattern for functions. When the
+program calls it with a <code>list[int]</code>, the checker makes a <strong>copy</strong> of
+the function with <code>T</code> standing for <code>int</code>, and names the copy
+<code>first[int]</code>. Called with a <code>list[str]</code>, it makes <code>first[str]</code>. A
+second call with a <code>list[int]</code> finds the copy already made.</p>
+<p>A copy is an ordinary function. It is checked like one and compiled
+like one. That is why most of the compiler did not have to learn what
+a type parameter is: by the time the C backend sees the program, there
+are no generics in it, only <code>first[int]</code> and <code>first[str]</code>.</p>
+<pre><code class="zeno">function first[T](items: list[T]) -&gt; T        the pattern, written once
+        |
+        |   first([1, 2])        first(["a"])        first([3])
+        v
+first[int](items: list[int]) -&gt; int           made at the first call,
+first[str](items: list[str]) -&gt; str           found again at the third</code></pre>
+<p>C++ and Rust do the same thing, and call it <em>templates</em> and
+<em>monomorphization</em>. Java does the opposite: it keeps one function and
+forgets <code>T</code> when the program runs. Decision 5.14 says why Zeno copies.</p>
+<h2 id="through-the-stages">Through the stages</h2>
+<h3 id="the-parser">The parser</h3>
+<p>Two small changes in <code>src/parser.rs</code>. After the name of a function or
+a class, there may be names in square brackets:</p>
+<pre><code>fn type_params(&amp;mut self) -&gt; Result&lt;Vec&lt;String&gt;, Error&gt; {
+    let mut names = Vec::new();
+    if self.eat(TokenKind::LBracket) {
+        loop {
+            names.push(self.name("a name for a type, such as `T`")?);
+            if !self.eat(TokenKind::Comma) {
+                break;
+            }
+        }
+        self.expect(TokenKind::RBracket)?;
+    }
+    Ok(names)
+}</code></pre>
+<p>They are kept in a new field, <code>type_params</code>, on <code>Function</code> and <code>Class</code>
+in <code>src/ast.rs</code>. <code>Stack[int]</code> as a type needed nothing new: a type
+could already carry types in brackets, for <code>list[int]</code>.</p>
+<p>There is no confusion with an index. <code>first[0]</code> in an expression is
+still "item 0 of first". Type parameters only appear straight after
+<code>function name</code> or <code>class Name</code>, where an index cannot.</p>
+<h3 id="the-interpreter-and-the-vm">The interpreter and the VM</h3>
+<p>Nothing changed in either. When a program runs, every value carries
+its own type: a <code>1</code> knows it is an int. <code>first</code> takes whatever it is
+given and returns item 0. The one function does for every type, so
+both engines run the pattern itself and never see a copy.</p>
+<h3 id="the-checker">The checker</h3>
+<p>All the real work is here, at the end of <code>src/checker.rs</code> under
+"Generic functions and classes". It has three steps.</p>
+<p><strong>1. Work out the types</strong> (<code>infer</code>). The checker lays the written
+type of each parameter over the type of the argument given for it, and
+notes what each type parameter must be. <code>bind</code> does the laying over.
+Its heart is short:</p>
+<pre><code>(Ty::List(pattern), Ty::List(actual))
+| (Ty::Optional(pattern), Ty::Optional(actual))
+| (Ty::Owned(pattern), Ty::Owned(actual))
+| (Ty::Borrowed(pattern), Ty::Borrowed(actual)) =&gt; self.bind(pattern, actual, found),</code></pre>
+<p>A list over a list: look inside both. When the pattern is down to a
+bare <code>T</code>, whatever is opposite it is what <code>T</code> is:</p>
+<pre><code>pattern   list[ T ]            Pair[ A , list[B] ]
+actual    list[int]            Pair[str, list[float]]
+found       T = int              A = str, B = float</code></pre>
+<p>Two arguments can speak for one <code>T</code>. A <code>u8</code> and an <code>int</code> make it
+<code>int</code>, the wider one. <code>none</code> and an <code>int</code> make it <code>int or none</code>. Two
+types with nothing in common leave the first, and the ordinary check
+of the arguments then reports the second in plain words: "<code>b</code> of
+<code>same[int]</code> should be int, but this is str".</p>
+<p><strong>2. Make the copy</strong> (<code>copy_function</code>, <code>copy_class</code>). The copy is a
+copy of the syntax tree itself:</p>
+<pre><code>let mut decl = template.fresh();
+decl.type_params.clear();
+if !alone {
+    decl.name = name;
+}</code></pre>
+<p><code>fresh</code> is in <code>src/ast.rs</code>. A plain <code>clone</code> would not do. The stages
+after the parser keep their notes about a function by <em>where its nodes
+are in memory</em>, and <code>first[int]</code> and <code>first[str]</code> need separate notes:
+the <code>items[0]</code> in one is an int and in the other a str. So each copy
+gets nodes of its own.</p>
+<p>The copy is checked in a scope where <code>T</code> is declared as a name for the
+type:</p>
+<pre><code>env.declare(param, Ty::Alias(Box::new(ty.clone())), false);</code></pre>
+<p>After that the checker does not know the function was ever generic.</p>
+<p><strong>3. Carry on as an ordinary call.</strong> <code>call_generic</code> ends by calling
+the same <code>call</code> every other function goes through, with the copy.</p>
+<p>Four tables come out of this for the compilers, in <code>Types</code>:
+<code>function_copies</code> and <code>class_copies</code> (the copies of each generic),
+<code>copy_called</code> (which copy each call reaches) and <code>annotation</code> (what
+each written type means, since <code>T</code> means something different in each
+copy).</p>
+<p><strong>A mistake inside a generic</strong> is reported in the copy it happens in,
+with a note saying which:</p>
+<pre class="out"><code>error: `*` does not work between str and int
+ --&gt; box.zeno:4:16
+  |
+4 |         return self.value * 2
+  |                ^
+  = note: this is inside `Box[str]`: `Box` with T = str, which line 9 asks for</code></pre>
+<p><strong>A generic nothing uses</strong> has no copy, so nothing would check it. So
+that a misspelt name in it is still found, <code>finish_generics</code> checks it
+once with every type parameter standing for "anything".</p>
+<h3 id="the-c-backend">The C backend</h3>
+<p><code>src/emit_c.rs</code> changed in three places. Where it learns the
+program's classes and functions, a generic is skipped and its copies
+are registered:</p>
+<pre><code>StmtKind::Class(decl) if !decl.type_params.is_empty() =&gt; {
+    for copy in types.class_copies(decl) {
+        emitter.register_class(copy, statement.span)?;
+    }
+}</code></pre>
+<p>At a call, the checker's note says which copy to call. And a name
+like <code>Stack[int]</code> cannot be written in C, so <code>ident</code> turns it into
+<code>Stack_int</code>.</p>
+<p>From this small program:</p>
+<pre><code class="zeno">class Cell[T] {
+    value: T
+
+    function get(self) -&gt; T {
+        return self.value
+    }
+}
+
+let small: u8 = 7
+print(Cell(1.5).get(), Cell(small))</code></pre>
+<p>comes this C:</p>
+<pre><code>struct z_Cell_float {
+    double z_value;
+};
+struct z_Cell_u8 {
+    uint8_t z_value;
+};
+
+static double z_Cell_float_get(z_Cell_float *z_self) {
+    return z_self-&gt;z_value;
+}
+static int64_t z_Cell_u8_get(z_Cell_u8 *z_self) {
+    return ((int64_t)z_self-&gt;z_value);
+}</code></pre>
+<p>Two structs, two functions, and a <code>Cell[u8]</code> is one byte. This is what
+copying buys: each copy is exactly as big and as fast as if it had
+been written by hand for that type. Nothing is looked up when the
+program runs.</p>
+<p><code>--firmware</code> and <code>--no-collector</code> needed nothing more. An
+<code>owned class Box[T]</code> works too: each copy gets its own <code>zeno_drop_</code>
+function, and the tests check that a build with no collector frees
+every block.</p>
+<h3 id="the-llvm-backend">The LLVM backend</h3>
+<p>The same three changes in <code>src/emit_llvm.rs</code>. LLVM allows any name if
+it is in quotes, so the copies keep the names Zeno gave them:</p>
+<pre><code>%"z_Cell[float]" = type { double }
+%"z_Cell[u8]" = type { i8 }
+
+define internal double @"z_Cell[float].get"(ptr %arg.self) {</code></pre>
+<h2 id="what-it-does-not-do-yet">What it does not do yet</h2>
+<ul>
+<li><strong>No bounds.</strong> There is no way to write "<code>T</code> must be something <code>&gt;</code>
+  works on". The body is checked for each type it is used with, so a
+  wrong use is still found before the program runs. But it is reported
+  inside the generic, with a note, and not at the call.</li>
+<li><strong>An enum cannot be generic.</strong> <code>enum Maybe[T]</code> is refused by the
+  parser. <code>T or none</code> covers the commonest case.</li>
+<li><strong>A method cannot have type parameters of its own.</strong> The class can.</li>
+<li><strong>A generic cannot be kept as a value</strong>: <code>let f = first</code> is refused,
+  because <code>f</code> would have to be every copy at once. Wrap it:
+  <code>function(xs: list[int]) -&gt; int { return first(xs) }</code>.</li>
+<li><strong>The types cannot be written at the call.</strong> There is no
+  <code>first[int](xs)</code>. If nothing says what <code>T</code> is, put the result where
+  its type is written.</li>
+<li><strong>An owned or borrowed value cannot fill a type parameter.</strong>
+  <code>Stack[owned list[int]]</code> would need the stack to free what it holds.</li>
+<li><strong>An object of a generic class cannot be raised</strong>, because <code>raises</code>
+  and <code>except</code> take a plain name.</li>
+<li><strong>A generic inside a function is not compiled.</strong> <code>zeno run</code> runs it.
+  The compilers refuse every function with a name inside another, and
+  this is the same refusal.</li>
+<li><strong>In C, <code>Stack[int]</code> and a class called <code>Stack_int</code> cannot be in one
+  program.</strong> Both would be <code>z_Stack_int</code>. The build says so. <code>--llvm</code>
+  has no such limit.</li>
+<li><strong>More copies is more code.</strong> A generic used with ten types is ten
+  functions in the program. On a small chip that matters. It is the
+  price of the speed.</li>
+</ul>
+<h2 id="the-tests">The tests</h2>
+<p>Every program in the tests runs on the interpreter and the VM, then
+compiled through C, C for firmware, and LLVM, and all five must print
+the same thing. The new ones:</p>
+<ul>
+<li><code>parser::tests::generics</code>: what is parsed, and what is refused.</li>
+<li><code>checker::tests::generics_are_checked</code>: programs that must pass,
+  with every type written out so that a wrong answer would be caught.</li>
+<li><code>the_types_of_a_generic_come_from_the_call</code> and
+  <code>a_written_number_in_a_generic_call_takes_the_size_that_is_wanted</code>:
+  the three places a type is worked out from.</li>
+<li><code>a_generic_is_checked_once_for_each_set_of_types</code>: the note under an
+  error, a generic nothing uses, and a class that would need copies
+  without end.</li>
+<li><code>what_a_generic_cannot_do_yet</code>: the exact words of each refusal.</li>
+<li><code>interpreter::tests::generics</code> and <code>the_generics_example</code>.</li>
+<li><code>emit_c::tests::generics_match</code>: one long program with generics over
+  ints, floats, text, a <code>u8</code>, an enum, lists and objects, with errors,
+  defaults and functions as arguments. Then an owned generic class,
+  built with no collector, which must free everything.</li>
+<li><code>emit_c::tests::a_generic_is_compiled_once_for_each_set_of_types</code>
+  and <code>emit_llvm::tests::the_ir_for_a_generic</code>: three calls make two
+  functions, each <code>Cell</code> is its own struct, and a generic nothing
+  calls leaves nothing behind.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>In <code>generics.zeno</code>, change <code>ring(4, u8(0))</code> to <code>ring(4, 0)</code> and run
+   it. Two lines are refused. What do the messages say <code>T</code> is now?
+   Then write <code>let bytes: Ring[u8] = ring(4, 0)</code>. Why does that work
+   when the first change did not?</li>
+<li>Add <code>log.push(3.3 V)</code> at the end. What does the message say <code>item</code>
+   should be? <code>push</code> was written once, with <code>item: T</code>. Where did the
+   <code>str</code> come from?</li>
+<li>Add <code>print(largest([bytes, bytes]))</code>, a list of two rings. The
+   message is about <code>&gt;</code>. Which line does it point at, and what does
+   the note under it tell you?</li>
+<li>Build the example and count the <code>struct z_Ring_</code> lines in
+   <code>generics.c</code>. Then add <code>let flags = ring(2, false)</code> and count
+   again. How many new functions came with it? Search for
+   <code>z_Ring_bool_</code>.</li>
+<li>Write <code>function last[T](items: list[T]) -&gt; T</code>. Then
+   <code>function swap[A, B](p: Pair[A, B]) -&gt; Pair[B, A]</code> for a class
+   <code>Pair[A, B]</code> of your own. Print what <code>swap</code> returns.</li>
+<li>Write <code>class Queue[T]</code> with <code>put</code> and <code>take</code>, where <code>take</code> returns
+   <code>T or none</code>. What must the caller do with what <code>take</code> returns
+   before using it? (Decision 3.12.)</li>
+<li>Find <code>bind</code> in <code>checker.rs</code>. There is no arm for a function type
+   laid over a function type that takes a different number of
+   arguments. What happens then? Write a test program and see which
+   message you get, and from where.</li>
+<li>In <code>copy_function</code>, change <code>template.fresh()</code> to
+   <code>(**template).clone()</code> and run the tests. One fails: <code>doubled</code>, at
+   the end of the long program in <code>generics_match</code>, has a nameless
+   function in its body. Read what the C compiler says about it. Which
+   copy's types did the inner function end up with, and why does
+   <code>fresh</code> fix it?</li>
+<li><code>ident</code> in <code>emit_c.rs</code> turns <code>Stack[int]</code> into <code>Stack_int</code>. Find
+   two different copy names that it turns into the same C name. (One
+   class name with an underscore in it is enough.) Then make the C
+   backend refuse that program with a clear message, the way it
+   refuses a class called <code>Stack_int</code> today.</li>
+<li>A big one: bounds. Let a type parameter say what it needs, as in
+    <code>function largest[T: Ordered](items: list[T]) -&gt; T</code>. Start with
+    one built-in bound, <code>Ordered</code>, meaning "<code>&gt;</code> works". The checker
+    must refuse <code>largest([Point(1, 2)])</code> at the call, before it makes
+    the copy. Where in <code>infer</code> does that check go? What should the
+    message say?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/generics.md">docs/generics.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/sized-ints/"><span>Previous</span>How the bit operators and the sized whole numbers work</a><span></span></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-rules">The rules</a></li><li><a href="#one-generic-many-copies">One generic, many copies</a></li><li><a href="#through-the-stages">Through the stages</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#the-tests">The tests</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

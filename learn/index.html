@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Zeno guide · Zeno</title>
+<meta name="description" content="Learn Zeno: install it, then the whole language a step at a time, with the real output of every sample.">
+<meta property="og:title" content="The Zeno guide · Zeno">
+<meta property="og:description" content="Learn Zeno: install it, then the whole language a step at a time, with the real output of every sample.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/learn/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/learn/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/" aria-current="page">Learn</a><a href="/examples/">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="learn-layout">
+<aside class="learn-toc"><h4>The guide</h4><ol><li><a href="#install">Install</a></li><li><a href="#first">Your first program</a></li><li><a href="#variables">Variables</a></li><li><a href="#typos">A misspelt name is an error</a></li><li><a href="#numbers">Numbers</a></li><li><a href="#overflow">Overflow is an error</a></li><li><a href="#control">Choices and loops</a></li><li><a href="#truth">Conditions are true or false</a></li><li><a href="#functions">Functions</a></li><li><a href="#closures">Functions that remember</a></li><li><a href="#lists">Lists and text</a></li><li><a href="#classes">Classes</a></li><li><a href="#enums">Enums and match</a></li><li><a href="#none">Values that may be missing</a></li><li><a href="#errors">Errors</a></li><li><a href="#units">Units</a></li><li><a href="#sized">Numbers with a size</a></li><li><a href="#generics">Generics</a></li><li><a href="#ownership">Owned values</a></li><li><a href="#board">Pins and time</a></li><li><a href="#commands">The commands</a></li><li><a href="#next">Where next</a></li></ol></aside>
+<div class="learn-main">
+<header class="page-head"><p class="eyebrow">Learn</p><h1>The Zeno guide</h1><p class="lede">Everything in the language, a step at a time. Every sample on this page was run with <code>zeno run</code>, and what is under it is exactly what Zeno printed, error messages included. If you know Python or C, you can read it in twenty minutes.</p></header>
+<section class="lesson wide" id="install">
+  <div class="lesson-text"><span class="num">01</span><h2>Install</h2>
+<p>Zeno is built from source. You need <a href="https://rustup.rs">Rust</a>, and a C compiler if you want <code>zeno build</code>. For <code>zeno build --llvm</code> you also need clang 15 or later. There is nothing else to install.</p>
+<figure class="window shell"><figcaption><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd">Copy</button></figcaption>
+<pre id="install-cmd"><code>git clone https://github.com/partham20/zeno-lang
+cd zeno-lang
+cargo build --release
+./target/release/zeno run examples/hello.zeno</code></pre></figure>
+<p>The rest of this guide writes <code>zeno</code> for that program. Put <code>target/release</code> on your <code>PATH</code>, or use <code>cargo run --</code> in its place.</p></div>
+  <div class="lesson-code"></div>
+</section><section class="lesson" id="first">
+  <div class="lesson-text"><span class="num">02</span><h2>Your first program</h2>
+<p>A program is a file of statements, run from the top. There is no <code>main</code>, nothing to import for printing, and no semicolons: a line break ends a statement.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">hello.zeno</span></figcaption><pre><code class="zeno">print("Hello, Zeno!")</code></pre><div class="out-label">output</div><pre class="out"><code>Hello, Zeno!</code></pre></figure></div>
+</section><section class="lesson" id="variables">
+  <div class="lesson-text"><span class="num">03</span><h2>Variables</h2>
+<p>A variable says once whether it can change. <code>let</code> is set once. <code>var</code> can change, and a plain <code>=</code> updates it. <code>const</code> is fixed when the program is built. A type goes after the name, and only where you want one.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">basics.zeno</span></figcaption><pre><code class="zeno">let name = "Zeno"            # let: set once
+var count = 3                # var: can change
+count = count + 1            # plain = updates it
+const LIMIT = 10             # const: fixed when the program is built
+
+let ports: list[int] = [80, 443, 8080]   # a type, only where you want one
+print(name, count, LIMIT, ports)</code></pre><div class="out-label">output</div><pre class="out"><code>Zeno 4 10 [80, 443, 8080]</code></pre></figure></div>
+</section><section class="lesson" id="typos">
+  <div class="lesson-text"><span class="num">04</span><h2>A misspelt name is an error</h2>
+<p>Because <code>=</code> only updates, assigning to a name that was never declared cannot quietly make a new variable. The checker stops before anything runs, and says what to write.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">typo.zeno</span></figcaption><pre><code class="zeno">var count = 3
+cuont = count + 1</code></pre><div class="out-label">output</div><pre class="out"><code>error: `cuont` is not declared. Create it with `let` or `var` first
+ --&gt; typo.zeno:2:1
+  |
+2 | cuont = count + 1
+  | ^
+
+1 error found. Nothing was run.</code></pre></figure></div>
+</section><section class="lesson" id="numbers">
+  <div class="lesson-text"><span class="num">05</span><h2>Numbers</h2>
+<p><code>/</code> always gives a float and <code>//</code> divides and rounds down, so you can see which one you meant. Comparisons chain as they do in maths. An <code>int</code> and a <code>float</code> can be mixed in arithmetic; nothing else converts by itself.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">numbers.zeno</span></figcaption><pre><code class="zeno">print(7 / 2, 7 // 2, 7 % 2, 2 ** 10)
+print(1 &lt; 2 &lt; 3, 0 &lt;= 5 &lt; 4)
+print(0xFF, 0b1010, 1 + 2.5)</code></pre><div class="out-label">output</div><pre class="out"><code>3.5 3 1 1024
+true false
+255 10 3.5</code></pre></figure></div>
+</section><section class="lesson" id="overflow">
+  <div class="lesson-text"><span class="num">06</span><h2>Overflow is an error</h2>
+<p>Whole-number arithmetic is checked. A sum that does not fit is an error you can catch, never a silent wrap to a negative number.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">overflow.zeno</span></figcaption><pre><code class="zeno">var big = 9223372036854775807
+big = big + 1</code></pre><div class="out-label">output</div><pre class="out"><code>error: uncaught OverflowError: the result is too big for an int
+ --&gt; overflow.zeno:2:7
+  |
+2 | big = big + 1
+  |       ^</code></pre></figure></div>
+</section><section class="lesson" id="control">
+  <div class="lesson-text"><span class="num">07</span><h2>Choices and loops</h2>
+<p><code>if</code>, <code>else if</code>, <code>for</code> and <code>while</code> need no brackets around the condition and no colon after it. The brace opens the block, and the block always has braces, so a stray space can never change what the code does.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">control.zeno</span></figcaption><pre><code class="zeno">let temperature = 31
+
+if temperature &gt; 30 {
+    print("hot")
+} else if temperature &gt; 15 {
+    print("mild")
+} else {
+    print("cold")
+}
+
+for i in range(3) {
+    print("tick", i)
+}
+
+var left = 3
+while left &gt; 0 {
+    left -= 1
+}
+print("done, left =", left)</code></pre><div class="out-label">output</div><pre class="out"><code>hot
+tick 0
+tick 1
+tick 2
+done, left = 0</code></pre></figure></div>
+</section><section class="lesson" id="truth">
+  <div class="lesson-text"><span class="num">08</span><h2>Conditions are true or false</h2>
+<p>There is no truthiness. An empty list, zero and empty text are not quietly <code>false</code>: write what you mean, such as <code>len(items) &gt; 0</code>.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">truthy.zeno</span></figcaption><pre><code class="zeno">let items = [1, 2]
+if items {
+    print("not empty")
+}</code></pre><div class="out-label">output</div><pre class="out"><code>error: a condition must be true or false, but this is list[int]
+ --&gt; truthy.zeno:2:4
+  |
+2 | if items {
+  |    ^
+
+1 error found. Nothing was run.</code></pre></figure></div>
+</section><section class="lesson" id="functions">
+  <div class="lesson-text"><span class="num">09</span><h2>Functions</h2>
+<p>A function is declared with the word <code>function</code>. Types on parameters and the result are optional. Arguments can be named, parameters can have defaults, and a function with no name is written in place with <code>function(n) { }</code>.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">functions.zeno</span></figcaption><pre><code class="zeno">function area(width: float, height: float) -&gt; float {
+    return width * height
+}
+
+function loose_area(width, height) {     # the same, with no types written
+    return width * height
+}
+
+function greet(who: str, excited: bool = false) -&gt; str {
+    if excited {
+        return f"Hello, {who}!"
+    }
+    return f"Hello, {who}."
+}
+
+let triple = function(n) { return n * 3 }   # functions are values
+print(area(2.0, 3.5), loose_area(2, 3))
+print(greet("Achilles"), greet("tortoise", excited=true))
+print([1, 2, 3].map(triple), [n * n for n in range(6) if n % 2 == 0])</code></pre><div class="out-label">output</div><pre class="out"><code>7.0 6
+Hello, Achilles. Hello, tortoise!
+[3, 6, 9] [0, 4, 16]</code></pre></figure></div>
+</section><section class="lesson" id="closures">
+  <div class="lesson-text"><span class="num">10</span><h2>Functions that remember</h2>
+<p>A function written inside another keeps the variables it can see, and can change them.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">closures.zeno</span></figcaption><pre><code class="zeno">function counter() {
+    var count = 0
+    return function() {
+        count += 1
+        return count
+    }
+}
+
+let next_id = counter()
+print(next_id(), next_id(), next_id())</code></pre><div class="out-label">output</div><pre class="out"><code>1 2 3</code></pre></figure></div>
+</section><section class="lesson" id="lists">
+  <div class="lesson-text"><span class="num">11</span><h2>Lists and text</h2>
+<p>Lists are written with <code>[ ]</code>, and have <code>append</code>, <code>map</code>, <code>filter</code> and <code>reduce</code>. Comprehensions read like the sentence they stand for. Formatted text needs the <code>f</code> prefix, so a brace in ordinary text is just a brace.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">lists.zeno</span></figcaption><pre><code class="zeno">var ports = [80, 443]
+ports.append(8080)
+print(ports, len(ports), ports[0])
+
+let evens = [n for n in range(10) if n % 2 == 0]
+print(evens)
+print(evens.map(function(n) { return n * 10 }))
+print(evens.filter(function(n) { return n &gt; 4 }))
+print("a,b,c".split(","), "zeno".upper(), f"{3.14159:.2f}")</code></pre><div class="out-label">output</div><pre class="out"><code>[80, 443, 8080] 3 80
+[0, 2, 4, 6, 8]
+[0, 20, 40, 60, 80]
+[6, 8]
+["a", "b", "c"] ZENO 3.14</code></pre></figure></div>
+</section><section class="lesson" id="classes">
+  <div class="lesson-text"><span class="num">12</span><h2>Classes</h2>
+<p>A class lists its fields at the top and gets a constructor for free, which takes the fields in order or by name. Methods name <code>self</code> explicitly.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">classes.zeno</span></figcaption><pre><code class="zeno">from math import sqrt
+
+class Point {
+    x: float
+    y: float
+
+    function distance_to(self, other: Point) -&gt; float {
+        return sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
+    }
+}
+
+let origin = Point(0.0, 0.0)
+let here = Point(x=3.0, y=4.0)
+print(here, origin.distance_to(here))</code></pre><div class="out-label">output</div><pre class="out"><code>Point(x=3.0, y=4.0) 5.0</code></pre></figure></div>
+</section><section class="lesson" id="enums">
+  <div class="lesson-text"><span class="num">13</span><h2>Enums and match</h2>
+<p>Each case of an enum can carry its own values, and <code>match</code> takes them apart. A <code>match</code> must handle every case. This one forgets <code>Dot</code>, so nothing runs.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">shapes.zeno</span></figcaption><pre><code class="zeno">enum Shape {
+    Circle(radius: float)
+    Rect(width: float, height: float)
+    Dot
+}
+
+function area(shape: Shape) -&gt; float {
+    match shape {
+        case Circle(r) { return 3.14159 * r * r }
+        case Rect(w, h) { return w * h }
+    }
+}
+
+print(area(Rect(2.0, 3.0)))</code></pre><div class="out-label">output</div><pre class="out"><code>error: this `match` does not handle Dot. Add a `case` for it, or a final `case _`
+ --&gt; shapes.zeno:8:5
+  |
+8 |     match shape {
+  |     ^
+
+1 error found. Nothing was run.</code></pre></figure></div>
+</section><section class="lesson" id="none">
+  <div class="lesson-text"><span class="num">14</span><h2>Values that may be missing</h2>
+<p>A value can be <code>none</code> only if its type says <code>or none</code>. Before you use it, you check it with <code>is not none</code>, and inside that check it is the plain type.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">users.zeno</span></figcaption><pre><code class="zeno">function find_user(id: int) -&gt; str or none {
+    if id == 1 {
+        return "partha"
+    }
+    return none
+}
+
+let user = find_user(1)
+print(user.upper())              # not allowed: it might be none
+
+if user is not none {
+    print(user.upper())          # allowed inside this check
+}</code></pre><div class="out-label">output</div><pre class="out"><code>error: this is str or none. Check it with `is not none` before using `.upper`
+ --&gt; users.zeno:9:7
+  |
+9 | print(user.upper())              # not allowed: it might be none
+  |       ^
+
+1 error found. Nothing was run.</code></pre></figure></div>
+</section><section class="lesson" id="errors">
+  <div class="lesson-text"><span class="num">15</span><h2>Errors</h2>
+<p><code>try</code>, <code>except</code> and <code>raise</code> read as they do in Python. A function that can fail says so with <code>raises</code>, and the checker makes sure the error is handled or passed on. Any class can be raised, so an error can carry data.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">ports.zeno</span></figcaption><pre><code class="zeno">function parse_port(text: str) -&gt; int raises ValueError {
+    let port = int(text)             # int() may raise; it passes up
+    if not 1 &lt;= port &lt;= 65535 {      # comparisons chain, as in maths
+        raise ValueError("port out of range")
+    }
+    return port
+}
+
+try {
+    print("listening on", parse_port("8080"))
+    print("listening on", parse_port("99999"))
+} except ValueError as err {
+    print(f"error: {err}")
+}</code></pre><div class="out-label">output</div><pre class="out"><code>listening on 8080
+error: port out of range</code></pre></figure></div>
+</section><section class="lesson" id="units">
+  <div class="lesson-text"><span class="num">16</span><h2>Units</h2>
+<p>A number can carry a unit: <code>500 ms</code>, <code>3.3 V</code>. The unit is part of the type, so a function that wants milliseconds will not take a bare number.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">delay.zeno</span></figcaption><pre><code class="zeno">from time import sleep
+
+function blink_for(delay: ms) -&gt; str {
+    sleep(delay)
+    return f"waited {delay}"
+}
+
+print(blink_for(20 ms))
+print(3.3 V &gt; 2.9 V)
+print(blink_for(20))</code></pre><div class="out-label">output</div><pre class="out"><code>error: `delay` of `blink_for` should be a quantity in ms, but this is int
+  --&gt; delay.zeno:10:17
+   |
+10 | print(blink_for(20))
+   |                 ^
+
+1 error found. Nothing was run.</code></pre></figure></div>
+</section><section class="lesson" id="sized">
+  <div class="lesson-text"><span class="num">17</span><h2>Numbers with a size</h2>
+<p><code>u8</code>, <code>u16</code>, <code>u32</code>, <code>i8</code>, <code>i16</code> and <code>i32</code> have a size, and <code>&amp;</code>, <code>|</code>, <code>^</code>, <code>~</code>, <code>&lt;&lt;</code> and <code>&gt;&gt;</code> work on their bits. Arithmetic gives a full <code>int</code>, <code>u8(n)</code> checks that <code>n</code> fits, and <code>u8.wrap(n)</code> keeps the low eight bits on purpose. A <code>u8</code> field is one byte in a compiled object.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">packet.zeno</span></figcaption><pre><code class="zeno">class Header {
+    sensor: u8          # one byte in the compiled struct
+    value: u16          # two bytes
+}
+
+let total = 200 + 100            # arithmetic gives a full int: nothing wraps by accident
+print(total, u8.wrap(total))     # wrapping is something you ask for
+let flags = 0b1010 &lt;&lt; 4 | 0x03   # the operators every datasheet uses
+print(f"{flags:02x}", Header(sensor=3, value=u16(64000)))
+print(u8(total))                 # 300 does not fit in a byte</code></pre><div class="out-label">output</div><pre class="out"><code>300 44
+a3 Header(sensor=3, value=64000)
+error: uncaught OverflowError: 300 does not fit in a u8 (0 to 255)
+  --&gt; packet.zeno:10:7
+   |
+10 | print(u8(total))                 # 300 does not fit in a byte
+   |       ^</code></pre></figure></div>
+</section><section class="lesson" id="generics">
+  <div class="lesson-text"><span class="num">18</span><h2>Generics</h2>
+<p><code>class Stack[T]</code> and <code>function largest[T]</code> are written once, with <code>T</code> standing for a type. A call never says what <code>T</code> is: the checker works it out, and the compilers make one copy for each type used, so a <code>Stack[u8]</code> is as small as one written for bytes by hand.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">stack.zeno</span></figcaption><pre><code class="zeno">class Stack[T] {
+    items: list[T]
+
+    function push(self, item: T) {
+        self.items.append(item)
+    }
+
+    function top(self) -&gt; T or none {
+        if len(self.items) == 0 {
+            return none
+        }
+        return self.items[len(self.items) - 1]
+    }
+}
+
+function largest[T](items: list[T]) -&gt; T {
+    var best = items[0]
+    for item in items {
+        if item &gt; best {
+            best = item
+        }
+    }
+    return best
+}
+
+let bytes: Stack[u8] = Stack([])
+bytes.push(u8(72))
+print(bytes.top(), largest([3.1 V, 3.3 V, 2.9 V]), largest(["boot", "ready"]))</code></pre><div class="out-label">output</div><pre class="out"><code>72 3.3 V ready</code></pre></figure></div>
+</section><section class="lesson" id="ownership">
+  <div class="lesson-text"><span class="num">19</span><h2>Owned values</h2>
+<p>Most values are shared, and a garbage collector frees them. A value marked <code>owned</code> has one owner instead, and is freed the moment its owner's block ends. A <code>borrow</code> parameter only looks. Giving the value away empties the old name, and the checker points at any later use.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">frame.zeno</span></figcaption><pre><code class="zeno">owned class Frame {
+    channel: int
+    samples: owned list[int]
+}
+
+function capture(channel: int) -&gt; Frame {
+    let samples: owned list[int] = [n * channel for n in range(4)]
+    return Frame(channel, samples)       # samples moves into the frame
+}
+
+function average(samples: borrow list[int]) -&gt; int {   # only looks
+    return sum(samples) // len(samples)
+}
+
+function send(frame: Frame) -&gt; int {     # takes the frame over, and frees it
+    return len(frame.samples)
+}
+
+let frame = capture(7)
+print(average(frame.samples))
+print(send(frame))
+print(frame.channel)</code></pre><div class="out-label">output</div><pre class="out"><code>error: `frame` was given away on line 21 and holds nothing now. Lend it instead (a `borrow` parameter), or use it before it goes
+  --&gt; frame.zeno:22:7
+   |
+22 | print(frame.channel)
+   |       ^
+
+1 error found. Nothing was run.</code></pre></figure></div>
+</section><section class="lesson" id="board">
+  <div class="lesson-text"><span class="num">20</span><h2>Pins and time</h2>
+<p><code>from board import led, pin</code> and <code>from time import sleep, now</code> give a program pins and a clock. On a computer the board is simulated and prints each pin as it changes. A compiled program meets a real board through four C functions.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><span class="file">board.zeno</span></figcaption><pre><code class="zeno">from board import led, pin
+from time import sleep, now
+
+let start = now()
+let fan = pin(5)
+fan.on()
+for i in range(3) {
+    led.toggle()
+    sleep(10 ms)
+}
+fan.off()
+print("took at least 30 ms:", now() - start &gt;= 30 ms)</code></pre><div class="out-label">output</div><pre class="out"><code>pin 5 on
+led on
+led off
+led on
+pin 5 off
+took at least 30 ms: true</code></pre></figure></div>
+</section>
+<section class="lesson" id="commands"><div class="lesson-text"><span class="num">∞</span><h2>The commands</h2>
+<p>One program, <code>zeno</code>, does everything. Every command checks the program first, and nothing runs if the check fails.</p></div>
+<div class="lesson-code"><dl class="cmd-list">
+<dt><code>zeno run file.zeno</code></dt><dd>Check it, then run it with the interpreter.</dd>
+<dt><code>zeno run --vm file.zeno</code></dt><dd>The same, compiled to bytecode and run by the VM.</dd>
+<dt><code>zeno check file.zeno</code></dt><dd>Only look for mistakes.</dd>
+<dt><code>zeno check --strict file.zeno</code></dt><dd>Every type must be known, as firmware needs.</dd>
+<dt><code>zeno build file.zeno</code></dt><dd>Compile to C, then to a program.</dd>
+<dt><code>zeno build --llvm file.zeno</code></dt><dd>Compile to LLVM IR, then to a program with clang.</dd>
+<dt><code>zeno build --firmware</code></dt><dd>Errors as return values, no <code>setjmp</code>.</dd>
+<dt><code>zeno build --no-collector</code></dt><dd>No garbage collector and no heap: one fixed pool.</dd>
+<dt><code>zeno build --memory</code></dt><dd>The program reports its memory use as it ends.</dd>
+<dt><code>zeno bytecode · parse · tokens</code></dt><dd>Look inside: the instructions, the syntax tree, the tokens.</dd>
+</dl></div></section>
+<section class="next-steps" id="next"><h2>Where next</h2><div class="cards">
+<a class="card" href="/examples/"><b>Read the examples</b><span>Fifteen whole programs, each with its output.</span></a>
+<a class="card" href="/docs/"><b>See how it works</b><span>A walkthrough of every compiler stage.</span></a>
+<a class="card" href="/decisions/"><b>Read the reasons</b><span>Why each part of the language is the way it is.</span></a>
+</div></section>
+</div></div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

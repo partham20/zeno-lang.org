@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>words.zeno · Zeno</title>
+<meta name="description" content="Lists that nobody keeps. A Zeno example, with its output.">
+<meta property="og:title" content="words.zeno · Zeno">
+<meta property="og:description" content="Lists that nobody keeps. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/words/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/words/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">Lists that nobody keeps</h1>
+  <p class="lede small">The whole of <code>examples/words.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <figure class="window"><figcaption><span class="file">words.zeno</span></figcaption><pre><code class="zeno"># Lists that nobody keeps.
+#
+# A line arrives from a serial console: "set led 3 on". The program
+# splits it into words, looks at them, and keeps only what it needs.
+#
+# Every list below that is not given a name belongs to the statement
+# that makes it, and is freed when that statement is over. So nothing
+# here needs a collector, and this builds with none:
+#
+#     zeno run examples/words.zeno
+#     zeno build --no-collector --memory examples/words.zeno
+#
+# docs/temporaries.md walks through it.
+
+owned class Command {
+    name: str
+    args: owned list[str]
+
+    function shown(self) -&gt; str {
+        return f"{self.name}/{len(self.args)}"
+    }
+}
+
+function is_number(word: str) -&gt; bool {
+    for ch in word {
+        if ch not in "0123456789" { return false }
+    }
+    return len(word) &gt; 0
+}
+
+function not_empty(word: str) -&gt; bool { return len(word) &gt; 0 }
+
+function loud(word: str) -&gt; str { return word.upper() }
+
+function count(items: borrow list[str]) -&gt; int { return len(items) }
+
+# `split` makes a list and `filter` makes another. The first belongs to
+# the `return` statement, which frees it. The second is given back to
+# the caller, who owns it from then on.
+function words(line: str) -&gt; owned list[str] {
+    return line.split(" ").filter(not_empty)
+}
+
+function parse(line: str) -&gt; Command raises ValueError {
+    let parts = words(line)
+    if len(parts) == 0 { raise ValueError("an empty line") }
+    return Command(parts[0], parts.filter(is_number))
+}
+
+let line = "set  led 3 on 250"
+
+# Looked at and gone: each of these lists lives for one statement.
+print(count(line.split()))
+print(len(words(line)))
+print("led" in line.split())
+
+# A loop walks the list it is given, and frees it after the last trip.
+for word in words(line).map(loud) {
+    print(word)
+}
+
+# Kept: these lists have owners.
+let numbers: owned list[str] = words(line).filter(is_number)
+var history: owned list[str] = []
+history += words(line)
+history += ["end"]
+print(numbers)
+print(history)
+
+for text in [line, "", "stop now"] {
+    try {
+        let command = parse(text)
+        print(command.shown())
+    } except ValueError as e {
+        print("refused:", e.message)
+    }
+}</code></pre><div class="out-label">zeno run examples/words.zeno</div><pre class="out"><code>5
+5
+true
+SET
+LED
+3
+ON
+250
+["3", "250"]
+["set", "led", "3", "on", "250", "end"]
+set/2
+refused: an empty line
+stop/0</code></pre></figure>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/words.zeno">examples/words.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/labels/"><span>Previous</span>labels.zeno</a><a class="next" href="/examples/scheduler/"><span>Next</span>scheduler.zeno</a></nav>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How memory is managed · Zeno</title>
+<meta name="description" content="Memory management is the stage after compiling to C. Before it, a compiled Zeno program took memory from the machine and never gave any back. Now it carries a garbage collector: a small piece of the runtime that finds the memory the program can no…">
+<meta property="og:title" content="How memory is managed · Zeno">
+<meta property="og:description" content="Memory management is the stage after compiling to C. Before it, a compiled Zeno program took memory from the machine and never gave any back. Now it carries a garbage collector: a small piece of the runtime that finds the memory the program can no…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/memory/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/memory/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/" aria-current="page">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How memory is managed</h1>
+  <p>Memory management is the stage after compiling to C. Before it, a compiled Zeno program
+took memory from the machine and never gave any back. Now it carries a
+<strong>garbage collector</strong>: a small piece of the runtime that finds the memory
+the program can no longer use and frees it.</p>
+<pre><code>cargo run -- build --memory examples/memory.zeno
+./memory</code></pre>
+<pre><code>...
+memory: 780027 blocks made (13222784 bytes), at most 1048574 bytes in use at once, 10 collections, 60002 blocks freed without the collector</code></pre>
+<p>That program asked for thirteen megabytes, a few bytes at a time, and never
+held more than one. <code>--memory</code> is what adds the last line; without it the
+collector works just the same and says nothing.</p>
+<p>The last figure counts blocks that never waited for the collector. A few
+frees are safe at a line the compiler can point to: the old storage of a
+list that has just grown, the copy a <code>for</code> loop walks, and every value
+marked <code>owned</code>. Those are the subject of
+<a href="/docs/ownership/"><code>docs/ownership.md</code></a>. Everything else on this page is about
+the blocks nobody owns. A program with no such blocks can be built with no
+collector at all: <a href="/docs/no-collector/"><code>docs/no-collector.md</code></a>.</p>
+<p><code>zeno run</code> is not affected. The interpreter is a Rust program, and Rust
+frees its values for it.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>, the section headed "Memory": the
+  whole collector, about 200 lines of C.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>: three small pieces. The top-level
+  code moved out of <code>main</code>, <code>main</code> notes where the stack starts, and one
+  generated function, <code>zeno_roots</code>, lists the top-level variables.</li>
+<li><a href="/examples/memory/"><code>examples/memory.zeno</code></a>: a program that makes
+  far more than it keeps.</li>
+</ul>
+<h2 id="what-needs-memory">What needs memory</h2>
+<p>Numbers and bools live in C variables and need nothing. These do take
+memory from the machine while the program runs:</p>
+<ul>
+<li>text that is built (<code>a + b</code>, an f-string, <code>text.upper()</code>),</li>
+<li>every list, and the items inside it,</li>
+<li>every object and every enum value that carries data,</li>
+<li>a function written inside another, and the box of a variable they share.</li>
+</ul>
+<p>Each of these is a <strong>block</strong>: a piece of memory from C's <code>malloc</code>. The
+question of this stage is when to call <code>free</code>.</p>
+<h2 id="the-question-nobody-can-answer-in-advance">The question nobody can answer in advance</h2>
+<pre><code class="zeno">function label(reading: Reading) -&gt; str {
+    let text = f"tick {reading.tick}"
+    return text
+}</code></pre>
+<p>Is <code>text</code> finished with when <code>label</code> returns? No: the caller has it now.
+And the caller may put it in a list, which goes into an object, which a
+function value remembers. In C the programmer keeps track of all that by
+hand, and the mistakes are famous: freeing too early (the program uses
+memory that is now something else), freeing twice, or never freeing.</p>
+<p>A collector answers a simpler question, and answers it while the program
+runs: <strong>can the program still reach this block?</strong> If no variable leads to
+it, directly or through other blocks, nothing can ever use it again, and it
+is safe to free.</p>
+<h2 id="mark-and-sweep">Mark and sweep</h2>
+<p>The collector here is the oldest and simplest kind. It was invented for
+Lisp in 1960 and is still what MicroPython runs on microcontrollers.</p>
+<ol>
+<li><strong>Every block is written in a table</strong> as it is handed out
+   (<code>zeno_new_block</code>).</li>
+<li><strong>Mark.</strong> Start from the variables, which are called the <em>roots</em>.
+   Whatever a root points at is in use: mark it. Whatever a marked block
+   points at is in use too: mark that. Carry on until nothing new turns up.</li>
+<li><strong>Sweep.</strong> Go through the table. A block with no mark cannot be reached:
+   free it. Take the marks off the rest, ready for next time.</li>
+</ol>
+<pre><code>roots            blocks
+-----            ------
+recent  ------&gt;  [list] ---&gt; [Reading 49999] ---&gt; "sample 49999"
+hottest ------&gt;  [Reading 102] ---&gt; "sample 102"
+
+                 [Reading 7] ---&gt; "sample 7"       nothing points here:
+                 [list] ---&gt; [Reading 3]           all four are freed</code></pre>
+<p>Two objects that point at each other, and at nothing else that is in use,
+are freed like anything else. Nothing reaches them from a root, so neither
+gets a mark. (This is the case that defeats the other popular method,
+counting references. More on that below.)</p>
+<h2 id="where-the-roots-are">Where the roots are</h2>
+<p>A variable of a compiled Zeno program is in one of two places.</p>
+<p><strong>Top-level variables</strong> are C globals. The compiler knows them all, so it
+writes a function that hands each one to the collector. For
+<code>examples/memory.zeno</code> it is:</p>
+<pre><code>static void zeno_roots(void) {
+    zeno_mark_words(&amp;zeno_raised, sizeof zeno_raised);
+    zeno_mark_words(&amp;z_recent, sizeof z_recent);
+    zeno_mark_words(&amp;z_hottest, sizeof z_hottest);
+}</code></pre>
+<p>(<code>zeno_raised</code> is the runtime's own variable: an error that has been raised
+and is on its way to an <code>except</code>.)</p>
+<p><strong>Everything else is on the C stack</strong>: local variables, arguments, and the
+temporaries the compiler invents. Here the collector does something
+blunt. It does not ask which stack slots are pointers. It reads the whole
+stack, from the function running now back to <code>main</code>, one word at a time,
+and asks of each word: <em>is this the address of one of my blocks?</em></p>
+<pre><code>static void zeno_mark_stack(void) {
+    void *here = NULL;
+    uintptr_t low = (uintptr_t)&amp;here, high = (uintptr_t)zeno_stack_base;
+    ...
+    zeno_mark_words((const void *)low, high - low + sizeof(void *));
+}</code></pre>
+<p><code>&amp;here</code> is the address of a variable in the newest function, so it is one
+end of the stack. <code>zeno_stack_base</code> is the address of a variable in <code>main</code>,
+the other end. That is why the top-level code no longer lives in <code>main</code>:</p>
+<pre><code>int main(void) {
+    void *base = NULL;
+    zeno_stack_base = &amp;base; /* the stack starts here */
+    zeno_file = "memory.zeno";
+    zeno_program();
+    return 0;
+}</code></pre>
+<p>Everything the program does happens inside <code>zeno_program</code>, so every
+variable it has lies between those two addresses.</p>
+<p>One more hiding place: a pointer may be in a processor register and nowhere
+in memory. <code>__builtin_unwind_init()</code> at the top of <code>zeno_collect</code> makes the
+C compiler copy the registers onto the stack first.</p>
+<h2 id="is-this-word-a-pointer">"Is this word a pointer?"</h2>
+<p><code>zeno_mark</code> answers it. The table is sorted by address at the start of each
+collection, so the answer is a binary search: find the last block that
+starts at or before the word, then see whether the word falls inside it.
+Most words are turned away sooner, by two comparisons against the lowest
+and highest addresses any block has.</p>
+<p>The same question is asked of the words <em>inside</em> a marked block, which is
+how the collector gets from a list to its items and from an object to its
+fields. It still does not know which fields are pointers. It does not need
+to.</p>
+<p>This is called a <strong>conservative</strong> collector: when unsure, it keeps. It can
+be wrong in one direction only. An integer that happens to equal the
+address of a block keeps that block alive for nothing. It can never free
+something in use, as long as every pointer is somewhere it looks.</p>
+<p>Blocks of text are marked as <em>plain</em>: they cannot hold a pointer, so the
+collector does not read them. That is quicker, and a piece of text is the
+likeliest thing to contain bytes that look like an address by accident.</p>
+<h2 id="following-pointers-without-recursion">Following pointers without recursion</h2>
+<p>The obvious way to mark is a function that marks a block and calls itself
+for everything inside. On a list of 300,000 nodes, each pointing to the
+next, that is 300,000 calls deep, and the collector crashes the program it
+is serving.</p>
+<p>Instead, a block that has been marked but not yet looked into is put on a
+waiting list, and one loop takes blocks off it until it is empty. The
+waiting list is threaded through the blocks themselves (<code>next_waiting</code>, a
+field in front of every block), so the collector needs no memory of its own
+at the one moment when there may be none to have.</p>
+<p>Between collections that field has nothing to do, so it holds something
+else: the block's position in the table (<code>place</code>). The two share one word,
+<code>link</code>. Knowing the position is what lets <code>zeno_free</code> take a single block
+out of the table without searching for it.</p>
+<h2 id="when-it-runs">When it runs</h2>
+<p>Collecting takes time, in proportion to what is in use. So it is not done
+on every allocation. The runtime counts the bytes in use, and collects when
+they pass a limit. After each collection the limit becomes twice what
+survived. A program that keeps little is collected often and cheaply. A
+program that keeps a great deal is left alone for longer.</p>
+<p>The first limit is one megabyte (<code>ZENO_FIRST_COLLECTION</code>). There is a
+second trigger: if <code>malloc</code> itself says there is no more, the collector
+runs and the request is tried again. On a board with 64 KB of memory that
+second trigger is the one that matters.</p>
+<h2 id="what-it-costs">What it costs</h2>
+<ul>
+<li><strong>Pauses.</strong> While the collector runs, the program does not. The pause
+  grows with the amount of memory in use, not with the amount of garbage.
+  A control loop that must answer within microseconds should not make
+  blocks inside the loop. Numbers, bools and fixed text never do.</li>
+<li><strong>A few words per block</strong>: the header in front of it and its line in the
+  table.</li>
+<li><strong>It leans on the C compiler.</strong> Reading the stack like this is not
+  something the C standard describes. It works on every mainstream compiler
+  and processor, and the Boehm collector, Ruby and MicroPython have relied
+  on it for decades, but it is a habit, not a guarantee.</li>
+<li><strong>Now and then it keeps too much.</strong> A stale value in a stack slot that no
+  longer means anything can hold one block, and all that block leads to.</li>
+</ul>
+<p><a href="/decisions/"><code>docs/decisions.md</code></a>, 5.7, says why this was chosen over
+counting references and over Rust-style ownership, and what would make
+the choice change.</p>
+<p><code>--memory</code> works with <code>zeno build --llvm</code> as well, and prints the same
+line.</p>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<p>A collector has one unforgivable bug: freeing a block that is still in use.
+The program then reads memory that belongs to something else, and fails
+much later, somewhere unrelated.</p>
+<p>So every test in <code>emit_c.rs</code> that compares a compiled program with the
+interpreter is now built with <code>-DZENO_COLLECT_ALWAYS</code>, which runs the
+collector before <strong>every single allocation</strong>. A block that is wrongly freed
+is freed at the first chance, and the program prints something different
+from <code>zeno run</code>. Three more tests aim at the collector itself: one checks
+that a loop of garbage stays within a small amount of memory, one that a
+long chain, lists, objects and a function value come through many
+collections intact, and one that an error in flight is not lost.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/memory.zeno</code> with <code>--memory</code>. Change <code>range(50000)</code> to
+   ten times as many. Which of the numbers in the report grow, and which
+   do not?</li>
+<li>Keep every reading (<code>all.append(reading)</code>, never emptied). Watch the
+   number of collections. Why does it rise so slowly?</li>
+<li>Compile <code>memory.c</code> by hand with a lower first limit:
+   <code>cc -O2 -DZENO_MEMORY_REPORT -DZENO_FIRST_COLLECTION=4096 -o memory memory.c -lm</code>.
+   What happens to the most-in-use figure, and to the running time?</li>
+<li>Make the report say how long the longest collection took. (<code>clock()</code>
+   from <code>&lt;time.h&gt;</code> is enough.)</li>
+<li>Break it on purpose: in <code>memory.c</code>, delete the line for <code>z_hottest</code>
+   from <code>zeno_roots</code>, compile by hand with <code>-DZENO_COLLECT_ALWAYS</code>, and
+   run. What happens when the program gets to the hottest reading? This
+   is what a missed root looks like.</li>
+<li>The table is sorted again at every collection. Blocks that survived are
+   still in order; only the new ones are not. Sort just those and merge.</li>
+<li><code>malloc</code> is a general-purpose allocator. Most Zeno blocks are 16 to 48
+   bytes. Give the collector its own pool for small blocks and compare the
+   speed.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/memory.md">docs/memory.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/llvm/"><span>Previous</span>How the LLVM backend works</a><a class="next" href="/docs/ownership/"><span>Next</span>Owned values: memory freed at a line you can point to</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#what-needs-memory">What needs memory</a></li><li><a href="#the-question-nobody-can-answer-in-advance">The question nobody can answer in advance</a></li><li><a href="#mark-and-sweep">Mark and sweep</a></li><li><a href="#where-the-roots-are">Where the roots are</a></li><li><a href="#is-this-word-a-pointer">"Is this word a pointer?"</a></li><li><a href="#following-pointers-without-recursion">Following pointers without recursion</a></li><li><a href="#when-it-runs">When it runs</a></li><li><a href="#what-it-costs">What it costs</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

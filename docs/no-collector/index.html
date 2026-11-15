@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A build with no collector · Zeno</title>
+<meta name="description" content="zeno build --no-collector compiles a Zeno program to C that has no garbage collector in it. Not a collector that is switched off: the code is not in the file.">
+<meta property="og:title" content="A build with no collector · Zeno">
+<meta property="og:description" content="zeno build --no-collector compiles a Zeno program to C that has no garbage collector in it. Not a collector that is switched off: the code is not in the file.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/no-collector/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/no-collector/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/" aria-current="page">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>A build with no collector</h1>
+  <p><code>zeno build --no-collector</code> compiles a Zeno program to C that has no
+garbage collector in it. Not a collector that is switched off: the code is
+not in the file.</p>
+<pre><code>cargo run -- build --no-collector --memory examples/buffer.zeno
+./buffer</code></pre>
+<pre><code>sent 44400 samples, skipped 13 quiet frames
+refused 33 frames, the first on channel 84
+[3, 3, 3, 3]
+4
+memory: 1691 blocks made (2646299 bytes), at most 13336 bytes in use at once, no collector, 0 blocks left at the end
+pool: 25384 bytes taken, in a pool of 32768
+text: at most 53 bytes in use at once, in a room of 1024</code></pre>
+<p>The program made 1691 blocks and gave every one of them back, at a line
+you can find in <code>buffer.c</code>. Open that file and search for <code>zeno_collect</code>,
+<code>zeno_roots</code> or <code>setjmp</code>. None is there. Nor is <code>malloc</code>: the blocks come
+from a pool of a fixed size that is part of the program
+(<a href="/docs/pool/"><code>pool.md</code></a>).</p>
+<p>It is a firmware build (<a href="/docs/firmware/"><code>firmware.md</code></a>) with one more
+promise, so <code>--no-collector</code> turns <code>--firmware</code> on by itself.</p>
+<h2 id="why">Why</h2>
+<p>The collector (<a href="/docs/memory/"><code>memory.md</code></a>) is the right default. It lets you
+write <code>let names = text.split(",")</code> and never think about it again. It
+also has three habits that firmware cannot always live with:</p>
+<ul>
+<li><strong>It pauses the program</strong>, for a time that depends on how much memory is
+  in use. A control loop with a deadline cannot plan for that.</li>
+<li><strong>It reads the C stack</strong> to find out what is still in use. That works on
+  every mainstream compiler, and no C standard describes it.</li>
+<li><strong>Nobody can say when a block is freed</strong>, so nobody can say how much
+  memory the program needs in the worst case.</li>
+</ul>
+<p>Owned values (<a href="/docs/ownership/"><code>ownership.md</code></a>) answer all three for the
+values that are owned. This build is what you get when <em>every</em> value is.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>, the parts headed "With no collector
+  to help" and "What a statement owns": <code>hold</code>, <code>text_begin</code>, <code>text_end</code>,
+  <code>stays</code>, <code>belongs</code>. The refusals are where each kind of value is made:
+  search for <code>without_collector</code>.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: the parts between
+  <code>#ifdef ZENO_NO_COLLECTOR</code> and <code>#endif</code>. As with <code>ZENO_FIRMWARE</code>, the
+  compiler keeps one side when it pastes the runtime in (<code>runtime</code> in
+  <code>emit_c.rs</code>).</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/checker.rs"><code>src/checker.rs</code></a>: <code>Rules { one_owner }</code>, which
+  makes every list and object owned for this build
+  (<a href="/docs/one-owner/"><code>one-owner.md</code></a>), and three small sets, <code>fresh</code>, <code>made</code>
+  and <code>lent</code>, which tell the compiler which lists start life owned and
+  which owned values are only looked at.</li>
+</ul>
+<h2 id="where-memory-comes-from-now">Where memory comes from now</h2>
+<p>With no collector, memory that is taken must be given back by a line of
+the program. There are exactly five ways to get memory in this build, and
+each has such a line.</p>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Where it lives</th>
+<th>When it is given back</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>An owned list or object</td>
+<td>the pool, a fixed array</td>
+<td>when its owner's block ends</td>
+</tr>
+<tr>
+<td>A list or object that is made and given to nobody</td>
+<td>the pool</td>
+<td>when the statement that made it is over</td>
+</tr>
+<tr>
+<td>Text built while the program runs</td>
+<td>the text room, a fixed array</td>
+<td>when the statement that built it is over</td>
+</tr>
+<tr>
+<td>Text that is kept</td>
+<td>the pool</td>
+<td>when the variable, field or list that keeps it is done with it</td>
+</tr>
+<tr>
+<td>An error that was raised</td>
+<td>the pool</td>
+<td>when the <code>except</code> block that caught it ends</td>
+</tr>
+</tbody>
+</table>
+<p>Numbers, bools, quantities, enum cases without data and text written in
+the program (<code>"idle"</code>) need no memory at all, here as in every build.</p>
+<p>Anything else that would take memory is <strong>refused when you build</strong>, with
+the line that does it:</p>
+<pre class="out"><code>error: this list has no owner. Give it one, as in `let items: owned list[int] = [1, 2, 3]`. `zeno build --no-collector` leaves the collector out, so nothing would free it. docs/no-collector.md lists what such a build accepts
+  --&gt; buffer.zeno:58:26
+   |
+58 | var refused: list[int] = []
+   |                          ^</code></pre>
+<p>That is the whole idea of the build. It does not find leaks while the
+program runs. It refuses to build a program that could have one.</p>
+<h2 id="owned-lists-and-objects">Owned lists and objects</h2>
+<p>In this build every list and every object is owned, by whoever received
+it. <code>let xs = [1, 2]</code> owns its list and <code>class Task</code> is an owned class,
+with no word to write. <a href="/docs/one-owner/"><code>one-owner.md</code></a> is the walkthrough
+of that, and of lists that own their items.</p>
+<p>Nothing new happens when one is freed, and that is the point. Stage 2 already wrote a
+free at the end of every owner's block and on every early way out. What
+changes is what the free <em>is</em>. With a collector, <code>zeno_free</code> takes the
+block out of the collector's table and hands it to the C library's
+<code>free</code>. Here there is no table and no C library heap. <code>zeno_alloc</code> takes
+a block from the <strong>pool</strong>, one array whose size is fixed when the C is
+compiled, and <code>zeno_free</code> puts it on a list of spare blocks of its size:</p>
+<pre><code>block-&gt;head.asked = 0;
+block-&gt;next = zeno_pool_spare[block-&gt;head.step];
+zeno_pool_spare[block-&gt;head.step] = block;</code></pre>
+<p><a href="/docs/pool/"><code>pool.md</code></a> is the walkthrough of the pool: how it is laid out,
+why it cannot break up into unusable pieces, what it costs, and how to
+choose its size.</p>
+<h2 id="text-one-statement-one-fixed-room">Text: one statement, one fixed room</h2>
+<p>Firmware prints. <code>print(f"sent {sent} samples")</code> has to work, and the text
+it builds has to live somewhere for a moment.</p>
+<p>It lives in the <strong>text room</strong>: one array, <code>zeno_text_room</code>, whose size is
+fixed when the C is compiled. <code>zeno_text_top</code> says how much of it is in
+use. Building text writes at the top and moves the top up. The compiler
+notes the top before a statement that builds text, and puts it back after:</p>
+<pre><code>size_t m2 = zeno_text_top;
+zeno_print(1, zeno_join(5, "sent ", zeno_str_int(z_sent), " samples, skipped ", zeno_str_int(z_quiet), " quiet frames"));
+zeno_text_top = m2;</code></pre>
+<p>Giving text back is one assignment. There is nothing to search and nothing
+to fragment.</p>
+<p>A function called in the middle of a statement does the same for its own
+statements, above the caller's half-built text. So the room is used like a
+stack, and its size is the most text that can be in the making at one
+moment. The report's second line tells you what that was. Compile the C by
+hand to choose the size:</p>
+<pre><code>cc -O2 -DZENO_TEXT_ROOM=256 -o buffer buffer.c -lm</code></pre>
+<p>If a statement needs more than the room has, the program stops and says
+so. That is a fault, like an index past the end of a list.</p>
+<p><strong>Text that outlives its statement is copied.</strong> The room is emptied
+when the statement ends, so text that is kept cannot stay there:</p>
+<pre><code class="zeno">print(f"channel {channel}")              # built, printed, given back
+if command.strip().upper() == "ON" { }   # the same
+let line = f"channel {channel}"          # `line` keeps a copy, in the pool</code></pre>
+<p>Whatever keeps text (a variable, a field, a list) has a copy of its
+own and frees it when it is done. Text is never changed once made, so
+a copy cannot be told from the original, and there is no rule to
+learn. <a href="/docs/text/"><code>text.md</code></a> is the walkthrough: where the copies are
+made and freed, how a function gives text back, and what it costs.
+(Until that stage, keeping built text was refused.)</p>
+<p>The compiler tracks which text is in the room with one flag on each
+compiled value (<code>fixed</code> on <code>Val</code>): a literal and a variable that
+cannot change are fixed, and everything else is in the room and is
+copied to be kept.</p>
+<p>An <code>if</code> or <code>while</code> whose condition builds text takes its answer first,
+gives the text back, and then runs its body. A <code>for</code> gives it back
+before the first trip, and a <code>match</code> as soon as a case is chosen.</p>
+<h2 id="errors">Errors</h2>
+<p><code>raise Overload(channel, peak)</code> makes an object, and an error to carry it.
+Neither has an owner in the usual sense: the error leaves the function
+that made it. So this build gives it one rule of its own. <strong>The <code>except</code>
+block that catches an error frees it when the block ends</strong>, however the
+block is left:</p>
+<pre><code>if (zeno_is(zeno_caught_1, "Overload")) {
+    z_Overload *z_overload = (z_Overload *)zeno_caught_1-&gt;object;
+    zeno_list_append(z_refused, (zeno_slot){.i = z_overload-&gt;z_channel});
+    zeno_error_drop(zeno_caught_1);
+}</code></pre>
+<p>Inside the block the error can be read, printed, asked for its fields
+and lent to a <code>borrow</code> parameter. It cannot be kept, given away or
+raised again. Copy out what you need. The other half of the rule: an error can only be made by <code>raise</code>, as
+in <code>raise ValueError("too hot")</code>. <code>let e = ValueError("too hot")</code> is
+refused, because no <code>except</code> would ever free it.</p>
+<p>The error's message is often built text (<code>raise ValueError(f"{n} is too
+big")</code>), which would be gone before the <code>except</code> runs. So in this build
+the error keeps its own copy of the message, in the same block as itself.</p>
+<p>An error that nobody catches stops the program. There is nothing to free
+after that.</p>
+<h2 id="a-value-between-two-owners">A value between two owners</h2>
+<p>Four times, a value belongs to nobody for a moment. With a collector that
+does not matter. Here each needs an answer, and all four get the same
+one: the compiler <strong>holds</strong> the value (<code>hold</code> in <code>emit_c.rs</code>), which means
+that any early way out of the block frees it, just as it frees what the
+block's owners hold.</p>
+<ol>
+<li><strong>A list being filled.</strong> <code>[check(n) for n in range(size)]</code>: if <code>check</code>
+   fails on the fourth item, the first three are in a list that has no
+   name yet.</li>
+</ol>
+<pre><code>zeno_list *t24 = zeno_list_new(0);
+for (int64_t z2_n = 0; z2_n &lt; t25; z2_n++) {
+    int64_t t26;
+    if (!z_check(z2_n, &amp;t26)) { zeno_list_drop(t24); return false; }
+    zeno_list_append(t24, (zeno_slot){.i = t26});
+}</code></pre>
+<ol start="2">
+<li>
+<p><strong>An owned value on its way into a call.</strong> In <code>join(a, b, check(n))</code>,
+   <code>a</code> and <code>b</code> have left their variables by the time <code>check</code> runs. If it
+   fails, the failure frees them.</p>
+</li>
+<li>
+<p><strong>The copy a <code>for</code> loop walks</strong> (decision 3.10a). A <code>return</code> or a
+   failed call inside the loop frees it on the way out.</p>
+</li>
+<li>
+<p><strong>A value that is made and given to nobody</strong>, as in
+   <code>print(count(line.split()))</code>. It belongs to the statement, which
+   frees it when it is over, and a failure half way through the
+   statement frees it too. <a href="/docs/temporaries/"><code>temporaries.md</code></a> is the
+   walkthrough.</p>
+</li>
+</ol>
+<p>The first and third were small leaks to the collector in stages 1 and 2.
+They are now fixed in every build.</p>
+<h2 id="what-is-refused">What is refused</h2>
+<p>Each of these makes memory that no line gives back. Each error names the
+line and says what to write instead where there is something.</p>
+<table>
+<thead>
+<tr>
+<th>Refused</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A list or object used after it was given away (<code>let b = a</code>, then <code>a</code>)</td>
+<td>it has one owner (<a href="/docs/one-owner/"><code>one-owner.md</code></a>)</td>
+</tr>
+<tr>
+<td>A list or object inside an <code>or none</code></td>
+<td>taking it out would leave a hole</td>
+</tr>
+<tr>
+<td>An error that is kept, given away, or raised again</td>
+<td>its <code>except</code> frees it</td>
+</tr>
+<tr>
+<td>An error made anywhere but in <code>raise</code></td>
+<td>no <code>except</code> would free it</td>
+</tr>
+<tr>
+<td>An enum case that carries values</td>
+<td>it sits in a block of its own</td>
+</tr>
+<tr>
+<td>A function written where a value goes</td>
+<td>so does it, with the variables it uses</td>
+</tr>
+<tr>
+<td>A list of <code>int or none</code></td>
+<td>each item sits in a block of its own</td>
+</tr>
+</tbody>
+</table>
+<p>Six things you might expect on this list are not. A plain list or
+object is fine: whoever receives it owns it. A list of objects or of
+lists is fine: the list owns its items
+(<a href="/docs/one-owner/"><code>one-owner.md</code></a>). A named function
+used as a value (<code>items.reduce(add, 0)</code>) is fine: it takes no memory.
+Text that is kept is fine: the keeper has a copy
+(<a href="/docs/text/"><code>text.md</code></a>). A list that is made and only looked at is fine,
+whatever makes it (<code>x in [1, 2]</code>, <code>count(line.split())</code>,
+<code>len(a + b)</code>): the statement frees it. And a list that a <code>for</code> loop
+walks is fine (<code>for pin in [2, 3, 5]</code>, <code>for word in line.split()</code>,
+<code>for ch in text</code>): the loop frees it. Both are in
+<a href="/docs/temporaries/"><code>temporaries.md</code></a>.</p>
+<p>Most of these are provisional. An enum value and a function value
+could be owned by whoever receives them, as lists and objects now are.
+Those are the next steps.</p>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li><strong>Memory is still taken and given back while the program runs.</strong> It
+  comes from a fixed pool and not from the heap, so MISRA C:2012 Rule
+  21.3 (no <code>malloc</code>, <code>calloc</code>, <code>realloc</code> or <code>free</code>) is met. Directive
+  4.12 is wider: it is against dynamic memory of any kind, and a pool is
+  still that. <a href="/docs/pool/"><code>pool.md</code></a>, "What this does not claim", says what
+  the pool does and does not answer.</li>
+<li><strong>It does not bound memory for you.</strong> A loop that appends to an owned
+  list for ever fills the pool, and the program stops there. <code>--memory</code>
+  tells you what a run needed.</li>
+<li><strong>The text room is a fixed size that you choose.</strong> Too small, and the
+  program stops at the statement that overflowed it.</li>
+<li>The rest of the list in <a href="/docs/firmware/"><code>firmware.md</code></a> stands: <code>printf</code>
+  and <code>exit</code>, variable argument lists in the runtime, the GCC builtins for
+  checked arithmetic, and the forward <code>goto</code>.</li>
+</ul>
+<h2 id="the-same-through-llvm">The same, through LLVM</h2>
+<pre><code>cargo run -- build --llvm --no-collector --memory examples/buffer.zeno</code></pre>
+<p><code>zeno build --llvm --no-collector</code> is this design written in LLVM IR.
+An owner is a slot that is set to null when it gives its value away
+and dropped where its block ends. The text room's top is a global the
+IR loads before a statement that builds text and stores back after it.
+An <code>except</code> drops the error it caught. The runtime file beside the IR
+is the one from this page, and what is refused is refused in the same
+words. <a href="/docs/llvm/"><code>llvm.md</code></a>, "Owned values" and "With no collector",
+walks through the IR.</p>
+<p>The two builds do not only print the same. They make the same number
+of blocks, hold the same number of bytes at most, and fill the text
+room to the same height, and the tests require it.</p>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<p>Every test program for this build (<code>no_collector_as_interpreter</code> in
+<code>emit_c.rs</code>) is checked four ways:</p>
+<ol>
+<li>It prints exactly what <code>zeno run</code> prints.</li>
+<li>Its memory report ends with <strong>0 blocks left at the end</strong>. With no
+   collector, a block that no line frees is never freed, so this number
+   is the test.</li>
+<li>The C file does not contain <code>zeno_collect</code>, <code>zeno_roots</code> or <code>setjmp</code>,
+   nor <code>malloc</code>, <code>calloc</code>, <code>realloc</code> or the library's <code>free</code>.</li>
+<li>The same program still agrees with the interpreter in the two builds
+   that do have a collector.</li>
+<li>Built through LLVM with no collector, it prints the same, and its
+   memory report is the same as the C build's, line for line.</li>
+</ol>
+<p>The programs aim at the hard places: an error raised inside a loop over a
+list, inside another <code>except</code>, half way through filling a list, and while
+owned values are on their way into a call; <code>return</code>, <code>break</code> and
+<code>continue</code> out of <code>except</code> blocks; and two thousand trips round a loop
+that builds text, which must leave the text room as it found it. A table
+of 14 small programs checks that each refusal says what it should, and
+that each of them still builds where there is a collector.</p>
+<p>They were also run by hand with gcc and clang at several optimisation
+levels, and, while memory still came from the heap, under
+AddressSanitizer with its leak check on. <a href="/docs/pool/"><code>pool.md</code></a> lists the
+tests of the pool itself.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/buffer.zeno</code> with <code>--memory</code>, then with
+   <code>--no-collector --memory</code>. The second makes fewer blocks. Which ones
+   are gone? (Look at where the text went.)</li>
+<li>In <code>buffer.zeno</code>, take the word <code>owned</code> off <code>refused</code> and build
+   with <code>--no-collector</code>. Nothing changes: in this build the list has
+   one owner either way. Then try keeping an error:
+   <code>var last: Overload or none = none</code> and <code>last = overload</code> in the
+   <code>except</code>. Read the error.</li>
+<li>Compile <code>buffer.c</code> by hand with <code>-DZENO_TEXT_ROOM=32</code>. Which statement
+   stops the program? What is the smallest room it runs in, and does the
+   report agree?</li>
+<li><code>let line = f"plain text"</code> copies the text into the pool, though
+   nothing in it is built. Find where <code>format_string</code> makes its value,
+   and when every part is a literal make it the literal itself. How
+   does the report for such a program change?</li>
+<li>This exercise used to be "replace <code>calloc</code> and <code>free</code> with a pool".
+   That is done (<a href="/docs/pool/"><code>pool.md</code></a>), so here is what is left of it:
+   print, from <code>zeno_memory_report</code>, how many blocks of each size were
+   ever cut from the pool. Which sizes does <code>buffer.zeno</code> ask for, and
+   which size holds most of the pool?</li>
+<li><code>print(42)</code> builds the text <code>"42"</code> and then prints it. Give the runtime
+   a <code>zeno_put_int</code> that prints a number with no text room, and make the
+   compiler use it when <code>print</code> has one argument.</li>
+<li><code>look([1, 2, 3])</code> used to be refused, where <code>look</code> takes a
+   <code>borrow list[int]</code>. It builds now: find the line in the C that frees
+   the list, then make <code>look</code> fail (give it a <code>raises</code>) and find the
+   second line that does. <a href="/docs/temporaries/"><code>temporaries.md</code></a> says how
+   both got there.</li>
+<li><code>raise e</code> inside <code>except ... as e</code> is refused. It could be a move: the
+   error goes back to <code>zeno_raised</code> and the block no longer frees it. What
+   would the checker have to know?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/no-collector.md">docs/no-collector.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/ownership/"><span>Previous</span>Owned values: memory freed at a line you can point to</a><a class="next" href="/docs/pool/"><span>Next</span>The memory pool</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why">Why</a></li><li><a href="#the-files">The files</a></li><li><a href="#where-memory-comes-from-now">Where memory comes from now</a></li><li><a href="#owned-lists-and-objects">Owned lists and objects</a></li><li><a href="#text-one-statement-one-fixed-room">Text: one statement, one fixed room</a></li><li><a href="#errors">Errors</a></li><li><a href="#a-value-between-two-owners">A value between two owners</a></li><li><a href="#what-is-refused">What is refused</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#the-same-through-llvm">The same, through LLVM</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

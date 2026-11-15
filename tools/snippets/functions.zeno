@@ -1,0 +1,19 @@
+function area(width: float, height: float) -> float {
+    return width * height
+}
+
+function loose_area(width, height) {     # the same, with no types written
+    return width * height
+}
+
+function greet(who: str, excited: bool = false) -> str {
+    if excited {
+        return f"Hello, {who}!"
+    }
+    return f"Hello, {who}."
+}
+
+let triple = function(n) { return n * 3 }   # functions are values
+print(area(2.0, 3.5), loose_area(2, 3))
+print(greet("Achilles"), greet("tortoise", excited=true))
+print([1, 2, 3].map(triple), [n * n for n in range(6) if n % 2 == 0])

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>buffer.zeno · Zeno</title>
+<meta name="description" content="Owned values: memory that is given back at a line you can point to. A Zeno example, with its output.">
+<meta property="og:title" content="buffer.zeno · Zeno">
+<meta property="og:description" content="Owned values: memory that is given back at a line you can point to. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/buffer/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/buffer/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">Owned values: memory that is given back at a line you can point to</h1>
+  <p class="lede small">The whole of <code>examples/buffer.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <figure class="window"><figcaption><span class="file">buffer.zeno</span></figcaption><pre><code class="zeno"># Owned values: memory that is given back at a line you can point to.
+#
+#     cargo run -- run examples/buffer.zeno
+#     cargo run -- build --memory examples/buffer.zeno &amp;&amp; ./buffer
+#     cargo run -- build --no-collector --memory examples/buffer.zeno &amp;&amp; ./buffer
+#
+# Most values in Zeno are shared, and a garbage collector frees them some
+# time after their last use (docs/memory.md). A value marked `owned` has
+# exactly one owner instead, and is freed the moment its owner's block
+# ends. docs/ownership.md explains the rules. This file is the short tour.
+#
+# Every list and object here is owned, so the third command above can
+# build the program with no collector in it at all (docs/no-collector.md).
+
+# Every Frame has one owner. When that owner's block ends, the frame and
+# the list inside it are freed, there and then.
+owned class Frame {
+    channel: int
+    samples: owned list[int]
+
+    # A method only looks at the object it is called on.
+    function peak(self) -&gt; int {
+        var highest = 0
+        for sample in self.samples {
+            if sample &gt; highest {
+                highest = sample
+            }
+        }
+        return highest
+    }
+}
+
+# An ordinary, shared class. An error to raise.
+class Overload {
+    channel: int
+    peak: int
+}
+
+# Makes a frame and hands it to the caller, who owns it from then on.
+function capture(channel: int, size: int) -&gt; Frame {
+    let samples: owned list[int] = [(n * n + channel * 13) % (400 + channel) for n in range(size)]
+    return Frame(channel, samples)    # `samples` moves into the frame
+}
+
+# `borrow`: this function looks at a list and cannot keep it. Any list
+# will do, owned or shared, and the caller still has it afterwards.
+function average(samples: borrow list[int]) -&gt; int {
+    return sum(samples) // len(samples)
+}
+
+# No `borrow` here: `send` takes the frame over. The caller's variable is
+# empty after the call, and the frame is freed when `send` is done with it.
+function send(frame: Frame) -&gt; int raises Overload {
+    if frame.peak() &gt; 480 {
+        raise Overload(frame.channel, frame.peak())
+    }
+    return len(frame.samples)
+}
+
+var sent = 0
+var quiet = 0
+var refused: owned list[int] = []
+
+for channel in range(120) {
+    let frame = capture(channel, 600)
+    if average(frame.samples) &lt; 205 {
+        quiet += 1
+        continue                      # `frame` is freed here,
+    }
+    try {
+        sent += send(frame)           # or it moves into `send`, which frees it.
+    } except Overload as overload {
+        refused.append(overload.channel)
+    }
+}
+
+print(f"sent {sent} samples, skipped {quiet} quiet frames")
+print(f"refused {len(refused)} frames, the first on channel {refused[0]}")
+
+# A `var` that owns its value can be given a new one. The old one is freed
+# at that line.
+var window: owned list[int] = [0, 0, 0, 0]
+for round in range(3) {
+    window = [value + round for value in window]
+}
+print(window)
+
+# After a move the old name holds nothing, and the checker says so. Take
+# the `#` off the last line to see the message:
+let last = capture(7, 4)
+print(send(last))
+# print(last.channel)</code></pre><div class="out-label">zeno run examples/buffer.zeno</div><pre class="out"><code>sent 44400 samples, skipped 13 quiet frames
+refused 33 frames, the first on channel 84
+[3, 3, 3, 3]
+4</code></pre></figure>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/buffer.zeno">examples/buffer.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/blink/"><span>Previous</span>blink.zeno</a><a class="next" href="/examples/memory/"><span>Next</span>memory.zeno</a></nav>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

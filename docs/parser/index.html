@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the parser works · Zeno</title>
+<meta name="description" content="The parser is the second stage. The lexer gave us a flat list of tokens; the parser works out how they nest and builds a syntax tree.">
+<meta property="og:title" content="How the parser works · Zeno">
+<meta property="og:description" content="The parser is the second stage. The lexer gave us a flat list of tokens; the parser works out how they nest and builds a syntax tree.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/parser/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/parser/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/" aria-current="page">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How the parser works</h1>
+  <p>The parser is the second stage. The lexer gave us a flat list of tokens; the
+parser works out how they nest and builds a <strong>syntax tree</strong>.</p>
+<pre><code class="zeno">let total = 1 + 2 * 3
+
+tokens:  Let  Ident("total")  Assign  Int(1)  Plus  Int(2)  Star  Int(3)
+
+tree:    Let total
+           └─ Binary +
+                ├─ Int 1
+                └─ Binary *
+                     ├─ Int 2
+                     └─ Int 3</code></pre>
+<p>The tree is where meaning starts to appear. The tokens do not say that <code>2 * 3</code>
+happens before the <code>+</code>; the tree does.</p>
+<p>See it for any file. Blocks are shown by indentation, and every operator gets
+its own brackets so you can see how it grouped:</p>
+<pre><code>cargo run -- parse examples/tour.zeno</code></pre>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/ast.rs"><code>src/ast.rs</code></a>: the shapes a tree node can have. Read this first.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/parser.rs"><code>src/parser.rs</code></a>: the parser and its tests.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/printer.rs"><code>src/printer.rs</code></a>: prints a tree back out as text.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/error.rs"><code>src/error.rs</code></a>: the error type the lexer and parser share.</li>
+</ul>
+<h2 id="statements-and-expressions">Statements and expressions</h2>
+<p>Everything in the tree is one of two things:</p>
+<ul>
+<li>A <strong>statement</strong> does something: <code>let x = 1</code>, <code>if ... { }</code>, <code>return x</code>. See <code>StmtKind</code>.</li>
+<li>An <strong>expression</strong> produces a value: <code>1 + 2</code>, <code>area(shape)</code>, <code>user.name</code>. See <code>ExprKind</code>.</li>
+</ul>
+<p>Statements contain expressions (<code>return</code> holds the value to return), and some
+statements contain blocks of more statements (<code>if</code> holds its body).</p>
+<h2 id="recursive-descent">Recursive descent</h2>
+<p>The parser has one function per piece of grammar, and each function parses
+exactly that piece. The grammar rule for <code>while</code> is "the word <code>while</code>, a
+condition, a block", and the code says the same thing:</p>
+<pre><code>fn while_loop(&amp;mut self) -&gt; Result&lt;StmtKind, Error&gt; {
+    self.advance(); // while
+    let condition = self.expression()?;
+    let body = self.block()?;
+    Ok(StmtKind::While { condition, body })
+}</code></pre>
+<p><code>block</code> calls <code>statement</code>, which may call <code>while_loop</code>, which calls <code>block</code>
+again. That circle is the "recursive" in recursive descent, and it is why
+nesting to any depth just works.</p>
+<p><code>statement</code> is the hub. It looks at one token and picks the function:
+<code>let</code> goes to <code>declaration</code>, <code>if</code> to <code>if_statement</code>, and so on. Anything else
+must be an expression or an assignment.</p>
+<p>The same few helpers as the lexer do the reading, on tokens this time:
+<code>peek</code>, <code>advance</code>, <code>eat(kind)</code>, plus <code>expect(kind)</code>, which consumes a token or
+fails with "expected X, found Y".</p>
+<h2 id="precedence-without-a-table">Precedence without a table</h2>
+<p>How does <code>1 + 2 * 3</code> become <code>1 + (2 * 3)</code>? Each precedence level is its own
+function, and each one calls the next tighter level to get its operands:</p>
+<pre><code>expression → or → and → not → comparison → bits → sum → product → negation → power → postfix → primary
+  loosest                                                                                 tightest</code></pre>
+<p><code>bits</code> is four levels in one function: <code>|</code>, then <code>^</code>, then <code>&amp;</code>, then the
+shifts <code>&lt;&lt;</code> and <code>&gt;&gt;</code>. They are the same loop four times over, so <code>bits_at</code>
+takes the level as a number and calls itself with the next one
+(<a href="/docs/sized-ints/"><code>sized-ints.md</code></a> says why they sit where they do).</p>
+<p><code>sum</code> asks <code>product</code> for its left side. <code>product</code> consumes <code>1</code>, sees a <code>+</code>,
+which is not its business, and returns. <code>sum</code> takes the <code>+</code>, then asks
+<code>product</code> for the right side. This time <code>product</code> consumes <code>2 * 3</code> whole
+before returning. So the multiplication ends up lower in the tree, and things
+lower in the tree happen first.</p>
+<p>A loop inside each level makes operators group to the left: <code>a - b - c</code> is
+<code>(a - b) - c</code>. Power is the exception. It recurses on its right side instead
+of looping, so <code>2 ** 3 ** 2</code> is <code>2 ** (3 ** 2)</code>.</p>
+<h2 id="places-where-one-token-is-not-enough">Places where one token is not enough</h2>
+<p>Mostly the next token decides everything. A few spots need a little more:</p>
+<ul>
+<li><strong>Assignment or expression?</strong> <code>x = 1</code> and <code>x.go()</code> both start with an
+  expression. <code>assignment_or_expression</code> parses the expression first, then
+  checks whether <code>=</code> follows.</li>
+<li><strong>List or comprehension?</strong> <code>[a, b]</code> and <code>[a for a in b]</code> start the same.
+  <code>list</code> parses the first element, then checks for <code>for</code>.</li>
+<li><strong>Named argument?</strong> In a call, a name followed by <code>=</code> is <code>name=value</code>. This
+  is the one place the parser peeks two tokens ahead.</li>
+<li><strong><code>is not</code> and <code>not in</code></strong> are each two tokens that make one operator.</li>
+<li><strong>Declaration or value?</strong> <code>function name(...)</code> declares a function;
+  <code>function(...)</code> with no name is an expression. One token of lookahead after
+  <code>function</code> tells them apart.</li>
+<li><strong><code>strict</code></strong> is not a keyword. It is the word <code>strict</code> alone on the first
+  line of the file, which sets <code>Program.strict</code>; anywhere else it is an
+  ordinary name.</li>
+<li><strong>Function types.</strong> Where a type is expected, <code>function(int) -&gt; int</code> is
+  parsed by <code>type_</code>: types in the <code>( )</code>, and an optional <code>-&gt;</code> and return type.</li>
+</ul>
+<h2 id="f-strings">f-strings</h2>
+<p>The lexer hands over <code>f"Hello, {who}!"</code> as one piece of text. <code>format_parts</code>
+cuts out each <code>{...}</code> and runs the lexer and parser on it as a tiny program of
+its own, so anything that works in normal code works inside the braces.</p>
+<h2 id="errors">Errors</h2>
+<p>The parser stops at the first error, because after one mistake everything
+that follows tends to be noise. Messages say what was expected and what was
+found, in words rather than token names, and common habits get a hint:</p>
+<pre class="out"><code>error: expected `{`, found `:`. Zeno uses `{ }` around blocks
+ --&gt; main.zeno:2:13
+  |
+2 | if total &gt; 5:
+  |             ^</code></pre>
+<h2 id="what-the-parser-leaves-for-later">What the parser leaves for later</h2>
+<p>The parser only checks shape. All of these parse without complaint:</p>
+<ul>
+<li><code>let x = y</code> where <code>y</code> was never declared.</li>
+<li><code>"abc" - 1</code>.</li>
+<li><code>return</code> outside a function.</li>
+<li><code>case Idle</code>, which could be an enum case or a new variable. The tree stores
+  the bare name and a later stage decides.</li>
+</ul>
+<p>Those are jobs for name resolution and the type checker.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Add a <code>loop { }</code> statement that repeats forever. (A keyword in the lexer,
+   a <code>StmtKind</code>, a branch in <code>statement</code>, a line in the printer, a test.)</li>
+<li>Add <code>x if cond else y</code> as an expression. Where does it go in the precedence chain?</li>
+<li>Let enum cases be separated by commas as well as line breaks.</li>
+<li>Make the parser carry on after an error and report several. After a
+   failure, skip tokens until the next <code>Newline</code> and try again. What makes
+   this harder inside a block?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/parser.md">docs/parser.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/lexer/"><span>Previous</span>How the lexer works</a><a class="next" href="/docs/checker/"><span>Next</span>How the type checker works</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#statements-and-expressions">Statements and expressions</a></li><li><a href="#recursive-descent">Recursive descent</a></li><li><a href="#precedence-without-a-table">Precedence without a table</a></li><li><a href="#places-where-one-token-is-not-enough">Places where one token is not enough</a></li><li><a href="#f-strings">f-strings</a></li><li><a href="#errors">Errors</a></li><li><a href="#what-the-parser-leaves-for-later">What the parser leaves for later</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

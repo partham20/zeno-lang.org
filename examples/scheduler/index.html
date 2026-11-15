@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>scheduler.zeno · Zeno</title>
+<meta name="description" content="A small scheduler: tasks that run every so many ticks. A Zeno example, with its output.">
+<meta property="og:title" content="scheduler.zeno · Zeno">
+<meta property="og:description" content="A small scheduler: tasks that run every so many ticks. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/scheduler/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/scheduler/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">A small scheduler: tasks that run every so many ticks</h1>
+  <p class="lede small">The whole of <code>examples/scheduler.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <figure class="window"><figcaption><span class="file">scheduler.zeno</span></figcaption><pre><code class="zeno"># A small scheduler: tasks that run every so many ticks.
+#
+# There is not one `owned` in this file, and it still builds with no
+# garbage collector:
+#
+#     zeno run examples/scheduler.zeno
+#     zeno build --no-collector --memory examples/scheduler.zeno &amp;&amp; ./scheduler
+#
+# In that build every list and every object has one owner: whoever
+# received it. docs/one-owner.md is the walkthrough.
+
+class Task {
+    name: str
+    every: int            # how many ticks lie between two runs
+    runs: list[int]       # the ticks it ran at. The task owns this list.
+
+    function due(self, tick: int) -&gt; bool {
+        return tick % self.every == 0
+    }
+}
+
+class Scheduler {
+    tasks: list[Task]     # the scheduler owns the list, and the list owns each task
+
+    function add(self, task: Task) {
+        self.tasks.append(task)         # the task is the list's from here
+    }
+
+    # Run what is due at `now`. Returns how many tasks ran.
+    function tick(self, now: int) -&gt; int {
+        var ran = 0
+        for task in self.tasks {        # the loop is lent each task in turn
+            if task.due(now) {
+                task.runs.append(now)
+                ran += 1
+            }
+        }
+        return ran
+    }
+}
+
+# `borrow`: these two only look. The caller goes on owning what it lends.
+function busiest(tasks: borrow list[Task]) -&gt; str {
+    var best = "nothing"
+    var most = 0
+    for task in tasks {
+        if len(task.runs) &gt; most {
+            most = len(task.runs)
+            best = task.name
+        }
+    }
+    return best
+}
+
+function report(task: borrow Task) -&gt; str {
+    return f"{task.name} ran {len(task.runs)} times: {task.runs}"
+}
+
+# No `borrow`: this one takes the task over, and frees it when it returns.
+function retire(task: Task) -&gt; int {
+    print("retiring", task.name)
+    return len(task.runs)
+}
+
+let scheduler = Scheduler([])
+scheduler.add(Task("blink", 2, []))
+scheduler.add(Task("sample", 3, []))
+let slow = Task("log", 5, [])
+scheduler.add(slow)                     # `slow` holds nothing after this line
+
+var total = 0
+for now in range(1, 11) {
+    total += scheduler.tick(now)
+}
+print("runs:", total)
+for task in scheduler.tasks {
+    print(report(task))
+}
+print("busiest:", busiest(scheduler.tasks))
+
+# `[ ]` looks at a task where it is. The task can be changed there.
+scheduler.tasks[0].every = 4
+print(scheduler.tasks[0].name, "now runs every", scheduler.tasks[0].every)
+
+# `pop()` takes a task out of the list. Whoever receives it owns it.
+let last = scheduler.tasks.pop()
+print("left:", len(scheduler.tasks))
+print("it ran", retire(last), "times")
+
+# A new task takes the place of an old one, which is freed on the spot.
+scheduler.tasks[1] = Task("sample fast", 1, [])
+print(scheduler.tick(12), "ran at tick 12")
+
+# A list of lists. Each row belongs to the table.
+var table = [[0, 0, 0], [0, 0, 0]]
+table[1][2] = 7
+table.append([1, 2, 3])
+for row in table {
+    print(row)
+}</code></pre><div class="out-label">zeno run examples/scheduler.zeno</div><pre class="out"><code>runs: 10
+blink ran 5 times: [2, 4, 6, 8, 10]
+sample ran 3 times: [3, 6, 9]
+log ran 2 times: [5, 10]
+busiest: blink
+blink now runs every 4
+left: 2
+retiring log
+it ran 2 times
+2 ran at tick 12
+[0, 0, 0]
+[0, 0, 7]
+[1, 2, 3]</code></pre></figure>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/scheduler.zeno">examples/scheduler.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/words/"><span>Previous</span>words.zeno</a><span></span></nav>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+enum Reading {
+    Value(celsius: float)
+    Gap
+}
+
+function describe(reading: Reading) -> str {
+    match reading {
+        case Value(c) { return f"{c:.1f} °C" }
+        case Gap { return "no reading" }
+    }
+}
+
+for reading in [Value(21.5), Gap, Value(22.04)] {
+    print(describe(reading))
+}

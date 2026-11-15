@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>What a statement owns · Zeno</title>
+<meta name="description" content="A build with no collector used to refuse each of these lines:">
+<meta property="og:title" content="What a statement owns · Zeno">
+<meta property="og:description" content="A build with no collector used to refuse each of these lines:">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/temporaries/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/temporaries/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/" aria-current="page">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>What a statement owns</h1>
+  <p>A build with no collector used to refuse each of these lines:</p>
+<pre><code class="zeno">print(count(line.split()))
+print("led" in line.split())
+for word in words(line).map(loud) {
+    print(word)
+}</code></pre>
+<p>Each makes a list that is given to nobody. <code>line.split()</code> is counted and
+never named. With a collector that is fine: the list is left behind and
+collected later. With none, "nothing would free it" was the whole reason
+for the refusal.</p>
+<p>Now something does free it: <strong>the statement it is in</strong>.</p>
+<pre><code>cargo run -- build --no-collector --memory examples/words.zeno
+./words</code></pre>
+<pre><code>5
+5
+true
+SET
+LED
+3
+ON
+250
+["3", "250"]
+["set", "led", "3", "on", "250", "end"]
+set/2
+refused: an empty line
+stop/0
+memory: 219 blocks made (3314 bytes), at most 505 bytes in use at once, no collector, 0 blocks left at the end
+pool: 1160 bytes taken, in a pool of 32768
+text: at most 79 bytes in use at once, in a room of 1024</code></pre>
+<p><a href="/examples/words/"><code>examples/words.zeno</code></a> splits a line from a
+serial console into words nine times, and gives a name to only a few of
+the lists it makes on the way. The report still ends with <strong>0 blocks
+left</strong>.</p>
+<p>This page follows on from <a href="/docs/text/"><code>text.md</code></a>. It is the second of five
+steps that take the rules of that build from "refuse what has no owner"
+to "whoever receives a value owns it".</p>
+<h2 id="the-idea-what-is-given-to-nobody-belongs-to-the-statement">The idea: what is given to nobody belongs to the statement</h2>
+<p>A list that was just made is nobody's yet. One of four things happens to
+it next, and each has an answer to "who frees it?":</p>
+<table>
+<thead>
+<tr>
+<th>The list goes to</th>
+<th>Example</th>
+<th>Who frees it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>an owner</td>
+<td><code>let parts: owned list[str] = line.split()</code></td>
+<td>the owner, when its block ends</td>
+</tr>
+<tr>
+<td>nobody</td>
+<td><code>print(count(line.split()))</code></td>
+<td>the statement, when it is over</td>
+</tr>
+<tr>
+<td>a <code>for</code> loop</td>
+<td><code>for word in line.split() { ... }</code></td>
+<td>the loop, after its last trip</td>
+</tr>
+<tr>
+<td>a place that is not an owner</td>
+<td><code>let parts = line.split()</code></td>
+<td>nobody could, so it was refused. Since <a href="/docs/one-owner/"><code>one-owner.md</code></a> every such place is an owner</td>
+</tr>
+</tbody>
+</table>
+<p>The second row is the new one:</p>
+<blockquote>
+<p><strong>A value that is made in the middle of a statement and given to nobody
+belongs to that statement, which frees it when it is over.</strong></p>
+</blockquote>
+<p>Rust and C++ have the same rule and call such a value a <em>temporary</em>.
+It is the rule you would guess. In <code>print(count(line.split()))</code> the list
+is needed until <code>count</code> has answered, and there is no way to mention it
+after the statement, so the end of the statement is the first moment
+that is certainly late enough and the last that is certainly reachable.</p>
+<p>Nothing new is written in the program. There is no keyword for it and
+no choice to make, which is the test "unambiguous and intuitive" asks
+for: a line that reads as "split, count, print" does exactly that, and
+the build that has no collector agrees with the one that has.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/checker.rs"><code>src/checker.rs</code></a>: <code>made</code> (which expressions make
+  a new list), <code>fresh_list</code> (a made list can start life owned) and
+  <code>lent</code> (an owned value that is only looked at).</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>, the part headed "What a statement
+  owns": <code>own_begin</code>, <code>own_end</code>, <code>belongs</code>. The C that walks and fills
+  lists is in <code>over_list</code> and <code>open_list_loop</code>.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_llvm.rs"><code>src/emit_llvm.rs</code></a>: the same three names.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: <code>zeno_piece</code> and
+  <code>zeno_list_keep_text</code>.</li>
+</ul>
+<h2 id="what-makes-a-list">What makes a list</h2>
+<p>Six things make a new list:</p>
+<pre><code class="zeno">[1, 2, 3]                      # a list written out
+[n * n for n in items]         # a comprehension
+line.split()                   # also line.split(",")
+items.map(double)
+items.filter(big)
+left + right                   # two lists joined</code></pre>
+<p>The compiler marks the value each of these gives as <em>made</em>
+(<code>Val::made</code>). Then <code>belongs</code>, which every expression passes through,
+asks one question: is somebody getting it? The checker has the answer.
+It notes each made list that arrives where an <strong>owned list is wanted</strong>:
+a <code>let</code> with an owned type, an owned parameter, an owned field, a
+<code>return</code> from a function that gives back an owned list. Those start
+life owned (<code>Types::fresh</code>), and nothing more is done here. Any other
+made list becomes the statement's.</p>
+<p>That is why this works, with no <code>owned</code> written on the right:</p>
+<pre><code class="zeno">function words(line: str) -&gt; owned list[str] {
+    return line.split(" ").filter(not_empty)
+}</code></pre>
+<p><code>split</code> makes a list that goes to nobody: <code>filter</code> only reads it. It is
+the <code>return</code> statement's, which frees it. <code>filter</code> makes a second list,
+and that one is wanted as an owned list, so it is given to the caller.</p>
+<h2 id="the-c-declare-make-free">The C: declare, make, free</h2>
+<pre><code class="zeno">let line = "set led on"
+print(longest(line.split()))</code></pre>
+<pre><code>zeno_list *t1 = NULL;                        // where the statement begins
+t1 = zeno_split_blanks(z_line);
+zeno_print(1, zeno_str_int(z_longest(t1)));
+zeno_list_drop_text(t1);                     // where it ends</code></pre>
+<p>The statement puts the list in a C variable of its own, and one line at
+its end frees it. (The two lines about the text room that surround
+these are left out. They are from <a href="/docs/text/"><code>text.md</code></a>.)</p>
+<p>Why declare the variable first and fill it on the next line? Because of
+where a value may be made. A comparison such as <code>a &lt; f(x) &lt; g([1, 2])</code>
+becomes nested <code>if</code>s in C, and a list made inside an <code>if</code> cannot be
+freed by a line after it unless the variable is declared outside. So
+every such variable is declared where the statement begins, holding
+<code>NULL</code>, and freeing <code>NULL</code> does nothing. <code>own_end</code> inserts those
+declarations once the statement has been compiled, which is the first
+moment it knows how many there are.</p>
+<h3 id="leaving-early">Leaving early</h3>
+<p>A statement can fail half way. In a firmware build that is a <code>return
+false</code> in the middle of it (<a href="/docs/firmware/"><code>firmware.md</code></a>):</p>
+<pre><code class="zeno">function pick(text: str) -&gt; str raises ValueError {
+    return str(count(text.split())) + first(text)
+}</code></pre>
+<pre><code>zeno_list *t4 = NULL;
+size_t m7 = zeno_text_top;
+t4 = zeno_split_blanks(z_text);
+const char *t6 = zeno_str_int(z_count(t4));
+const char *t5;
+if (!z_first(z_text, &amp;t5)) { zeno_list_drop_text(t4); return false; }
+const char *t7 = zeno_text_return(m7, zeno_join(2, t6, t5));
+zeno_list_drop_text(t4);
+*zeno_result = t7;
+return true;</code></pre>
+<p>The list is freed on both ways out. Nothing new was built for this: the
+value is <strong>held</strong> from the line that makes it (<code>hold</code>, from
+<a href="/docs/no-collector/"><code>no-collector.md</code></a>, "A value between two owners"), so
+every early way out of the block frees it along with what the block's
+owners hold. <code>return</code>, <code>break</code>, <code>continue</code> and a failed call all go
+through that one path.</p>
+<h2 id="where-a-statement-ends">Where a statement ends</h2>
+<p>For <code>let</code>, an assignment and a call on a line of its own, the end is
+the end of the line. The others each have a rule, and it is always
+"as soon as nothing can still be looking":</p>
+<ul>
+<li><strong>A condition</strong> is over when it has its answer. <code>if</code>, <code>else if</code> and
+  <code>while</code> free what their condition made before the block runs, and a
+  <code>while</code> does so on every trip.</li>
+<li><strong>Each side of <code>and</code> and <code>or</code>, and what <code>not</code> is in front of</strong>, is a
+  condition too. The right side of <code>and</code> may never run, so what it
+  makes is freed inside the <code>if</code> that guards it:</li>
+</ul>
+<pre><code class="zeno">let ok = len(line) &gt; 4 and len(line.split()) == 3</code></pre>
+<pre><code>bool t4 = (zeno_len(z_line) &gt; 4);
+if (t4) {
+    zeno_list *t2 = NULL;
+    t2 = zeno_split_blanks(z_line);
+    bool t3 = (t2-&gt;len == 3);
+    zeno_list_drop_text(t2);
+    t4 = t3;
+}
+z_ok = t4;</code></pre>
+<ul>
+<li><strong>One item of a comprehension</strong>: <code>[count(w.split(",")) for w in ws]</code>
+  frees each little list before it works out the next item.</li>
+<li><strong><code>for</code> and <code>match</code></strong> keep what their first line made until their last
+  block is over. <code>for x in make().data</code> walks a list inside an object
+  that the statement owns, so the object has to last as long as the
+  loop does. Rust does the same.</li>
+<li><strong><code>return</code> and <code>raise</code></strong> leave the function, so they free what the
+  statement owns on the way out, with everything else.</li>
+</ul>
+<h2 id="only-looked-at-so-it-cannot-be-kept">Only looked at, so it cannot be kept</h2>
+<p>A value the statement owns is gone when the statement is. So it may be
+looked at, and nothing may keep it. The compiler marks it
+(<code>Val::passing</code>) and <code>stays</code>, which already guards every place a value
+is kept, refuses it:</p>
+<pre class="out"><code>error: this list has no owner. Give it one, as in `let items: owned list[int] = [1, 2, 3]`. `zeno build --no-collector` leaves the collector out, so nothing would free it. docs/no-collector.md lists what such a build accepts
+ --&gt; words.zeno:2:13
+  |
+2 | let parts = line.split()
+  |             ^</code></pre>
+<p>Looking is: a built-in (<code>len</code>, <code>print</code>, <code>in</code>, <code>sum</code>), an index, a loop,
+a method of the list (<code>map</code>, <code>filter</code>, <code>reduce</code>), and a parameter that
+says <code>borrow</code>. A <code>borrow</code> parameter is a promise the checker already
+enforces: the function cannot keep, return or give away what it was
+lent (<a href="/docs/ownership/"><code>ownership.md</code></a>). So <code>count(line.split())</code> is safe
+by a rule that was there before this stage.</p>
+<p>A parameter that is a plain <code>list[str]</code> makes no such promise. When
+this page was written <code>total(line.split())</code> was refused where <code>total</code>
+takes a <code>list[str]</code>. The next step (<a href="/docs/one-owner/"><code>one-owner.md</code></a>)
+made a plain list in this build an owned one, so <code>total</code> now takes the
+list and frees it.</p>
+<p>A field of an object the statement owns is marked the same way:
+<code>make().data</code> may be walked and counted and not kept.</p>
+<h2 id="lists-of-text">Lists of text</h2>
+<p>With no collector a list has <strong>its own copy</strong> of each text in it
+(<a href="/docs/text/"><code>text.md</code></a>, "Objects and lists"). The lists made here follow
+that rule, each in the cheapest way there is:</p>
+<ul>
+<li><strong><code>split</code></strong> and the characters of <code>for ch in text</code> are cut straight
+  into the pool (<code>zeno_piece</code> in <code>runtime.c</code>). They never pass through
+  the text room.</li>
+<li><strong><code>map</code></strong> with a function that gives text: each answer arrives in the
+  text room, the new list takes a copy, and the room is given back
+  before the next call. So a <code>map</code> over a thousand items needs room for
+  one answer and not for a thousand:</li>
+</ul>
+<pre><code>zeno_list *t7 = zeno_list_new(t5-&gt;len);
+size_t m4 = zeno_text_top;
+for (int64_t t6 = 0; t6 &lt; t5-&gt;len; t6++) {
+    zeno_list_append(t7, (zeno_slot){.s = zeno_text_keep(...loud(t5-&gt;items[t6].s)...)});
+    zeno_text_top = m4;
+}</code></pre>
+<ul>
+<li><strong><code>filter</code></strong> copies each item it takes.</li>
+<li><strong><code>+</code></strong> joins the two lists and then gives the new one copies of its
+  own (<code>zeno_list_keep_text</code>).</li>
+</ul>
+<p>Every one of them is freed by <code>zeno_list_drop_text</code>, which frees the
+items and then the list.</p>
+<h2 id="loops">Loops</h2>
+<p>A <code>for</code> loop walks the list <em>as it was when the loop began</em>, so it
+walks a copy (decision 3.10a). Two kinds of list need no copy, because
+nothing the body does can reach them:</p>
+<ul>
+<li><strong>A list made right there</strong>: <code>for word in line.split()</code>. The loop
+  walks the list itself and frees it after the last trip. That was
+  already so for <code>for pin in [2, 3, 5]</code>. Now it is so for all six ways
+  of making a list, and for an owned list that a function gives back
+  (<code>for word in words(line)</code>).</li>
+<li><strong>A list the statement owns</strong>: <code>for x in make().data</code>. The loop walks
+  it where it is, and the statement frees the object after the loop.</li>
+</ul>
+<p><code>map</code>, <code>filter</code> and <code>reduce</code> skip their copy for the same reason when
+the list they are called on is the statement's:</p>
+<pre><code class="zeno">for word in words(line).map(loud) {
+    print(word)
+}</code></pre>
+<pre><code>zeno_list *t4 = NULL;
+t4 = z_words(z_line);              // the statement's
+zeno_list *t5 = t4;                // `map` walks it as it is
+...the loop that fills t7...
+zeno_list *t8 = t7;                // the `for` loop walks what `map` made
+for (int64_t t9 = 0; t9 &lt; t8-&gt;len; t9++) {
+    const char *z_word = t8-&gt;items[t9].s;
+    zeno_print(1, z_word);
+}
+zeno_list_drop_text(t8);           // the loop frees its list
+zeno_list_drop_text(t4);           // the statement frees its own</code></pre>
+<p><strong><code>for ch in text</code></strong> was refused, because it makes a list of the
+characters. That list is now the loop's own, like any other made list.</p>
+<h2 id="on-an-owned-list"><code>+=</code> on an owned list</h2>
+<p><code>xs += ys</code> means <code>xs = xs + ys</code> everywhere else in Zeno, and the checker
+used to refuse it for an owned list. It is accepted now, in every build:
+<code>+</code> makes a list, and the owner takes it and frees the one it had.</p>
+<pre><code class="zeno">var history: owned list[str] = []
+history += words(line)</code></pre>
+<pre><code>zeno_list *t14 = NULL;
+zeno_list *t15 = z_history;
+t14 = z_words(z_line);
+zeno_list *t16 = zeno_list_keep_text(zeno_list_concat(t15, t14));
+zeno_list_drop_text(z_history);    // the old list
+z_history = t16;
+zeno_list_drop_text(t14);          // the statement's</code></pre>
+<p>Where the variable or field on the left was not an owner, a build with
+no collector refused the line. Every variable and field that holds a
+list is an owner there now (<a href="/docs/one-owner/"><code>one-owner.md</code></a>).</p>
+<h2 id="the-same-rule-in-every-build">The same rule, in every build</h2>
+<p>The checker had a refusal of its own, in every build:</p>
+<pre class="out"><code>error: this Packet has no owner yet. Give it a name with `let` first, and use the name here</code></pre>
+<p>for <code>print(size(make()))</code>, where <code>make</code> gives back an owned value. That
+was the same question, "who frees it?", and it now has the same answer.
+The checker notes the expression (<code>Types::lent</code>) and both compilers
+give the value to the statement, with a collector or without:</p>
+<pre><code class="zeno">total += last(make(round)) + make(round).id % 2</code></pre>
+<pre><code>z_Packet *t3 = NULL;
+z_Packet *t4 = NULL;
+t3 = z_make(z_round);
+int64_t t5 = z_last(t3);
+t4 = z_make(z_round);
+z_total = zeno_add(z_total, zeno_add(t5, zeno_mod(t4-&gt;z_id, 2, 10, 38), 10, 18), 10, 9);
+zeno_drop_Packet(t4);
+zeno_drop_Packet(t3);</code></pre>
+<p>Four hundred trips of that make six megabytes and the collector never
+runs. A made list that is <em>not</em> owned (a plain <code>list[int]</code>) is left to
+the collector where there is one, as before.</p>
+<h2 id="through-llvm">Through LLVM</h2>
+<pre><code>cargo run -- build --llvm --no-collector --memory examples/words.zeno</code></pre>
+<p>The IR keeps the value's address in a <strong>slot</strong>, as it does for an owner
+(<a href="/docs/llvm/"><code>llvm.md</code></a>, "Owned values"):</p>
+<pre><code>  store ptr null, ptr %own.1                 ; where the statement begins
+  %t1 = load ptr, ptr @z_line
+  %t2 = call ptr @zeno_split_blanks(ptr %t1)
+  store ptr %t2, ptr %own.1
+  %t3 = call i64 @z_longest(ptr %t2)
+  %t4 = call ptr @zeno_str_int(i64 %t3)
+  call void (i32, ...) @zeno_print(i32 1, ptr %t4)
+  %t5 = load ptr, ptr %own.1                 ; where it ends
+  call void @zeno_list_drop_text(ptr %t5)</code></pre>
+<p>A slot, and not simply <code>%t2</code>, for the reason C declares its variable
+first: in IR a name made in a block that may be skipped cannot be used
+after it. The <code>store ptr null</code> line is inserted where the statement
+began, as the line that notes the text room's top is.</p>
+<p>The two builds make the same blocks in the same order, and the tests
+require the same memory report from both, line for line.</p>
+<h2 id="what-it-costs">What it costs</h2>
+<p>Nothing, compared with naming the list:</p>
+<pre><code class="zeno">print(len(line.split()))                       # 5 blocks, 67 bytes
+
+let words: owned list[str] = line.split()      # 5 blocks, 67 bytes
+print(len(words))</code></pre>
+<p>The list is made once and freed once either way. What differs is how
+long it is held: to the end of the statement, or to the end of the
+block.</p>
+<p>Three costs that are worth knowing:</p>
+<ul>
+<li><strong><code>for ch in text</code> takes a block for every character</strong> while the loop
+  runs: 24 bytes of the pool each. For a line from a console that is
+  nothing. For long text, <code>for i in range(len(text))</code> with <code>text[i]</code>
+  takes no block at all.</li>
+<li><strong><code>filter</code> on a list of text copies</strong> each item it takes, and <code>+</code>
+  copies every item of both lists.</li>
+<li><strong>A <code>for</code> or a <code>match</code> holds what its first line made until it is
+  over.</strong> <code>for x in make().data</code> keeps the whole object for the length
+  of the loop.</li>
+</ul>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li>When this page was written, a plain <code>list[T]</code> parameter, variable or
+  field could not keep a made list in a build with no collector, and
+  nested lists (<code>[[1, 2], [3]]</code>) were refused. Both work since the next
+  step: <a href="/docs/one-owner/"><code>one-owner.md</code></a>.</li>
+<li><strong>The statement's end is not the last use.</strong> <code>print(len(a.split()),
+  slow())</code> holds the list while <code>slow()</code> runs. Rust makes the same
+  choice. A name and a block of your own (<code>let</code>) is how to say
+  otherwise.</li>
+<li><strong>The text room's high-water mark can differ between the C build and
+  the LLVM build</strong> when one statement both shows a list and builds other
+  text (decision 5.9q, "Known gap"). The blocks and the bytes do not.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li><code>with_no_collector_a_statement_owns_the_lists_it_makes</code>,
+  <code>..._made_lists_of_text_keep_their_own_copies</code> and
+  <code>..._what_a_statement_owns_is_freed_on_every_way_out</code> in <code>emit_c.rs</code>:
+  three programs that between them use every kind of made list in a
+  call, a condition, a loop, a comprehension, a <code>match</code>, a <code>return</code>, and
+  a statement that fails half way. Each goes through
+  <code>no_collector_as_interpreter</code>: the same output as <code>zeno run</code>, 0 blocks
+  left, the same in the two builds with a collector, and the same
+  memory report through LLVM.</li>
+<li><code>with_no_collector_made_lists_do_not_fill_the_pool_over_time</code>: 5000
+  trips need exactly the pool that 50 trips need.</li>
+<li><code>the_c_for_what_a_statement_owns</code> and
+  <code>the_ir_for_what_a_statement_owns</code> pin down the code on this page.</li>
+<li><code>an_owned_value_that_is_only_looked_at_is_freed_in_every_build</code>: with
+  a collector, the collector has nothing to do.</li>
+<li>The table in <code>what_a_build_with_no_collector_refuses_says_so</code> lost six
+  rows and gained seven: every way a made list can be kept by something
+  that is not an owner.</li>
+<li>By hand: each trial program was also built with freed pool blocks
+  overwritten with <code>#</code> and given-back text room with <code>~</code>, in both
+  backends, and still printed what <code>zeno run</code> prints.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/words.zeno</code> with <code>--no-collector --memory</code>. Then give
+   the first list a name (<code>let parts: owned list[str] = line.split()</code>
+   and <code>print(count(parts))</code>). The report says the same number of
+   blocks. Which two numbers change, and why?</li>
+<li>In <code>words.zeno</code>, change <code>count</code> to take a plain <code>list[str]</code> and build
+   with <code>--no-collector</code>. Read the error. Then build without the flag.</li>
+<li>Write <code>let both = line.split() + line.split()</code> and read the error.
+   Fix it two ways: with a type on the <code>let</code>, and by not naming it.</li>
+<li>Open <code>words.c</code> and find <code>z_words</code>. Two lists are made there. Follow
+   each to the line that frees it. One of those lines is not in this
+   function: where is it?</li>
+<li><code>if "x" in line.split() or "y" in line.split()</code> makes two lists.
+   Look at the C. When is the second one made, and where is each freed?</li>
+<li><code>for ch in text</code> makes a list of every character. Change
+   <code>open_list_loop</code> so that a loop over a str walks the text itself,
+   one character at a time, with <code>zeno_char_size</code>. What happens to
+   text built in the loop's first line, which is given back before the
+   first trip today?</li>
+<li><code>filter</code> on a list the statement owns copies each text it takes and
+   then frees the original. It could <em>move</em> the text into the new list
+   and leave <code>NULL</code> behind. <code>zeno_list_drop_text</code> already skips <code>NULL</code>.
+   Try it, and compare the reports.</li>
+<li><code>print(len(a.split()), slow())</code> holds the list while <code>slow()</code> runs.
+   Could the compiler free it after <code>len</code>? What would it have to know
+   about <code>len</code>, and what about a function of your own in its place?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/temporaries.md">docs/temporaries.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/text/"><span>Previous</span>Text that is kept</a><a class="next" href="/docs/one-owner/"><span>Next</span>One owner</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-idea-what-is-given-to-nobody-belongs-to-the-statement">The idea: what is given to nobody belongs to the statement</a></li><li><a href="#the-files">The files</a></li><li><a href="#what-makes-a-list">What makes a list</a></li><li><a href="#the-c-declare-make-free">The C: declare, make, free</a></li><li><a href="#where-a-statement-ends">Where a statement ends</a></li><li><a href="#only-looked-at-so-it-cannot-be-kept">Only looked at, so it cannot be kept</a></li><li><a href="#lists-of-text">Lists of text</a></li><li><a href="#loops">Loops</a></li><li><a href="#on-an-owned-list">+= on an owned list</a></li><li><a href="#the-same-rule-in-every-build">The same rule, in every build</a></li><li><a href="#through-llvm">Through LLVM</a></li><li><a href="#what-it-costs">What it costs</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

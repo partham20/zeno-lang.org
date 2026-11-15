@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Zeno: a programming language that reads like plain English</title>
 <meta name="description" content="Zeno is a small programming language that reads like plain English and is checked before it runs. Whole-word keywords, optional types, and builds small enough for a microcontroller.">
-<meta property="og:title" content="Zeno, a programming language">
-<meta property="og:description" content="Reads like plain English. Checked before it runs. Small enough for a microcontroller.">
+<meta property="og:title" content="Zeno: a programming language that reads like plain English">
+<meta property="og:description" content="Zeno is a small programming language that reads like plain English and is checked before it runs. Whole-word keywords, optional types, and builds small enough for a microcontroller.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
@@ -14,33 +14,19 @@
 <meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://zeno-lang.org/">
-<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
-<script>
-  // Apply a saved theme before the page paints, so it does not flash.
-  try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
-</script>
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 </head>
 <body>
-
-<!-- The bar at the top closes half of the distance that is left, again and again. It never arrives. -->
+<a class="skip" href="#content">Skip to the content</a>
 <div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
-
 <header class="nav">
-  <a class="brand" href="#top" aria-label="Zeno, home">
-    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg>
-    <span>zeno</span>
-  </a>
-  <nav aria-label="Sections">
-    <a href="#why">Why</a>
-    <a href="#tour">Tour</a>
-    <a href="#firmware">Firmware</a>
-    <a href="#inside">Inside</a>
-    <a href="#roadmap">Roadmap</a>
-  </nav>
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
@@ -48,9 +34,7 @@
     <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
   </div>
 </header>
-
-<main id="top">
-
+<main id="content" class="home">
 <section class="hero">
   <div class="hero-text">
     <p class="eyebrow">A programming language, built from scratch</p>
@@ -58,7 +42,7 @@
     <p class="lede">Zeno is one small language for a quick script and for a microcontroller. Keywords are whole words, punctuation is kept only where it helps, and the compiler finds the mistake and says what to write instead.</p>
     <div class="actions">
       <a class="button" href="#tour">Take the tour</a>
-      <a class="button ghost" href="#start">Run it yourself</a>
+      <a class="button ghost" href="/learn/">Read the guide</a>
     </div>
   </div>
   <div class="hero-code">
@@ -158,6 +142,7 @@ no reading
     <article><h3>Numbers do not wrap by accident</h3><p>Arithmetic overflow is an error. A <code>u8</code> is one byte, and wrapping is something you ask for with <code>u8.wrap(n)</code>.</p></article>
     <article><h3>Units are types</h3><p><code>500 ms</code> and <code>3.3 V</code> are quantities. A function that wants milliseconds will not take a bare number.</p></article>
   </div>
+  <p class="more"><a href="/decisions/">Every design decision, with its reason <span aria-hidden="true">→</span></a></p>
 </section>
 
 <section id="tour" class="section">
@@ -404,6 +389,7 @@ print(frame.channel)</code></pre>
 1 error found. Nothing was run.</code></pre></figure>
     </div>
   </div>
+  <p class="more"><a href="/learn/">The whole language in the guide <span aria-hidden="true">→</span></a></p>
 </section>
 
 <section id="styles" class="section">
@@ -460,6 +446,7 @@ print(valid.reduce(add, 0.0) / len(valid))</code></pre></figure>
     <figure class="window"><figcaption><span class="file">The short way</span></figcaption><pre><code class="zeno">let kept = [r for r in readings if -40.0 &lt;= r &lt;= 85.0]
 print(sum(kept) / len(kept))</code></pre></figure>
   </div>
+  <p class="more"><a href="/examples/">Fifteen whole programs to read <span aria-hidden="true">→</span></a></p>
 </section>
 
 <section id="firmware" class="section">
@@ -541,6 +528,7 @@ led on</code></pre>
 pool: 25384 bytes taken, in a pool of 32768</code></pre>
   </figure>
   <p class="aside">That program makes 2.6 MB of values over its run and never holds more than 13 KB, because each one is freed at a line you can point to.</p>
+  <p class="more"><a href="/docs/firmware/">How the firmware build works <span aria-hidden="true">→</span></a></p>
 </section>
 
 <section id="inside" class="section">
@@ -570,6 +558,7 @@ pool: 25384 bytes taken, in a pool of 32768</code></pre>
     <article><h3>Every stage is documented</h3><p>Each part of the compiler has a walkthrough that ends in things to try, from the lexer to the LLVM backend.</p></article>
     <article><h3>Every decision has a reason</h3><p>One document records each design choice, why it was made and what was turned down. If you disagree, you can see what you are disagreeing with.</p></article>
   </div>
+  <p class="more"><a href="/docs/">Walk through every stage of the compiler <span aria-hidden="true">→</span></a></p>
 </section>
 
 <section id="roadmap" class="section">
@@ -593,6 +582,7 @@ pool: 25384 bytes taken, in a pool of 32768</code></pre>
   </ul>
 
   <p class="aside">Zeno is young and the syntax can still change. It is a language to learn from and experiment with, and not yet one to ship a product on.</p>
+  <p class="more"><a href="/roadmap/">The full roadmap <span aria-hidden="true">→</span></a></p>
 </section>
 
 <section id="start" class="section">
@@ -617,19 +607,20 @@ cargo run -- run examples/tour.zeno</code></pre>
     <div><code>zeno build --llvm file.zeno</code><span>Compile through LLVM IR and clang.</span></div>
     <div><code>zeno bytecode file.zeno</code><span>Show the VM's instructions, one per line.</span></div>
   </div>
+  <p class="more"><a href="/learn/#install">Install and the first steps <span aria-hidden="true">→</span></a></p>
 </section>
 
 </main>
-
 <footer class="foot">
   <blockquote>Every journey is halfway done. Forever.</blockquote>
-  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of this page works the same way.</p>
-  <div class="foot-row">
-    <span>Made by Partha</span>
-    <a href="https://github.com/partham20/zeno-lang">Source on GitHub</a>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
   </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
 </footer>
-
-<script src="main.js"></script>
+<script src="/assets/main.js"></script>
 </body>
 </html>

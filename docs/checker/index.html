@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the type checker works · Zeno</title>
+<meta name="description" content="The type checker is the fourth stage. It reads the syntax tree and finds mistakes without running the program: a misspelt name, a str where an int was promised, a match that forgets a case, a value that might be none used as if it were not.">
+<meta property="og:title" content="How the type checker works · Zeno">
+<meta property="og:description" content="The type checker is the fourth stage. It reads the syntax tree and finds mistakes without running the program: a misspelt name, a str where an int was promised, a match that forgets a case, a value that might be none used as if it were not.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/checker/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/checker/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/" aria-current="page">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How the type checker works</h1>
+  <p>The type checker is the fourth stage. It reads the syntax tree and finds
+mistakes <strong>without running the program</strong>: a misspelt name, a str where an int
+was promised, a <code>match</code> that forgets a case, a value that might be <code>none</code>
+used as if it were not.</p>
+<pre><code>cargo run -- check examples/tour.zeno             # check only
+cargo run -- run examples/tour.zeno               # check, then run
+cargo run -- check --strict examples/tour.zeno    # every type must be known</code></pre>
+<p>Before this stage, a mistake on line 200 was found only when line 200 ran.
+Now <code>zeno run</code> refuses to start until the checker is satisfied.</p>
+<h2 id="the-file">The file</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/checker.rs"><code>src/checker.rs</code></a>: everything, with its tests.</li>
+</ul>
+<h2 id="the-same-walk-with-types-in-place-of-values">The same walk, with types in place of values</h2>
+<p>The checker is the interpreter's twin. It has the same shape: scopes, a
+function per statement kind, a function per expression kind. The difference
+is what flows through it.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Interpreter</th>
+<th>Checker</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>1 + 2</code> gives</td>
+<td>the value <code>3</code></td>
+<td>the type <code>int</code></td>
+</tr>
+<tr>
+<td>a scope maps names to</td>
+<td>values</td>
+<td>types</td>
+</tr>
+<tr>
+<td>an <code>if</code></td>
+<td>runs one branch</td>
+<td>checks both</td>
+</tr>
+<tr>
+<td>a loop</td>
+<td>runs the body many times</td>
+<td>checks the body once</td>
+</tr>
+<tr>
+<td>a function call</td>
+<td>runs the body</td>
+<td>compares arguments with the signature</td>
+</tr>
+</tbody>
+</table>
+<p>So the checker's <code>expr</code> returns a <code>Ty</code> where the interpreter's <code>eval</code> returns
+a <code>Value</code>. <code>Ty</code> is an enum of every type Zeno has: <code>Int</code>, <code>Str</code>, <code>List</code> of
+something, <code>Optional</code> of something, an object of a class, and so on.</p>
+<h2 id="gradual-three-kinds-of-answer">Gradual: three kinds of answer</h2>
+<p>Zeno's types are optional, so for any expression the checker ends up in one
+of three places:</p>
+<ol>
+<li><strong>The type was written down.</strong> <code>let x: int = ...</code> is checked against it.</li>
+<li><strong>The type was left out but can be worked out.</strong> <code>let n = 3</code> is an <code>int</code>.
+   <code>[n * 2 for n in range(3)]</code> is a <code>list[int]</code>. No annotation needed.</li>
+<li><strong>The type cannot be known until the program runs.</strong> A parameter that is
+   called with an int in one place and a str in another could be either. Its
+   type is <code>Dynamic</code>.</li>
+</ol>
+<p><code>Dynamic</code> fits everywhere and everything fits it, so untyped code passes
+through without complaint. The function <code>fits(from, to)</code> is the centre of the
+checker: it decides whether a value of one type may go where another is wanted.</p>
+<p><strong>Strict mode</strong> (<code>--strict</code>, or <code>strict</code> as the first line of the file) turns case 3 into an error. That is the mode for
+firmware, where a value of unknown type would need extra memory at run time.</p>
+<h2 id="working-out-a-return-type">Working out a return type</h2>
+<pre><code class="zeno">function double(n: int) { return n * 2 }</code></pre>
+<p>No return type is written, so the checker finds it by checking the body and
+collecting the type of every <code>return</code>. If the end of the body can be reached
+without a <code>return</code>, <code>none</code> is added. The types are combined with <code>join</code>:
+<code>int</code> and <code>int</code> give <code>int</code>; <code>str</code> and <code>none</code> give <code>str or none</code>.</p>
+<p>This is done the first time the function's signature is needed (<code>signature</code>),
+which may be at a call that comes before the function in the file. A function
+that is mid-check when it is called is being called recursively; that call
+sees what the signature declares, or, if no return type is written, what the
+previous pass worked out (see the next section).</p>
+<h3 id="a-use-that-comes-too-early">A use that comes too early</h3>
+<p>Checking a body at the first use has a second job. A function may use
+the variables its block declares above it, and those must exist before
+it runs:</p>
+<pre><code class="zeno">let x = 1
+function outer() {
+    print(inner())      # too early: the x below has no value yet
+    let x = 5
+    function inner() { return x }
+}</code></pre>
+<p><code>hoist</code> gives each function the list of variables its block declares
+above its line (<code>FunctionInfo::above</code>). When <code>signature</code> starts on the
+body it notes which of those are not declared yet (<code>Early::missing</code>).
+A name in the body that is on that list is reported there
+(<code>too_early</code>), where it would otherwise be taken for the <code>x</code> on the
+first line, and the program would stop when run (decision 3.6d). A
+class keeps the same list for the defaults of its fields, which are
+worked out where an object is built.</p>
+<h2 id="working-out-parameters-and-fields">Working out parameters and fields</h2>
+<pre><code class="zeno">function add(a, b) { return a + b }
+print(add(1, 2))</code></pre>
+<p>Nothing says what <code>a</code> and <code>b</code> are, but the only call passes ints. The checker
+uses that. Every untyped parameter and field is a <em>slot</em> with an identity (a
+<code>SlotId</code>: where its function or class is declared, plus its name). Whenever a
+value arrives at a slot (an argument at a call, a default value, a value
+stored in a field, a function passed where a function type is wanted),
+<code>sees</code> records its type against the slot.</p>
+<p>One answer leads to another: if <code>a(x)</code> passes <code>x</code> on to <code>b</code>, then <code>b</code>'s
+parameter is known only once <code>a</code>'s is. So <code>check</code> runs the whole checker
+several times:</p>
+<ol>
+<li>In the first pass every slot is <em>unsettled</em>. Its type is <code>Invalid</code>, the
+   quiet type, so nothing built on it complains and nothing built on it
+   counts as evidence.</li>
+<li>At the end of the pass, each slot has seen either one consistent type
+   (<code>known</code>), types that disagree or cannot be pinned down (<code>open</code>, which
+   means dynamic for good), or nothing.</li>
+<li>The next pass starts with those answers. This repeats until a pass changes
+   nothing, at most <code>MAX_ROUNDS</code> times.</li>
+<li>A final pass, with everything settled, is the only one whose errors are
+   reported.</li>
+</ol>
+<p>Types are carried between passes as a <code>Key</code>, a plain description such as
+"list of int" or "the class declared at line 4", because each pass builds its
+own <code>ClassInfo</code> objects and one pass's cannot be used in the next.</p>
+<p>A function value can leave the checker's sight: stored in a <code>list[any]</code>, or
+passed to something dynamic. From there it may be called with anything, so
+<code>escapes</code> marks its slots open. <code>arrives</code> is where this is noticed: it is
+called whenever a value has been accepted somewhere, and looks inside lists
+and <code>or none</code> for functions.</p>
+<p>The return type of a recursive function uses the same machinery, as a slot
+named <code>-&gt;</code>. In the first pass the recursive call's type is unsettled and is
+left out of the <code>join</code>, so <code>fact</code> is an <code>int</code> from <code>return 1</code>; the second
+pass confirms it.</p>
+<h2 id="function-types-and-units">Function types and units</h2>
+<p><code>function(int) -&gt; int</code> resolves to <code>Ty::Callable</code>. A real function is still a
+<code>Ty::Function</code> that points at its declaration; when one arrives where a
+<code>Callable</code> is wanted, <code>expect_function</code> compares them: the number of
+parameters, each parameter, and what is returned.</p>
+<p>A unit name used as a type, such as <code>d: ms</code>, resolves to the same
+<code>Ty::Quantity</code> that the literal <code>500 ms</code> has. The list of units lives in
+<code>src/units.rs</code>, shared with the interpreter, and a unit that is not on it is
+an error.</p>
+<h2 id="knowing-that-something-is-not-none">Knowing that something is not none</h2>
+<pre><code class="zeno">let user = find_user(2)         # str or none
+print(user.upper())             # error: might be none
+if user is not none {
+    print(user.upper())         # fine: it is a str in here
+}</code></pre>
+<p>When a condition is <code>x is not none</code>, the checker records that inside that
+branch <code>x</code> has the plain type. This is called <em>narrowing</em>. <code>narrowings</code> looks
+at a condition and returns two lists: what is known when it is true, and what
+is known when it is false. It understands <code>is none</code>, <code>is not none</code>, <code>not</code>,
+<code>and</code> and <code>or</code>.</p>
+<p>The body of <code>while x is not none { ... }</code> knows it too.</p>
+<p>It also follows early exits. After</p>
+<pre><code class="zeno">if text is none { return "" }</code></pre>
+<p>the only way to reach the next line is for <code>text</code> not to be <code>none</code>, so the
+rest of the block treats it as a plain <code>str</code>. To know that, every statement
+check returns one bool: <em>does this always leave the block?</em> <code>return</code>, <code>raise</code>,
+<code>break</code> and <code>continue</code> do; an <code>if</code> does when both its branches do.</p>
+<p>That same bool is how the checker catches a function that can run off its
+end without returning what it promised.</p>
+<h3 id="a-new-value-changes-what-is-known">A new value changes what is known</h3>
+<p>What is known about a variable lasts until the variable is given a new
+value. Then the new value decides:</p>
+<pre><code class="zeno">var node = head                 # Node or none
+while node is not none {
+    total += node.value         # a Node in here
+    node = node.next            # may be none again...
+}                               # ...which the `while` asks about next time
+
+var name = given                # str or none
+if name is none {
+    name = "anon"               # a str from here on
+}
+return name                     # a str on both paths, so a str</code></pre>
+<p>Three small rules do this, all in the <code>Assign</code> and <code>If</code> arms of <code>stmt</code>:</p>
+<ul>
+<li>Assigning a value that cannot be <code>none</code> narrows the variable. Assigning
+  one that might be takes the knowledge away again (<code>Scope::widen</code>), in
+  every block between here and where the variable was declared.</li>
+<li>After an <code>if</code>, the variable is narrowed when both branches end with it
+  narrowed. That is the <code>name</code> example above.</li>
+<li>A loop body is checked once but runs many times, so what was known
+  before the loop may be untrue on the second pass. Before checking the
+  body, <code>forget_assigned</code> drops what is known about every variable the
+  body assigns.</li>
+</ul>
+<p>The variable keeps its declared type the whole time (<code>Variable.declared</code>),
+and that is what an assignment is checked against. A narrowed <code>int or none</code>
+can still be given <code>none</code>.</p>
+<h2 id="match-must-cover-everything">match must cover everything</h2>
+<p>For a <code>match</code> on an enum, the checker collects which cases the arms handle
+and reports the ones left over:</p>
+<pre class="out"><code>error: this `match` does not handle Missing. Add a `case` for it, or a final `case _`</code></pre>
+<p>A pattern like <code>Circle(r)</code> handles the whole case. <code>Circle(1.0)</code> handles only
+one value of it, so it does not count. <code>_</code> or a new name handles everything.</p>
+<h2 id="raises">raises</h2>
+<p>The checker keeps a list of the errors the code checked so far can raise. A
+<code>raise</code> statement adds to it; so does calling a function whose signature has
+a <code>raises</code>. A <code>try</code> takes out the ones its <code>except</code>s catch. At the end of a
+function body, what is left is what the function can raise.</p>
+<p>If the function wrote <code>raises ...</code>, that list must cover it. If it wrote
+nothing, the list is worked out, exactly like a return type, and passed on to
+its callers. In strict mode it must always be written.</p>
+<h2 id="many-errors-but-no-avalanche">Many errors, but no avalanche</h2>
+<p>Unlike the parser, the checker reports every mistake it finds, because after
+a type error it still knows exactly where it is in the program.</p>
+<p>The danger is one mistake causing ten messages. To prevent that, an
+expression that has had an error reported gets the type <code>Invalid</code>, which, like
+<code>Dynamic</code>, fits everywhere. A misspelt name is reported once, and everything
+built on it stays quiet.</p>
+<h2 id="handing-the-answers-on">Handing the answers on</h2>
+<p><code>check_with_types</code> returns the errors and a <code>Types</code>: the worked-out signature
+of every function, in a plain form (<code>Kind</code>) with no links back into the
+checker. <code>zeno build</code> uses it to give every C function its types. See
+<code>docs/compiler.md</code>.</p>
+<p><code>Types</code> also lists every place where a variable is read after narrowing.
+The compiler stores an <code>int or none</code> differently from an <code>int</code>, so it has
+to know that <code>x</code> inside <code>if x is not none { ... }</code> is the plain number.
+Only the checker knows that, so the checker writes it down.</p>
+<p>Owned values are handed on the same way. <code>Types</code> lists every place where a
+name gives its value away (<code>moves</code>), every <code>let</code> or <code>var</code> that becomes an
+owner (<code>owner</code>), and every statement that makes an owned value and drops it
+on the floor (<code>discarded</code>). The compiler turns each of those into a line of
+C. The rules themselves, and how the checker follows a value through <code>if</code>,
+loops and <code>try</code>, are in <a href="/docs/ownership/"><code>docs/ownership.md</code></a>.</p>
+<h2 id="what-it-does-not-do-yet">What it does not do yet</h2>
+<ul>
+<li><strong>An untyped function is not generic by itself.</strong> <code>function id(x) {
+  return x }</code> called with an int and with a str leaves <code>x</code> dynamic.
+  Written <code>function id[T](x: T) -&gt; T</code>, the checker makes a copy for
+  each type: see <a href="/docs/generics/"><code>generics.md</code></a>.</li>
+<li><strong>Derived units.</strong> <code>1 s + 500 ms</code> works, but <code>V * A</code> is not <code>W</code>: units are
+  grouped by what they measure, with no arithmetic between groups.</li>
+<li><strong>Fields of an enum value.</strong> <code>shape.radius</code> is <code>Dynamic</code>, because which
+  case the value is, is not known. Use <code>match</code>.</li>
+<li><strong>Exact positions inside signatures.</strong> A bad parameter or field type is
+  reported at the start of the function or class, not at the parameter.</li>
+<li><strong>Sized integers.</strong> There is one <code>int</code>. <code>u8</code>, <code>i32</code> and friends come with
+  the compile-to-C stage.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Make <code>"abc" * 3</code> type check (and add it to the interpreter).</li>
+<li>Give parameters and fields their own spans in the tree, so that errors
+   point at the exact parameter.</li>
+<li>Add a unit of your own to <code>src/units.rs</code>, such as <code>kA</code> or <code>um</code>. What must its size be?</li>
+<li>Warn about code that can never run: statements after a <code>return</code>.</li>
+<li>Narrow on <code>==</code>: after <code>if x == none</code>. Why is <code>is none</code> the form Zeno prefers?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/checker.md">docs/checker.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/parser/"><span>Previous</span>How the parser works</a><a class="next" href="/docs/interpreter/"><span>Next</span>How the interpreter works</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-file">The file</a></li><li><a href="#the-same-walk-with-types-in-place-of-values">The same walk, with types in place of values</a></li><li><a href="#gradual-three-kinds-of-answer">Gradual: three kinds of answer</a></li><li><a href="#working-out-a-return-type">Working out a return type</a></li><li><a href="#working-out-parameters-and-fields">Working out parameters and fields</a></li><li><a href="#function-types-and-units">Function types and units</a></li><li><a href="#knowing-that-something-is-not-none">Knowing that something is not none</a></li><li><a href="#match-must-cover-everything">match must cover everything</a></li><li><a href="#raises">raises</a></li><li><a href="#many-errors-but-no-avalanche">Many errors, but no avalanche</a></li><li><a href="#handing-the-answers-on">Handing the answers on</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

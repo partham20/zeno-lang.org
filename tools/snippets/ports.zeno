@@ -1,0 +1,14 @@
+function parse_port(text: str) -> int raises ValueError {
+    let port = int(text)             # int() may raise; it passes up
+    if not 1 <= port <= 65535 {      # comparisons chain, as in maths
+        raise ValueError("port out of range")
+    }
+    return port
+}
+
+try {
+    print("listening on", parse_port("8080"))
+    print("listening on", parse_port("99999"))
+} except ValueError as err {
+    print(f"error: {err}")
+}

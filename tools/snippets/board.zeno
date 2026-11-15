@@ -1,0 +1,12 @@
+from board import led, pin
+from time import sleep, now
+
+let start = now()
+let fan = pin(5)
+fan.on()
+for i in range(3) {
+    led.toggle()
+    sleep(10 ms)
+}
+fan.off()
+print("took at least 30 ms:", now() - start >= 30 ms)

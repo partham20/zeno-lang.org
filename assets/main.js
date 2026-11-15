@@ -27,7 +27,7 @@ function highlight(source) {
   return html + escape(source.slice(last));
 }
 
-for (const code of document.querySelectorAll("code.zeno")) code.innerHTML = highlight(code.textContent);
+for (const code of document.querySelectorAll("code.zeno, code.language-zeno")) code.innerHTML = highlight(code.textContent);
 
 // In printed output, make the compiler's error line and its pointer stand out.
 for (const code of document.querySelectorAll("pre.out code")) {
@@ -65,6 +65,7 @@ for (const [i, tab] of tabs.entries()) {
 // amber 10 ms, shown 25 times slower.
 
 const log = document.querySelector("#log code");
+if (log) {
 const lamp = (name) => document.getElementById("lamp-" + name);
 const LIGHTS = [{ pin: 2, hold: 40 }, { pin: 4, hold: 30 }, { pin: 3, hold: 10 }];
 const lines = ["pin 2 on", "led on"];
@@ -88,6 +89,7 @@ function step() {
 lamp(2).classList.add("on");
 lamp("led").classList.add("on");
 if (!matchMedia("(prefers-reduced-motion: reduce)").matches) setTimeout(step, 1000);
+}
 
 // --- Copy button ------------------------------------------------------------
 
@@ -101,7 +103,7 @@ for (const button of document.querySelectorAll("[data-copy]")) {
 
 // --- Theme ------------------------------------------------------------------
 
-document.getElementById("theme").addEventListener("click", () => {
+document.getElementById("theme")?.addEventListener("click", () => {
   const root = document.documentElement;
   const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   root.dataset.theme = dark ? "light" : "dark";
@@ -120,3 +122,22 @@ function progress() {
 addEventListener("scroll", progress, { passive: true });
 addEventListener("resize", progress);
 progress();
+
+// --- Contents that follow the reader -----------------------------------------
+// In a page's table of contents, mark the section being read.
+
+const tocLinks = [...document.querySelectorAll(".doc-toc a, .decisions-nav a, .learn-toc a")];
+if (tocLinks.length && "IntersectionObserver" in window) {
+  const byId = new Map(tocLinks.map((a) => [decodeURIComponent(a.hash.slice(1)), a]));
+  const seen = new Set();
+  const watch = new IntersectionObserver((entries) => {
+    for (const e of entries) e.isIntersecting ? seen.add(e.target.id) : seen.delete(e.target.id);
+    const first = [...byId.keys()].find((id) => seen.has(id));
+    if (!first) return;
+    for (const a of tocLinks) a.classList.toggle("on", a === byId.get(first));
+  }, { rootMargin: "-15% 0px -70% 0px" });
+  for (const id of byId.keys()) {
+    const el = document.getElementById(id);
+    if (el) watch.observe(el);
+  }
+}

@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the bit operators and the sized whole numbers work · Zeno</title>
+<meta name="description" content="Firmware talks to hardware in bytes. A sensor sends six of them, a register is thirty-two bits wide, and bit 3 of it turns something on. This stage gives Zeno the two things that work needs:">
+<meta property="og:title" content="How the bit operators and the sized whole numbers work · Zeno">
+<meta property="og:description" content="Firmware talks to hardware in bytes. A sensor sends six of them, a register is thirty-two bits wide, and bit 3 of it turns something on. This stage gives Zeno the two things that work needs:">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/sized-ints/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/sized-ints/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/" aria-current="page">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How the bit operators and the sized whole numbers work</h1>
+  <p>Firmware talks to hardware in bytes. A sensor sends six of them, a
+register is thirty-two bits wide, and bit 3 of it turns something on.
+This stage gives Zeno the two things that work needs:</p>
+<ul>
+<li><strong>Bit operators</strong>: <code>&amp;</code>, <code>|</code>, <code>^</code>, <code>~</code>, <code>&lt;&lt;</code>, <code>&gt;&gt;</code>.</li>
+<li><strong>Whole numbers with a size</strong>: <code>u8</code>, <code>u16</code>, <code>u32</code>, <code>i8</code>, <code>i16</code>, <code>i32</code>.</li>
+</ul>
+<p><code>examples/packet.zeno</code> uses both. It packs sensor readings into
+six-byte frames and unpacks them again:</p>
+<pre><code>cargo run -- run examples/packet.zeno
+cargo run -- build examples/packet.zeno          # packet.c, and ./packet
+cargo run -- build --llvm examples/packet.zeno   # packet.ll, and ./packet</code></pre>
+<pre><code>a5 03 00 d7 fe 7d   Reading(sensor=3, flags=0, value=215, count=254) true
+a5 83 03 ff ff 29   Reading(sensor=3, flags=8, value=1023, count=255) true
+  alarm on sensor 3
+a5 c3 fa 00 00 62   Reading(sensor=3, flags=12, value=64000, count=0) true
+  alarm on sensor 3
+the checksum should be a6, but the frame says 9b</code></pre>
+<p>The page has two parts, because the stage was built in two commits.
+The reasons for every choice are in <a href="/decisions/"><code>decisions.md</code></a>,
+2.7 and 2.8 for the language and 5.13 for how it is built.</p>
+<hr />
+<h1 id="part-one-the-bit-operators">Part one: the bit operators</h1>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a &amp; b</code></td>
+<td>and</td>
+<td>a bit is 1 where both have a 1</td>
+</tr>
+<tr>
+<td><code>a \| b</code></td>
+<td>or</td>
+<td>a bit is 1 where either has a 1</td>
+</tr>
+<tr>
+<td><code>a ^ b</code></td>
+<td>exclusive or</td>
+<td>a bit is 1 where the two differ</td>
+</tr>
+<tr>
+<td><code>~a</code></td>
+<td>not</td>
+<td>every bit turned over</td>
+</tr>
+<tr>
+<td><code>a &lt;&lt; n</code></td>
+<td>shift left</td>
+<td><code>a</code> times two, <code>n</code> times</td>
+</tr>
+<tr>
+<td><code>a &gt;&gt; n</code></td>
+<td>shift right</td>
+<td><code>a</code> halved, <code>n</code> times, rounding down</td>
+</tr>
+</tbody>
+</table>
+<p>Each has a form that updates a variable: <code>reg |= 1 &lt;&lt; 3</code>.</p>
+<p>An <code>int</code> is 64 bits in two's complement, the way every processor made
+in the last fifty years holds a signed number. So <code>~x</code> is <code>-x - 1</code>, and
+<code>-1</code> is sixty-four ones: <code>-1 &amp; 0xFF</code> is <code>255</code>.</p>
+<h2 id="through-the-stages">Through the stages</h2>
+<p>A new operator touches every stage, a little. That makes it a good way
+to walk the whole compiler again.</p>
+<p><strong>The lexer</strong> (<code>src/lexer.rs</code>) gets eleven new tokens. The only care
+needed is where one is the start of another. <code>&lt;</code> could be <code>&lt;</code>, <code>&lt;=</code>,
+<code>&lt;&lt;</code> or <code>&lt;&lt;=</code>, so the lexer looks one character further each time:</p>
+<pre><code>'&lt;' =&gt; {
+    if self.eat('&lt;') {
+        if self.eat('=') { ShlAssign } else { Shl }
+    } else if self.eat('=') {
+        LtEq
+    } else {
+        Lt
+    }
+}</code></pre>
+<p><code>&amp;&amp;</code> and <code>||</code> were already errors with a hint ("Zeno spells this
+<code>and</code>"). They still are. The check for the double character simply
+comes before the single one.</p>
+<p><strong>The parser</strong> (<code>src/parser.rs</code>) gets four new precedence levels,
+between the comparisons and <code>+</code>:</p>
+<pre><code>or → and → not → comparison → | → ^ → &amp; → &lt;&lt; &gt;&gt; → + - → * / // % → - ~ → **</code></pre>
+<p>Every level in this parser is a function with the same loop in it
+(<a href="/docs/parser/"><code>parser.md</code></a>). Four more copies of the loop would be four
+chances for a slip, so there is one function that takes the level as a
+number:</p>
+<pre><code>fn bits_at(&amp;mut self, level: usize) -&gt; Result&lt;Expr, Error&gt; {
+    if level == 4 {
+        return self.sum();          // past the last bit level: arithmetic
+    }
+    let mut left = self.bits_at(level + 1)?;
+    loop {
+        let op = match (level, self.peek()) {
+            (0, TokenKind::Pipe) =&gt; BinaryOp::BitOr,
+            (1, TokenKind::Caret) =&gt; BinaryOp::BitXor,
+            (2, TokenKind::Amp) =&gt; BinaryOp::BitAnd,
+            (3, TokenKind::Shl) =&gt; BinaryOp::Shl,
+            (3, TokenKind::Shr) =&gt; BinaryOp::Shr,
+            _ =&gt; return Ok(left),
+        };
+        self.advance();
+        let right = self.bits_at(level + 1)?;
+        left = Self::binary(left, op, right);
+    }
+}</code></pre>
+<p><code>~</code> joins unary minus in <code>negation</code>. Nothing else in the parser
+changed: the tree already had <code>Binary</code> and <code>Unary</code> nodes, and these
+are five more operators and one more.</p>
+<p><strong>The checker</strong> (<code>src/checker.rs</code>) allows them on whole numbers only.
+Two bools are the likely slip, from someone who writes C, so that case
+gets its own sentence:</p>
+<pre class="out"><code>error: `&amp;` works on the bits of whole numbers, and these are bool and bool.
+       For two bools Zeno spells this `and`</code></pre>
+<p><strong>What they do</strong> is written once, in <code>src/ops.rs</code>, which the
+interpreter and the VM share (<a href="/docs/vm/"><code>vm.md</code></a>). <code>&amp;</code>, <code>|</code>, <code>^</code> and <code>~</code>
+are Rust's own operators on an <code>i64</code>. The shifts are the interesting
+ones, below.</p>
+<p><strong>The C backend</strong> writes <code>(l &amp; r)</code>, <code>(l | r)</code>, <code>(l ^ r)</code> and <code>(~x)</code>
+straight into the C. <strong>The LLVM backend</strong> writes <code>and i64</code>, <code>or i64</code>
+and <code>xor i64</code>. IR has no "not" instruction, and needs none: <code>~x</code> is
+<code>xor i64 %x, -1</code>, because exclusive-or with all ones turns every bit
+over.</p>
+<h2 id="why-not-cs-precedence">Why not C's precedence</h2>
+<p>In C, this line is a bug:</p>
+<pre><code>if (flags &amp; MASK == 0) { ... }</code></pre>
+<p><code>==</code> binds tighter than <code>&amp;</code>, so it means <code>flags &amp; (MASK == 0)</code>. It
+compiles without a word. The people who made C said later that it was
+a mistake, kept from an older language where <code>&amp;</code> also did the job of
+<code>&amp;&amp;</code>.</p>
+<p>Python moved the bit operators above the comparisons, and Zeno copies
+it. So in Zeno the line means what it looks like, and the tests pin it
+down:</p>
+<pre><code class="zeno">print(flags &amp; mask == 5, 1 &lt;&lt; 2 + 1, 6 | 1 ^ 3 &amp; 2)</code></pre>
+<p><code>1 &lt;&lt; 2 + 1</code> is <code>1 &lt;&lt; 3</code>: arithmetic is tighter than a shift, in C,
+Python and Zeno alike.</p>
+<h2 id="a-shift-that-cannot-go-quietly-wrong">A shift that cannot go quietly wrong</h2>
+<p>In C, three things can happen to a shift and none of them is an error:</p>
+<ul>
+<li><code>1 &lt;&lt; 40</code> on a 32-bit <code>int</code>: undefined.</li>
+<li><code>x &lt;&lt; 64</code> or <code>x &lt;&lt; -1</code>: undefined.</li>
+<li><code>-5 &gt;&gt; 1</code>: whatever the compiler likes.</li>
+</ul>
+<p>Zeno already checks <code>+</code> and <code>*</code> for overflow (2.2). A left shift is a
+multiplication by a power of two, so it gets the same treatment, and a
+shift count must be 0 to 63. This is the whole of it, from the runtime
+that every compiled program carries (<code>src/runtime.c</code>):</p>
+<pre><code>static int64_t zeno_shl(int64_t a, int64_t n, int line, int col) {
+    zeno_shift_count(n, line, col);
+    int64_t shifted = (int64_t)((uint64_t)a &lt;&lt; n);
+    if ((shifted &lt; 0 ? ~(~shifted &gt;&gt; n) : shifted &gt;&gt; n) != a) zeno_overflow(line, col);
+    return shifted;
+}
+
+static int64_t zeno_shr(int64_t a, int64_t n, int line, int col) {
+    zeno_shift_count(n, line, col);
+    return a &lt; 0 ? ~(~a &gt;&gt; n) : a &gt;&gt; n;
+}</code></pre>
+<p>Three small tricks are in there.</p>
+<ol>
+<li><strong>The shift is done on the unsigned number.</strong> C says exactly what
+   <code>&lt;&lt;</code> does to a <code>uint64_t</code>: the bits that leave the top are gone. On
+   a signed number it says nothing.</li>
+<li><strong>"Did it overflow?" is "does shifting back give what I started
+   with?"</strong> If any bit that mattered fell off the top, it does not.</li>
+<li><strong>A negative number is shifted right upside down.</strong> <code>~a</code> is not
+   negative when <code>a</code> is, so <code>~a &gt;&gt; n</code> is safe, and turning the bits
+   back over gives the answer that rounds down: <code>-5 &gt;&gt; 1</code> is <code>-3</code>, the
+   same as <code>-5 // 2</code>.</li>
+</ol>
+<p>The interpreter does the same thing in Rust, in a dozen lines of
+<code>ops.rs</code>. Rust's <code>&gt;&gt;</code> on an <code>i64</code> already rounds down, so only the
+shift-back test is needed there.
+The LLVM backend calls these two functions too, where it writes <code>+</code> and
+<code>*</code> in IR itself: a shift is rare enough that a call costs nothing
+worth saving.</p>
+<hr />
+<h1 id="part-two-whole-numbers-with-a-size">Part two: whole numbers with a size</h1>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>bits</th>
+<th>holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>u8</code></td>
+<td>8</td>
+<td>0 to 255</td>
+</tr>
+<tr>
+<td><code>u16</code></td>
+<td>16</td>
+<td>0 to 65535</td>
+</tr>
+<tr>
+<td><code>u32</code></td>
+<td>32</td>
+<td>0 to 4294967295</td>
+</tr>
+<tr>
+<td><code>i8</code></td>
+<td>8</td>
+<td>-128 to 127</td>
+</tr>
+<tr>
+<td><code>i16</code></td>
+<td>16</td>
+<td>-32768 to 32767</td>
+</tr>
+<tr>
+<td><code>i32</code></td>
+<td>32</td>
+<td>-2147483648 to 2147483647</td>
+</tr>
+</tbody>
+</table>
+<p><code>int</code> is still 64 bits, and still what you get when you write nothing.</p>
+<h2 id="the-rules">The rules</h2>
+<p>There are four, and the rest of this part is how each is built.</p>
+<pre><code class="zeno">let a: u8 = 200            # 1. a number written out takes the size it is put in
+let b: u8 = 100
+let total = a + b          # 2. arithmetic gives an int: 300, never 44
+let c: u8 = u8(total)      # 3. u8( ) checks. This one raises OverflowError
+let d: u8 = u8.wrap(total) # 4. u8.wrap( ) keeps the low bits: 44</code></pre>
+<p>And one about going the other way: a <code>u8</code> can be used wherever an
+<code>int</code> is wanted, with nothing written, because every <code>u8</code> is an <code>int</code>.</p>
+<p>The thinking behind rule 2 is the heart of the design, so here it is
+again in short (decision 2.8a has it in full). C and Rust do the sum
+at the small size. Then either <code>200 + 100</code> is quietly <code>44</code>, or
+<code>(a + b) // 2</code> fails for two numbers whose average fits. Zeno does
+every sum on full ints, so the middle of an expression can never
+overflow at 255. The one place a number may not fit is the place it is
+stored, and there the program says which it wants: a check, or the low
+bits.</p>
+<p>The cost is that <code>count += 1</code> does not compile for a <code>u8</code>:</p>
+<pre class="out"><code>error: the new value should be u8, but this is int.
+       Convert it with `u8(...)`, which checks that it fits</code></pre>
+<p>Write <code>count = u8(count + 1)</code>, or <code>u8.wrap(count + 1)</code> for a counter
+that is meant to go round.</p>
+<h2 id="one-file-knows-the-sizes">One file knows the sizes</h2>
+<p><code>src/ints.rs</code> is about 120 lines, tests included, and it is the only place that knows what a
+<code>u8</code> holds:</p>
+<pre><code>pub struct Width {
+    pub name: &amp;'static str,   // "u8"
+    pub wrap: &amp;'static str,   // "u8.wrap"
+    pub bits: u32,
+    pub signed: bool,
+}
+
+pub const WIDTHS: [Width; 6] = [ ... ];
+
+impl Width {
+    pub fn min(self) -&gt; i64 { if self.signed { -(1 &lt;&lt; (self.bits - 1)) } else { 0 } }
+    pub fn max(self) -&gt; i64 { ... }
+    pub fn holds(self, n: i64) -&gt; bool { (self.min()..=self.max()).contains(&amp;n) }
+    pub fn wrap(self, n: i64) -&gt; i64 { ... }
+}</code></pre>
+<p>The checker, the interpreter and both compilers ask it. A seventh
+size would be one more line in <code>WIDTHS</code>.</p>
+<h2 id="a-sized-number-is-an-ordinary-int-with-a-promise">A sized number is an ordinary int with a promise</h2>
+<p>This is the idea that made the stage small. Look at what rule 2 says:
+arithmetic on sized numbers gives an <code>int</code>. So once a <code>u8</code> exists,
+there is nothing it does differently from an <code>int</code>. It is added like
+one, printed like one, compared like one.</p>
+<p>So it <em>is</em> one. In the interpreter a <code>u8</code> is a <code>Value::Int</code>. In C it is
+an <code>int64_t</code>. In LLVM it is an <code>i64</code>. The size is a promise that the
+number is in range, and the promise is kept in exactly two places:
+<code>u8( )</code> and <code>u8.wrap( )</code>, which make one, and the checker, which lets
+nothing else into a <code>u8</code>.</p>
+<p>Units work this way (<code>500 ms</code> is a <code>double</code>), and so do pins (<code>led</code> is
+its number). The type stops the mistake, and then it is gone.</p>
+<p>The other design would be a <code>Value::U8</code>, and with it a new row in
+every operator, in four engines. That is a lot of code whose whole job
+is to agree with the code beside it.</p>
+<h2 id="in-the-checker">In the checker</h2>
+<p>The checker gets one new type, <code>Ty::Sized(Width)</code>, and three small
+rules.</p>
+<p><strong>Arithmetic sees an int.</strong> <code>widened</code> turns a sized type into <code>int</code>,
+and <code>binary</code> applies it to both sides before it does anything else:</p>
+<pre><code>fn widened(&amp;self) -&gt; Ty {
+    match self {
+        Ty::Sized(_) =&gt; Ty::Int,
+        other =&gt; other.clone(),
+    }
+}</code></pre>
+<p>After that line the whole of <code>binary</code> is unchanged. It only ever sees
+ints, and answers <code>int</code>. The built-in functions do the same to their
+arguments, which is why <code>abs</code>, <code>max</code> and <code>sum</code> work on sized numbers
+without knowing they exist.</p>
+<p><strong>A sized number fits where an int is wanted.</strong> One line in <code>fits</code>:</p>
+<pre><code>(Ty::Sized(_), Ty::Int) =&gt; true,</code></pre>
+<p>There is no line the other way round, so an <code>int</code> going to a <code>u8</code> is
+the ordinary "should be u8, but this is int" error, with a hint added
+for the fix.</p>
+<p>A <code>list[u8]</code> does <em>not</em> fit a <code>list[int]</code>, though each item would.
+Lists are shared: whoever held it as a <code>list[int]</code> could append 300,
+and the first holder would then find a <code>u8</code> that is not one. This is
+the one place the checker has to think about it:</p>
+<pre><code>(Ty::List(from), Ty::List(to)) =&gt; !sized_into_int(from, to) &amp;&amp; fits(from, to),</code></pre>
+<p><strong>A number written out adapts.</strong> <code>let b: u8 = 7</code> must not need
+<code>u8(7)</code>. But <code>7</code> is an <code>int</code>, and ints do not fit. So before the
+checker asks whether a value fits, it asks whether the value is a
+number that is <em>written there</em>:</p>
+<pre><code>enum Written {
+    Number(i128),
+    List(Vec&lt;Written&gt;),
+}</code></pre>
+<p><code>written(expr)</code> gives one for <code>7</code>, for <code>-1</code>, and for <code>[1, 2, 0xFF]</code>.
+If the place wants a sized type, the number is checked against the
+size there and then, and takes the type:</p>
+<pre><code class="zeno">let b: u8 = 300
+error: 300 does not fit in a u8 (0 to 255)</code></pre>
+<p>That is an error before the program runs, and it costs nothing when
+it does. It works in every place a value can go: a <code>let</code>, an
+assignment, an argument, a <code>return</code>, a default, an item appended to a
+list.</p>
+<p>A <code>const</code> is not a written number. <code>const START = 0xA5</code> is an <code>int</code>.
+Give it the size: <code>const START: u8 = 0xA5</code>.</p>
+<p><strong><code>u8</code> is two things with one name.</strong> It is a type, and it is the
+built-in function that converts, <code>u8( )</code>.
+The checker finds the type through the function: a type name that
+resolves to the built-in <code>u8</code> is the sized type. That is why a class
+of your own called <code>u8</code> wins, with no special case. <code>u8.wrap</code> is a
+field of the built-in, the same way <code>math.sqrt</code> is a field of a
+module.</p>
+<h2 id="making-one-u8-and-u8wrap">Making one: <code>u8( )</code> and <code>u8.wrap( )</code></h2>
+<p>In the interpreter both are a few lines in <code>src/builtins.rs</code>:</p>
+<pre><code>fn fit_in(width: Width, args: Vec&lt;Value&gt;, span: Span) -&gt; Result {
+    arity(width.name, &amp;args, 1, 1, span)?;
+    match &amp;args[0] {
+        Value::Int(n) if width.holds(*n) =&gt; Ok(Value::Int(*n)),
+        Value::Int(n) =&gt; raise("OverflowError", width.does_not_fit(n), span),
+        other =&gt; wrong_type(width.name, "a whole number", other, span),
+    }
+}</code></pre>
+<p>Look at what comes back: <code>Value::Int(*n)</code>. The same number that went
+in. All <code>u8( )</code> does is look.</p>
+<p><code>wrap</code> is the one piece of real arithmetic, in <code>ints.rs</code>:</p>
+<pre><code>pub fn wrap(self, n: i64) -&gt; i64 {
+    let low = n &amp; ((1 &lt;&lt; self.bits) - 1);
+    if self.signed &amp;&amp; low &gt; self.max() { low - (1 &lt;&lt; self.bits) } else { low }
+}</code></pre>
+<p><code>(1 &lt;&lt; 8) - 1</code> is <code>255</code>, eight ones, so the <code>&amp;</code> keeps the low eight
+bits. For a signed size the top one of those bits counts as minus, so
+<code>200</code> (which has it set) becomes <code>200 - 256</code>, which is <code>-56</code>. That is
+what the bits <code>11001000</code> mean when they are read as an <code>i8</code>.</p>
+<p>There is a Rust detail worth a look. A built-in is a plain function
+pointer, and a function pointer cannot remember which size it is for.
+So there has to be one function for each size. They are stamped out
+by a number in the type:</p>
+<pre><code>fn fit&lt;const N: usize&gt;(_: &amp;mut dyn Machine, args: Vec&lt;Value&gt;, span: Span) -&gt; Result {
+    fit_in(ints::WIDTHS[N], args, span)
+}
+
+const FITS: [Call; 6] = [fit::&lt;0&gt;, fit::&lt;1&gt;, fit::&lt;2&gt;, fit::&lt;3&gt;, fit::&lt;4&gt;, fit::&lt;5&gt;];</code></pre>
+<p><code>fit::&lt;0&gt;</code> is a different function from <code>fit::&lt;3&gt;</code>, made by the
+compiler from the one written here. This is called a const generic.</p>
+<p><strong>In C</strong>, the two are runtime functions:</p>
+<pre><code>static int64_t zeno_fit(int64_t n, int64_t min, int64_t max, const char *size, int line, int col) {
+    if (n &lt; min || n &gt; max) {
+        zeno_fail("OverflowError", zeno_join(8, zeno_str_int(n), " does not fit in ", size, ...), line, col);
+    }
+    return n;
+}
+
+static int64_t zeno_wrap(int64_t n, int bits, bool is_signed) {
+    uint64_t low = (uint64_t)n &amp; ((UINT64_C(1) &lt;&lt; bits) - 1);
+    if (is_signed &amp;&amp; (low &gt;&gt; (bits - 1)) != 0) return (int64_t)low - (INT64_C(1) &lt;&lt; bits);
+    return (int64_t)low;
+}</code></pre>
+<p>So this line of <code>packet.zeno</code>:</p>
+<pre><code>u8(reading.flags &lt;&lt; 4 | reading.sensor)</code></pre>
+<p>compiles to this:</p>
+<pre><code>zeno_fit((zeno_shl(((int64_t)z2_reading-&gt;z_flags), 4, 42, 12) | ((int64_t)z2_reading-&gt;z_sensor)),
+         INT64_C(0), INT64_C(255), "a u8", 42, 9)</code></pre>
+<p><strong>In LLVM</strong>, <code>u8( )</code> calls the same <code>zeno_fit</code>. <code>u8.wrap( )</code> needs no
+call at all. IR has an instruction that keeps the low bits and one
+that widens again, and those two are the whole of it:</p>
+<pre><code>%t9 = trunc i64 %t7 to i8        ; keep the low eight bits
+%t10 = zext i8 %t9 to i64        ; and make it an i64 again, with zeros</code></pre>
+<p>For a signed size the second is <code>sext</code> ("sign extend"), which fills
+the new bits with copies of the top one. That is the <code>low - 256</code> of
+the Rust version, done by the processor in one instruction.</p>
+<h2 id="where-the-size-is-real-a-field-of-an-object">Where the size is real: a field of an object</h2>
+<p>If a <code>u8</code> is an <code>int64_t</code> everywhere, what was the point? The point is
+this struct, from <code>packet.c</code>:</p>
+<pre><code>struct z_Reading {
+    uint8_t z_sensor;
+    uint8_t z_flags;
+    uint16_t z_value;
+    uint8_t z_count;
+};</code></pre>
+<p>Six bytes (five, and one of padding), where four plain ints would
+take thirty-two. In LLVM it is <code>%z_Reading = type { i8, i8, i16, i8 }</code>.</p>
+<p>A field is the one place a sized number is stored small. Memory is
+spent on what there are many of, and what there are many of lives in
+objects. A local variable lives in a register, where a <code>u8</code> saves
+nothing.</p>
+<p>The checker tells the compilers which fields are sized
+(<code>Types::widths</code>), and each compiler makes the value small on the way
+in and an ordinary int again on the way out. In C:</p>
+<pre><code>self-&gt;z_sensor = (uint8_t)z_sensor;        /* in: the constructor */
+... ((int64_t)z_p-&gt;z_kind) ...             /* out: every read */</code></pre>
+<p><strong>That cast on the way out is not decoration.</strong> Without it, C would do
+arithmetic on a <code>uint32_t</code> field as <em>unsigned</em> arithmetic. <code>-field</code>
+would be a huge positive number, and <code>field &lt; -1</code> would be true. The
+cast is what makes rule 2 hold in C. A test has a <code>u32</code> field holding
+4294967295 and prints <code>~q.big</code>, <code>-p.big</code> and <code>p.big &lt; -1</code> for this
+reason.</p>
+<p>In LLVM the same two steps are the <code>trunc</code>, and <code>zext</code> or <code>sext</code>, that
+<code>wrap</code> uses. They live in two functions of <code>src/emit_llvm.rs</code>,
+<code>load_field</code> and <code>store_field</code>, and every read or write of a field
+goes through one of them:</p>
+<pre><code>%t3 = getelementptr %z_Packet, ptr %t2, i32 0, i32 0
+%t4 = load i8, ptr %t3
+%t5 = zext i8 %t4 to i64</code></pre>
+<p>The <code>trunc</code> on the way in cannot lose anything: the checker made sure
+the number is in range before it got there.</p>
+<h2 id="what-it-does-not-do-yet">What it does not do yet</h2>
+<ul>
+<li><strong>A <code>list[u8]</code> is not packed.</strong> Each item still takes eight bytes,
+  because the runtime has one list type for everything
+  (<a href="/docs/compiler/"><code>compiler.md</code></a>). A packed list, or a <code>bytes</code> type, is
+  its own stage.</li>
+<li><strong>No <code>u64</code>.</strong> Half its values do not fit in an <code>int</code>, and then "the
+  sum is an int" stops being true (decision 2.8d).</li>
+<li><strong>A <code>u8</code> does not go where a <code>u16</code> is wanted</strong> without <code>u16( )</code>,
+  though it always fits. The rule today is "sized to int is free,
+  everything else is written". It could be loosened.</li>
+<li><strong>No <code>u8.max</code> or <code>u8.min</code>.</strong> <code>ints.rs</code> knows them. Nothing lets a
+  program ask.</li>
+<li><strong>Variables, parameters and enum cases are not small</strong>, only fields
+  of classes.</li>
+<li><strong>In a program that is not strict</strong>, a value whose type is unknown
+  until run time can land in a <code>u8</code> unchecked, as it can land in an
+  <code>int</code> today. Compiled programs are always strict.</li>
+<li><strong>In a firmware build</strong> a <code>u8( )</code> that does not fit stops the
+  program, like any overflow (<a href="/docs/firmware/"><code>firmware.md</code></a>). It cannot
+  be caught there. Test first, or use <code>wrap</code>.</li>
+</ul>
+<h2 id="the-tests">The tests</h2>
+<p>Every program in the tests runs on the interpreter and the VM, then
+compiled through C, C for firmware, and LLVM, and all five must print
+the same thing. The new ones:</p>
+<ul>
+<li><code>ints::tests</code>: the six ranges, and <code>wrap</code> at each edge.</li>
+<li><code>checker::tests::sized_ints_are_types</code>,
+  <code>a_written_number_must_fit_its_size</code>,
+  <code>an_int_does_not_become_sized_by_itself</code>,
+  <code>a_size_left_out_is_worked_out</code>: what is allowed, and the exact
+  words of every refusal.</li>
+<li><code>interpreter::tests::sized_ints</code> and <code>a_sized_int_must_fit</code>.</li>
+<li><code>emit_c::tests::sized_ints_match</code>: one long program with every
+  operator on sized numbers, every conversion at its edges, sized
+  fields of every size, lists, defaults and <code>or none</code>.</li>
+<li><code>emit_c::tests::a_sized_field_is_small_in_the_struct</code> and
+  <code>emit_llvm::tests::the_ir_for_a_sized_field</code>: the struct really is
+  small, and the casts are where this page says.</li>
+<li><code>bit_operators_match</code> and <code>a_shift_too_far_is_an_error</code>, from part
+  one, checked against Python.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>In <code>packet.zeno</code>, make a reading with <code>flags=16</code>. Which line
+   refuses it, and is it refused before the program runs or while it
+   does? Now pass <code>flags=u8(16)</code>. What changed, and why?</li>
+<li>Change <code>checksum</code> to return <code>u8(total)</code> and run it. Which frame
+   fails? Change it back and say in one sentence why a checksum is the
+   textbook case for <code>wrap</code>.</li>
+<li><code>1 &lt;&lt; 2 + 1</code> is 8. Change <code>bits_at</code> so that the shifts bind tighter
+   than <code>+</code>, run the tests, and read which ones fail. Put it back.</li>
+<li>Add <code>u8.max</code> and <code>u8.min</code>. The checker's <code>field</code> and <code>ops.rs</code>'s
+   <code>field</code> already handle <code>u8.wrap</code>, so start beside those. They are
+   constants, so what should the two compilers write for them?</li>
+<li>Add <code>&gt;&gt;&gt;</code>, a right shift that brings in zeros and not copies of the
+   sign. Follow part one's list of stages. Is it needed at all, now
+   that <code>u32</code> exists? Try writing it with <code>u32.wrap</code> and <code>&gt;&gt;</code>.</li>
+<li>Allow a <code>u8</code> to go where a <code>u16</code> is wanted. It is one more arm in
+   <code>fits</code>. Write down the full table of which size fits in which
+   first: does <code>u8</code> fit <code>i8</code>? Does <code>i8</code> fit <code>u16</code>? Then decide whether
+   the table is worth teaching to everyone who reads a Zeno program.</li>
+<li>Build <code>packet.zeno</code> and print <code>sizeof(z_Reading)</code> from the C (add a
+   <code>printf</code> to <code>main</code> by hand). Then put a <code>u32</code> field first in the
+   class and look again. Then put it last. This is "struct padding",
+   and it is why field order matters in firmware.</li>
+<li>Find <code>load_field</code> in <code>emit_llvm.rs</code>. Change <code>sext</code> to <code>zext</code> for
+   every size and run the tests. Which value in which test goes wrong,
+   and what does it print?</li>
+<li>Write <code>rotate_left(x: u8, n: int) -&gt; u8</code>, which shifts left and
+   brings the bits that fall off back in at the bottom. You need <code>&lt;&lt;</code>,
+   <code>&gt;&gt;</code>, <code>|</code> and one <code>wrap</code>. Check it against <code>0b1000_0001</code> rotated by
+   one.</li>
+<li>A big one: make <code>list[u8]</code> take one byte an item. The list in
+    <code>runtime.c</code> holds <code>zeno_slot</code> items, each eight bytes. What would
+    a second list type need from the runtime, and how many functions
+    in <code>emit_c.rs</code> look inside a list? Count them before you start.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/sized-ints.md">docs/sized-ints.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/board/"><span>Previous</span>How the board and the clock work</a><a class="next" href="/docs/generics/"><span>Next</span>How generics work</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#through-the-stages">Through the stages</a></li><li><a href="#why-not-cs-precedence">Why not C's precedence</a></li><li><a href="#a-shift-that-cannot-go-quietly-wrong">A shift that cannot go quietly wrong</a></li><li><a href="#the-rules">The rules</a></li><li><a href="#one-file-knows-the-sizes">One file knows the sizes</a></li><li><a href="#a-sized-number-is-an-ordinary-int-with-a-promise">A sized number is an ordinary int with a promise</a></li><li><a href="#in-the-checker">In the checker</a></li><li><a href="#making-one-u8-and-u8wrap">Making one: u8( ) and u8.wrap( )</a></li><li><a href="#where-the-size-is-real-a-field-of-an-object">Where the size is real: a field of an object</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#the-tests">The tests</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

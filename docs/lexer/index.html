@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the lexer works · Zeno</title>
+<meta name="description" content="The lexer is the first stage of the compiler. It turns a string of characters into a list of tokens, the words of the language. Every later stage works with tokens and never looks at raw characters again.">
+<meta property="og:title" content="How the lexer works · Zeno">
+<meta property="og:description" content="The lexer is the first stage of the compiler. It turns a string of characters into a list of tokens, the words of the language. Every later stage works with tokens and never looks at raw characters again.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/lexer/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/lexer/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/" aria-current="page">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How the lexer works</h1>
+  <p>The lexer is the first stage of the compiler. It turns a string of characters
+into a list of <strong>tokens</strong>, the words of the language. Every later stage works
+with tokens and never looks at raw characters again.</p>
+<pre><code class="zeno">let count = 3     -&gt;     Let  Ident("count")  Assign  Int(3)  Newline  Eof</code></pre>
+<p>Try it on any file:</p>
+<pre><code>cargo run -- tokens examples/hello.zeno</code></pre>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/token.rs"><code>src/token.rs</code></a>: the list of token kinds, and the keyword table.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/lexer.rs"><code>src/lexer.rs</code></a>: the lexer and its tests.</li>
+</ul>
+<h2 id="the-main-loop">The main loop</h2>
+<p><code>Lexer::run</code> is one loop. Each time round it looks at the next character,
+without consuming it, and that one character is enough to decide what kind of
+token starts here:</p>
+<table>
+<thead>
+<tr>
+<th>Next character</th>
+<th>What it starts</th>
+<th>Handled by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>space, tab</td>
+<td>nothing, skip it</td>
+<td></td>
+</tr>
+<tr>
+<td>line break</td>
+<td>maybe the end of a statement</td>
+<td><code>end_statement</code></td>
+</tr>
+<tr>
+<td><code>#</code></td>
+<td>a comment, skipped to the end of the line</td>
+<td><code>comment</code></td>
+</tr>
+<tr>
+<td><code>"</code> or <code>'</code></td>
+<td>a string</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td><code>f</code> followed by a quote</td>
+<td>a formatted string</td>
+<td><code>string</code></td>
+</tr>
+<tr>
+<td>a digit</td>
+<td>a number</td>
+<td><code>number</code></td>
+</tr>
+<tr>
+<td>a letter or <code>_</code></td>
+<td>a keyword or a name</td>
+<td><code>word</code></td>
+</tr>
+<tr>
+<td>anything else</td>
+<td>punctuation or an operator</td>
+<td><code>symbol</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each handler consumes exactly the characters of its token and pushes one
+token. Then the loop goes round again.</p>
+<p>Three small helpers do all the reading: <code>peek</code> looks at the next character,
+<code>advance</code> consumes it (and keeps the line and column counters right), and
+<code>eat(c)</code> consumes it only if it is <code>c</code>. Two-character operators fall out of
+<code>eat</code>: after reading <code>=</code>, <code>eat('=')</code> tells you whether it was <code>==</code> or <code>=</code>.</p>
+<h2 id="keywords-are-just-names-in-a-table">Keywords are just names in a table</h2>
+<p><code>word</code> reads letters, digits and underscores, then asks <code>keyword()</code> whether the
+result is reserved. <code>function</code> becomes the <code>Function</code> token; <code>functions</code> is an
+ordinary name. Adding a keyword to Zeno is one line in the enum and one in the table.</p>
+<h2 id="line-breaks-instead-of-semicolons">Line breaks instead of semicolons</h2>
+<p>This is the only subtle part. A line break ends a statement, so the lexer
+emits a <code>Newline</code> token for it. But not every line break ends a statement, so
+<code>end_statement</code> stays quiet in three cases:</p>
+<ol>
+<li><strong>Inside <code>( )</code> or <code>[ ]</code>.</strong> The lexer counts open brackets in <code>depth</code>. While
+   it is above zero, line breaks are ignored, so long calls and lists can wrap.
+   A <code>{</code> starts counting afresh, because inside braces there are statements
+   again, even when the braces sit inside a call: <code>items.map(function(n) { ... })</code>.</li>
+<li><strong>After a token that cannot end a statement</strong>, such as <code>+</code>, <code>,</code>, <code>=</code> or <code>and</code>
+   (see <code>TokenKind::continues_line</code>). The statement carries on to the next line.</li>
+<li><strong>After another <code>Newline</code>, or at the top of the file.</strong> Blank lines and
+   comment-only lines produce nothing.</li>
+</ol>
+<p>The parser therefore sees exactly one <code>Newline</code> per statement and never has to
+think about blank lines.</p>
+<h2 id="errors">Errors</h2>
+<p>The lexer does not stop at the first problem. It records each one with its
+line and column, skips the bad character, and carries on, so you see every
+mistake in one run. Habits from other languages get a hint:</p>
+<pre class="out"><code>error: Zeno has no semicolons. A line break ends a statement
+ --&gt; main.zeno:1:10
+  |
+1 | let x = 1;
+  |          ^</code></pre>
+<h2 id="what-the-lexer-leaves-for-later">What the lexer leaves for later</h2>
+<ul>
+<li><strong>Formatted strings.</strong> <code>f"Hello, {who}"</code> becomes one string token marked
+  <code>formatted</code>. Splitting out the <code>{who}</code> part is the parser's job.</li>
+<li><strong>Units.</strong> <code>500 ms</code> is two tokens, a number and a name. The parser joins them.</li>
+<li><strong>Negative numbers.</strong> <code>-5</code> is <code>Minus</code> then <code>Int(5)</code>.</li>
+<li><strong>Meaning.</strong> The lexer is happy with <code>let let = = 3</code>. Deciding that it makes
+  no sense is the parser's job.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<p>Good exercises for getting to know the code:</p>
+<ol>
+<li>Add a <code>%=</code> operator. (One enum line, one branch in <code>symbol</code>, one test.)</li>
+<li>Add an <code>unless</code> keyword.</li>
+<li>Allow multi-line strings in triple quotes, <code>"""like this"""</code>.</li>
+<li>Make <code>0x</code> with no digits after it say "expected digits after 0x".</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/lexer.md">docs/lexer.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><span></span><a class="next" href="/docs/parser/"><span>Next</span>How the parser works</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#the-main-loop">The main loop</a></li><li><a href="#keywords-are-just-names-in-a-table">Keywords are just names in a table</a></li><li><a href="#line-breaks-instead-of-semicolons">Line breaks instead of semicolons</a></li><li><a href="#errors">Errors</a></li><li><a href="#what-the-lexer-leaves-for-later">What the lexer leaves for later</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

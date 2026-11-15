@@ -1,0 +1,7 @@
+let name = "Zeno"            # let: set once
+var count = 3                # var: can change
+count = count + 1            # plain = updates it
+const LIMIT = 10             # const: fixed when the program is built
+
+let ports: list[int] = [80, 443, 8080]   # a type, only where you want one
+print(name, count, LIMIT, ports)

@@ -1,0 +1,1530 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the LLVM backend works · Zeno</title>
+<meta name="description" content="zeno build has a second way to make a program. With --llvm it does not write C. It writes LLVM IR, the input language of the compiler library behind Clang, Rust and Swift, and hands that to clang.">
+<meta property="og:title" content="How the LLVM backend works · Zeno">
+<meta property="og:description" content="zeno build has a second way to make a program. With --llvm it does not write C. It writes LLVM IR, the input language of the compiler library behind Clang, Rust and Swift, and hands that to clang.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/llvm/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/llvm/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/" aria-current="page">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How the LLVM backend works</h1>
+  <p><code>zeno build</code> has a second way to make a program. With <code>--llvm</code> it does
+not write C. It writes <strong>LLVM IR</strong>, the input language of the compiler
+library behind Clang, Rust and Swift, and hands that to clang.</p>
+<pre><code>cargo run -- build --llvm examples/shapes.zeno   # writes shapes.ll and shapes_runtime.c, builds ./shapes
+./shapes                                         # same output as `zeno run`</code></pre>
+<pre><code>tokens -&gt; parser -&gt; tree -&gt; checker -&gt; [emit_llvm] -&gt; LLVM IR -&gt; clang -&gt; program</code></pre>
+<p>The program prints exactly what <code>zeno run</code> prints. As with every stage
+since the C backend, that is the rule, and the tests hold it.</p>
+<p>It compiles what the C backend compiles: numbers, text, functions,
+classes, enums and <code>match</code>, lists, <code>none</code>, <code>try</code> and <code>raise</code>, functions
+as values, units and <code>import math</code>. The first half of this page is the
+ground floor (values, slots, blocks, overflow). The second half is one
+section for each of those, and each is mostly one new idea in IR.</p>
+<p>It also takes the same flags: <code>--firmware</code>, <code>--no-collector</code> and
+<code>--memory</code>. The last sections show what each one changes in the IR.</p>
+<h2 id="why">Why</h2>
+<p>The C backend works, and for firmware it stays the right one: every
+microcontroller has a C compiler, and a reviewer can read C. But it
+leans on a second language, and a good part of <code>emit_c.rs</code> is there to
+get round C's rules: the order arguments are worked out in, overflow
+being undefined, temporaries so that one thing happens before another.</p>
+<p>LLVM takes that layer away. Its IR is lower than C and stricter, and it
+is the same thing clang turns C into before it does anything clever. So
+everything LLVM can do for C it can do for Zeno: the optimiser, and
+machine code for x86, ARM, RISC-V or WebAssembly from one input.</p>
+<p>It is also how most new languages are built today (Rust, Swift, Zig,
+Julia), which makes it worth seeing from the inside.</p>
+<h2 id="ir-in-five-minutes">IR in five minutes</h2>
+<pre><code class="zeno">function area(w: float, h: float) -&gt; float {
+    return w * h
+}</code></pre>
+<p>becomes</p>
+<pre><code>define internal double @z_area(double %arg.w, double %arg.h) {
+entry:
+  %t1 = fmul double %arg.w, %arg.h
+  ret double %t1
+}</code></pre>
+<p>Read it as assembly for a machine that has as many registers as you
+like:</p>
+<ul>
+<li><strong><code>@name</code> is global, <code>%name</code> is local</strong> to one function.</li>
+<li><strong>Every value has a type, written at every use.</strong> <code>i64</code> is a whole
+  number of 64 bits, <code>double</code> a float, <code>i1</code> one bit (a bool), <code>ptr</code> an
+  address. Text is a <code>ptr</code> to its first byte, as in the C backend.</li>
+<li><strong>One instruction does one thing</strong> and gives its result a new name.
+  <code>fmul</code> multiplies floats. <code>a + b * c</code> is two instructions. Nothing is
+  nested, so the order things happen in is the order they are written.
+  Zeno's left-to-right rule costs nothing here.</li>
+<li><strong>A name is given a value once.</strong> <code>%t1</code> is never assigned again. This
+  is called SSA, "static single assignment", and it is what makes IR
+  easy for an optimiser to reason about: to know what <code>%t1</code> is, find
+  the one line that makes it.</li>
+<li><strong>A function is a list of blocks.</strong> A block starts with a label
+  (<code>entry:</code>), runs straight down, and ends with exactly one instruction
+  that leaves it: <code>br</code> (jump), <code>ret</code> (return) or <code>unreachable</code>.
+  There is no <code>if</code> and no <code>while</code>.</li>
+</ul>
+<p><code>internal</code> means what <code>static</code> means in C: nothing outside this file
+needs the function, so LLVM may inline it everywhere and drop it.
+The <code>z_</code> in front keeps a Zeno function called <code>main</code> or <code>printf</code> from
+meeting the real one.</p>
+<h2 id="the-file">The file</h2>
+<p><code>src/emit_llvm.rs</code>, about 3,800 lines without its tests, a good part of
+them comments. It has no dependencies: IR is text, and the file is
+built up with <code>format!</code>. It follows the order of this page.</p>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Val</code></td>
+<td>A value that has been worked out: how the IR names it (<code>%t3</code>, <code>42</code>, <code>@.str.2</code>) and its Zeno kind</td>
+</tr>
+<tr>
+<td><code>Place</code>, <code>Variable</code></td>
+<td>Where a variable is: a <code>Value</code>, or a <code>Slot</code> in memory</td>
+</tr>
+<tr>
+<td><code>Code</code></td>
+<td>The function being written: its lines, its <code>alloca</code>s, the block being filled, the <code>try</code>s it is inside</td>
+</tr>
+<tr>
+<td><code>ins</code>, <code>set</code></td>
+<td>Write one instruction. <code>set</code> also makes the new name</td>
+</tr>
+<tr>
+<td><code>place</code>, <code>jump</code>, <code>jump_if</code>, <code>end</code></td>
+<td>Start a block, leave one</td>
+</tr>
+<tr>
+<td><code>slot</code>, <code>load</code>, <code>store</code></td>
+<td>Memory for a <code>var</code>, and reading and writing it</td>
+</tr>
+<tr>
+<td><code>statement</code>, <code>expr</code></td>
+<td>The walk over the tree, as in every other stage</td>
+</tr>
+<tr>
+<td><code>checked</code>, <code>arithmetic</code>, <code>compare</code>, <code>logic</code>, <code>chain</code></td>
+<td>Operators</td>
+</tr>
+<tr>
+<td><code>ir_type</code></td>
+<td>The IR type for a Zeno kind (the table below)</td>
+</tr>
+<tr>
+<td><code>field_at</code>, <code>construct</code>, <code>match_statement</code></td>
+<td>Objects and enums</td>
+</tr>
+<tr>
+<td><code>to_slot</code>, <code>from_slot</code>, <code>walk_open</code></td>
+<td>Lists</td>
+</tr>
+<tr>
+<td><code>coerce</code>, <code>is_there</code>, <code>inside</code>, <code>present</code></td>
+<td>Values that may be <code>none</code></td>
+</tr>
+<tr>
+<td><code>try_statement</code>, <code>raise</code>, <code>leave_tries</code></td>
+<td>Errors</td>
+</tr>
+<tr>
+<td><code>closure</code>, <code>function_value</code>, <code>invoke</code></td>
+<td>Functions as values</td>
+</tr>
+<tr>
+<td><code>side</code></td>
+<td>Write a helper function while in the middle of another</td>
+</tr>
+<tr>
+<td><code>DECLARED</code></td>
+<td>What the IR may call in the runtime, as LLVM wants it declared</td>
+</tr>
+<tr>
+<td><code>WRITTEN</code></td>
+<td>Small functions written in IR and put into every file that uses them</td>
+</tr>
+</tbody>
+</table>
+<p>Every Zeno kind becomes one IR type:</p>
+<table>
+<thead>
+<tr>
+<th>Zeno</th>
+<th>IR</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td><code>i64</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>float</code>, a number with a unit</td>
+<td><code>double</code></td>
+<td>the unit is gone by now; the checker dealt with it</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>i1</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>str</code></td>
+<td><code>ptr</code></td>
+<td>to its first byte</td>
+</tr>
+<tr>
+<td>a list, an object, an enum value, an error, a function</td>
+<td><code>ptr</code></td>
+<td>to memory from <code>zeno_alloc</code></td>
+</tr>
+<tr>
+<td><code>T or none</code>, where <code>T</code> is one of the <code>ptr</code> kinds</td>
+<td><code>ptr</code></td>
+<td><code>null</code> is <code>none</code></td>
+</tr>
+<tr>
+<td><code>int or none</code>, <code>float or none</code>, <code>bool or none</code></td>
+<td><code>{ i1, T }</code></td>
+<td>a pair: is it there, and the value</td>
+</tr>
+</tbody>
+</table>
+<h2 id="a-let-is-a-value-a-var-is-a-slot">A <code>let</code> is a value, a <code>var</code> is a slot</h2>
+<p>A Zeno <code>let</code> is given a value once. So is an IR name. So a <code>let</code> needs
+nothing at all: the variable <em>is</em> the value. The same goes for a
+parameter, which Zeno does not let you change.</p>
+<p>A <code>var</code> changes, and a name in IR cannot. The way out is memory:
+<code>alloca</code> makes room for one value on the stack and gives its address.
+<code>store</code> writes there and <code>load</code> reads.</p>
+<pre><code class="zeno">function sum_to(limit: int) -&gt; int {
+    var total = 0
+    for n in range(limit) {
+        total += n
+    }
+    return total
+}</code></pre>
+<pre><code>define internal i64 @z_sum_to(i64 %arg.limit) {
+entry:
+  %var.total = alloca i64
+  %for.n.1 = alloca i64
+  store i64 0, ptr %var.total
+  store i64 0, ptr %for.n.1
+  br label %for1
+
+for1:
+  %t1 = load i64, ptr %for.n.1
+  %t2 = icmp slt i64 %t1, %arg.limit
+  br i1 %t2, label %do1, label %done1
+
+do1:
+  %t3 = load i64, ptr %var.total
+  ...</code></pre>
+<p><code>limit</code> is used as it arrived (<code>%arg.limit</code>). <code>total</code> has a slot. The
+loop's counter has one too, because it changes, but the <code>n</code> the body
+sees is <code>%t1</code>, a value.</p>
+<p>This looks wasteful, and it is on purpose. LLVM's first pass, called
+<code>mem2reg</code>, finds every slot whose address never leaves the function and
+turns it back into plain values. Ask for only that pass:</p>
+<pre><code>opt -passes=mem2reg -S demo.ll</code></pre>
+<pre><code>for1:
+  %for.n.1.0 = phi i64 [ 0, %entry ], [ %t8, %next1 ]
+  %var.total.0 = phi i64 [ 0, %entry ], [ %t5, %next1 ]
+  %t2 = icmp slt i64 %for.n.1.0, %arg.limit</code></pre>
+<p>The slots are gone. In their place is <code>phi</code>, the one odd instruction
+SSA needs: "<code>total</code> is 0 if we came here from <code>entry</code>, and <code>%t5</code> if we
+came round from <code>next1</code>". Working out where the <code>phi</code>s go is the hard
+part of building SSA, and LLVM does it for us. Every front end built on
+LLVM, clang included, uses this trick (decision 5.11b).</p>
+<p>The <code>alloca</code>s all go at the top of the first block, wherever the <code>var</code>
+is written. One inside a loop would take new stack on every trip.</p>
+<p>Variables at the top of the file are different: functions use them, so
+they are globals (<code>@z_limit = internal global i64 0</code>), read and written
+with the same <code>load</code> and <code>store</code>.</p>
+<p>Two kinds of <code>var</code> are kept out of an <code>alloca</code>, and both come up later:
+one that a function written inside this one uses
+(<a href="#functions-as-values">Functions as values</a>), and any <code>var</code> in a
+function that has a <code>try</code>
+(<a href="#why-the-slots-are-volatile">Why the slots are <code>volatile</code></a>).</p>
+<h2 id="blocks-and-jumps">Blocks and jumps</h2>
+<p><code>if n &lt; 0 { return "minus" }</code> then <code>return "plus"</code>:</p>
+<pre><code>define internal ptr @z_sign(i64 %arg.n) {
+entry:
+  %t1 = icmp slt i64 %arg.n, 0
+  br i1 %t1, label %then1, label %end1
+
+then1:
+  ret ptr @.str.4
+
+end1:
+  ret ptr @.str.5
+}</code></pre>
+<p><code>icmp slt</code> is "compare whole numbers, signed less than", and gives an
+<code>i1</code>. <code>br i1</code> jumps one of two ways on it. The number on the labels
+groups the ones that belong to one statement.</p>
+<p><code>Code</code> keeps one flag for all of this: <code>ended</code>, true once the block has
+been left. <code>place(label)</code> starts a new block, and first adds a <code>br</code> to
+it if the block before is still open, because a block may not simply
+run on into the next. After <code>return</code> the flag is set, so no <code>br</code> is
+added after <code>ret</code>.</p>
+<p>A <code>while</code> is three blocks: the test, the body, and what follows. The
+test is a block of its own because the body jumps back to it. <code>break</code>
+is a jump to the block after the loop, <code>continue</code> a jump to the test.
+A <code>for</code> over a <code>range</code> is the same with a counter. No list is built.</p>
+<p>Code after a <code>return</code> can never run, but it still has to be valid IR.
+It gets a block that nothing jumps to (<code>dead3:</code>), which LLVM deletes.</p>
+<h2 id="and-or-and-phi"><code>and</code>, <code>or</code> and <code>phi</code></h2>
+<p><code>a and b</code> must not work <code>b</code> out when <code>a</code> is false. That is a jump:</p>
+<pre><code>define internal i1 @z_in_range(i64 %arg.n, i64 %arg.low, i64 %arg.high) {
+entry:
+  %t1 = icmp sge i64 %arg.n, %arg.low
+  br i1 %t1, label %and1, label %end1
+
+and1:
+  %t2 = icmp sle i64 %arg.n, %arg.high
+  br label %end1
+
+end1:
+  %t3 = phi i1 [ false, %entry ], [ %t2, %and1 ]
+  ret i1 %t3
+}</code></pre>
+<p>Here the <code>phi</code> is written by hand, because the shape never varies:
+false if the left side sent us straight to the end, otherwise whatever
+the right side gave. <code>a &lt; b &lt; c</code> is built the same way, one block for
+each comparison after the first.</p>
+<h2 id="whole-numbers-that-report-overflow">Whole numbers that report overflow</h2>
+<p>A plain <code>add i64</code> wraps round on overflow. Zeno says that is an
+<code>OverflowError</code>. LLVM has an instruction for exactly this, which gives
+back the result and the processor's overflow flag together:</p>
+<pre><code>  %t4 = call { i64, i1 } @llvm.sadd.with.overflow.i64(i64 %t3, i64 %t1)
+  %t5 = extractvalue { i64, i1 } %t4, 0
+  %t6 = extractvalue { i64, i1 } %t4, 1
+  br i1 %t6, label %overflow2, label %fits2
+
+overflow2:
+  call void @zeno_overflow(i32 8, i32 9)
+  unreachable
+
+fits2:
+  store i64 %t5, ptr %var.total</code></pre>
+<p><code>{ i64, i1 }</code> is a pair, and <code>extractvalue</code> takes one half out. The
+<code>8, 9</code> is the line and column of the <code>+</code>, for the error message.
+<code>unreachable</code> tells LLVM that <code>zeno_overflow</code> does not come back.</p>
+<p>It reads as a lot for one <code>+</code>. On the processor it is an add and a
+"jump if overflow" that is almost never taken. This is the same thing
+<code>__builtin_add_overflow</code> in <code>runtime.c</code> turns into.</p>
+<p><code>//</code> and <code>%</code> have more to them. The processor rounds toward zero and
+Zeno rounds down, the result of <code>%</code> takes the sign of the right side,
+and dividing by zero is an error. The runtime has C functions for both,
+and the first version of this backend called them. That made a loop
+full of <code>%</code> two and a half times slower than the C build, because LLVM
+cannot see into a function in another file, so it could not inline it.</p>
+<p>So they are written in IR instead, once, in the table <code>WRITTEN</code>:</p>
+<pre><code>define internal i64 @zeno.mod(i64 %a, i64 %b, i32 %line, i32 %col) {
+entry:
+  %zero = icmp eq i64 %b, 0
+  br i1 %zero, label %by_zero, label %divide
+
+by_zero:
+  call void @zeno_by_zero(i32 %line, i32 %col)
+  unreachable
+
+divide:
+  %minus_one = icmp eq i64 %b, -1
+  %by = select i1 %minus_one, i64 1, i64 %b
+  %left_over = srem i64 %a, %by
+  %inexact = icmp ne i64 %left_over, 0
+  %mixed = xor i64 %left_over, %b
+  %differ = icmp slt i64 %mixed, 0
+  %move = and i1 %inexact, %differ
+  %moved = add i64 %left_over, %b
+  %result = select i1 %move, i64 %moved, i64 %left_over
+  ret i64 %result
+}</code></pre>
+<p><code>srem</code> is the processor's remainder. <code>select</code> is "this value or that
+one, depending on an <code>i1</code>": an <code>if</code> with no jump. The program calls
+<code>@zeno.mod</code>, and because it is in the same file LLVM inlines it. In
+<code>n % 2</code> it then sees that <code>%b</code> is 2 and throws nearly all of it away.
+A name with a dot in it (<code>zeno.mod</code>) cannot be a Zeno name or a C name,
+so it can meet neither (decision 5.11c).</p>
+<p><code>**</code> and the float forms of <code>//</code> and <code>%</code> still call the runtime. Floats
+use <code>fadd</code>, <code>fsub</code> and <code>fmul</code> directly.</p>
+<h2 id="text-printing-and-the-runtime">Text, printing and the runtime</h2>
+<p>The compiled program still needs <code>runtime.c</code>: joining text, turning
+numbers into text, printing, the collector. The IR declares what it
+uses and calls it:</p>
+<pre><code>declare ptr @zeno_str_int(i64)
+declare ptr @zeno_join(i32 signext, ...)
+declare void @zeno_print(i32 signext, ...)
+
+  %t5 = call ptr @zeno_str_int(i64 %t4)
+  %t9 = call ptr (i32, ...) @zeno_join(i32 3, ptr %t1, ptr @.str.2, ptr %t5)
+  call void (i32, ...) @zeno_print(i32 1, ptr %t9)</code></pre>
+<ul>
+<li><code>...</code> is a function that takes any number of arguments, like C's
+  <code>printf</code>. The call has to repeat <code>(i32, ...)</code>.</li>
+<li><code>signext</code> and <code>zeroext</code> say how a value narrower than a register is
+  widened when it is handed to a C function. A C compiler does this
+  without being asked. In IR it has to be said, or on some processors
+  (RISC-V, PowerPC) the C side may read leftover bits.</li>
+<li>A piece of text in the program is a constant, with the zero byte C
+  expects written out: <code>@.str.1 = private unnamed_addr constant [5 x i8] c"Zeno\00"</code>.
+  The same text is stored once however often it is written.</li>
+</ul>
+<p>The table <code>DECLARED</code> holds every declaration. Only the ones a program
+uses are written into its file.</p>
+<h3 id="linking-to-the-runtime">Linking to the runtime</h3>
+<p>A C build pastes the runtime in front of the program, and every
+function in it is <code>static</code>. Here the program is in another file, and
+<code>static</code> would hide the runtime from it. So <code>runtime()</code> in
+<code>emit_llvm.rs</code> takes the word off (only where it starts a line, which
+is where it stands outside a function), adds three small functions that
+only an LLVM build needs (see <a href="#errors-try-and-raise">Errors</a>), and
+<code>zeno build --llvm</code> writes the result as <code>shapes_runtime.c</code>. Then:</p>
+<pre><code>clang -O2 -Wno-override-module -o shapes shapes.ll shapes_runtime.c -lm</code></pre>
+<p>clang compiles the C, compiles the IR, and links the two. The IR does
+not say which processor it is for, so the same file builds anywhere.
+clang fills in its own and would warn that it did, which is what the
+<code>-W</code> flag turns off.</p>
+<h2 id="one-program-for-the-rest">One program for the rest</h2>
+<p>The sections from here on all read from one small program. Save it as
+<code>demo.zeno</code>, build it with <code>--llvm</code>, and keep <code>demo.ll</code> open.</p>
+<pre><code class="zeno">class Point {
+    x: float
+    y: float
+}
+
+enum Shape {
+    Circle(centre: Point, radius: float)
+    Square(side: float)
+    Nothing
+}
+
+function area(shape: Shape) -&gt; float {
+    match shape {
+        case Circle(_, r) { return 3.14159 * r * r }
+        case Square(side) { return side * side }
+        case Nothing { return 0.0 }
+    }
+}
+
+function largest(shapes: list[Shape]) -&gt; float or none {
+    var best: float or none = none
+    for shape in shapes {
+        let size = area(shape)
+        if best is none or size &gt; best { best = size }
+    }
+    return best
+}
+
+function halve(n: int) -&gt; int raises ValueError {
+    if n % 2 == 1 { raise ValueError(f"{n} is odd") }
+    return n // 2
+}
+
+function make_counter() -&gt; function() -&gt; int {
+    var count = 0
+    return function() -&gt; int {
+        count = count + 1
+        return count
+    }
+}
+
+let shapes = [Circle(Point(0.0, 0.0), 1.0), Square(2.0), Nothing]
+print(shapes[0], largest(shapes), largest([]))
+var done = 0
+try {
+    done = halve(8)
+    done = halve(done + 1)
+} except ValueError as error {
+    print("stopped:", error.message, done)
+}
+let next = make_counter()
+print(next(), next(), next())</code></pre>
+<pre><code>Circle(Point(x=0.0, y=0.0), 1.0) 4.0 none
+stopped: 5 is odd 4
+1 2 3</code></pre>
+<h2 id="objects-and-getelementptr">Objects and <code>getelementptr</code></h2>
+<p>A class becomes a <strong>struct type</strong>, declared once at the top of the
+file. It is a list of field types and nothing else. The names are gone.</p>
+<pre><code>%z_Point = type { double, double }</code></pre>
+<p>(A field with a size, such as <code>level: u8</code>, is an <code>i8</code> in the struct
+type and an <code>i64</code> everywhere else. <a href="/docs/sized-ints/"><code>sized-ints.md</code></a>
+has that. A generic class gets one struct type for each type it is
+used with, such as <code>%"z_Stack[int]"</code>: see <a href="/docs/generics/"><code>generics.md</code></a>.)</p>
+<p>An object is a <code>ptr</code> to that much memory from the collector. Making one
+is a small function, written the first time the program makes a
+<code>Point</code>:</p>
+<pre><code>define internal ptr @zeno.new.Point(double %f0, double %f1) {
+entry:
+  %t1 = call ptr @zeno_alloc(i64 ptrtoint (ptr getelementptr (%z_Point, ptr null, i32 1) to i64))
+  %t2 = getelementptr %z_Point, ptr %t1, i32 0, i32 0
+  store double %f0, ptr %t2
+  %t3 = getelementptr %z_Point, ptr %t1, i32 0, i32 1
+  store double %f1, ptr %t3
+  ret ptr %t1
+}</code></pre>
+<p>The new instruction is <strong><code>getelementptr</code></strong>, "GEP" for short. It is the
+one everybody finds odd at first, and it does one thing: <strong>address
+arithmetic</strong>. It never reads memory. Given a type, an address and some
+indices, it works out another address.</p>
+<pre><code>%t3 = getelementptr %z_Point, ptr %t1, i32 0, i32 1</code></pre>
+<p>Read it as C's <code>&amp;t1[0].y</code>. The first index steps over whole <code>Point</code>s,
+as if <code>%t1</code> were an array of them. 0 means "this one". The second picks
+field 1 inside it. The result is the address of <code>y</code>, and <code>store</code> or
+<code>load</code> does the rest. <code>field_at</code> in the emitter writes this line.</p>
+<p>The long argument to <code>zeno_alloc</code> is the same instruction used as a
+trick. IR has no <code>sizeof</code>. But "the address of <code>Point</code> number 1 in an
+array that starts at address 0" is exactly the size of one <code>Point</code>, and
+<code>ptrtoint</code> turns that address into a number. LLVM folds the whole thing
+to <code>16</code> at compile time. Writing 16 ourselves would mean knowing every
+processor's rules for padding, and LLVM already knows them.</p>
+<p>A <strong>method</strong> is a function with the object first. Give <code>Point</code> a
+method, <code>function width(self) -&gt; float { return self.x }</code>, and it is:</p>
+<pre><code>define internal double @z_Point.width(ptr %arg.self) {
+entry:
+  %t1 = getelementptr %z_Point, ptr %arg.self, i32 0, i32 0
+  %t2 = load double, ptr %t1
+  ret double %t2
+}</code></pre>
+<p><code>p.width()</code> is <code>call double @z_Point.width(ptr %p)</code>. The checker knows
+the class of <code>p</code>, so there is nothing to look up while the program runs
+(decision 5.11h).</p>
+<h2 id="enums-and-match">Enums and <code>match</code></h2>
+<p>An enum value is a <code>ptr</code> too. What it points to starts with an <code>i64</code>,
+the <strong>tag</strong>: which case this is, counting from 0. The case's own fields
+follow. Each case with fields has its own struct type:</p>
+<pre><code>%z_Shape.Circle = type { i64, ptr, double }
+%z_Shape.Square = type { i64, double }
+
+@zeno.case.Shape.Nothing = internal constant { i64 } { i64 2 }</code></pre>
+<p>A case with no fields needs no memory at run time. There is only ever
+one <code>Nothing</code>, so it is a constant in the program, and the value is the
+address of that constant.</p>
+<p>The C backend uses one struct with a <code>union</code> inside, as big as the
+biggest case. IR has no unions. It does not need them: a <code>ptr</code> does not
+say what it points to, so the code reads the tag through it, and then
+uses the struct type of the case it found.</p>
+<p><code>match</code> is a row of tests, in the order the cases are written:</p>
+<pre><code>define internal double @z_area(ptr %arg.shape) {
+entry:
+  %t1 = load i64, ptr %arg.shape
+  %t2 = icmp eq i64 %t1, 0
+  br i1 %t2, label %is2, label %case1.1
+
+is2:
+  %t3 = getelementptr %z_Shape.Circle, ptr %arg.shape, i32 0, i32 2
+  %t4 = load double, ptr %t3
+  %t5 = fmul double 3.14159, %t4
+  %t6 = fmul double %t5, %t4
+  ret double %t6
+
+case1.1:
+  %t7 = load i64, ptr %arg.shape
+  %t8 = icmp eq i64 %t7, 1
+  br i1 %t8, label %is3, label %case1.2
+  ...
+
+case1.3:
+  br label %end1
+
+end1:
+  unreachable
+}</code></pre>
+<p><code>load i64, ptr %arg.shape</code> reads the tag: it is the first thing there,
+so no GEP is needed. A case that fails jumps to the next one. The <code>_</code>
+in <code>Circle(_, r)</code> loads nothing at all.</p>
+<p>The checker has already proved that the cases cover every <code>Shape</code>, so
+falling off the end cannot happen, and the function ends in
+<code>unreachable</code>. That is a promise to LLVM, and it uses it: at <code>-O2</code> the
+three tests become one <code>switch</code> on the tag, with no fourth way out.
+A nested pattern such as <code>case Circle(Point(0.0, _), r)</code> is the same
+row, with more tests before the body.</p>
+<h2 id="lists">Lists</h2>
+<p>A list is the runtime's own <code>zeno_list</code>: a length, a capacity, and the
+address of the items. The IR declares the same layout so that it can
+read the length and the items itself:</p>
+<pre><code>%zeno_list = type { i64, i64, ptr }</code></pre>
+<p>Everything that changes a list (<code>append</code>, <code>pop</code>, growing) is a call to
+the runtime. The C is already there and already tested.</p>
+<p>In C every item is a <code>zeno_slot</code>, a union of an int, a float, a bool
+and a pointer: eight bytes that mean whatever the list's kind says. In
+IR <strong>an item is an <code>i64</code></strong>, eight bytes, and each kind is turned into
+one on the way in and back on the way out (<code>to_slot</code>, <code>from_slot</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Into a slot</th>
+<th>Back</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>int</code></td>
+<td>as it is</td>
+<td>as it is</td>
+</tr>
+<tr>
+<td><code>float</code></td>
+<td><code>bitcast double to i64</code> (the same bits)</td>
+<td><code>bitcast</code></td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>zext i1 to i64</code></td>
+<td><code>trunc</code></td>
+</tr>
+<tr>
+<td>anything that is a <code>ptr</code></td>
+<td><code>ptrtoint</code></td>
+<td><code>inttoptr</code></td>
+</tr>
+<tr>
+<td><code>int or none</code> and the like</td>
+<td>boxed: the pair goes into memory, the slot is its address</td>
+<td>unboxed</td>
+</tr>
+</tbody>
+</table>
+<p>The list at the top of the demo:</p>
+<pre><code>  %t4 = ptrtoint ptr %t2 to i64
+  %t5 = ptrtoint ptr %t3 to i64
+  %t6 = ptrtoint ptr @zeno.case.Shape.Nothing to i64
+  %t7 = call ptr (i32, ...) @zeno_list_of(i32 3, i64 %t4, i64 %t5, i64 %t6)</code></pre>
+<p><code>shapes[0]</code> asks the runtime for the address of item 0, because the
+runtime checks the index and reports an <code>IndexError</code>:</p>
+<pre><code>  %t9 = call ptr @zeno_list_at(ptr %t8, i64 0, i32 43, i32 7)
+  %t10 = load i64, ptr %t9
+  %t11 = inttoptr i64 %t10 to ptr</code></pre>
+<p>A <code>for</code> over a list does not need that check. It walks the items
+directly (<code>walk_open</code>), from <code>largest</code>:</p>
+<pre><code>  %t1 = call ptr @zeno_list_copy(ptr %arg.shapes)
+  ...
+for1:
+  %t2 = load i64, ptr %for.shape.1          ; the counter
+  %t3 = load i64, ptr %t1                   ; the length: the list's first field
+  %t4 = icmp slt i64 %t2, %t3
+  br i1 %t4, label %do1, label %done1
+
+do1:
+  %t5 = getelementptr %zeno_list, ptr %t1, i32 0, i32 2
+  %t6 = load ptr, ptr %t5                   ; where the items are
+  %t7 = getelementptr i64, ptr %t6, i64 %t2 ; the address of item number %t2
+  %t8 = load i64, ptr %t7
+  %t9 = inttoptr i64 %t8 to ptr</code></pre>
+<p>Here GEP is used the other way: the type is <code>i64</code> and there is one
+index, so it steps over whole <code>i64</code>s. That is C's <code>&amp;items[i]</code>.</p>
+<p>The copy at the top is Zeno's rule that a loop walks the list as it was
+when the loop began, so a body that appends to it does not loop for
+ever. It is left out when nobody else can hold the list: a list literal
+or a comprehension written in the <code>for</code> itself.</p>
+<p>Nothing else ever sees that copy, so it is freed as soon as the loop is
+over. <code>done1</code> begins with <code>call void @zeno_list_drop(ptr %t1)</code>, and a
+<code>return</code> written inside the body gets the same call just before its
+<code>ret</code>. The C backend does the same (<a href="/docs/ownership/"><code>ownership.md</code></a>,
+"Two frees that every program gets").</p>
+<p>The <code>i64</code> slot is provisional (decision 5.11i). It holds on a 64-bit
+processor that hands a union to a function the way it hands an <code>i64</code>,
+which is true of x86-64 and ARM64.</p>
+<h2 id="values-that-may-be-none">Values that may be <code>none</code></h2>
+<p>There are two shapes, by what <code>T</code> is.</p>
+<p>If <code>T</code> is already a <code>ptr</code> (text, a list, an object), <code>none</code> is the
+address 0, <code>null</code>. No real value is ever there. Checking is one compare
+and nothing is stored that was not stored before.</p>
+<p>A number has no value to spare: every <code>i64</code> is a valid <code>int</code>. So
+<code>int or none</code>, <code>float or none</code> and <code>bool or none</code> are a <strong>pair</strong>, an
+<code>i1</code> that says whether there is a value, then the value. <code>largest</code> in
+the demo returns one:</p>
+<pre><code>define internal { i1, double } @z_largest(ptr %arg.shapes) {
+entry:
+  %var.best = alloca { i1, double }
+  store { i1, double } zeroinitializer, ptr %var.best</code></pre>
+<p><code>zeroinitializer</code> is "all zero bits", so the <code>i1</code> is false: <code>none</code>.</p>
+<pre><code>  %t11 = load { i1, double }, ptr %var.best
+  %t12 = extractvalue { i1, double } %t11, 0     ; is there a value?
+  %t13 = xor i1 %t12, true                       ; `best is none`
+  br i1 %t13, label %end2, label %or2
+
+or2:
+  %t14 = load { i1, double }, ptr %var.best
+  %t15 = extractvalue { i1, double } %t14, 1     ; the float inside
+  %t16 = fcmp ogt double %t10, %t15
+  br label %end2
+  ...
+then3:
+  %t18 = insertvalue { i1, double } { i1 true, double undef }, double %t10, 1
+  store { i1, double } %t18, ptr %var.best</code></pre>
+<p><code>extractvalue</code> was met at the overflow check. <code>insertvalue</code> is its
+partner: it takes a pair and gives back a new one with one half
+replaced. <code>undef</code> is "any bits will do", for the half about to be
+filled in. <code>xor</code> with <code>true</code> is how IR writes <code>not</code>.</p>
+<p>After <code>best is none or</code>, the checker knows <code>best</code> is a float on the
+right side, and it left a note saying so (<code>types.narrowed</code>). The
+emitter reads the note and takes half 1 out without testing again
+(<code>present</code>). There is one case where it does test again: a <code>var</code> that
+some other function could have set back to <code>none</code> in between. The C
+backend does the same, and the message is the same.</p>
+<p>Four functions do all of it. <code>coerce</code> makes a <code>T</code> into a <code>T or none</code>
+where one is wanted. <code>is_there</code> gives the <code>i1</code>. <code>inside</code> takes the
+value out. <code>is_none</code> compiles <code>x is none</code> (decision 5.11j).</p>
+<h2 id="helpers-written-when-they-are-first-needed">Helpers written when they are first needed</h2>
+<p><code>print(shapes[0])</code> has to turn a <code>Shape</code> into text. No instruction does
+that, so the emitter writes a function for it, the first time one is
+needed, and only then:</p>
+<pre><code>define internal ptr @zeno.show.Point(ptr %self) {
+entry:
+  %t1 = getelementptr %z_Point, ptr %self, i32 0, i32 0
+  %t2 = load double, ptr %t1
+  %t3 = call ptr @zeno_str_float(double %t2)
+  %t4 = getelementptr %z_Point, ptr %self, i32 0, i32 1
+  %t5 = load double, ptr %t4
+  %t6 = call ptr @zeno_str_float(double %t5)
+  %t7 = call ptr (i32, ...) @zeno_join(i32 5, ptr @.str.2, ptr %t3, ptr @.str.3, ptr %t6, ptr @.str.4)
+  ret ptr %t7
+}</code></pre>
+<p><code>@zeno.show.Shape</code> reads the tag and uses <code>switch</code>, the one instruction
+that jumps more than two ways, then calls <code>@zeno.show.Point</code> for the
+centre of a circle. <code>==</code> on two objects gets <code>@zeno.same.Point</code> in the
+same way, and <code>float or none</code> gets <code>@zeno.text.opt_float</code>.</p>
+<p>The emitter is in the middle of some other function when it finds it
+needs one of these. <code>side</code> handles that: it puts the function being
+written to one side, writes the helper from an empty start, and puts
+the first one back. The helper's name goes into a set before its body
+is written, so a class with a field of its own kind (a tree, a linked
+list) does not go round for ever (decision 5.11k).</p>
+<p>The runtime's list functions need the same thing from the other
+direction. <code>zeno_list_str</code> joins the items of a list, and it is C: it
+cannot know how to show a <code>Shape</code>. So it takes a function to call for
+each item, and the emitter writes a small <strong>adapter</strong> that takes the
+<code>i64</code> slot, turns it back into the real kind, and calls the helper
+(<code>@zeno.item.repr.…</code>, <code>@zeno.item.eq.…</code> for <code>in</code> and <code>==</code>).</p>
+<h2 id="errors-try-and-raise">Errors: <code>try</code> and <code>raise</code></h2>
+<p>The C backend has two ways to do errors (<a href="/docs/firmware/"><code>firmware.md</code></a>).
+The ordinary one is <code>setjmp</code> and <code>longjmp</code>: <code>try</code> marks a place, and
+<code>raise</code> jumps back to it from however deep. <code>zeno build --llvm</code> uses
+that one, and this section shows it. <code>zeno build --llvm --firmware</code>
+uses the other, where an error is a value that each caller tests. That
+is the section after this one.</p>
+<p><code>raise</code> is short:</p>
+<pre><code>then1:
+  %t3 = call ptr @zeno_str_int(i64 %arg.n)
+  %t4 = call ptr (i32, ...) @zeno_join(i32 2, ptr %t3, ptr @.str.12)
+  %t5 = call ptr @zeno_error_new(ptr @.str.10, ptr %t4, ptr null)
+  call void @zeno_raise(ptr %t5, i32 30, i32 21)
+  unreachable</code></pre>
+<p>An error value is three addresses: its kind (<code>"ValueError"</code>), its
+message, and the object when a class of the program's own was raised.</p>
+<p><code>try</code> is the larger half:</p>
+<pre><code>entry:
+  %try.size.1 = call i64 @zeno_try_size()
+  %try.1 = alloca i8, i64 %try.size.1, align 16
+  ...
+  call void @zeno_try_open(ptr %try.1)
+  %t19 = call i32 @_setjmp(ptr %try.1) returns_twice
+  %t20 = icmp eq i32 %t19, 0
+  br i1 %t20, label %try1, label %caught1
+
+try1:
+  ...                                    ; the body
+  call void @zeno_try_close(ptr %try.1)
+  br label %end1
+
+caught1:
+  %t27 = call i1 @zeno_caught(ptr @.str.10)      ; is it a ValueError?
+  br i1 %t27, label %except1.1, label %caught1.1
+
+except1.1:
+  %t28 = load ptr, ptr @zeno_raised              ; `as error`
+  ...
+  br label %end1
+
+caught1.1:
+  call void @zeno_raise_again()                  ; not ours: pass it on
+  unreachable</code></pre>
+<ul>
+<li><strong><code>_setjmp</code> returns twice.</strong> Once now, with 0, and the body runs.
+  Once more if something raises, with 1, as if the call had only just
+  come back. The words <code>returns_twice</code> tell LLVM so. Without them it
+  would optimise as if that could not happen.</li>
+<li><strong>The buffer.</strong> <code>setjmp</code> saves the processor's registers in a
+  <code>jmp_buf</code>, and how big that is differs from one C library to the
+  next. The IR must not guess. So the runtime is asked
+  (<code>zeno_try_size</code>), and the <code>alloca</code> takes that many bytes. This is
+  one of the three functions added to the runtime for LLVM. The other
+  two, <code>zeno_try_open</code> and <code>zeno_try_close</code>, put the buffer on the
+  runtime's list of open <code>try</code>s and take it off.</li>
+<li><strong>Leaving early.</strong> A <code>return</code>, <code>break</code> or <code>continue</code> inside a <code>try</code>
+  jumps out without reaching <code>zeno_try_close</code>. <code>leave_tries</code> writes the
+  close before the jump, once for every <code>try</code> being left.</li>
+</ul>
+<h3 id="why-the-slots-are-volatile">Why the slots are <code>volatile</code></h3>
+<p>There is a trap in <code>setjmp</code>, and it is the reason for one more word in
+the IR. Take this:</p>
+<pre><code class="zeno">function steps(n: int) -&gt; int {
+    var count = 0
+    var left = n
+    try {
+        while left &gt; 1 {
+            left = halve(left)
+            count = count + 1
+        }
+    } except ValueError as error {
+        print("stopped:", error.message)
+    }
+    return count
+}
+
+print(steps(64), steps(40))</code></pre>
+<p><code>steps(40)</code> halves three times (40, 20, 10, 5), then 5 is odd, and the
+answer should be 3. <code>setjmp</code> saved the registers at the top of the
+<code>try</code>. If the optimiser keeps <code>count</code> in a register through the loop,
+the jump back puts the old register back, and <code>count</code> is 0 again.</p>
+<p>C has the same trap and the same answer: a variable changed inside a
+<code>try</code> and read after it must be <code>volatile</code>, which means "really read
+and really write memory, every time". So in a function that has a
+<code>try</code>, every slot is read and written that way:</p>
+<pre><code>  %t7 = load volatile i64, ptr %var.count
+  ...
+  store volatile i64 %t9, ptr %var.count</code></pre>
+<p>and <code>mem2reg</code> leaves those slots alone. Functions with no <code>try</code> are
+not touched, so nothing else pays for it. Exercise 6 takes the word out
+by hand, and the program prints <code>6 0</code> (decision 5.11l).</p>
+<h2 id="errors-as-values-llvm-firmware">Errors as values: <code>--llvm --firmware</code></h2>
+<pre><code>cargo run -- build --llvm --firmware examples/sensor.zeno
+grep -c setjmp sensor.ll sensor_runtime.c     # 0 and 0</code></pre>
+<p>Coding standards for firmware do not allow <code>setjmp</code>
+(<a href="/docs/firmware/"><code>firmware.md</code></a> says why). So a firmware build carries
+an error the slow, plain way: as a return value. The C backend has
+done this since its firmware stage. This is the same design, written
+in IR, and the two builds must print the same thing.</p>
+<p>Take the <code>steps</code> program from just above, and build it this way.</p>
+<p><strong>A function that can raise</strong> gives back an <code>i1</code>: 1 for "it worked", 0
+for "it raised". Its real answer goes out through one more parameter,
+a pointer the caller supplies:</p>
+<pre><code>define internal zeroext i1 @z_halve(i64 %arg.n, ptr %result) {
+entry:
+  %t1 = call i64 @zeno.mod(i64 %arg.n, i64 2, i32 2, i32 8)
+  %t2 = icmp ne i64 %t1, 0
+  br i1 %t2, label %then1, label %end1
+
+then1:
+  %t3 = call ptr @zeno_str_int(i64 %arg.n)
+  %t4 = call ptr (i32, ...) @zeno_join(i32 2, ptr %t3, ptr @.str.1)
+  %t5 = call ptr @zeno_error_new(ptr @.str.2, ptr %t4, ptr null)
+  call void @zeno_note(ptr %t5, i32 3, i32 9)      ; raise: note the error...
+  ret i1 false                                     ; ...and say "it failed"
+
+end1:
+  %t6 = call i64 @zeno.floordiv(i64 %arg.n, i64 2, i32 5, i32 12)
+  store i64 %t6, ptr %result                       ; return: the answer...
+  ret i1 true                                      ; ...and "it worked"
+}</code></pre>
+<p><code>zeno_note</code> puts the error in the runtime's <code>zeno_raised</code>, with its
+line and column. Nothing jumps. <code>raise</code> is a <code>ret</code>.</p>
+<p><strong>A call to such a function</strong> is followed at once by a test:</p>
+<pre><code>do2:
+  %t3 = load i64, ptr %var.left
+  %t4 = call zeroext i1 @z_halve(i64 %t3, ptr %answer.3)
+  br i1 %t4, label %worked4, label %failed4
+
+failed4:
+  br label %except1               ; inside a `try`: go to its `except`s
+
+worked4:
+  %t5 = load i64, ptr %answer.3   ; the answer `halve` stored</code></pre>
+<p><code>%answer.3</code> is an <code>alloca</code> at the top of <code>steps</code>, one for each such
+call. Where <code>failed4</code> goes depends on where the call is, and it is the
+table from <code>firmware.md</code> again (<code>failed</code> in <code>emit_llvm.rs</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>What a failure does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inside a <code>try</code> in this function</td>
+<td><code>br label %except1</code></td>
+</tr>
+<tr>
+<td>In a function that says <code>raises</code></td>
+<td><code>ret i1 false</code></td>
+</tr>
+<tr>
+<td>At the top of the file</td>
+<td><code>call void @zeno_uncaught()</code>, which prints the error and stops</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>try</code></strong> has no <code>setjmp</code>, no buffer, no <code>zeno_try_open</code>. The body is
+just the body. Its end, and every failure inside it, arrive at one
+label:</p>
+<pre><code>done2:                                    ; the loop ended: the body is over
+  br label %except1
+
+except1:
+  %t10 = load ptr, ptr @zeno_raised
+  %t11 = icmp ne ptr %t10, null           ; did anything fail?
+  br i1 %t11, label %caught1, label %end1
+
+caught1:
+  store ptr null, ptr @zeno_raised        ; it is being dealt with
+  %t12 = call i1 @zeno_is(ptr %t10, ptr @.str.2)       ; a ValueError?
+  br i1 %t12, label %except1.1, label %caught1.1
+
+except1.1:
+  %t13 = getelementptr { ptr, ptr, ptr }, ptr %t10, i32 0, i32 1
+  %t14 = load ptr, ptr %t13                            ; error.message
+  call void (i32, ...) @zeno_print(i32 2, ptr @.str.3, ptr %t14)
+  br label %end1
+
+caught1.1:
+  store ptr %t10, ptr @zeno_raised        ; not ours: put it back
+  call void @zeno_uncaught()
+  unreachable</code></pre>
+<p><code>caught1.1</code> cannot be reached here: the body can only raise a
+<code>ValueError</code>, and there is an <code>except</code> for it. The block is written
+all the same, because a <code>br</code> needs two labels.</p>
+<p>Now look for the word <code>volatile</code>. It is gone:</p>
+<pre><code>  %t6 = load i64, ptr %var.count
+  ...
+  store i64 %t8, ptr %var.count</code></pre>
+<p><code>volatile</code> was there because a jump could put old registers back.
+Nothing jumps now, so <code>count</code> can live in a register through the whole
+loop, and <code>mem2reg</code> is free to put it there. <code>return</code>, <code>break</code> and
+<code>continue</code> inside a <code>try</code> need no <code>zeno_try_close</code> either, because
+there is nothing to close. The plain way of carrying errors is also
+the one the optimiser understands best.</p>
+<p>What it costs is a test after every call to a function that can
+raise, whether or not it raised. Exercise 16 measures both.</p>
+<p><strong>What the runtime finds for itself</strong>, such as a division by zero or
+an index past the end, stops a firmware build, as in C. The runtime
+file written beside the IR is the firmware one, where <code>zeno_fail</code>
+prints and stops. <code>int(text)</code> and <code>float(text)</code> are the two runtime
+functions a program can catch, so they follow the same pattern as
+<code>halve</code>: <code>call zeroext i1 @zeno_parse_int(ptr %t1, i32 2, i32 12, ptr
+%answer.1)</code>.</p>
+<p><strong>What it refuses</strong> is what the C firmware build refuses, in the same
+words: a <code>try</code> in which nothing can be caught, and a function that can
+raise used as a value.</p>
+<h2 id="functions-as-values">Functions as values</h2>
+<p>A function held in a variable is a <code>ptr</code> to a small <strong>block</strong>:</p>
+<pre><code>{ ptr code, ptr name, the variables it uses from outside ... }</code></pre>
+<p><code>make_counter</code> in the demo builds one:</p>
+<pre><code>define internal ptr @z_make_counter() {
+entry:
+  %t1 = call ptr @zeno_alloc(i64 ptrtoint (ptr getelementptr (i64, ptr null, i32 1) to i64))
+  store i64 0, ptr %t1                          ; `count`, in a box of its own
+  %t2 = call ptr @zeno_alloc(i64 ptrtoint (ptr getelementptr ({ ptr, ptr, ptr }, ptr null, i32 1) to i64))
+  store ptr @zeno.fn.1, ptr %t2                 ; the code
+  %t3 = getelementptr { ptr, ptr, ptr }, ptr %t2, i32 0, i32 1
+  store ptr @.str.8, ptr %t3                    ; the name: none, it was written in place
+  %t4 = getelementptr { ptr, ptr, ptr }, ptr %t2, i32 0, i32 2
+  store ptr %t1, ptr %t4                        ; where `count` is
+  ret ptr %t2
+}</code></pre>
+<p>The function written in place becomes an ordinary function with one
+more parameter in front, the block it was called through:</p>
+<pre><code>define internal i64 @zeno.fn.1(ptr %self) {
+entry:
+  %t1 = getelementptr { ptr, ptr, ptr }, ptr %self, i32 0, i32 2
+  %t2 = load ptr, ptr %t1          ; the box
+  %t3 = load i64, ptr %t2          ; count
+  ...
+  store i64 %t5, ptr %t2           ; count = count + 1</code></pre>
+<p>And a call loads the code out of the block and calls it, with the block
+as the first argument:</p>
+<pre><code>  %t34 = load ptr, ptr @z_next
+  %t35 = load ptr, ptr %t34
+  %t36 = call i64 %t35(ptr %t34)</code></pre>
+<p>Two rules decide what goes into the block (decision 5.11m):</p>
+<ul>
+<li>A <strong><code>let</code></strong> cannot change, so its value is copied in.</li>
+<li>A <strong><code>var</code></strong> can, and the function and the place it was made must see
+  the same one. Here <code>count</code> even outlives the call to <code>make_counter</code>
+  that made it. So a <code>var</code> that an inner function uses does not get an
+  <code>alloca</code>. It gets a <strong>box</strong>, eight bytes from the collector, and the
+  block holds the address of the box. The emitter looks for these
+  before it compiles a function's body (<code>Code.shared</code>).</li>
+</ul>
+<p>A named function used as a value (<code>let f = area</code>) has no block yet.
+The emitter writes a constant one, and a small wrapper that takes the
+unused <code>self</code> and calls the real function, so that every function value
+is called the same way.</p>
+<p><code>map</code>, <code>filter</code> and <code>reduce</code> are loops written in IR that call the
+function value for each item (<code>over_list</code>).</p>
+<h2 id="units-and-import-math">Units and <code>import math</code></h2>
+<p>A number with a unit is a <code>double</code>. The checker has made sure the units
+agree, and what is left for the emitter is the scale:</p>
+<pre><code class="zeno">function total(wait: s, extra: ms) -&gt; ms {
+    return wait + extra
+}</code></pre>
+<pre><code>define internal double @z_total(double %arg.wait, double %arg.extra) {
+entry:
+  %t1 = fmul double %arg.wait, 1000.0
+  %t2 = fadd double %t1, %arg.extra
+  ret double %t2
+}</code></pre>
+<p>The seconds are brought to milliseconds and added. Printing calls
+<code>zeno_str_quantity</code> with the unit's name, which is all that is left of
+the unit in the program.</p>
+<p><code>import math</code> is known to the emitter, as it is to the C backend:
+<code>math.sqrt(x)</code> is <code>call double @zeno_sqrt(double %x, i32 line, i32 col)</code>,
+where the runtime checks for a negative number, and <code>math.pi</code> is the
+constant written out. Another module is refused.</p>
+<h2 id="the-top-of-the-file">The top of the file</h2>
+<pre><code>define internal void @zeno_program() noinline { ... }
+
+define void @zeno_roots() {
+entry:
+  call void @zeno_mark_words(ptr @zeno_raised, i64 8)
+  call void @zeno_mark_words(ptr @z_name, i64 8)
+  ret void
+}
+
+define i32 @main() {
+entry:
+  %base = alloca ptr
+  store ptr %base, ptr @zeno_stack_base
+  store ptr @.str.6, ptr @zeno_file
+  call void @zeno_program()
+  ret i32 0
+}</code></pre>
+<p>The same three pieces the C backend writes, for the same reasons
+(<a href="/docs/memory/"><code>memory.md</code></a>). The statements at the top of the file
+become <code>zeno_program</code>. <code>main</code> notes where the stack begins and the
+file's name, and calls it. <code>zeno_roots</code> shows the collector each global
+that holds text. The collector finds text held by a value inside a
+function by looking through the stack, exactly as it does for C.</p>
+<p>Functions are compiled in a second step. When the walk over the top of
+the file reaches a function, it puts it aside together with a copy of
+the variables declared so far. Those are the only ones the function
+may use (decision 3.6d), and the copy is what its body is compiled
+against.</p>
+<h2 id="owned-values-a-slot-a-null-and-a-drop">Owned values: a slot, a null and a drop</h2>
+<p>An <code>owned</code> list or object has one owner, and it is freed where that
+owner ends (<a href="/docs/ownership/"><code>ownership.md</code></a>). The checker has already
+done the hard part: it knows which variables are owners, and which
+expressions give a value away. The emitter asks it two questions
+(<code>types.owner</code>, <code>types.moves</code>) and writes three small things.</p>
+<pre><code class="zeno">owned class Frame {
+    id: int
+    bytes: owned list[int]
+}
+
+function make(id: int) -&gt; Frame {
+    let bytes: owned list[int] = [id, id * 2]
+    return Frame(id, bytes)
+}
+
+function size(frame: Frame) -&gt; int {
+    return len(frame.bytes)
+}
+
+function first_big(limit: int) -&gt; int {
+    for id in range(100) {
+        let frame = make(id)
+        if frame.bytes[1] &gt; limit { return id }
+    }
+    return -1
+}
+
+let frame = make(7)
+print(size(frame))
+print(first_big(20))</code></pre>
+<p><strong>An owner is always a slot.</strong> Earlier on this page a <code>let</code> was a
+value and only a <code>var</code> was a slot. An owner is the exception. <code>bytes</code>
+is a <code>let</code>, and it still gets an <code>alloca</code>:</p>
+<pre><code>define internal ptr @z_make(i64 %arg.id) {
+entry:
+  %var.bytes = alloca ptr
+  ...
+  %t4 = call ptr (i32, ...) @zeno_list_of(i32 2, i64 %arg.id, i64 %t2)
+  store ptr %t4, ptr %var.bytes
+  %t5 = load ptr, ptr %var.bytes            ; `bytes` gives its list away:
+  store ptr null, ptr %var.bytes            ; copy it out, write null
+  %t6 = call ptr @zeno.new.Frame(i64 %arg.id, ptr %t5)
+  %t7 = load ptr, ptr %var.bytes            ; end of the function:
+  call void @zeno_list_drop(ptr %t7)        ; free whatever is still there
+  ret ptr %t6
+}</code></pre>
+<p>The reason is the second line of the pair. <strong>Giving away writes
+null</strong>, and a value in IR cannot be written to twice. Only memory can.</p>
+<p><strong>The end of a block asks each owner.</strong> <code>zeno_list_drop</code> does nothing
+when it is handed null. So the emitter does not work out which owners
+still hold something at the end of a block. It loads each one and
+calls the drop, and the pointer is the answer (<code>free_owned</code>).</p>
+<p>Here <code>%t7</code> is always null. <code>opt -O2</code> works that out: the slot goes and
+the call becomes <code>zeno_list_drop(ptr null)</code>. It cannot take the call
+away, though. <code>zeno_list_drop</code> is in the other file, so LLVM does not
+know that it does nothing for null. The C build can, because there the
+runtime is in the same file. Exercise 14 closes the gap.</p>
+<p>A parameter that takes a value over is an owner too, so it is moved
+into a slot at the top of the function and dropped at the end:</p>
+<pre><code>define internal i64 @z_size(ptr %arg.frame) {
+entry:
+  %var.frame = alloca ptr
+  store ptr %arg.frame, ptr %var.frame
+  ...
+  %t4 = load i64, ptr %t3                   ; the answer is worked out first
+  %t5 = load ptr, ptr %var.frame
+  call void @zeno.drop.Frame(ptr %t5)       ; then the frame is freed
+  ret i64 %t4
+}</code></pre>
+<p><strong>Each owned class gets a drop function</strong>, written the first time it
+is needed (<code>drop_class</code>). It frees what the fields own, then the
+object:</p>
+<pre><code>define internal void @zeno.drop.Frame(ptr %self) {
+entry:
+  %t1 = icmp eq ptr %self, null
+  br i1 %t1, label %gone1, label %there1
+
+gone1:
+  ret void
+
+there1:
+  %t2 = getelementptr %z_Frame, ptr %self, i32 0, i32 1
+  %t3 = load ptr, ptr %t2
+  call void @zeno_list_drop(ptr %t3)        ; the list the frame owns
+  call void @zeno_free(ptr %self)           ; then the frame
+  ret void
+}</code></pre>
+<p><strong>Every way out of a block is an end of that block.</strong> In <code>first_big</code>
+the <code>return</code> inside the loop leaves the body early, so it gets the
+same drop the closing <code>}</code> gets:</p>
+<pre><code>then2:
+  %t10 = load ptr, ptr %var.frame
+  call void @zeno.drop.Frame(ptr %t10)      ; `return id` leaves the body
+  ret i64 %t1
+
+end2:
+  %t11 = load ptr, ptr %var.frame
+  call void @zeno.drop.Frame(ptr %t11)      ; the `}` of the body
+  br label %next1</code></pre>
+<p><code>break</code>, <code>continue</code>, <code>raise</code> and (in a firmware build) the <code>failed</code>
+block after a call all do the same. Each one frees the scopes it is
+leaving and no more: a <code>continue</code> frees the body's owners, a <code>return</code>
+frees the function's.</p>
+<p>An assignment to an owner frees the old value, after the new one has
+been made. An owned value that nobody takes, such as <code>make(3)</code> written
+as a statement, is freed on the spot.</p>
+<p>Some values are owned by nobody for a moment: a list while a
+comprehension fills it, or an owned argument that has been worked out
+while the next argument is still to come. If something fails in that
+moment, nobody would free it. <code>hold</code> notes such a value and <code>let_go</code>
+forgets it, and whatever is noted is freed with the owners when a
+block is left early (<a href="/docs/no-collector/"><code>no-collector.md</code></a>, "A value
+between two owners").</p>
+<p>In an ordinary build an error is a jump, and the jump passes over the
+functions between the <code>raise</code> and the <code>try</code>. What they owned is left
+for the collector, as in the C build. The one trap is in the function
+that has the <code>try</code>: a slot written since <code>_setjmp</code> might come back
+with its old value. That is the <code>volatile</code> rule from the section on
+errors, and it already covers every slot of such a function, owners
+included.</p>
+<p>Build the program with <code>--llvm --memory</code> and the last number on the
+line is the blocks freed this way:</p>
+<pre><code>memory: 41 blocks made (733 bytes), at most 58 bytes in use at once, 0 collections, 39 blocks freed without the collector</code></pre>
+<p>The two that are left are the texts <code>print</code> made for its numbers.</p>
+<h2 id="with-no-collector-llvm-no-collector">With no collector: <code>--llvm --no-collector</code></h2>
+<pre><code>cargo run -- build --llvm --no-collector --memory examples/buffer.zeno
+./buffer
+grep -c zeno_collect buffer.ll buffer_runtime.c     # 0 and 0</code></pre>
+<p><a href="/docs/no-collector/"><code>no-collector.md</code></a> is the design: owned values are
+freed by their owners, text lives in a fixed room until the end of the
+statement that built it, text that is kept is a copy
+(<a href="/docs/text/"><code>text.md</code></a>), and the compiler refuses what would need
+anything more. This is that design again in IR. The runtime file
+written beside the IR is the one the C build uses, with the collector
+left out of it.</p>
+<p>Three things are missing from the top of the file: <code>zeno_roots</code>,
+<code>@zeno_stack_base</code> and the <code>%base</code> slot in <code>main</code>. They were all for
+the collector. One declaration is new:</p>
+<pre><code>@zeno_text_top = external global i64</code></pre>
+<p>That is how full the text room is. It is the whole of memory
+management for text:</p>
+<pre><code class="zeno">function halve(n: int) -&gt; int raises ValueError {
+    if n % 2 == 1 { raise ValueError(f"{n} is odd") }
+    return n // 2
+}
+
+var total = 0
+for n in range(1, 5) {
+    print(f"reading {n} of 4")
+    try {
+        total = total + halve(n)
+    } except ValueError as error {
+        print("skipped:", error.message)
+    }
+}
+print(f"total {total}")</code></pre>
+<pre><code>do1:
+  %mark.1 = load i64, ptr @zeno_text_top    ; how full is the room now?
+  %t3 = call ptr @zeno_str_int(i64 %t1)
+  %t4 = call ptr (i32, ...) @zeno_join(i32 3, ptr @.str.1, ptr %t3, ptr @.str.2)
+  call void (i32, ...) @zeno_print(i32 1, ptr %t4)
+  store i64 %mark.1, ptr @zeno_text_top     ; the statement is over: back to there</code></pre>
+<p><strong>A statement that builds text notes the mark first and puts it back
+after.</strong> Everything it built is gone in one <code>store</code>. A statement that
+builds no text gets neither line.</p>
+<p>The emitter does not know that a statement builds text until it has
+compiled it, and by then the <code>load</code> belongs several lines up. So
+<code>text_begin</code> only remembers the line it is at, and <code>text_end</code> goes
+back and inserts the <code>load</code> there if text was built. An <code>if</code>, a
+<code>while</code>, a <code>return</code> and a <code>raise</code> do the same round their own
+expression, and a comprehension does it for each item.</p>
+<p><strong>A <code>try</code> puts the mark back where failures arrive.</strong> A failure half
+way through a statement skips that statement's own <code>store</code>:</p>
+<pre><code>  %t5 = load i64, ptr @zeno_text_top        ; before the body of the `try`
+  ...
+except2:
+  store i64 %t5, ptr @zeno_text_top         ; however the body ended
+  %t12 = load ptr, ptr @zeno_raised</code></pre>
+<p><strong>An error is freed by the <code>except</code> that catches it.</strong> The error is
+one block, made by <code>zeno_error_new</code>, with a copy of its message in the
+same block. (The message is copied out of the text room, which is why
+<code>raise</code> can put the mark back.) The handler holds the error while it
+runs:</p>
+<pre><code>except2.1:
+  ...
+  call void (i32, ...) @zeno_print(i32 2, ptr @.str.4, ptr %t16)
+  ...
+  call void @zeno_error_drop(ptr %t12)      ; the handler is over
+  br label %end2</code></pre>
+<p>A <code>return</code> or a <code>continue</code> inside the handler gets the same call,
+because the error is held with <code>hold</code>, like a value between two
+owners.</p>
+<p><strong>Text that is kept is copied.</strong> The room is about to be emptied, so
+wherever text is stored (a <code>let</code>, an assignment, a field, a list
+item) the IR calls <code>zeno_text_keep</code>, which copies it into the pool
+unless it is written in the program. The slot that holds the copy is
+an owner, and the end of its block calls <code>zeno_text_drop</code>. A <code>return</code>
+of text calls <code>zeno_text_return</code>, which leaves the answer in the room
+for the caller. <a href="/docs/text/"><code>text.md</code></a>, "Through LLVM", shows the IR.
+Each value the emitter makes carries one bit for this (<code>fixed</code> in
+<code>Val</code>): text that is not fixed is in the room.</p>
+<p><strong>What a statement makes and gives to nobody is the statement's.</strong> In
+<code>print(count(line.split()))</code> the list of words has no owner. Its
+address goes into a slot of the statement's own, and the statement
+frees it when it is over:</p>
+<pre><code>  store ptr null, ptr %own.1                 ; where the statement begins
+  %t2 = call ptr @zeno_split_blanks(ptr %t1)
+  store ptr %t2, ptr %own.1
+  ...
+  %t5 = load ptr, ptr %own.1                 ; where it ends
+  call void @zeno_list_drop_text(ptr %t5)</code></pre>
+<p>The slot is an owner like any other while the statement runs, so a
+<code>ret i1 false</code> in the middle of the statement frees the list on its
+way out. It is a slot and not simply <code>%t2</code> because the list may be
+made in a block that is skipped (the right side of <code>and</code>), and a name
+from such a block cannot be used after it. The <code>store ptr null</code> line
+is written where the statement began once the statement is finished,
+as the <code>%mark</code> line is. <a href="/docs/temporaries/"><code>temporaries.md</code></a> is the
+walkthrough; <code>own_begin</code>, <code>own_end</code> and <code>belongs</code> are the code.</p>
+<p><strong>What it refuses</strong> is what the C build refuses, in the same words,
+because both call the same function for the message
+(<code>emit_c::without_collector</code>).</p>
+<h3 id="why-an-f-string-waits">Why an f-string waits</h3>
+<pre><code class="zeno">print(f"{a} then {next()}")</code></pre>
+<p>The values are worked out left to right, as always. But a number is
+not turned into text until all the values are known:</p>
+<pre><code>  %t1 = load i64, ptr @z_a
+  %t2 = call i64 @z_next()
+  %t7 = call ptr @zeno_str_int(i64 %t1)     ; only now
+  %t8 = call ptr @zeno_str_int(i64 %t2)</code></pre>
+<p>Text in the room while <code>next()</code> runs is room <code>next()</code> cannot use. If
+<code>next()</code> is the function this line is in, every level of the recursion
+would hold one text more. The C build never did that, and its numbers
+for "at most N bytes of text in use" were lower until this was done
+the same way.</p>
+<p>It is safe for a number, a bool, a quantity and text, because a later
+call cannot change the value that was read. A list or an object is
+turned into text at once: a later call could append to it, and the
+f-string has to show it as it was.</p>
+<h3 id="-memory"><code>--memory</code></h3>
+<p><code>zeno build --memory</code> makes the program print what it used when it
+ends. Through LLVM that is one line in <code>main</code> and one flag:</p>
+<pre><code>  %asked = call i32 @atexit(ptr @zeno_memory_report)</code></pre>
+<p>and <code>-DZENO_MEMORY_REPORT</code> for the runtime file, so that it counts.
+With no collector the report has a line for the pool that blocks come
+from (<a href="/docs/pool/"><code>pool.md</code></a>) and one for the text room:</p>
+<pre><code>memory: 2 blocks made (66 bytes), at most 33 bytes in use at once, no collector, 0 blocks left at the end
+pool: 72 bytes taken, in a pool of 32768
+text: at most 17 bytes in use at once, in a room of 1024</code></pre>
+<p>Those are the two errors with their messages, both freed, the one
+64-byte block of the pool that held each in turn, and the longest line
+the program ever built. The C build of the same program prints the
+same three lines, and the tests require that.</p>
+<p>The pool is in the runtime file, so the IR knows nothing of it. To
+choose its size, build by hand with <code>-DZENO_POOL=</code>, as exercise 19
+does for the text room.</p>
+<h2 id="the-tests">The tests</h2>
+<p><code>same_as_interpreter</code> in <code>emit_llvm.rs</code> runs a program on the
+interpreter and the VM (<code>vm::run_both</code>), builds it with clang, and
+requires the same output and, when it stops, the same error at the same
+line and column. The runtime is built with <code>ZENO_COLLECT_ALWAYS</code>, which
+runs the collector before every allocation.</p>
+<p>The C backend's own tests end by calling it too. So each of the 52
+programs written to test the C backend is also built through LLVM, and
+a difference between the two backends shows up as a failed test
+(decision 5.11g).</p>
+<p>Two tests compare IR with what it should be, character for character:
+one for a small function and one for a class. A change to the shape of
+the IR is noticed. One checks that everything in <code>DECLARED</code> is in the
+runtime.</p>
+<p>Every one of those programs is built a second time for firmware
+(<code>--llvm --firmware</code>) and must print the same again. A refusal has to
+say <code>--firmware</code>, as in the C backend's tests. On top of that:
+<code>a_firmware_build_has_nothing_to_jump_with</code> (no <code>setjmp</code>, <code>zeno_try</code>
+or <code>volatile</code> in the IR, and a function that cannot raise is the same
+in both kinds of build), <code>the_ir_for_a_try_in_a_firmware_build</code>,
+<code>what_a_firmware_build_refuses_says_so</code>, and
+<code>a_fault_stops_a_firmware_build_where_an_ordinary_one_catches_it</code>.
+The two long programs the C backend uses for errors as values must be
+accepted here too (<code>firmware_as_interpreter</code>).</p>
+<p>Owned values: <code>the_ir_for_an_owned_value</code> reads the IR above, and
+<code>owned_values_are_freed_without_the_collector</code> builds a program that
+makes four thousand owned blocks with <code>--memory</code> and requires that all
+of them were freed by their owners and none by the collector.</p>
+<p>With no collector the test is stricter than "prints the same". Each
+of the C backend's no-collector programs is built both ways with
+<code>--memory</code>, and the two <strong>memory reports must be the same line for
+line</strong> (<code>no_collector_as_c</code>): blocks made, bytes, the most in use at
+once, nothing left at the end, how much of the pool was taken, and
+the most text in the room. A free
+that is missing, or one that comes a statement late, changes a number.
+Each refusal is tried through LLVM too and must use the C build's
+words (<code>refuses_as_c</code>).</p>
+<p>Set <code>ZENO_VALGRIND=1</code> and the no-collector tests run each program
+under valgrind. (It was most use while blocks came from the heap,
+where it stops at a block freed twice or read after it was freed. It
+cannot see inside the pool. The pool catches a block given back twice
+by itself.)</p>
+<pre><code>ZENO_VALGRIND=1 cargo test no_collector</code></pre>
+<p>If clang is not installed the compiled half of each test is skipped.</p>
+<h2 id="how-fast">How fast</h2>
+<p>On the machine it was written on, with <code>-O2</code>, best of several runs:</p>
+<table>
+<thead>
+<tr>
+<th>Program</th>
+<th>C, gcc</th>
+<th>C, clang</th>
+<th>LLVM</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fib(38)</code></td>
+<td>0.22 s</td>
+<td>0.19 s</td>
+<td>0.19 s</td>
+</tr>
+<tr>
+<td>300 million times <code>total += i % 7</code></td>
+<td>0.29 s</td>
+<td>0.28 s</td>
+<td>0.28 s</td>
+</tr>
+<tr>
+<td>Objects, an enum with <code>match</code>, lists</td>
+<td>0.16 s</td>
+<td>0.12 s</td>
+<td>0.14 s</td>
+</tr>
+</tbody>
+</table>
+<p>The IR written here ends up as much the same machine code clang makes
+from Zeno's C. That is the point of the stage: LLVM does not need C to
+sit in between.</p>
+<p>The second row was 0.76 s when <code>%</code> was a call into the runtime. Writing
+it in IR is what brought it level.</p>
+<p>The third row is a little behind clang on the C. That program spends
+its time in <code>zeno_alloc</code> and the list functions, which are in the other
+file. In a C build they are in the same file and can be inlined.</p>
+<h2 id="what-it-does-not-do-yet">What it does not do yet</h2>
+<ul>
+<li><strong>What <code>--no-collector</code> refuses in C it refuses here</strong>: function
+  literals, enum cases that carry values, lists of <code>int or none</code>
+  (<a href="/docs/no-collector/"><code>no-collector.md</code></a>, "What is refused"). Lists of
+  objects and lists of lists are freed with their items, by functions
+  written into the IR when a program needs them (<code>drop_list</code>;
+  <a href="/docs/one-owner/"><code>one-owner.md</code></a>).</li>
+<li><strong>What the C backend also refuses</strong>: a named function, class or enum
+  declared inside a function, a default for a parameter that is not
+  a literal, a method used as a value.
+  The message says so, and <code>zeno run</code> runs all of them.</li>
+<li><strong>It needs clang</strong>, version 15 or later (the first to write every
+  pointer as <code>ptr</code>). gcc cannot read IR.</li>
+<li><strong>The runtime is not inlined</strong>, as above, and all of it is linked in:
+  a small program is about 38 KB where the C build is 18 to 22 KB.</li>
+<li><strong>64-bit processors only</strong>, and the slot of a list assumes the bytes
+  of a number are stored lowest first, which is true of every processor
+  it is likely to meet. <code>_setjmp</code> is the name on Linux and macOS.</li>
+<li><strong>No debug information.</strong> A debugger shows the program as assembly.</li>
+</ul>
+<p>One thing it does that the C backend does not: an assignment through
+any expression, such as <code>grid[0][1] = 5</code>.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/primes.zeno</code> with <code>--llvm</code> and read <code>primes.ll</code>
+   beside <code>primes.zeno</code>. Find the <code>phi</code> for <code>while not is_prime(largest)</code>.
+   There is none. Why not? Now run <code>opt -passes=mem2reg -S primes.ll</code>
+   and look at <code>z_is_prime</code>.</li>
+<li>Run <code>opt -O2 -S primes.ll</code> and list the functions that are left.
+   Where did <code>z_is_prime</code> and <code>z_count_primes</code> go? What made that
+   allowed? (Look at the word after <code>define</code>.)</li>
+<li><code>2 * 3</code> is compiled as an overflow check on two constants. LLVM
+   folds it to <code>6</code>. Do it in <code>arithmetic</code> instead, when both sides are
+   literals. What should happen for <code>9223372036854775807 + 1</code>?</li>
+<li>Build the demo and run <code>opt -O2 -S demo.ll</code>. <code>z_area</code> is gone:
+   find where it went, and find the <code>switch</code> the three tests turned
+   into. It lists two cases, not three. Where does the third go, and
+   what told LLVM that there is no fourth?</li>
+<li>Give <code>Point</code> a third field of kind <code>bool</code> and look at the size
+   <code>zeno_alloc</code> is asked for (<code>opt -O2 -S</code> folds it to a number). It is
+   not 17. Put the <code>bool</code> first instead. Does the size change? Does the
+   number in the last <code>getelementptr</code> index change?</li>
+<li>Save the <code>steps</code> program above as <code>tries.zeno</code> and build it. Then
+   take the word out and build again by hand:
+   <code>sed 's/ volatile//' tries.ll &gt; loose.ll</code>, then
+   <code>clang -O2 -Wno-override-module -o loose loose.ll tries_runtime.c -lm</code>.
+   Run both. Now build <code>loose</code> with <code>-O0</code>. Why is it right again?</li>
+<li>Run <code>opt -passes=mem2reg -S tries.ll</code> and look at <code>z_steps</code>, then at
+   <code>z_halve</code>. Which slots are still there? <code>left</code> is never read after
+   the <code>try</code>. Could it be left out of the rule? What would the emitter
+   have to know?</li>
+<li><code>math.sqrt</code> calls into the runtime. Write it in IR, as an entry in
+   <code>WRITTEN</code> next to <code>zeno.mod</code>: compare with <code>fcmp olt</code>, raise through
+   a runtime function when it is negative, otherwise call
+   <code>llvm.sqrt.f64</code>. The test <code>units_and_imports_match</code> will tell you
+   when it is right.</li>
+<li>Do the same for <code>zeno_list_at</code>: the check on the index in IR, and a
+   call to the runtime only for the error. Time a loop that reads
+   <code>items[i]</code> a hundred million times before and after.</li>
+<li><code>bool or none</code> is <code>{ i1, i1 }</code>, two bytes for three possible
+    values. Make it one <code>i8</code>: 0 for <code>none</code>, 1 for <code>false</code>, 2 for
+    <code>true</code>. Which functions have to change? (<code>coerce</code>, <code>is_there</code>,
+    <code>inside</code>, and what puts it in a list.)</li>
+<li>In <code>make_counter</code>, <code>count</code> has to be in a box. Write a function
+    where a captured <code>var</code> is never assigned after the inner function
+    is made. A copy would do there. How could the emitter tell? What
+    does the checker already know that would help?</li>
+<li>Add <code>-flto</code> to the clang line in <code>src/main.rs</code>. That lets LLVM
+    optimise across the two files. Does the third row of the table
+    change? What does it need installed?</li>
+<li>Give the IR another processor: <code>clang --target=riscv64 -O2 -S primes.ll</code>
+    writes <code>primes.s</code>. Find an overflow check in it (look for
+    <code>zeno_overflow</code>). Nothing for RISC-V had to be installed first. Why
+    not, and what would be needed to make a program that runs?</li>
+<li>Build the <code>Frame</code> program above with <code>--llvm</code> and run
+    <code>opt -O2 -S frame.ll</code>. Find <code>zeno_list_drop(ptr null)</code>: a call
+    that does nothing. The drop of a <code>Frame</code> that is null has gone,
+    because <code>zeno.drop.Frame</code> is in the IR and LLVM can read its null
+    test. Give lists the same: an entry in <code>WRITTEN</code> called
+    <code>zeno.drop.list</code> that tests for null and only then calls the
+    runtime, and use it in <code>free</code>. Run <code>opt</code> again.</li>
+<li>Build <code>examples/sensor.zeno</code> with <code>--llvm</code> and again with
+    <code>--llvm --firmware</code> (keep the first <code>sensor.ll</code> under another
+    name). Compare <code>z_read_all</code> in the two files. Which has more
+    blocks? Which has <code>volatile</code>? Then run <code>opt -passes=mem2reg -S</code> on
+    both and count the <code>alloca</code>s that are left in each.</li>
+<li>Time it. Write a loop that calls <code>halve</code> twenty million times with
+    an even number, and build it both ways. Which is faster when
+    nothing is ever raised? Now make every tenth call raise, with the
+    <code>try</code> inside the loop. Which is faster now, and why does the
+    ordinary build suffer more?</li>
+<li>A firmware build gives back an <code>i1</code> and writes the answer through
+    a pointer. The other way is to give back both together, as
+    <code>{ i1, i64 }</code>: you have already met that type, for <code>int or none</code>.
+    Change <code>function</code>, the <code>return</code> statement and <code>checked_call</code> to do
+    that, and read <code>opt -O2 -S</code> of both. Is the machine code
+    different? What would a <code>list[int]</code> answer look like?</li>
+<li>In <code>first_big</code>, write <code>break</code> in place of <code>return id</code>. Before you
+    build it, write down the IR you expect for the <code>then</code> block. Then
+    put a second owner in the function, above the loop. Does <code>break</code>
+    free it? Does <code>return</code>?</li>
+<li>Build the <code>halve</code> program above with <code>--llvm --no-collector
+    --memory</code>, then again with <code>-DZENO_TEXT_ROOM=16</code> added by hand:
+    <code>clang -O2 -Wno-override-module -DZENO_MEMORY_REPORT
+    -DZENO_TEXT_ROOM=16 -o small room.ll room_runtime.c -lm</code>. What
+    happens, and at which line of the program? What is the smallest
+    room it runs in?</li>
+<li>In <code>room.ll</code>, delete the <code>store i64 %mark.1, ptr @zeno_text_top</code>
+    that follows the first <code>zeno_print</code> in <code>zeno_program</code>, and build
+    it by hand as in 19 (without the small room). The output is the
+    same. Which number in the report changes, and by how much for each
+    trip round the loop? What would a thousand trips do? This is the
+    bug the test <code>no_collector_as_c</code> is there to catch.</li>
+<li><code>text_begin</code> goes back and inserts the <code>load</code> only when text was
+    built. The simpler way is to write the <code>load</code> and the <code>store</code> for
+    every statement. Do that, and look at <code>opt -O2 -S</code> of a function
+    that builds no text. Are they still there? Why can LLVM not remove
+    a <code>load</code> and a <code>store</code> of a global round a call?</li>
+<li>A <code>for</code> whose first line builds text, such as
+    <code>for i in range(len(str(x))) { }</code>, gives the text back before the
+    first trip. Find <code>text_given_back</code> in <code>emit_llvm.rs</code> and the two
+    places that call it. Why is it called after the list is copied
+    and not before? (Think of <code>for name in [str(x), str(y)]</code>.)</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/llvm.md">docs/llvm.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/compiler/"><span>Previous</span>How compiling to C works</a><a class="next" href="/docs/memory/"><span>Next</span>How memory is managed</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why">Why</a></li><li><a href="#ir-in-five-minutes">IR in five minutes</a></li><li><a href="#the-file">The file</a></li><li><a href="#a-let-is-a-value-a-var-is-a-slot">A let is a value, a var is a slot</a></li><li><a href="#blocks-and-jumps">Blocks and jumps</a></li><li><a href="#and-or-and-phi">and, or and phi</a></li><li><a href="#whole-numbers-that-report-overflow">Whole numbers that report overflow</a></li><li><a href="#text-printing-and-the-runtime">Text, printing and the runtime</a></li><li><a href="#one-program-for-the-rest">One program for the rest</a></li><li><a href="#objects-and-getelementptr">Objects and getelementptr</a></li><li><a href="#enums-and-match">Enums and match</a></li><li><a href="#lists">Lists</a></li><li><a href="#values-that-may-be-none">Values that may be none</a></li><li><a href="#helpers-written-when-they-are-first-needed">Helpers written when they are first needed</a></li><li><a href="#errors-try-and-raise">Errors: try and raise</a></li><li><a href="#errors-as-values-llvm-firmware">Errors as values: --llvm --firmware</a></li><li><a href="#functions-as-values">Functions as values</a></li><li><a href="#units-and-import-math">Units and import math</a></li><li><a href="#the-top-of-the-file">The top of the file</a></li><li><a href="#owned-values-a-slot-a-null-and-a-drop">Owned values: a slot, a null and a drop</a></li><li><a href="#with-no-collector-llvm-no-collector">With no collector: --llvm --no-collector</a></li><li><a href="#the-tests">The tests</a></li><li><a href="#how-fast">How fast</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

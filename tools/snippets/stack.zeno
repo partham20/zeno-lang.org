@@ -1,0 +1,28 @@
+class Stack[T] {
+    items: list[T]
+
+    function push(self, item: T) {
+        self.items.append(item)
+    }
+
+    function top(self) -> T or none {
+        if len(self.items) == 0 {
+            return none
+        }
+        return self.items[len(self.items) - 1]
+    }
+}
+
+function largest[T](items: list[T]) -> T {
+    var best = items[0]
+    for item in items {
+        if item > best {
+            best = item
+        }
+    }
+    return best
+}
+
+let bytes: Stack[u8] = Stack([])
+bytes.push(u8(72))
+print(bytes.top(), largest([3.1 V, 3.3 V, 2.9 V]), largest(["boot", "ready"]))

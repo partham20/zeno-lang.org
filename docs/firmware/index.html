@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How a firmware build handles errors · Zeno</title>
+<meta name="description" content="zeno build --firmware compiles the same Zeno program to different C. In this first version of it, one thing changes: how an error travels.">
+<meta property="og:title" content="How a firmware build handles errors · Zeno">
+<meta property="og:description" content="zeno build --firmware compiles the same Zeno program to different C. In this first version of it, one thing changes: how an error travels.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/firmware/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/firmware/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/" aria-current="page">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How a firmware build handles errors</h1>
+  <p><code>zeno build --firmware</code> compiles the same Zeno program to different C. In
+this first version of it, one thing changes: <strong>how an error travels</strong>.</p>
+<pre><code>cargo run -- build examples/sensor.zeno              # errors jump
+cargo run -- build --firmware examples/sensor.zeno   # errors are values</code></pre>
+<p>Both programs print the same thing. Open <code>sensor.c</code> after each and search
+for <code>setjmp</code>: the first has it, the second does not.</p>
+<h2 id="why-a-second-way">Why a second way</h2>
+<p>An ordinary build compiles <code>try</code> with C's <code>setjmp</code> and <code>longjmp</code>
+(<a href="/docs/compiler/"><code>compiler.md</code></a>, "Errors"). A <code>raise</code> jumps straight back to
+the <code>try</code>, out of however many functions are in between. That is cheap and
+short, and it is exactly what coding standards for safety-critical
+firmware do not allow. MISRA C:2012, Rule 21.4, bans <code>&lt;setjmp.h&gt;</code>:</p>
+<ul>
+<li>the jump skips whatever the functions in between still meant to do,</li>
+<li>a local variable changed since the <code>setjmp</code> can be left with no defined
+  value,</li>
+<li>tools that work out the deepest the stack can get, or prove that every
+  path has been tested, cannot follow a jump they cannot see.</li>
+</ul>
+<p>So firmware held to such a standard needs errors it <em>can</em> see: ordinary
+return values, tested by ordinary <code>if</code>s.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>, the part headed "Errors as values
+  (firmware)": <code>failed</code>, <code>checked_call</code> and <code>try_with_values</code>. About 150
+  lines.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: the parts between
+  <code>#ifdef ZENO_FIRMWARE</code> and <code>#endif</code>. The compiler keeps one side or the
+  other when it pastes the runtime in (<code>runtime</code> in <code>emit_c.rs</code>), so a
+  firmware build's C file does not contain the word <code>setjmp</code> at all.</li>
+</ul>
+<h2 id="a-function-that-can-raise">A function that can raise</h2>
+<pre><code class="zeno">function parse_line(line: str) -&gt; float or none raises ValueError {
+    let text = line.strip()
+    if text == "--" {
+        return none
+    }
+    let value = float(text)
+    if not -40.0 &lt;= value &lt;= 125.0 {
+        raise ValueError(f"{value} is outside what the sensor can measure")
+    }
+    return value
+}</code></pre>
+<p>In a firmware build it becomes:</p>
+<pre><code>static bool z_parse_line(const char *z_line, zeno_opt_float *zeno_result) {
+    const char *z_text = zeno_strip(z_line);
+    if ((strcmp(z_text, "--") == 0)) {
+        *zeno_result = (zeno_opt_float){false, 0.0};
+        return true;
+    }
+    double t16;
+    if (!zeno_parse_float(z_text, 19, 17, &amp;t16)) return false;
+    double z_value = t16;
+    if (!(((-40.0) &lt;= z_value) &amp;&amp; (z_value &lt;= 125.0))) {
+        zeno_note(zeno_error_new("ValueError", ...), 21, 9);
+        return false;
+    }
+    *zeno_result = (zeno_opt_float){true, z_value};
+    return true;
+}</code></pre>
+<p>Three things changed.</p>
+<ol>
+<li><strong>What it returns.</strong> <code>true</code> means it worked, <code>false</code> means it raised.
+   The real answer goes out through one more parameter, <code>zeno_result</code>.</li>
+<li><strong><code>raise</code></strong> notes the error in one variable of the runtime
+   (<code>zeno_raised</code>, with the line and column) and returns <code>false</code>.</li>
+<li><strong>A call to something that can raise</strong> (<code>float(text)</code> here) is followed
+   at once by a test. If the callee failed, so does this function. The
+   error is already noted, so there is nothing to copy.</li>
+</ol>
+<p>Which functions get this treatment? The ones that say <code>raises</code>. The
+checker already insists that they say so (strict mode, which <code>zeno build</code>
+always uses). A function that cannot raise is compiled exactly as before,
+with no tests after calls to it. In <code>sensor.c</code>, <code>in_range</code> and <code>counter</code>
+are untouched.</p>
+<h2 id="try-and-except">try and except</h2>
+<pre><code>try {
+    readings.append(parse_line(line))
+} except ValueError as err {
+    faults += 1
+    ...
+}</code></pre>
+<pre><code>{
+    zeno_opt_float t19;
+    if (!z_parse_line(z_line, &amp;t19)) goto zeno_except_2;
+    zeno_list_append(z2_readings, (zeno_slot){.p = zeno_box_float(t19)});
+}
+zeno_except_2: ;
+if (zeno_raised != NULL) {                   // did the body fail?
+    zeno_error *zeno_caught_2 = zeno_raised;
+    zeno_raised = NULL;                      // it is being dealt with
+    if (zeno_is(zeno_caught_2, "ValueError")) {
+        zeno_error *z_err = zeno_caught_2;
+        ...the except block...
+    } else {
+        zeno_raised = zeno_caught_2;         // not ours
+        zeno_uncaught();
+    }
+}</code></pre>
+<p>Inside a <code>try</code>, a failed call does not return <code>false</code>. It goes forward to
+the <code>except</code> blocks of that <code>try</code>. This is the one use of <code>goto</code> in the
+generated C, and it only ever goes <strong>forward, to a label in a block around
+it</strong>. That is the form MISRA's required rules (15.2, 15.3) allow, though
+its advisory Rule 15.1 would rather there were no <code>goto</code> at all.</p>
+<p>After the label, the body either finished (<code>zeno_raised</code> is still <code>NULL</code>,
+and the whole <code>if</code> is skipped) or failed. Each <code>except</code> is one arm of an
+<code>if</code>. The last <code>else</code> is for an error no <code>except</code> here wants. What goes
+there depends on where the <code>try</code> is, and it is the same choice as for any
+failed call (<code>failed</code> in <code>emit_c.rs</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>What a failure does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inside a <code>try</code> in this function</td>
+<td><code>goto</code> its <code>except</code> blocks</td>
+</tr>
+<tr>
+<td>In a function that says <code>raises</code></td>
+<td><code>return false;</code></td>
+</tr>
+<tr>
+<td>At the top of the file</td>
+<td><code>zeno_uncaught();</code> which prints the error and stops</td>
+</tr>
+</tbody>
+</table>
+<p>In the example, every kind the body can raise has an <code>except</code>, so the last
+<code>else</code> cannot happen. It is written anyway: the C compiler cannot know
+that, and Rule 15.7 wants every <code>else if</code> chain to end in an <code>else</code>.</p>
+<p>Because nothing is skipped, the awkward parts of the jumping version are
+gone. <code>return</code>, <code>break</code> and <code>continue</code> inside a <code>try</code> need no care, and no
+variable has to be <code>volatile</code>.</p>
+<p>It also means a failure passes every line where something could be freed.
+If the block that fails holds owned values, the failure frees them first:
+<code>{ zeno_drop_Frame(z_frame); return false; }</code>.
+<a href="/docs/ownership/"><code>docs/ownership.md</code></a> has the details.</p>
+<h2 id="errors-that-stop-the-program-instead">Errors that stop the program instead</h2>
+<p>Zeno has two sorts of error that can be caught under <code>zeno run</code>:</p>
+<ul>
+<li>ones <strong>the program raises itself</strong>: <code>raise ValueError(...)</code>, raising an
+  object, and <code>int(text)</code> / <code>float(text)</code> on text that is not a number.
+  A function that can let one out must say so with <code>raises</code>.</li>
+<li>ones <strong>the runtime finds</strong>: a division by zero, an index past the end,
+  an int that overflows, <code>pop</code> on an empty list. These can happen on
+  almost any line, so no function has to declare them.</li>
+</ul>
+<p>A firmware build carries the first sort as values, as shown above. The
+second sort it treats as a <strong>fault</strong>: the program stops with the same
+message <code>zeno run</code> gives for an uncaught error, and no <code>except</code> sees it.</p>
+<p>The reason is cost. To carry a division by zero as a value, every
+function would have to be one that can fail, and nearly every line would
+need a test after it. The firmware answer is to test first:</p>
+<pre><code class="zeno">if divisor != 0 {
+    rate = total // divisor
+}</code></pre>
+<p>(On a real board a fault would call the board's fault handler. Today it
+prints and exits, as on a PC.)</p>
+<p>The compiler does not leave you to find this out when the board resets:</p>
+<pre class="out"><code>error: nothing in this `try` can be caught. In a firmware build, an error
+the program raises itself (and `int` or `float` of text) travels as a value
+and can be caught. A division by zero, a bad index or an overflow stops the
+program. Test for it before it happens, or build without `--firmware`</code></pre>
+<p>That is what <code>try { print(1 // n) } except ZeroDivisionError { ... }</code> gets
+in a firmware build. An <code>except</code> that names a built-in kind which nothing
+in the body raises as a value is refused the same way.</p>
+<p>One case is not refused. <code>except</code> with no kind (or <code>except Error</code>) around
+a body that <em>does</em> raise something as a value is accepted, and catches
+those. A fault in the same body still stops the program. This is the one
+place where a firmware build and an ordinary build of the same source can
+behave differently, and there is a test in <code>emit_c.rs</code> that pins it down.</p>
+<h2 id="what-a-firmware-build-does-not-accept-yet">What a firmware build does not accept yet</h2>
+<ul>
+<li><strong>A function that can raise, used as a value.</strong> <code>texts.map(parse)</code> where
+  <code>parse</code> says <code>raises</code>. A firmware build calls a function that can raise
+  differently from one that cannot, and the type <code>function(str) -&gt; int</code>
+  does not say which it is. Until function types can say <code>raises</code>, only
+  functions that cannot raise may be passed around. Call the others by
+  name.</li>
+</ul>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<p>Removing <code>setjmp</code> removes one obstacle to MISRA, not all of them. The C a
+firmware build writes today still:</p>
+<ul>
+<li>takes memory from the heap (<code>malloc</code> is banned by Rule 21.3).
+  <code>zeno build --no-collector</code> answers this one: it leaves the garbage
+  collector out, frees every block at a known line, and takes its
+  blocks from a fixed pool in place of the heap
+  (<a href="/docs/no-collector/"><code>no-collector.md</code></a>, <a href="/docs/pool/"><code>pool.md</code></a>),</li>
+<li>uses variable argument lists in the runtime (<code>zeno_print</code>, <code>zeno_join</code>:
+  Rule 17.1),</li>
+<li>uses <code>printf</code> and <code>exit</code> (Rules 21.6 and 21.8),</li>
+<li>uses GCC and Clang builtins for checked arithmetic (a language
+  extension, Rule 1.2),</li>
+<li>uses the forward <code>goto</code> described above (advisory Rule 15.1).</li>
+</ul>
+<p>None of these is hidden. Each is a later piece of work, and
+<code>decisions.md</code> 5.5l keeps the list.</p>
+<h2 id="the-same-through-llvm">The same, through LLVM</h2>
+<p><code>zeno build --llvm --firmware</code> writes the same design in LLVM IR in
+place of C: a function that can raise gives back an <code>i1</code> and puts its
+answer where a pointer says, each call is followed by a <code>br</code> on what
+came back, and a <code>try</code> is a label that failures branch to. The runtime
+file beside the IR is the firmware one, so neither file contains
+<code>setjmp</code>. It refuses what this build refuses, in the same words.
+<a href="/docs/llvm/"><code>llvm.md</code></a>, "Errors as values", walks through the IR.</p>
+<p><code>--no-collector</code> goes with <code>--llvm</code> too: <a href="/docs/llvm/"><code>llvm.md</code></a>, "With no
+collector".</p>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<p>Every test that compares a compiled program with <code>zeno run</code> now builds it
+<strong>twice</strong>, once each way, and both must agree with the interpreter. A
+program the firmware build refuses on purpose must be refused with a
+message that says <code>--firmware</code>; any other failure fails the test. Two
+larger programs written for this stage exercise errors through methods,
+loops, nested <code>try</code> blocks, conditions, recursion and function values, and
+one test checks that the C of a firmware build contains no <code>setjmp</code>.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/sensor.zeno</code> both ways and compare <code>read_all</code> in the two
+   C files side by side. Which version is longer? Which could you step
+   through in a debugger more easily?</li>
+<li>In the firmware <code>sensor.c</code>, follow one damaged line from <code>zeno_note</code> in
+   <code>parse_line</code> to the <code>except</code> in <code>read_all</code>. Count the tests it passes.</li>
+<li>Write a function that divides, and catch <code>ZeroDivisionError</code> around a
+   call to it. Read the error from <code>zeno build --firmware</code>, then rewrite
+   the function to test first.</li>
+<li>Add a second <code>except</code> to a <code>try</code>, for a kind the body does not raise.
+   When is it refused, and when is it let through? Find the line in
+   <code>try_with_values</code> that decides.</li>
+<li>Time a loop that calls a function that can raise ten million times,
+   built both ways. Then put the <code>try</code> inside the loop and time again.
+   Which build wins each time, and why?</li>
+<li>Let function types say <code>raises</code> (<code>function(str) -&gt; int raises
+   ValueError</code>). The parser, the checker's <code>Callable</code>, <code>FunctionKind</code> and
+   <code>invoke</code> in <code>emit_c.rs</code> all need to learn it. Then <code>texts.map(parse)</code>
+   can compile in a firmware build.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/firmware.md">docs/firmware.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/one-owner/"><span>Previous</span>One owner</a><a class="next" href="/docs/board/"><span>Next</span>How the board and the clock work</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why-a-second-way">Why a second way</a></li><li><a href="#the-files">The files</a></li><li><a href="#a-function-that-can-raise">A function that can raise</a></li><li><a href="#try-and-except">try and except</a></li><li><a href="#errors-that-stop-the-program-instead">Errors that stop the program instead</a></li><li><a href="#what-a-firmware-build-does-not-accept-yet">What a firmware build does not accept yet</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#the-same-through-llvm">The same, through LLVM</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

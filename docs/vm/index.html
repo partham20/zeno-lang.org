@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the bytecode VM works · Zeno</title>
+<meta name="description" content="zeno run has a second engine. With --vm it does not walk the syntax tree. It compiles the program to bytecode, a flat list of small instructions, and runs that.">
+<meta property="og:title" content="How the bytecode VM works · Zeno">
+<meta property="og:description" content="zeno run has a second engine. With --vm it does not walk the syntax tree. It compiles the program to bytecode, a flat list of small instructions, and runs that.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/vm/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/vm/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/" aria-current="page">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How the bytecode VM works</h1>
+  <p><code>zeno run</code> has a second engine. With <code>--vm</code> it does not walk the syntax
+tree. It compiles the program to <strong>bytecode</strong>, a flat list of small
+instructions, and runs that.</p>
+<pre><code>cargo run -- run --vm examples/shapes.zeno     # same output as without --vm
+cargo run -- bytecode examples/hello.zeno      # see the bytecode itself</code></pre>
+<pre><code>== main() ==
+0000    2  Const        0          ; &lt;function print&gt;
+0001    |  Const        1          ; "Hello, Zeno!"
+0002    |  Call         1
+0003    |  Pop          1
+0004    |  Const        2          ; none
+0005    |  Return</code></pre>
+<p>The program does exactly what it did before. That is the rule the whole
+stage is built around, and most of the tests are there to hold it.</p>
+<h2 id="why">Why</h2>
+<p>The interpreter (<a href="/docs/interpreter/"><code>interpreter.md</code></a>) answers the same
+questions again every time a line runs. To read <code>count</code> it looks the name
+up in a hash table, and if it is not there, in the table of the block
+outside, and so on. To run <code>a + b * 2</code> it follows three pointers into the
+tree before it has added anything.</p>
+<p>None of those answers change while the program runs. A compiler can work
+them out once, and leave behind only the work that has to happen: get
+slot 0, get slot 1, multiply, add. That is what bytecode is.</p>
+<p>It is also how most languages you have used run: Python, Java, C#, Lua,
+Ruby and the JavaScript engines all compile to a bytecode of their own
+first. This is the smallest honest version of that.</p>
+<p>A VM is not what puts Zeno on a microcontroller. <code>zeno build</code> does that,
+which is why it came first (decision 5.5a).</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/bytecode.rs"><code>src/bytecode.rs</code></a>: the instructions (<code>Op</code>), what a
+  compiled function holds (<code>Proto</code>), and the printer behind
+  <code>zeno bytecode</code>. Start here. Every instruction has a comment.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_bytecode.rs"><code>src/emit_bytecode.rs</code></a>: the compiler, from
+  the syntax tree to bytecode. It is <code>emit_c.rs</code>'s smaller sibling.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/vm.rs"><code>src/vm.rs</code></a>: the machine that runs it. <code>execute</code> is the
+  loop.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/ops.rs"><code>src/ops.rs</code></a>: what each step <em>does</em>: <code>+</code>, <code>&lt;</code>, reading
+  a field, lining arguments up with parameters. The interpreter and the
+  VM both call it.</li>
+</ul>
+<h2 id="a-stack-and-instructions-that-push-and-pop">A stack, and instructions that push and pop</h2>
+<p>The VM keeps one row of values, the <strong>stack</strong>. Every instruction does
+something small to the end of it. Take this program:</p>
+<pre><code class="zeno">let a = 2
+let b = 3
+print(a + b * 2)</code></pre>
+<pre><code>0000    1  Const        0          ; 2
+0001    2  Const        1          ; 3
+0002    3  Const        2          ; &lt;function print&gt;
+0003    |  GetLocal     0          ; a
+0004    |  GetLocal     1          ; b
+0005    |  Const        0          ; 2
+0006    |  Binary       *
+0007    |  Binary       +
+0008    |  Call         1
+0009    |  Pop          1</code></pre>
+<p>The first column is the instruction's number, the second the line of the
+program it came from. Follow the stack down the listing:</p>
+<table>
+<thead>
+<tr>
+<th>After</th>
+<th>The stack</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>0000</code></td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td><code>0001</code></td>
+<td><code>2  3</code></td>
+</tr>
+<tr>
+<td><code>0002</code></td>
+<td><code>2  3  print</code></td>
+</tr>
+<tr>
+<td><code>0003</code></td>
+<td><code>2  3  print  2</code></td>
+</tr>
+<tr>
+<td><code>0004</code></td>
+<td><code>2  3  print  2  3</code></td>
+</tr>
+<tr>
+<td><code>0005</code></td>
+<td><code>2  3  print  2  3  2</code></td>
+</tr>
+<tr>
+<td><code>0006</code></td>
+<td><code>2  3  print  2  6</code></td>
+</tr>
+<tr>
+<td><code>0007</code></td>
+<td><code>2  3  print  8</code></td>
+</tr>
+<tr>
+<td><code>0008</code></td>
+<td><code>2  3  none</code> (and <code>8</code> is on the screen)</td>
+</tr>
+<tr>
+<td><code>0009</code></td>
+<td><code>2  3</code></td>
+</tr>
+</tbody>
+</table>
+<p>Three things to see here.</p>
+<p><strong>The tree is gone, and the order it stood for is still there.</strong> <code>*</code> comes
+before <code>+</code> in the listing because the parser put it deeper in the tree,
+and the compiler writes the inner parts first. The whole of that, in
+<code>emit_bytecode.rs</code>:</p>
+<pre><code>ExprKind::Binary { op, left, right } =&gt; {
+    self.expr(left);
+    self.expr(right);
+    self.emit(Op::Binary(*op), span);
+}</code></pre>
+<p>Code for the left side, code for the right side, then one instruction.
+Whatever the two sides are, each leaves exactly one value on the stack,
+and <code>Binary</code> takes two and leaves one. Every expression keeps that
+promise, which is why they can be nested without thinking.</p>
+<p><strong>A variable is a place on the stack.</strong> <code>let a = 2</code> did not store anything
+anywhere. It pushed <code>2</code> and the compiler made a note: <code>a</code> is slot 0. From
+then on <code>a</code> is <code>GetLocal 0</code>. No name is looked up while the program runs.</p>
+<p><strong>Constants are kept beside the code.</strong> <code>Const 0</code> means "push constant
+number 0 of this function". An instruction only ever holds small numbers.</p>
+<h2 id="the-compiler-counts">The compiler counts</h2>
+<p>To know that <code>b</code> is slot 1, the compiler has to know how tall the stack is
+at every instruction. It keeps a count (<code>height</code>), and <code>emit</code> updates it
+for each instruction written: <code>Const</code> is one more, <code>Binary</code> is one fewer,
+<code>Call 1</code> takes two and leaves one.</p>
+<p>A block's variables are dropped when the block ends. The compiler notes
+the height at the <code>{</code>, and at the <code>}</code> writes a <code>Pop</code> for the difference
+(<code>open</code> and <code>close</code>).</p>
+<p>When this count is wrong by one, every variable declared afterwards is
+read from its neighbour's slot. That is the commonest bug in a stack VM,
+and the first of the new tests is built to catch it.</p>
+<h2 id="jumps">Jumps</h2>
+<p>There is no <code>if</code> or <code>while</code> in bytecode. There is "carry on from
+instruction n".</p>
+<pre><code class="zeno">var n = 3
+while n &gt; 0 {
+    n -= 1
+}</code></pre>
+<pre><code>0000    1  Const        0          ; 3
+0001    2  GetLocal     0          ; n
+0002    |  Const        1          ; 0
+0003    |  Binary       &gt;
+0004    |  JumpIfFalse  11
+0005    3  Const        2          ; 1
+0006    |  GetLocal     0          ; n
+0007    |  Swap
+0008    |  Binary       -
+0009    |  SetLocal     0          ; n
+0010    2  Jump         1
+0011    |  Const        3          ; none</code></pre>
+<p><code>JumpIfFalse 11</code> leaves the loop, <code>Jump 1</code> goes round again. When the
+compiler writes the <code>JumpIfFalse</code> it does not know yet where the loop
+ends. It writes <code>JumpIfFalse 0</code>, remembers where, and fills the number in
+when it gets there (<code>patch</code>).</p>
+<p><code>break</code> is a jump to the end of the loop, <code>continue</code> a jump to the top.
+Either can be deep inside other blocks, with their variables on the
+stack, so each is preceded by <code>PopTo</code>: drop everything above the height
+the loop started at.</p>
+<p>(<code>n -= 1</code> works out the <code>1</code> before it reads <code>n</code>, because that is the order
+the interpreter does it in. Hence the <code>Swap</code>.)</p>
+<p><code>for</code> keeps two values on the stack that the program cannot see: a copy
+of the list, and how far along it is. <code>ForNext</code> pushes the next item or
+jumps out.</p>
+<h2 id="calls-and-frames">Calls and frames</h2>
+<pre><code class="zeno">function double(n) {
+    return n * 2
+}
+print(double(21))</code></pre>
+<pre><code>== main() ==
+0000    1  Closure      0          ; double
+0001    4  Const        0          ; &lt;function print&gt;
+0002    |  GetLocal     0          ; double
+0003    |  Const        1          ; 21
+0004    |  Call         1
+0005    |  Call         1
+...
+
+== double(n) ==
+0000    1  Required     0 0        ; "`double` needs a value for `n`"
+0001    |  Enter
+0002    2  GetLocal     0          ; n
+0003    |  Const        1          ; 2
+0004    |  Binary       *
+0005    |  Return</code></pre>
+<p>Each function is compiled to a list of its own. At <code>0004</code> the stack is</p>
+<pre><code>double  print  double  21</code></pre>
+<p><code>Call 1</code> means: the top value is one argument, and under it is the thing
+to call. The VM does not copy the argument anywhere. It starts a new
+<strong>frame</strong>, which says "this function's slot 0 is <em>there</em>", pointing at the
+<code>21</code>. Inside <code>double</code>, <code>GetLocal 0</code> reads it. That is the reason
+parameters are the first slots.</p>
+<p>A frame (<code>Frame</code> in <code>vm.rs</code>) is what the VM remembers about one function
+that is running: which function, which instruction it is at, and where
+its stretch of the stack begins. <code>Return</code> takes the result, removes the
+frame and everything it had on the stack, and pushes the result where
+the call was. The caller's frame is now on top again, and carries on
+from the instruction after its <code>Call</code>.</p>
+<p>So a Zeno call does not use the Rust stack at all. In the interpreter a
+call is a Rust function calling itself, and deep recursion needs a deep
+Rust stack. Here it is one more item in a list.</p>
+<p>The first instructions of a function settle its parameters. <code>Required</code>
+complains if the caller left one out. A parameter with a default gets
+<code>Default n m</code>: if the caller gave it, jump over the code that works the
+default out. Then <code>Enter</code> counts the call, for the limit of 1000 nested
+calls that both engines share.</p>
+<p>Calls with named arguments, methods, classes and built-ins all go through
+<code>invoke</code> in <code>vm.rs</code>. A class is called like a function whose parameters
+are its fields: the compiler writes a small function for each class that
+fills in the defaults and ends with <code>Object</code>.</p>
+<h2 id="variables-that-outlive-their-function">Variables that outlive their function</h2>
+<pre><code class="zeno">function counter() {
+    var count = 0
+    return function() {
+        count += 1
+        return count
+    }
+}</code></pre>
+<p><code>count</code> cannot live in a slot. The slot is gone when <code>counter</code> returns,
+and the inner function goes on using <code>count</code> after that.</p>
+<pre><code>== counter() ==
+   cells: count
+0001    2  NewCell      0          ; count
+0002    |  Const        0          ; 0
+0003    |  DefineCell   0          ; count
+0004    3  Closure      0          ; function
+0005    |  Return
+
+== function() ==
+   captures: count
+0001    4  Const        0          ; 1
+0002    |  GetCaptured  0          ; count
+0003    |  Swap
+0004    |  Binary       +
+0005    |  SetCaptured  0          ; count
+0006    5  GetCaptured  0          ; count
+0007    |  Return</code></pre>
+<p>So <code>count</code> lives in a <strong>cell</strong>: a box of its own, off the stack, that is
+kept for as long as anything points at it. <code>Closure</code> makes the function
+value, and at that moment hands it the cells it uses. The function's code
+plus those cells is a <strong>closure</strong>. Call <code>counter</code> twice and you get two
+closures with the same code and a cell each.</p>
+<p>How does the compiler know <code>count</code> needs a cell? Before compiling a
+function it collects every name used by the functions written inside it
+(<code>shared_names</code>). A variable with one of those names gets a cell. That is
+cruder than it could be, since it goes by name alone, and it is never
+wrong.</p>
+<p>At the top level, every function another function calls is in a cell for
+the same reason. There are no global variables in the VM. The program is
+a function called <code>main</code>, and what looks like a global is a variable of
+<code>main</code> that other functions captured.</p>
+<p><code>NewCell</code> runs at the top of the block, each time the block is entered.
+That is what gives every trip round a loop its own variables:</p>
+<pre><code class="zeno">for i in range(3) {
+    makers.append(function() { return i })     # three functions, three cells
+}</code></pre>
+<h2 id="functions-above-where-they-are-written">Functions above where they are written</h2>
+<p>A function can be called from above the line it is written on (decision
+3.4). So at the top of each block the compiler writes a <code>Closure</code> for
+every function in it, before anything else (<code>hoist</code>).</p>
+<p>It does not compile the function's <em>body</em> there. It does that when it
+reaches the line the function is written on. At that point the compiler's
+own table of variables holds exactly what is declared above that line,
+which is exactly what the function is allowed to see (decision 3.6d).
+Until then the function has a number and no code, which is fine, because
+nothing runs until the whole program is compiled.</p>
+<h2 id="match">match</h2>
+<p>A pattern like <code>Pair(Rect(w, 2.0), Rect(_, h))</code> is a series of tests, and
+any of them can fail after some have passed and put values on the stack
+(<code>w</code> here). So every test in one <code>case</code> jumps to the same place when it
+fails, and the first instruction there is <code>PopTo</code>, which drops whatever
+that attempt left behind. Then the next <code>case</code> starts clean.</p>
+<h2 id="errors">Errors</h2>
+<pre><code class="zeno">try {
+    print(1 // 0)
+} except ZeroDivisionError as e {
+    print("caught:", e.message)
+}</code></pre>
+<pre><code>0000    1  Try          9
+0001    2  Const        0          ; &lt;function print&gt;
+0002    |  Const        1          ; 1
+0003    |  Const        2          ; 0
+0004    |  Binary       //
+0005    |  Call         1
+0006    |  Pop          1
+0007    1  EndTry
+0008    |  Jump         22
+0009    |  Except       3 21       ; "ZeroDivisionError"
+0010    |  GetLocal     0          ; the error
+0011    |  Unwrap
+0012    4  Const        0          ; &lt;function print&gt;
+...
+0021    |  Reraise</code></pre>
+<p><code>Try 9</code> adds a <strong>handler</strong> to a list: "if an error is raised, go to
+instruction 9". It also notes how tall the stack is and how many frames
+there are. <code>EndTry</code> removes it again.</p>
+<p>When <code>Binary //</code> raises, the VM takes the newest handler, cuts the stack
+and the frames back to what the handler noted, pushes the error and jumps
+(<code>catch</code> in <code>vm.rs</code>). If the error came from five calls deep, those five
+frames are simply dropped. Nothing has to be passed back up through them
+one at a time.</p>
+<p>Each <code>except</code> is a test on the error's kind. <code>Except</code> jumps to the next
+one if it does not fit, and after the last one <code>Reraise</code> sends the error
+on its way to the next handler out.</p>
+<p>A bug in the program (<code>"abc" - 1</code>) is not an error that can be caught. It
+ends the loop and the program.</p>
+<h2 id="a-built-in-that-calls-back">A built-in that calls back</h2>
+<p><code>[1, 2, 3].map(double)</code> is Rust code that has to call a Zeno function.
+The loop is already running, further down the Rust stack, in the middle
+of the <code>Call</code> that called <code>map</code>. So <code>map</code> starts a second loop
+(<code>Machine::call</code> in <code>vm.rs</code>), which runs until <code>double</code> returns and then
+hands the result back.</p>
+<p>This is the one place a Zeno call does use the Rust stack. An error
+raised inside <code>double</code> with no handler there comes back out through <code>map</code>
+as a Rust <code>Err</code>, and the outer loop catches it as usual.</p>
+<h2 id="a-mistake-the-compiler-can-see">A mistake the compiler can see</h2>
+<pre><code class="zeno">print("before")
+print(missing)</code></pre>
+<pre><code>0004    2  Const        0          ; &lt;function print&gt;
+0005    |  Fatal        2          ; "`missing` is not defined"</code></pre>
+<p>The compiler knows <code>missing</code> does not exist. It does not stop. It writes
+a <code>Fatal</code> instruction where the name would have been read, so the program
+prints <code>before</code> and then stops with the message, as it does in the
+interpreter. Finding mistakes before the program runs is the checker's
+job, and <code>zeno run --vm</code> runs the checker first like <code>zeno run</code> does. The
+bytecode compiler's only job is to mean the same thing as the tree.</p>
+<h2 id="one-meaning-two-engines">One meaning, two engines</h2>
+<p><code>Binary +</code> in <code>vm.rs</code> is three lines:</p>
+<pre><code>Op::Binary(op) =&gt; {
+    let right = pop!();
+    let left = pop!();
+    self.stack.push(ops::binary(op, left, right, span)?);
+}</code></pre>
+<p><code>ops::binary</code> is the function the interpreter calls for <code>a + b</code>. The same
+goes for fields, items, units, <code>raise</code>, <code>except</code>, argument binding and
+every built-in. Before this stage that code was inside the interpreter.
+It moved to <code>ops.rs</code> so that neither engine owns it.</p>
+<p>The values are shared too (<code>Value</code> in <code>value.rs</code>). A function value is
+the one thing that differs: in the interpreter it carries the scope it
+was defined in, in the VM its code and its cells (<code>Home</code>).</p>
+<p>The VM turned up one place where the interpreter itself was wrong. A
+function with a name could see a variable declared <em>below</em> it in the same
+block, which the checker did not expect. The VM got it right by
+construction, the two disagreed, and the interpreter was fixed. That is
+decision 3.6d.</p>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<p>Every test that runs a program now runs it on both engines (<code>run_both</code> in
+<code>vm.rs</code>) and requires three things to be equal: what was printed, and if
+the program stopped, the message and the line and column it points at.
+That covers every program in the interpreter's tests and the C
+compiler's, and every file in <code>examples/</code>.</p>
+<p>Fourteen new tests aim at what a VM can get wrong and a tree-walker
+cannot:</p>
+<ul>
+<li><code>break</code> and <code>continue</code> from inside nested blocks, a <code>match</code> and a <code>try</code>,
+  two hundred times round;</li>
+<li>variables shared between functions, one set per trip round a loop;</li>
+<li>a pattern that fails after binding half its names;</li>
+<li>an error that crosses several frames, and one that crosses <code>map</code>;</li>
+<li>nine hundred nested calls abandoned by an error, fifty times, which
+  must not count toward the limit afterwards;</li>
+<li>ten mistakes the compiler sees early, each of which must still let the
+  lines above it run.</li>
+</ul>
+<h2 id="what-it-does-not-do">What it does not do</h2>
+<ul>
+<li><strong>It is not fast for a VM.</strong> On this machine, in a release build,
+  <code>fib(27)</code> takes 0.26 s in the interpreter and 0.09 s in the VM, and a
+  loop of two million additions 0.70 s and 0.39 s. Three times and twice.
+  A tuned VM would be ten times quicker again. Values are the
+  interpreter's 32-byte <code>Value</code>, every <code>+</code> goes through the general
+  <code>ops::binary</code>, and a method call makes a small object for the method
+  first. Each was left alone because it keeps one meaning in one place.</li>
+<li><strong>It does not optimise.</strong> <code>2 * 3</code> is compiled as two constants and a
+  multiply. <code>Pop 1</code> twice in a row stays two instructions.</li>
+<li><strong>The bytecode is not bytes.</strong> An <code>Op</code> is a Rust enum, 12 bytes wide.
+  It cannot be saved to a file and run later (decision 5.10c).</li>
+<li><strong>It is not the default.</strong> <code>zeno run</code> without <code>--vm</code> still uses the
+  interpreter, which is the simpler statement of what Zeno means
+  (decision 5.10g).</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Run <code>zeno bytecode</code> on <code>examples/primes.zeno</code> and follow one trip
+   round the inner loop on paper, writing the stack after each
+   instruction.</li>
+<li>Compile <code>print(2 * 3 + 4)</code>. The answer is known before the program
+   runs. In <code>expr</code>, when both sides of a <code>Binary</code> are number constants,
+   work it out with <code>ops::binary</code> and emit one <code>Const</code>. What should
+   happen for <code>1 // 0</code>?</li>
+<li><code>x += 1</code> compiles to <code>Const, GetLocal, Swap, Binary, SetLocal</code>. When
+   the value is a constant like <code>1</code>, nothing can tell which side was
+   read first. Compile that case as <code>GetLocal, Const, Binary, SetLocal</code>
+   and drop the <code>Swap</code>. Why is it not safe for <code>x += f()</code>?</li>
+<li>Add an instruction <code>AddInt(n)</code> for "add the small number n to the
+   top", and use it for <code>i + 1</code>. Time <code>fib(27)</code> before and after. Where
+   must it give up and call <code>ops::binary</code>?</li>
+<li><code>items.append(x)</code> makes a <code>Value::Method</code> and then calls it. Add
+   <code>CallMethod(name, count)</code>, which looks at the receiver and calls
+   <code>builtins::call_method</code> or the class's method directly. <code>invoke</code> has
+   most of what you need.</li>
+<li>Print the stack after every instruction when an environment variable
+   is set (<code>ZENO_TRACE=1</code>). It is ten lines in <code>execute</code>, and it is how
+   every VM gets debugged.</li>
+<li>The compiler puts a variable in a cell if any inner function mentions
+   its <em>name</em>. Make it exact: only the variable that the inner function's
+   name actually resolves to. <code>resolve_in</code> already finds it. The hard
+   part is that the variable was given its place before the inner
+   function was compiled.</li>
+<li><code>function outer() { print(inner())</code> / <code>let x = 5</code> /
+   <code>function inner() { return x } }</code> is refused by <code>zeno check</code>, because
+   <code>inner</code> is used above the <code>x</code> it needs (decision 3.6d). Skip the
+   checker by writing the program in a test that calls <code>vm::run_both</code>,
+   and find the instruction in <code>zeno bytecode</code> that stops it. How does
+   the VM know the cell is still empty?</li>
+<li>The big one: make the bytecode bytes. Give each <code>Op</code> a one-byte
+   number, write operands after it, and make <code>execute</code> read from a
+   <code>Vec&lt;u8&gt;</code>. Then write the constants and the code to a file, and add
+   <code>zeno run program.zbc</code>.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/vm.md">docs/vm.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/interpreter/"><span>Previous</span>How the interpreter works</a><a class="next" href="/docs/compiler/"><span>Next</span>How compiling to C works</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why">Why</a></li><li><a href="#the-files">The files</a></li><li><a href="#a-stack-and-instructions-that-push-and-pop">A stack, and instructions that push and pop</a></li><li><a href="#the-compiler-counts">The compiler counts</a></li><li><a href="#jumps">Jumps</a></li><li><a href="#calls-and-frames">Calls and frames</a></li><li><a href="#variables-that-outlive-their-function">Variables that outlive their function</a></li><li><a href="#functions-above-where-they-are-written">Functions above where they are written</a></li><li><a href="#match">match</a></li><li><a href="#errors">Errors</a></li><li><a href="#a-built-in-that-calls-back">A built-in that calls back</a></li><li><a href="#a-mistake-the-compiler-can-see">A mistake the compiler can see</a></li><li><a href="#one-meaning-two-engines">One meaning, two engines</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

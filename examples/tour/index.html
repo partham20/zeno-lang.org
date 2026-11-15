@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tour.zeno · Zeno</title>
+<meta name="description" content="A sketch of what Zeno might look like. Nothing here is final. A Zeno example, with its output.">
+<meta property="og:title" content="tour.zeno · Zeno">
+<meta property="og:description" content="A sketch of what Zeno might look like. Nothing here is final. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/tour/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/tour/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">A sketch of what Zeno might look like. Nothing here is final</h1>
+  <p class="lede small">The whole of <code>examples/tour.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <figure class="window"><figcaption><span class="file">tour.zeno</span></figcaption><pre><code class="zeno"># tour.zeno: a sketch of what Zeno might look like. Nothing here is final.
+#
+# Two rules:
+#   1. Words over symbols. Keywords are whole words you can read aloud.
+#   2. Punctuation has to earn its place. Braces mark blocks, and that's
+#      about it: no semicolons, no colons after if/for, no brackets around conditions.
+
+
+from math import sqrt
+
+
+# --- Variables: say once whether a value can change ---
+
+let name = "Zeno"                      # let: set once, never changes
+var count = 3                          # var: can change later
+count = count + 1                      # plain = updates an existing variable
+let ports: list[int] = [80, 443, 8080] # write the type only when you want to
+
+const PI = 3.14159                     # const: fixed when the program is built
+
+
+# --- Functions ---
+
+function greet(who: str, excited: bool = false) -&gt; str {
+    if excited {
+        return f"Hello, {who}!"
+    }
+    return f"Hello, {who}."
+}
+
+
+# --- Classes: fields at the top, methods below ---
+
+class Point {
+    x: float
+    y: float
+
+    function distance_to(self, other: Point) -&gt; float {
+        return sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
+    }
+}
+
+let origin = Point(0.0, 0.0)
+let here = Point(x=3.0, y=4.0)
+
+
+# --- Enums that carry data, and match to take them apart ---
+
+enum Shape {
+    Circle(radius: float)
+    Rect(width: float, height: float)
+}
+
+function area(shape: Shape) -&gt; float {
+    match shape {
+        case Circle(r) { return PI * r * r }
+        case Rect(w, h) { return w * h }
+    }
+    # Forget a case and the compiler tells you, before the program ever runs.
+}
+
+
+# --- Errors: try / except / raise, but checked ---
+
+function parse_port(text: str) -&gt; int raises ValueError {
+    let port = int(text)               # int() may raise ValueError; it passes up
+    if not 1 &lt;= port &lt;= 65535 {        # comparisons chain, as in maths
+        raise ValueError("port out of range")
+    }
+    return port
+}
+
+try {
+    let port = parse_port("8080")
+    print(f"listening on {port}")
+} except ValueError as err {
+    print(f"error: {err}")
+}
+# Under the hood a `try` remembers one place to jump back to. There are no
+# unwinding tables as in C++, so it is cheap enough for a microcontroller.
+
+
+# --- No surprise none ---
+
+function find_user(id: int) -&gt; str or none {
+    if id == 1 {
+        return "partha"
+    }
+    return none
+}
+
+let user = find_user(2)
+if user is not none {
+    print(user.upper())                # allowed only inside this check
+}
+
+
+# --- Loops ---
+
+for shape in [Circle(1.0), Rect(2.0, 3.0)] {
+    print(f"area = {area(shape):.2f}")
+}
+
+var tries = 0
+while tries &lt; 3 and ports[tries] != 8080 {
+    tries += 1
+}
+
+let squares = [n * n for n in range(10) if n % 2 == 0]
+print(greet(name, excited=true), count, squares, origin.distance_to(here))
+
+
+# --- Functions are values, and units are types ---
+
+function twice(f: function(int) -&gt; int, x: int) -&gt; int {
+    return f(f(x))
+}
+
+function describe(delay: ms) -&gt; str {    # only a quantity in ms is accepted
+    return f"waiting {delay}"
+}
+
+print(twice(function(n) { return n * 3 }, 2), describe(500 ms))</code></pre><div class="out-label">zeno run examples/tour.zeno</div><pre class="out"><code>listening on 8080
+area = 3.14
+area = 6.00
+Hello, Zeno! 4 [0, 4, 16, 36, 64] 5.0
+18 waiting 500 ms</code></pre></figure>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/tour.zeno">examples/tour.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/hello/"><span>Previous</span>hello.zeno</a><a class="next" href="/examples/styles/"><span>Next</span>styles.zeno</a></nav>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

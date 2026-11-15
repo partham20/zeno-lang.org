@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Text that is kept · Zeno</title>
+<meta name="description" content="A build with no collector used to refuse this line:">
+<meta property="og:title" content="Text that is kept · Zeno">
+<meta property="og:description" content="A build with no collector used to refuse this line:">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/text/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/text/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/" aria-current="page">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>Text that is kept</h1>
+  <p>A build with no collector used to refuse this line:</p>
+<pre><code class="zeno">let line = f"channel {channel}"</code></pre>
+<p>Text built while the program runs lived for one statement and was gone.
+It could be printed, and that was all. Now it can be kept: in a variable,
+in a field, in a list. A function can return it and a function can be
+given it.</p>
+<pre><code>cargo run -- build --no-collector --memory examples/labels.zeno
+./labels</code></pre>
+<pre><code>ch3 (channel 3, 0 notes)
+probe ground (channel 3, 2 notes)
+["was ch3", "was ground"]
+started ch1 started ch1 renamed twice
+renamed twice
+probe ground at 95
+100 probe ground at 99 probe ground at 99
+an even total
+memory: 22 blocks made (495 bytes), at most 346 bytes in use at once, no collector, 0 blocks left at the end
+pool: 616 bytes taken, in a pool of 32768
+text: at most 72 bytes in use at once, in a room of 1024</code></pre>
+<p>Every line of <a href="/examples/labels/"><code>examples/labels.zeno</code></a> that
+keeps text was refused before this stage. The report still ends with
+<strong>0 blocks left</strong>.</p>
+<p>This page follows on from <a href="/docs/no-collector/"><code>no-collector.md</code></a> and
+<a href="/docs/pool/"><code>pool.md</code></a>. It is the first of five steps that take the rules
+of that build from "refuse what has no owner" to "whoever receives a
+value owns it".</p>
+<h2 id="the-idea-text-is-never-changed-so-keep-a-copy">The idea: text is never changed, so keep a copy</h2>
+<p>A list can be changed after it is made, so two names for one list can
+tell that they share it: one appends, the other sees it. That is why an
+owned list is <em>moved</em> when it is given away, and why the checker has
+rules about it (<a href="/docs/ownership/"><code>ownership.md</code></a>).</p>
+<p>Text cannot be changed after it is made. <code>name.upper()</code> makes new text
+and leaves <code>name</code> alone. So nobody can tell a copy of text from the
+original, by any program you can write. That gives a rule with nothing
+to learn:</p>
+<blockquote>
+<p><strong>Whatever keeps text has its own copy, and frees it when it is done.</strong></p>
+</blockquote>
+<p>No moves, no borrows, no new errors. <code>let a = b</code> leaves both usable. A
+program means exactly what it means under <code>zeno run</code>, and the checker
+is not changed by one line. The price is the copying, and "What it
+costs" below counts it.</p>
+<p>This is only for builds with no collector. Where there is a collector,
+text is shared as it always was, and none of the functions on this page
+are in the program.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: the comment "Text that is kept"
+  and the seven functions after it, then <code>zeno_list_drop_text</code> and
+  <code>zeno_list_copy_text</code>, and <code>zeno_error_of</code>.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>: the part headed "Kept text"
+  (<code>keep</code> and <code>lend</code>), <code>free_code</code>, and the places that call them.
+  Search for <code>is_text</code>.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_llvm.rs"><code>src/emit_llvm.rs</code></a>: the same part under the
+  same heading, and <code>arm</code> for <code>match</code>.</li>
+</ul>
+<h2 id="three-places-text-can-be">Three places text can be</h2>
+<table>
+<thead>
+<tr>
+<th>Where</th>
+<th>What is there</th>
+<th>How long it lasts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Written in the program</td>
+<td><code>"ground"</code>, <code>"probe "</code></td>
+<td>for ever</td>
+</tr>
+<tr>
+<td>The text room</td>
+<td>text the running statement built, and a function's answer</td>
+<td>until that statement is over</td>
+</tr>
+<tr>
+<td>The pool</td>
+<td>a kept copy</td>
+<td>until whatever keeps it is done</td>
+</tr>
+</tbody>
+</table>
+<p>The runtime tells them apart <strong>by address</strong>. The room and the pool are
+two arrays, so one subtraction says whether a pointer is inside one:</p>
+<pre><code>static bool zeno_in_pool(const char *text) {
+    return (uintptr_t)text - (uintptr_t)zeno_pool.bytes &lt; (uintptr_t)ZENO_POOL;
+}</code></pre>
+<p>(If <code>text</code> is below the array the subtraction wraps round to a huge
+number, so one comparison checks both ends.) Text that is in neither
+array was written in the program.</p>
+<p>So a <code>str</code> needs no flag beside it saying who owns it. That keeps a
+<code>str</code> one pointer, which is what C code that reads it expects.</p>
+<h2 id="keep-drop-lend-return">Keep, drop, lend, return</h2>
+<p>Four small functions do the work. Each starts by asking where the text
+is.</p>
+<p><strong>Keep</strong> is called wherever text is stored: a <code>let</code> or <code>var</code>, an
+assignment, a field, a list item, <code>append</code>.</p>
+<pre><code>static const char *zeno_text_keep(const char *text) {
+    if (text == NULL || !(zeno_in_pool(text) || zeno_in_room(text))) return text;
+    size_t size = strlen(text) + 1;
+    char *kept = zeno_alloc(size);
+    memcpy(kept, text, size);
+    return kept;
+}</code></pre>
+<p>Text written in the program is kept as it is: it will always be there.
+Anything else is copied into the pool. <code>NULL</code> is <code>none</code>, for a
+<code>str or none</code>.</p>
+<p><strong>Drop</strong> is called when the keeper is done: its block ends, or it is
+given other text.</p>
+<pre><code>static void zeno_text_drop(const char *text) {
+    if (text != NULL &amp;&amp; zeno_in_pool(text)) zeno_free((void *)text);
+}</code></pre>
+<p>Here are both, in <code>note</code> from the example:</p>
+<pre><code class="zeno">var last = "started " + label_for(1)
+
+function note(what: str) -&gt; str {
+    let before = last
+    last = what
+    return before
+}</code></pre>
+<pre><code>static const char *z_note(const char *z_what) {
+    size_t m18 = zeno_text_top;
+    const char *z_before = zeno_text_keep(z_last);
+    zeno_text_top = m18;
+    const char *t14 = zeno_text_keep(z_what);
+    zeno_text_drop(z_last);
+    z_last = t14;
+    size_t m19 = zeno_text_top;
+    const char *t15 = zeno_text_return(m19, z_before);
+    zeno_text_drop(z_before);
+    return t15;
+}</code></pre>
+<p><code>last = what</code> is three lines, and their order matters: the new copy is
+made <em>first</em>, then the old text is freed, then the variable is set. With
+the first two the other way round, <code>line = line + "*"</code> would free the
+text it was about to read (exercise 1).</p>
+<p>A parameter (<code>what</code>) is never dropped. It is the caller's text, lent
+for the length of the call.</p>
+<p><strong>Return.</strong> <code>before</code> is about to be freed, and the caller wants its
+text. So a function's answer travels in the text room:</p>
+<pre><code>static const char *zeno_text_return(size_t mark, const char *text) {
+    bool above = text != NULL &amp;&amp; zeno_in_room(text) &amp;&amp; (size_t)(text - zeno_text_room) &gt;= mark;
+    if (text == NULL || !(above || zeno_in_pool(text))) {
+        zeno_text_top = mark;
+        return text;
+    }
+    size_t size = strlen(text) + 1;
+    zeno_text_top = mark;
+    char *answer = zeno_alloc_text(size);
+    memmove(answer, text, size);
+    return answer;
+}</code></pre>
+<p><code>mark</code> is where the top of the room was when the <code>return</code> began. The
+answer is moved down to <code>mark</code> and the top is left just above it:</p>
+<pre><code>before the return        |caller's text|
+while it is worked out   |caller's text|scraps|scraps|the answer|
+after zeno_text_return   |caller's text|the answer|
+                                       ^mark      ^top</code></pre>
+<p>The caller's statement noted the top before it called, and puts it back
+when it ends, which gives the answer back with everything else. So the
+room is still a stack, and a function that returns text leaves exactly
+its answer on it. <code>memmove</code> and not <code>memcpy</code>, because the answer may
+overlap the place it is moved to.</p>
+<p>Text written in the program is returned as it is. So is the caller's
+own text, lower in the room (<code>function echo(t: str) -&gt; str { return t }</code>).</p>
+<p><strong>Lend</strong> is the subtle one. Read this line from the example again:</p>
+<pre><code class="zeno">print(last, note("renamed twice"), last)</code></pre>
+<p><code>last</code> is read, then <code>note</code> frees the text <code>last</code> held and gives it
+other text, then <code>print</code> uses what was read. Without care, <code>print</code>
+would be handed freed memory. So a read from a place that <strong>a function
+could change</strong> lends the statement a copy, in the text room:</p>
+<pre><code>const char *t2 = zeno_text_lend(z_last);
+const char *t3 = z_note("renamed twice");
+zeno_print(3, t2, t3, zeno_text_lend(z_last));</code></pre>
+<pre><code>started ch1 started ch1 renamed twice</code></pre>
+<p>Which reads are lent:</p>
+<table>
+<thead>
+<tr>
+<th>Read</th>
+<th>Lent?</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A <code>var</code> at the top of the file</td>
+<td>yes</td>
+<td>any function can assign to it</td>
+</tr>
+<tr>
+<td>A field, <code>channel.label</code></td>
+<td>yes</td>
+<td>a method can assign to it</td>
+</tr>
+<tr>
+<td>A list item, <code>names[0]</code></td>
+<td>yes</td>
+<td>whoever has the list can replace it</td>
+</tr>
+<tr>
+<td>A local variable, a parameter</td>
+<td>no</td>
+<td>no other function can reach it</td>
+</tr>
+<tr>
+<td>A <code>let</code> at the top of the file</td>
+<td>no</td>
+<td>it never changes</td>
+</tr>
+</tbody>
+</table>
+<p>Lending text written in the program copies nothing.</p>
+<p><strong>The short cut.</strong> When text is read and stored at once, nothing can
+happen in between, so it is copied straight from where it is kept:
+<code>let before = last</code> above is one <code>zeno_text_keep(z_last)</code>, with no
+<code>zeno_text_lend</code> inside it.</p>
+<h2 id="objects-and-lists">Objects and lists</h2>
+<p>An object has its own copies of the text in its fields. The function
+that makes one keeps them, and the function that ends one drops them:</p>
+<pre><code>static z_Channel *zeno_new_Channel(int64_t z_id, const char *z_label, zeno_list *z_notes) {
+    z_Channel *self = (z_Channel *)zeno_alloc(sizeof(z_Channel));
+    self-&gt;z_id = z_id;
+    self-&gt;z_label = zeno_text_keep(z_label);
+    self-&gt;z_notes = z_notes;
+    return self;
+}
+
+static void zeno_drop_Channel(z_Channel *self) {
+    if (self == NULL) return;
+    zeno_text_drop(self-&gt;z_label);
+    zeno_list_drop_text(self-&gt;z_notes);
+    zeno_free(self);
+}</code></pre>
+<p>A list of text has its own copies of its items. <code>zeno_list_drop_text</code>
+drops each item and then the list. Three things follow from that:</p>
+<ul>
+<li><code>names[0] = text</code> drops what was there before it stores.</li>
+<li><code>names.pop()</code> gives the statement the text and frees the list's copy
+  (<code>zeno_text_take</code>: lend, then drop).</li>
+<li>A <code>for</code> loop walks a copy of the list (decision 3.10a). For a list of
+  text the copy has <strong>copies of the items</strong> too
+  (<code>zeno_list_copy_text</code>), so this loop prints the list as it was:</li>
+</ul>
+<pre><code class="zeno">for name in names {
+    names[1] = name + "?"
+    print(name)
+}</code></pre>
+<h2 id="errors-that-carry-text">Errors that carry text</h2>
+<p><code>raise TooHot(channel.label, reading)</code> makes an object with text in it,
+and an error to carry it. The <code>except</code> that catches the error frees it
+(<code>no-collector.md</code>, "Errors"), and now it must free the label as well.
+The error did not know how: to the runtime an object is a <code>void *</code>. So
+the error is told which function ends its object:</p>
+<pre><code>z_TooHot *t13 = zeno_new_TooHot(zeno_text_lend(z2_channel-&gt;z_label), z2_reading);
+zeno_note(zeno_error_of("TooHot", zeno_show_TooHot(t13), t13, zeno_drop_any_TooHot), 35, 23);</code></pre>
+<p><code>zeno_error_drop</code> calls that function. Inside the <code>except</code>,
+<code>hot.label</code> is a field like any other, so <code>hottest = f"{hot.label} at
+{hot.reading}"</code> keeps a copy that outlives the error.</p>
+<h2 id="match-and-for"><code>match</code> and <code>for</code></h2>
+<p>Both were refused when their first line built text, because the text
+would have had to last for the whole statement. Now each gives it back
+at the earliest moment it is no longer needed.</p>
+<p>A <code>for</code> has its numbers or its list in hand before the first trip, so
+the text goes back there. A <code>match</code> needs it until a case is chosen:</p>
+<pre><code class="zeno">match label_for(total % 2) {
+    case "ground" { print("an even total") }
+    case other { print("an odd total, so", other) }
+}</code></pre>
+<pre><code>size_t m13 = zeno_text_top;
+const char *t9 = z_label_for(zeno_mod(z_total, 2, 70, 17));
+if ((strcmp(t9, "ground") == 0)) {
+    zeno_text_top = m13;
+    zeno_print(1, "an even total");
+} else {
+    const char *z_other = zeno_text_keep(t9);
+    zeno_text_top = m13;
+    zeno_print(2, "an odd total, so", z_other);
+    zeno_text_drop(z_other);
+}</code></pre>
+<p>A name the pattern gives (<code>other</code>) keeps a copy, taken before the room
+is given back, and drops it when its case ends.</p>
+<h2 id="what-it-costs">What it costs</h2>
+<p>Nothing here is free, and for firmware you should know the price.</p>
+<ul>
+<li><strong>A keep is a <code>strlen</code>, a block from the pool and a <code>memcpy</code>.</strong> For
+  text written in the program it is two comparisons and nothing else.</li>
+<li><strong>A kept text takes a pool block.</strong> Blocks come in sizes of 16, 32,
+  64 bytes and so on, with 8 bytes in front (<a href="/docs/pool/"><code>pool.md</code></a>). So
+  <code>"ch3"</code> kept costs 24 bytes of pool, and a 40-character line costs 72.</li>
+<li><strong>Text that comes back from a function and is kept is copied twice</strong>:
+  into the room by the <code>return</code>, into the pool by the <code>let</code>.</li>
+<li><strong>Reading a field or a list item of kept text copies it into the
+  room</strong>, unless it is stored at once. <code>len(channel.label)</code> copies the
+  label to count it.</li>
+<li><strong>Nothing is shared.</strong> Ten variables holding the same built line hold
+  ten copies.</li>
+</ul>
+<p>What you get for it: every one of those costs happens at a line you can
+point to, takes a time that depends only on the length of that text,
+and is given back at another line you can point to. The example makes
+22 blocks, 495 bytes in all, and never holds more than 346.</p>
+<p>If a loop keeps text on every trip, each trip gives its copy back, so
+the pool does not grow: a test runs such a loop 50 times and 5000 times
+and requires the same pool for both.</p>
+<h2 id="through-llvm">Through LLVM</h2>
+<p><code>zeno build --llvm --no-collector</code> does the same, with the same runtime.
+A variable that keeps text is a slot, and the end of its block frees
+what the slot holds:</p>
+<pre><code>define internal ptr @z_note(ptr %arg.what) {
+entry:
+  %var.before = alloca ptr
+  %mark.1 = load i64, ptr @zeno_text_top
+  %t1 = load ptr, ptr @z_last
+  %t3 = call ptr @zeno_text_keep(ptr %t1)
+  store ptr %t3, ptr %var.before
+  store i64 %mark.1, ptr @zeno_text_top
+  %t4 = call ptr @zeno_text_keep(ptr %arg.what)
+  %t5 = load ptr, ptr @z_last
+  call void @zeno_text_drop(ptr %t5)
+  store ptr %t4, ptr @z_last
+  %mark.2 = load i64, ptr @zeno_text_top
+  %t6 = load ptr, ptr %var.before
+  %t7 = call ptr @zeno_text_return(i64 %mark.2, ptr %t6)
+  %t8 = load ptr, ptr %var.before
+  call void @zeno_text_drop(ptr %t8)
+  ret ptr %t7
+}</code></pre>
+<p>There is no <code>%t2</code>. It was the <code>zeno_text_lend</code> for reading <code>last</code>, and
+when the very next thing was to keep the text, the compiler took the
+line out again. That is the short cut from above, done the way IR has
+to do it: an instruction is written when the value is read, so the
+decision that it was not needed comes afterwards.</p>
+<p>A function that ends an object is already <code>void (ptr)</code>, which is what
+an error wants, so there is no <code>zeno_drop_any_TooHot</code> in the IR:</p>
+<pre><code>%t7 = call ptr @zeno_error_of(ptr @.str.5, ptr %t6, ptr %t5, ptr @zeno.drop.TooHot)</code></pre>
+<p>The two builds print the same and write the same memory report for
+every test program, as before.</p>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li><strong>A statement that shows a list and builds other text may fill the
+  room to different heights in the C build and the LLVM build</strong>, by a
+  few bytes. C does not say in which order the arguments of a call are
+  worked out, and showing a list uses the room for a moment while it
+  works. What is printed is the same. The test programs keep the two
+  apart. This is on the list for the audit of the language.</li>
+<li><strong>A lend copies even when nothing is called afterwards.</strong>
+  <code>print(channel.label)</code> copies the label into the room and prints the
+  copy. The compiler could see that no function runs in between. It
+  does not look yet.</li>
+<li><strong>The room must hold a function's answer.</strong> A function that returns
+  2000 characters needs a room of 2000, for the moment between the
+  <code>return</code> and the <code>let</code>.</li>
+<li><strong>Lists made by <code>split</code>, <code>map</code>, <code>filter</code> and <code>+</code>, and <code>for ch in
+  text</code></strong>, were still refused when this page was written. They are the
+  next step, and it is done: <a href="/docs/temporaries/"><code>temporaries.md</code></a>.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li>Four programs in <code>emit_c.rs</code> go through <code>no_collector_as_interpreter</code>
+  (<code>no-collector.md</code>, "How it is tested"): the lines that used to be
+  refused, every early way out with text in hand, text inside objects
+  and lists, and the example. Each must print what <code>zeno run</code> prints,
+  end with 0 blocks left, and write the same report through LLVM.</li>
+<li><code>with_no_collector_kept_text_does_not_fill_the_pool_over_time</code> is the
+  50 and 5000 trips.</li>
+<li><code>the_three_places_text_can_be</code> drives the runtime's functions from C.</li>
+<li><code>the_c_for_kept_text</code> and <code>the_ir_for_kept_text</code> compare what the two
+  compilers write with what this page shows.</li>
+</ul>
+<p>While this was built, each trial program was also run with freed pool
+blocks and given-back room overwritten with <code>#</code> and <code>~</code>, so that any
+text read too late would print as rubbish. None did. Exercise 6 of
+<code>pool.md</code> builds the pool half of that check into the runtime.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Write a function that builds a line of stars in a loop, with
+   <code>var line = f"{count}:"</code> and <code>line = line + "*"</code>, and print
+   <code>stars(5)</code>. Build it with <code>--no-collector --memory</code> and find the
+   three lines for the assignment in the C. Swap the first two by hand,
+   compile the C yourself with <code>-DZENO_MEMORY_REPORT</code>, and run it. It
+   prints <code>*</code>. Where did <code>5:****</code> go? (When a block is given back, the
+   pool writes a pointer over its first 8 bytes.)</li>
+<li>Build <code>examples/labels.zeno</code> the same way. In <code>labels.c</code>, take the
+   <code>zeno_text_lend</code> off <code>t2</code> in the lines for
+   <code>print(last, note("renamed twice"), last)</code>, so that it reads
+   <code>const char *t2 = z_last;</code>. The first thing on that line of output
+   is now empty. Explain it with the hint from exercise 1. Why would
+   the program have printed the right thing, by luck, if <code>last</code> had
+   started as <code>"nothing yet"</code>?</li>
+<li><code>"ch3"</code> kept costs 24 bytes of pool. Change <code>label_for</code> to return
+   <code>f"channel number {id}"</code> and work out the new "pool: ... bytes
+   taken" before you run it.</li>
+<li><code>print(channel.label)</code> lends the label although nothing is called
+   after the read. In <code>emit_c.rs</code>, <code>sequence</code> already knows whether a
+   later part of the statement calls a function (<code>calls</code> on <code>Val</code>).
+   Use it to lend only when one does. Which of the tests' reports
+   change, and do the two backends still agree?</li>
+<li>A function's answer that is kept is copied twice. Write
+   <code>zeno_text_keep_answer(mark, text)</code> that copies straight to the pool
+   and puts the room's top back at <code>mark</code>. Where would the compiler
+   call it? What must be true of the statement for that to be safe?</li>
+<li>Text that is the same could be shared with a count of how many hold
+   it, in the 8 bytes in front of the block. What would <code>keep</code>, <code>drop</code>
+   and <code>lend</code> become? Which of them would no longer copy? What is the
+   new cost, and what could now go wrong that cannot today?</li>
+<li>Why is a parameter never dropped? Write a function that assigns to
+   one of its own parameters and see what the checker says. What would
+   the compiler have to do if that were allowed?</li>
+<li><code>zeno_in_pool</code> uses one comparison for both ends of the array.
+   Convince yourself it is right for an address below the array, inside
+   it, and above it. Then look up what the C standard says about
+   subtracting pointers into different arrays, and say why the function
+   casts to <code>uintptr_t</code> first.</li>
+<li><code>for name in names</code> copies every item of a list of text before the
+   first trip. For a list of 100 lines that is 100 blocks. When is the
+   copy needed? Could the checker tell the compiler that the body never
+   changes the list?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/text.md">docs/text.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/pool/"><span>Previous</span>The memory pool</a><a class="next" href="/docs/temporaries/"><span>Next</span>What a statement owns</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-idea-text-is-never-changed-so-keep-a-copy">The idea: text is never changed, so keep a copy</a></li><li><a href="#the-files">The files</a></li><li><a href="#three-places-text-can-be">Three places text can be</a></li><li><a href="#keep-drop-lend-return">Keep, drop, lend, return</a></li><li><a href="#objects-and-lists">Objects and lists</a></li><li><a href="#errors-that-carry-text">Errors that carry text</a></li><li><a href="#match-and-for">match and for</a></li><li><a href="#what-it-costs">What it costs</a></li><li><a href="#through-llvm">Through LLVM</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

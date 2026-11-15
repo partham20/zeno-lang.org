@@ -1,0 +1,14 @@
+from math import sqrt
+
+class Point {
+    x: float
+    y: float
+
+    function distance_to(self, other: Point) -> float {
+        return sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)
+    }
+}
+
+let origin = Point(0.0, 0.0)
+let here = Point(x=3.0, y=4.0)
+print(here, origin.distance_to(here))

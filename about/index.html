@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · Zeno</title>
+<meta name="description" content="Zeno is a programming language built from scratch by a firmware engineer, to learn by building.">
+<meta property="og:title" content="About · Zeno">
+<meta property="og:description" content="Zeno is a programming language built from scratch by a firmware engineer, to learn by building.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/about/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/about/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/" aria-current="page">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow prose about">
+<p class="eyebrow">About</p>
+<h1>A language built to learn from</h1>
+<p class="lede">Zeno is a programming language built from scratch by Partha, a firmware engineer, to learn how languages work by making one. It takes what he likes from C, C++, Python, JavaScript, Java and Rust, and leaves out what gets in the way.</p>
+<h2>The rule above the rules</h2>
+<blockquote><p>The entire language must be unambiguous and intuitive.</p></blockquote>
+<p>In practice that means one obvious way to write each thing, no syntax that can be read two ways, no surprising behaviour behind your back, keywords that are plain words, and error messages that say what to write instead. Every feature is checked against it, and the reasoning is written down in the <a href="/decisions/">design decisions</a>.</p>
+<h2>Why firmware first</h2>
+<p>Most new languages start on a laptop and reach a microcontroller late, if ever. Zeno went the other way: the same source builds with no garbage collector, no heap and no <code>setjmp</code>, memory comes from one pool of a size you choose, and a <code>u8</code> really is one byte. If a language is clear enough for firmware, it is clear enough for a script.</p>
+<h2>The name</h2>
+<p>Zeno of Elea argued that Achilles can never catch a tortoise: before he reaches it he must cover half the distance, then half of what is left, forever. The quantum Zeno effect says a system watched closely enough never changes. Both suit a compiler that will always be almost finished. The bar at the top of every page closes half the distance that is left as you scroll, and never arrives.</p>
+<h2>Status</h2>
+<p>Zeno is young. It runs programs, checks them, and compiles them to C and to LLVM, but the syntax can still change and there is no standard library yet. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
+<h2>The code</h2>
+<p>The compiler is plain Rust with no dependencies, about 31,000 lines with its C runtime, in <a href="https://github.com/partham20/zeno-lang">partham20/zeno-lang</a>. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

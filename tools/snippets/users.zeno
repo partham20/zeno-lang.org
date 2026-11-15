@@ -1,0 +1,13 @@
+function find_user(id: int) -> str or none {
+    if id == 1 {
+        return "partha"
+    }
+    return none
+}
+
+let user = find_user(1)
+print(user.upper())              # not allowed: it might be none
+
+if user is not none {
+    print(user.upper())          # allowed inside this check
+}

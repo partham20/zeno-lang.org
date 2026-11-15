@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Owned values: memory freed at a line you can point to · Zeno</title>
+<meta name="description" content="Until this stage, every list and object in a compiled Zeno program was shared. let b = a makes a second name for the same list, and a garbage collector frees the list some time after the last name is gone (memory.md).">
+<meta property="og:title" content="Owned values: memory freed at a line you can point to · Zeno">
+<meta property="og:description" content="Until this stage, every list and object in a compiled Zeno program was shared. let b = a makes a second name for the same list, and a garbage collector frees the list some time after the last name is gone (memory.md).">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/ownership/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/ownership/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/" aria-current="page">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>Owned values: memory freed at a line you can point to</h1>
+  <p>Until this stage, every list and object in a compiled Zeno program was
+<strong>shared</strong>. <code>let b = a</code> makes a second name for the same list, and a garbage
+collector frees the list some time after the last name is gone
+(<a href="/docs/memory/"><code>memory.md</code></a>).</p>
+<p>That is easy to write, and for most code it is the right trade. It has two
+costs. The collector pauses the program when it runs, and memory comes back
+at no particular moment. A buffer filled a thousand times a second inside a
+control loop wants neither.</p>
+<p>So a value can now be marked <strong>owned</strong>. An owned value has exactly one
+owner, and is freed the moment its owner's block ends:</p>
+<pre><code>cargo run -- run examples/buffer.zeno
+cargo run -- build --memory examples/buffer.zeno &amp;&amp; ./buffer</code></pre>
+<pre><code>...
+memory: 1806 blocks made (2646705 bytes), at most 15870 bytes in use at once, 0 collections, 1625 blocks freed without the collector</code></pre>
+<p>That program makes 2.6 megabytes of buffers, never holds more than 16
+kilobytes, and the collector never runs.</p>
+<p>Shared values are still the default. Nothing changes for a program that
+does not say <code>owned</code>.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/checker.rs"><code>src/checker.rs</code></a>, the section headed "Owned
+  values": <code>read</code>, <code>take</code>, <code>look</code> and <code>leave_loop</code>. This is where the
+  rules live.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>, the section headed "Owned values":
+  <code>frees</code>, <code>free_owned</code> and <code>end_of_block</code>, and a few lines each in <code>let</code>,
+  <code>return</code>, <code>break</code>, <code>raise</code> and assignment.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: <code>zeno_free</code> and <code>zeno_list_drop</code>,
+  about 25 lines.</li>
+<li><a href="/examples/buffer/"><code>examples/buffer.zeno</code></a>: the tour.</li>
+</ul>
+<p><code>zeno run</code> reads the new words and otherwise ignores them. The interpreter
+is a Rust program and its values are freed for it. The checker runs first
+either way, so the rules are enforced however the program is run.</p>
+<h2 id="three-new-words">Three new words</h2>
+<pre><code class="zeno">owned class Frame {                 # every Frame has one owner
+    channel: int
+    samples: owned list[int]        # this list belongs to the frame
+}
+
+let window: owned list[int] = [0, 0, 0, 0]
+
+function average(samples: borrow list[int]) -&gt; int { ... }</code></pre>
+<ul>
+<li><strong><code>owned class</code></strong>: every object of the class has exactly one owner. That
+  is decided once, where the class is declared, and not at each use.</li>
+<li><strong><code>owned list[T]</code></strong>: a list with exactly one owner. Its items are
+  ordinary values (numbers, text, shared objects).</li>
+<li><strong><code>borrow</code></strong>, on a parameter: the function may look at the value and
+  change what is inside it, and may not keep it.</li>
+</ul>
+<p><code>owned</code> and <code>borrow</code> are not reserved words. They only mean something in
+those three positions, so a program with a variable called <code>owned</code> still
+works.</p>
+<h2 id="the-rules">The rules</h2>
+<p><strong>1. One owner.</strong> A variable, a parameter, or a field of an owned object
+holds the value. Nothing else does.</p>
+<p><strong>2. Storing it somewhere gives it away.</strong> Assigning it to another variable,
+passing it to a parameter that takes it, putting it in a field, or returning
+it, moves it. The old name holds nothing afterwards, and using it is an
+error:</p>
+<pre><code class="zeno">let frame = capture(7, 4)
+print(send(frame))        # `frame` moves into `send`
+print(frame.channel)</code></pre>
+<pre class="out"><code>error: `frame` was given away on line 2 and holds nothing now. Lend it
+instead (a `borrow` parameter), or use it before it goes</code></pre>
+<p><strong>3. Looking is free.</strong> Reading a field, calling a method, printing,
+indexing, comparing, looping over it: none of these moves anything.</p>
+<p><strong>4. A function that only looks says <code>borrow</code>.</strong> The caller keeps the value.
+A borrowed value cannot be stored, returned or passed on to something that
+keeps it, so it can never outlive the call:</p>
+<pre><code class="zeno">function keep(p: borrow Packet) -&gt; Packet { return p }</code></pre>
+<pre class="out"><code>error: `p` is only borrowed here, so it cannot be kept, returned or given
+away. To keep it, take it as an owned parameter instead</code></pre>
+<p>A <code>borrow</code> parameter also accepts a shared value. Anyone may look at those.</p>
+<p><strong>5. It is freed where its owner's block ends.</strong> That is the closing <code>}</code>,
+or a <code>return</code>, <code>break</code> or <code>continue</code> that leaves the block early. A <code>var</code>
+that is given a new value frees the old one at that line.</p>
+<p><strong>6. Owned may hold shared. Shared may not hold owned.</strong> A shared list can
+be reached from many places. If it held an owned value, each of those
+places would think the value was still there after its owner had freed it.
+So a shared list, an <code>or none</code>, an enum case and an ordinary class cannot
+hold an owned value. An owned class can, and so can an owned list: it owns
+its items and frees them with itself (<a href="/docs/one-owner/"><code>one-owner.md</code></a>).</p>
+<p>That is the whole of it. There are no lifetimes to write and no <code>&amp;</code>.</p>
+<h2 id="how-the-checker-knows">How the checker knows</h2>
+<p>The checker already works out a type for every expression. An owned value
+gets three ways of being used, and each is one function:</p>
+<ul>
+<li><strong><code>take</code></strong> is called wherever a value is about to be kept: the right side
+  of <code>let</code> and <code>=</code>, an argument for a parameter that takes it, a <code>return</code>.
+  If the expression is the name of an owner, the checker notes that the
+  owner is now empty, and where that happened.</li>
+<li><strong><code>look</code></strong> is called wherever a value is only read. It changes nothing.</li>
+<li><strong><code>expr</code></strong>, the ordinary function, is what everything else calls. For the
+  name of an owner it answers with a special type, <code>Borrowed</code>, that fits
+  nowhere.</li>
+</ul>
+<p>The third one is the safety net. Suppose a later stage adds a new place
+where values can go, and nobody remembers ownership. The value arrives
+there as <code>Borrowed</code>, fits nothing, and the programmer gets an error
+message. The alternative mistake, a second owner that nobody noticed, would
+be a crash in the compiled program. The design makes the forgetful case the
+safe one.</p>
+<h3 id="which-owners-are-empty">Which owners are empty</h3>
+<p>The checker keeps one set: the owners that hold nothing at this point in
+the code. Reading an owner that is in the set is the error above. The work
+is in keeping the set right as the code branches:</p>
+<ul>
+<li><strong><code>if</code> and <code>match</code></strong>: each branch starts from the same set. Afterwards the
+  set is everything any branch gave away. A branch that ends in <code>return</code>
+  is left out, because what follows the <code>if</code> never runs after it:</li>
+</ul>
+<pre><code class="zeno">if not ok {
+    discard(frame)
+    return
+}
+send(frame)            # fine: this line is only reached with the frame</code></pre>
+<ul>
+<li><strong>Loops</strong>: a value given away on one trip is not there on the next. So
+  an owner declared outside a loop cannot be given away inside it, unless
+  that path leaves the loop with <code>break</code>:</li>
+</ul>
+<pre class="out"><code>error: `p` is given away inside a loop, and the loop may come round again
+with nothing in it. Give it away after the loop, or just before a `break`</code></pre>
+<ul>
+<li>
+<p><strong><code>try</code></strong>: an error can leave the body after any line. So an <code>except</code>
+  block starts with everything the body gives away already gone.</p>
+</li>
+<li>
+<p><strong>A <code>var</code> that is assigned</strong> holds a value again, and leaves the set.</p>
+</li>
+</ul>
+<h3 id="three-smaller-rules">Three smaller rules</h3>
+<ul>
+<li><strong>One line cannot use an owner and give it away.</strong>
+  <code>print(look(p) + send(p))</code> is refused. It keeps the compiled code simple
+  (nothing has to be saved before the move) and it is rarely what anyone
+  meant. Put the look on a line of its own.</li>
+<li><strong>An owned value stays in the function whose block holds it.</strong> A function
+  cannot reach an owned variable declared somewhere else, including at the
+  top of the file, and a function written inside another cannot carry one
+  away. Pass it in as a <code>borrow</code> parameter. This is what makes it safe to
+  free the value when the block ends: nothing outside the block ever knew
+  where it was.</li>
+<li><strong>An owned value made in the middle of a statement, and only looked
+  at, belongs to the statement.</strong> In <code>print(look(make()))</code> nobody is
+  given what <code>make()</code> returns, so the statement frees it when it is
+  over. <code>let p = make()</code> gives it an owner that lasts longer. (An owned
+  value made on a line by itself, and kept by nobody, is freed there in
+  the same way.) <a href="/docs/temporaries/"><code>temporaries.md</code></a> is the walkthrough.</li>
+</ul>
+<h2 id="what-the-c-looks-like">What the C looks like</h2>
+<p>An owned value is the same pointer in C that a shared one would be. All
+that differs is who frees it. Take a small function:</p>
+<pre><code class="zeno">function make(id: int, count: int) -&gt; Packet {
+    let data: owned list[int] = [n * id for n in range(count)]
+    return Packet(id, data)
+}</code></pre>
+<pre><code>static z_Packet *z_make(int64_t z_id, int64_t z_count) {
+    zeno_list *t7 = zeno_list_new(0);
+    ...the loop that fills t7...
+    zeno_list *z_data = t7;
+    zeno_list *t9 = z_data;
+    z_data = NULL;                              // `data` gives its list away
+    z_Packet *t10 = zeno_new_Packet(z_id, t9);
+    zeno_list_drop(z_data);                     // end of block: nothing left
+    return t10;
+}</code></pre>
+<p>Two things to see.</p>
+<p><strong>Giving away writes NULL.</strong> The pointer is copied out and the variable is
+set to NULL.</p>
+<p><strong>The end of a block frees whatever is still there.</strong> <code>zeno_list_drop</code>, and
+the <code>zeno_drop_Packet</code> the compiler writes for each owned class, do nothing
+when handed NULL. So the compiler does not need to know, at the end of a
+block, which owners still hold something. It asks each one, and the pointer
+itself is the answer. (Here the C compiler can see that <code>z_data</code> is NULL
+and removes the call.)</p>
+<p>A function that takes a value over is an owner like any other:</p>
+<pre><code>static int64_t z_send(z_Packet *z_p) {
+    ...
+    int64_t t13 = z_Packet_size(z_p);   // the answer is worked out first
+    zeno_drop_Packet(z_p);              // then the packet is freed
+    return t13;
+}</code></pre>
+<p>A <code>continue</code> frees the blocks it leaves, and then the normal end of the
+loop body frees the same variables for the trips that did not <code>continue</code>:</p>
+<pre><code>for (int64_t z_i = 0; z_i &lt; 3; z_i++) {
+    z_Packet *z_p = z_make(zeno_add(z_i, 1, 51, 18), 3);
+    if (z_i == 1) {
+        z_Packet *t4 = z_p;
+        z_p = NULL;
+        zeno_print(1, zeno_str_int(z_send(t4)));
+        zeno_drop_Packet(z_p);
+        continue;
+    }
+    zeno_print(1, z_describe(z_p));
+    zeno_drop_Packet(z_p);
+}</code></pre>
+<p>And an object of an owned class frees what its fields own, then itself:</p>
+<pre><code>static void zeno_drop_Packet(z_Packet *self) {
+    if (self == NULL) return;
+    zeno_list_drop(self-&gt;z_data);
+    zeno_free(self);
+}</code></pre>
+<h2 id="freeing-one-block">Freeing one block</h2>
+<p>The collector keeps a table of every block (<a href="/docs/memory/"><code>memory.md</code></a>).
+<code>zeno_free</code> has to take one block out of it:</p>
+<pre><code>static void zeno_free(void *memory) {
+    if (memory == NULL) return;
+    zeno_block *block = (zeno_block *)memory - 1;
+    zeno_block *last = zeno_blocks[--zeno_block_count];
+    last-&gt;link.place = block-&gt;link.place;
+    zeno_blocks[block-&gt;link.place] = last;
+    zeno_in_use -= block-&gt;size;
+    free(block);
+}</code></pre>
+<p>Each block remembers its place in the table, so nothing is searched: the
+last entry of the table moves into the gap. The cost is the same whether
+the program has ten blocks or a million.</p>
+<p>Where does a block keep its place? In the field the collector uses for its
+waiting list. The two are never needed at once. A collection sorts the
+table anyway, and writes every place afresh as it sweeps.</p>
+<p><strong>An owned block is still in the collector's table while it lives.</strong> That
+matters twice:</p>
+<ul>
+<li>The collector looks inside it, as it must: an owned list may hold the
+  only pointer to a shared string.</li>
+<li>If a free is ever skipped, nothing leaks. The block is still in the
+  table, nothing points at it, and the next collection frees it. The
+  collector is the net under the trapeze.</li>
+</ul>
+<h2 id="errors">Errors</h2>
+<p>When does a free get skipped? When an error jumps over it.</p>
+<p>In an <strong>ordinary build</strong>, <code>raise</code> is a <code>longjmp</code> (<a href="/docs/compiler/"><code>compiler.md</code></a>,
+"Errors"). The function that raises frees its own owned values first, since
+it knows it is leaving. But the jump then passes straight through every
+function between it and the <code>try</code>, and none of them gets a chance to free
+anything. What they owned is left for the collector.</p>
+<p>There is one more trap, and C sets it. Look at this:</p>
+<pre><code class="zeno">let b = fresh("b", n)
+try {
+    let got = swallow(b, fail)     # takes `b`, frees it, then raises
+    ...
+} except Refused as r { ... }</code></pre>
+<p><code>b</code> is set to NULL before the call. Then <code>swallow</code> raises and the <code>longjmp</code>
+lands back in this function. C says that a local variable changed since the
+<code>setjmp</code> may have <strong>either</strong> value after the jump, unless it is declared
+<code>volatile</code>. If <code>b</code> came back as the old pointer, the end of the block would
+free a buffer that <code>swallow</code> already freed. So in a function with a <code>try</code>,
+every owner is declared <code>volatile</code>:</p>
+<pre><code>z_Buf *volatile z_b = z_fresh(...);</code></pre>
+<p>In a <strong>firmware build</strong> (<a href="/docs/firmware/"><code>firmware.md</code></a>) none of this arises.
+An error is a return value, every caller tests it, and the test is one more
+place where a block ends:</p>
+<pre><code>if (!z_check(z_frame, &amp;t1)) { zeno_drop_Frame(z_frame); return false; }</code></pre>
+<p>Every function on the error's way frees what it owns, so nothing is left
+for the collector to find. That is what lets <code>zeno build --no-collector</code>
+leave the collector out: see <a href="/docs/no-collector/"><code>no-collector.md</code></a>.</p>
+<h2 id="two-frees-that-every-program-gets">Two frees that every program gets</h2>
+<p>While building this, two places turned up where a shared block is certain
+to be garbage, and both now free it at once:</p>
+<ul>
+<li><strong>A list that grows.</strong> <code>append</code> on a full list moves the items to a place
+  twice the size. Only the list ever pointed at the old place.</li>
+<li><strong>The copy a <code>for</code> loop walks.</strong> <code>for x in items</code> walks a copy of the
+  list, so that the body can change <code>items</code> without confusing the loop
+  (decision 3.10a). Nothing else ever sees that copy, so it is freed after
+  the loop's <code>}</code>, and by a <code>return</code> or a failed call that leaves from
+  inside the loop.</li>
+</ul>
+<p>Neither needs the word <code>owned</code>. Run <code>examples/memory.zeno</code> with <code>--memory</code>
+and the last number on the line counts them.</p>
+<h2 id="the-same-through-llvm">The same, through LLVM</h2>
+<p><code>zeno build --llvm</code> frees owned values at the same places. The pointer
+lives in a slot (<code>alloca ptr</code>), giving it away is a <code>load</code> followed by
+<code>store ptr null</code>, and each way out of a block loads the slot and calls
+<code>@zeno_list_drop</code> or the class's <code>@zeno.drop.Packet</code>. <a href="/docs/llvm/"><code>llvm.md</code></a>,
+"Owned values", shows the IR for a small program.</p>
+<h2 id="what-is-refused-for-now">What is refused for now</h2>
+<p>Each of these would need a rule the simple checker does not have. They are
+errors today, with a message that says so, and can be allowed later without
+breaking any program that works now.</p>
+<ul>
+<li><strong>An owned value inside an <code>or none</code>, an enum case or a function
+  type.</strong> Taking one back out would have to leave a hole. (An owned list
+  can hold owned values: <code>pop()</code> takes one out and leaves no hole. See
+  <a href="/docs/one-owner/"><code>one-owner.md</code></a>.)</li>
+<li><strong>Moving a field out of an object</strong> (<code>let d = packet.data</code>). Same reason.</li>
+<li><strong>Replacing an owned field through a borrow</strong>, which includes <code>self</code> in a
+  method. Somebody else may have been lent the old value at that moment.
+  Only the owner of the object may write <code>packet.data = [...]</code>. A method
+  can still change what is <em>in</em> the list (<code>self.data.append(x)</code>).</li>
+<li><strong>A shared list becoming an owned one.</strong> Only a list that was just
+  made can start life owned: one written out (<code>[1, 2]</code>), a
+  comprehension, or what <code>split</code>, <code>map</code>, <code>filter</code> or <code>+</code> gives. Only
+  those are certain to have no other name.</li>
+<li><strong><code>match</code> on an owned value, raising one, or keeping a method of one as a
+  value.</strong></li>
+</ul>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li>Text in an owned object or list is a shared value. The collector
+  still frees it. Items that are objects of an owned class are the
+  list's own, and are freed with it.</li>
+<li>An owned value is still taken from the heap with <code>malloc</code>. A build with
+  no collector at all, for a program where everything is owned, is
+  <code>zeno build --no-collector</code>: see <a href="/docs/no-collector/"><code>no-collector.md</code></a>.
+  That build takes its blocks from a fixed pool (<a href="/docs/pool/"><code>pool.md</code></a>).</li>
+<li>The borrow checker is small on purpose. It refuses some programs that
+  would be safe, such as the one-line rule above. Rust accepts more, with
+  far more machinery.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li>Some forty programs that break a rule, each checked for the exact message (<code>mod
+  tests</code> in <code>checker.rs</code>, "Owned values").</li>
+<li>Four programs that use owned values in every way the compiler handles
+  (early exits, errors caught and not caught, nested owned objects, function
+  values, nested loops) are built both ways, ordinary and <code>--firmware</code>,
+  with the collector forced to run before every allocation, and must print
+  what <code>zeno run</code> prints.</li>
+<li>One test builds the same loop with shared lists and with owned lists, and
+  checks that the owned one never needs the collector and stays under 8 KB.</li>
+<li>One test reads the generated C for the lines shown above, and one reads
+  the LLVM IR. The LLVM build of the loop of owned lists must also free
+  every block without the collector.</li>
+<li>While it was being built, the same programs were also run under GCC and
+  Clang at several optimisation levels, and under AddressSanitizer, which
+  reports any use of a block after it has been freed and any block freed
+  twice.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/buffer.zeno</code> with <code>--memory</code>, then change <code>owned class
+   Frame</code> to <code>class Frame</code> and <code>owned list[int]</code> to <code>list[int]</code> and build
+   again. Compare the two memory lines.</li>
+<li>Take the <code>#</code> off the last line of <code>examples/buffer.zeno</code>. Then find the
+   two lines in <code>read</code> (<code>checker.rs</code>) that produce the message.</li>
+<li>Open <code>buffer.c</code> and find where <code>frame</code> is freed when the loop does
+   <code>continue</code>, and where it is freed when it does not. Why are both needed?</li>
+<li>Write a function <code>longest(a: borrow list[int], b: borrow list[int])</code> that
+   returns the longer of the two. What does the checker say? Why must it?
+   What could the function return instead?</li>
+<li>In <code>leave_loop</code>, a value given away just before a <code>break</code> is allowed.
+   Write a loop where that is exactly what you want.</li>
+<li>Build a program with a <code>try</code> both ways and search the two C files for
+   <code>volatile</code>. Then read the "Errors" section again.</li>
+<li><code>for x in items</code> copies the list. For an owned list that nobody else can
+   change during the loop, is the copy needed? What would the checker have
+   to know to leave it out?</li>
+<li>Allow an owned value inside an <code>or none</code>. Start with <code>let p: Packet or
+   none = none</code>: what should <code>let q = p</code> mean, and what does <code>p</code> hold
+   afterwards?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/ownership.md">docs/ownership.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/memory/"><span>Previous</span>How memory is managed</a><a class="next" href="/docs/no-collector/"><span>Next</span>A build with no collector</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#three-new-words">Three new words</a></li><li><a href="#the-rules">The rules</a></li><li><a href="#how-the-checker-knows">How the checker knows</a></li><li><a href="#what-the-c-looks-like">What the C looks like</a></li><li><a href="#freeing-one-block">Freeing one block</a></li><li><a href="#errors">Errors</a></li><li><a href="#two-frees-that-every-program-gets">Two frees that every program gets</a></li><li><a href="#the-same-through-llvm">The same, through LLVM</a></li><li><a href="#what-is-refused-for-now">What is refused for now</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

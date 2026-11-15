@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the interpreter works · Zeno</title>
+<meta name="description" content="The interpreter is the third stage, and the first one that makes a program do something. It takes the syntax tree from the parser and runs it directly.">
+<meta property="og:title" content="How the interpreter works · Zeno">
+<meta property="og:description" content="The interpreter is the third stage, and the first one that makes a program do something. It takes the syntax tree from the parser and runs it directly.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/interpreter/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/interpreter/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/" aria-current="page">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How the interpreter works</h1>
+  <p>The interpreter is the third stage, and the first one that makes a program
+<em>do</em> something. It takes the syntax tree from the parser and runs it directly.</p>
+<pre><code>cargo run -- run examples/tour.zeno</code></pre>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/value.rs"><code>src/value.rs</code></a>: what a value is while the program runs.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/interpreter.rs"><code>src/interpreter.rs</code></a>: scopes, statements, expressions, calls.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/ops.rs"><code>src/ops.rs</code></a>: what each operator does, reading fields
+  and items, and lining arguments up with parameters. It is a file of its
+  own because the bytecode VM (<a href="/docs/vm/"><code>vm.md</code></a>) calls the same code.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/builtins.rs"><code>src/builtins.rs</code></a>: <code>print</code>, <code>len</code>, string and list
+  methods, the <code>math</code>, <code>time</code> and <code>board</code> modules, f-string formatting.</li>
+</ul>
+<h2 id="walking-the-tree">Walking the tree</h2>
+<p>The parser produced two kinds of node, and the interpreter has one function
+for each:</p>
+<ul>
+<li><code>exec(statement)</code> runs a statement. It returns nothing; it has an effect.</li>
+<li><code>eval(expression)</code> works out an expression and returns a <code>Value</code>.</li>
+</ul>
+<p>Each is one big <code>match</code> on the kind of node, and each calls itself for the
+nodes nested inside. Here is all of <code>while</code>:</p>
+<pre><code>StmtKind::While { condition, body } =&gt; {
+    while self.condition(condition, env)? {
+        match self.exec_block(body, env) {
+            Ok(()) | Err(Control::Continue(_)) =&gt; {}
+            Err(Control::Break(_)) =&gt; break,
+            Err(other) =&gt; return Err(other),
+        }
+    }
+    Ok(())
+}</code></pre>
+<p>A Zeno <code>while</code> loop is run by a Rust <code>while</code> loop. That is the whole idea of
+a tree-walking interpreter: the host language does the work, one node at a time.</p>
+<p>For <code>1 + 2 * 3</code>, <code>eval</code> on the <code>+</code> node calls <code>eval</code> on its left side (giving
+<code>1</code>) and on its right side, the <code>*</code> node, which in turn evaluates <code>2</code> and <code>3</code>
+and returns <code>6</code>. Then the <code>+</code> adds them. The order of operations was decided
+by the shape of the tree; the interpreter just follows it.</p>
+<h2 id="values">Values</h2>
+<p><code>Value</code> (in <code>value.rs</code>) is an enum with a case for everything a variable can
+hold: <code>Int</code>, <code>Float</code>, <code>Str</code>, <code>Bool</code>, <code>None</code>, <code>List</code>, a function, a class, an
+object, an enum case, an error.</p>
+<p>Simple values are copied. Lists and objects are wrapped in <code>Rc</code>, a shared
+pointer, so <code>let b = a</code> makes two names for one list.</p>
+<h2 id="scopes">Scopes</h2>
+<p>A <code>Scope</code> is a table from names to values, plus a link to the scope around
+it. Each <code>{ }</code> block gets a new one.</p>
+<pre><code class="zeno">let x = 1            scope A: { x }
+if true {
+    let y = 2        scope B: { y }, parent A
+    print(x + y)     looks for x in B, then in A
+}</code></pre>
+<p>Looking a name up walks outward through the parents until it is found. When
+the block ends, its scope is dropped, and <code>y</code> is gone. The outermost scope
+holds the built-ins, so <code>print</code> is found the same way as any variable.</p>
+<p>Each variable remembers whether it was a <code>let</code> or a <code>var</code>, which is how
+assigning to a <code>let</code> gets caught.</p>
+<h2 id="functions-and-closures">Functions and closures</h2>
+<p>A function value is a <code>Closure</code>: the function's code plus the scope it was
+<em>defined</em> in. Calling it:</p>
+<ol>
+<li>makes a new scope whose parent is that defining scope,</li>
+<li>declares each parameter in it, from the arguments or the defaults,</li>
+<li>runs the body there.</li>
+</ol>
+<p>Because the parent is where the function was defined, not where it was
+called from, a function can go on using the variables around it even after
+the outer function has returned:</p>
+<pre><code class="zeno">function counter() {
+    var count = 0
+    function next() -&gt; int {
+        count += 1          # still reaches count
+        return count
+    }
+    return next
+}</code></pre>
+<p>A function written as a value, <code>function(n) { return n * 2 }</code>, becomes a
+closure at the moment that expression is evaluated. Since a closure is just
+a <code>Value</code>, it can be stored in a variable, passed as an argument, or handed
+to <code>map</code>, <code>filter</code> and <code>reduce</code>, which call it once per item.</p>
+<p>A function keeps the variables in sight where it is written, and not ones
+declared further down the same block. So it does not keep the block's
+scope itself, which goes on growing. It keeps a <strong>view</strong> of it
+(<code>Scope::seen</code>): a scope with no variables of its own that looks into the
+block's and sees only the first so many declared there. Each variable is
+held through an <code>Rc</code>, so the function and the block share the very same
+variable, and a change made by one is seen by the other. Why it matters
+is in <code>docs/decisions.md</code> 3.6c and 3.6d.</p>
+<p>Before running a block, <code>hoist</code> declares all the functions, classes and
+enums in it, so they can be used above the line where they are written.
+None of the block's variables exist yet at that moment. So <code>hoist</code> counts
+how many will have been declared by the time the program reaches each
+function's line, and that count is where the function's view ends.</p>
+<h2 id="leaving-early-break-return-raise">Leaving early: break, return, raise</h2>
+<p><code>return</code> can be deep inside loops and ifs, and has to abandon all of them.
+The interpreter uses Rust's own error mechanism for this. <code>exec</code> and <code>eval</code>
+return <code>Result&lt;_, Control&gt;</code>, where <code>Control</code> is one of:</p>
+<ul>
+<li><code>Break</code>, <code>Continue</code>: caught by the nearest loop.</li>
+<li><code>Return(value)</code>: caught by the function call.</li>
+<li><code>Raise(error)</code>: caught by a <code>try</code> with a matching <code>except</code>. When an
+  object of a class is raised, it is wrapped in an error named after the
+  class, so every <code>except</code> deals with the same kind of thing.</li>
+<li><code>Fatal(error)</code>: a bug in the program; caught by nothing.</li>
+</ul>
+<p>Every <code>?</code> in the interpreter means "if something is leaving early, pass it
+up". Each construct catches only what belongs to it and passes the rest on,
+as the <code>while</code> code above shows.</p>
+<h2 id="classes-enums-and-match">Classes, enums and match</h2>
+<p>A class is a list of fields and a table of methods. Calling it builds an
+<code>Instance</code> with a value for each field. Reading <code>p.distance_to</code> finds the
+method and returns it already bound to <code>p</code>; calling that passes <code>p</code> as <code>self</code>.</p>
+<p>An enum declares its cases as names. A case with no data is a finished value
+(<code>Idle</code>); a case with data is a constructor (<code>Circle(1.0)</code>).</p>
+<p><code>match</code> tries each <code>case</code> in order. <code>matches</code> compares a pattern with a
+value, and when a pattern contains a name, declares it in the arm's scope so
+the body can use it.</p>
+<h2 id="what-it-does-not-do-yet">What it does not do yet</h2>
+<ul>
+<li><strong>Look at types.</strong> The interpreter ignores annotations. Checking them is
+  the type checker's job, and <code>zeno run</code> calls it first; see
+  <a href="/docs/checker/"><code>checker.md</code></a>.</li>
+<li><strong>Free cyclic memory.</strong> A function and its scope can point at each other
+  and are never released. That belongs to the memory management stage.</li>
+<li><strong>Run fast.</strong> Names are looked up in hash tables on every use. The
+  bytecode VM does not have to: see <a href="/docs/vm/"><code>vm.md</code></a>.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Add a <code>round(x)</code> built-in. (One function in <code>builtins.rs</code>, one line in <code>globals</code>.)</li>
+<li>Add a <code>loop { }</code> statement, if you added it to the parser earlier.</li>
+<li>Add <code>insert(index, item)</code> and <code>clear()</code> to lists.</li>
+<li>Add a <code>button</code> to the <code>board</code> module (<code>src/board.rs</code>): a pin the program
+   reads and does not drive. (<a href="/docs/board/"><code>board.md</code></a> is how <code>led</code> was done.)</li>
+<li>Make <code>print(a, b, sep=", ")</code> work. Why does it not already?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/interpreter.md">docs/interpreter.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/checker/"><span>Previous</span>How the type checker works</a><a class="next" href="/docs/vm/"><span>Next</span>How the bytecode VM works</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#walking-the-tree">Walking the tree</a></li><li><a href="#values">Values</a></li><li><a href="#scopes">Scopes</a></li><li><a href="#functions-and-closures">Functions and closures</a></li><li><a href="#leaving-early-break-return-raise">Leaving early: break, return, raise</a></li><li><a href="#classes-enums-and-match">Classes, enums and match</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

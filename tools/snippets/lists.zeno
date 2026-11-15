@@ -1,0 +1,9 @@
+var ports = [80, 443]
+ports.append(8080)
+print(ports, len(ports), ports[0])
+
+let evens = [n for n in range(10) if n % 2 == 0]
+print(evens)
+print(evens.map(function(n) { return n * 10 }))
+print(evens.filter(function(n) { return n > 4 }))
+print("a,b,c".split(","), "zeno".upper(), f"{3.14159:.2f}")

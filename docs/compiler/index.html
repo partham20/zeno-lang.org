@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How compiling to C works · Zeno</title>
+<meta name="description" content="zeno run reads your program and does what it says, one node of the syntax tree at a time. zeno build reads the same tree and writes a C program that does what it says. Then the machine&#x27;s C compiler turns that into a real program: no Zeno needed to…">
+<meta property="og:title" content="How compiling to C works · Zeno">
+<meta property="og:description" content="zeno run reads your program and does what it says, one node of the syntax tree at a time. zeno build reads the same tree and writes a C program that does what it says. Then the machine&#x27;s C compiler turns that into a real program: no Zeno needed to…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/compiler/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/compiler/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/" aria-current="page">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>How compiling to C works</h1>
+  <p><code>zeno run</code> reads your program and does what it says, one node of the syntax
+tree at a time. <code>zeno build</code> reads the same tree and writes a C program that
+does what it says. Then the machine's C compiler turns that into a real
+program: no Zeno needed to run it, and many times faster.</p>
+<pre><code>zeno build examples/primes.zeno     # writes primes.c, then builds ./primes
+./primes</code></pre>
+<pre><code>source -&gt; lexer -&gt; parser -&gt; checker -&gt; emit_c -&gt; primes.c -&gt; cc -&gt; ./primes</code></pre>
+<p>Open <code>primes.c</code> after building. Reading the C next to the Zeno is the best
+way to follow this document.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><code>src/emit_c.rs</code> walks the tree and writes C. It is the compiler proper.</li>
+<li><code>src/runtime.c</code> is a small C library that is pasted in front of every
+  program: checked arithmetic, strings, lists, errors, <code>print</code>.</li>
+</ul>
+<h2 id="one-rule-above-all-build-must-agree-with-run">One rule above all: build must agree with run</h2>
+<p>A program must print the same thing either way. The tests at the bottom of
+<code>emit_c.rs</code> enforce it: each one runs a program through the interpreter,
+compiles the same program, runs the result, and compares the output byte for
+byte, including the error message when the program is meant to fail. If you
+change one side, the tests tell you to change the other.</p>
+<p>Since the bytecode VM (<a href="/docs/vm/"><code>vm.md</code></a>) the same tests run each program a
+third way, on the VM, which must agree with the interpreter as well.</p>
+<h2 id="what-it-compiles-so-far">What it compiles so far</h2>
+<p>Nearly all of the language: numbers, bools, strings and their methods,
+quantities, variables, <code>if</code> / <code>while</code> / <code>for</code>, functions, f-strings,
+<code>print</code>, the <code>math</code>, <code>time</code> and <code>board</code> modules, classes with methods, lists (literals,
+indexing, <code>append</code>, <code>pop</code>, <code>+</code>, <code>in</code>, comprehensions, <code>map</code>, <code>filter</code>,
+<code>reduce</code>), enums and <code>match</code>, values that may be <code>none</code>, errors (<code>try</code>,
+<code>except</code>, <code>raise</code>), functions used as values, and owned values
+(<a href="/docs/ownership/"><code>docs/ownership.md</code></a>).</p>
+<p>Every program in <code>examples/</code> builds. <code>blink.zeno</code> and <code>signal.zeno</code> run on
+a simulated board (<a href="/docs/board/"><code>docs/board.md</code></a>).</p>
+<p>A few things are left. <code>zeno build</code> names each one and points at the line:</p>
+<pre class="out"><code>error: `zeno build` cannot compile a function inside a function or block yet. `zeno run` can still run this program</code></pre>
+<ul>
+<li>A <strong>named</strong> function, class or enum declared inside a function. (Write
+  <code>let helper = function(n) { ... }</code> instead: that one compiles.)</li>
+<li>A default value that is not a plain literal or <code>[]</code>:
+  <code>function f(at = now())</code>.</li>
+<li>A method taken off an object without calling it: <code>let f = point.length</code>.</li>
+</ul>
+<h2 id="where-the-types-come-from">Where the types come from</h2>
+<p>C wants a type on everything. Zeno lets you write none:</p>
+<p><pre><code class="zeno">function average_gap(limit) {
+    return limit / count_primes(limit)
+}</code></pre>
+<pre><code>static double z_average_gap(int64_t z3_limit) {
+    return zeno_div((double)z3_limit, (double)z_count_primes(z3_limit), 34, 12);
+}</code></pre></p>
+<p>The checker has already worked out that <code>limit</code> is an int (from the call) and
+that the function returns a float (from the <code>/</code>). It passes every function's
+signature to the compiler in <code>Types</code>. From those, the compiler works out the
+rest as it goes: a literal knows its own type, a variable has the type of its
+first value, <code>a + b</code> has the type its two sides give.</p>
+<p>Each compiled expression is a <code>Val</code>: a piece of C text (<code>code</code>) and its
+<code>kind</code>. <code>arithmetic</code> looks at the two kinds to choose what to write. Two ints
+become <code>zeno_add(a, b, ...)</code>; an int and a float become <code>((double)a + b)</code>.</p>
+<p>This is why <code>zeno build</code> always checks in strict mode: a value whose type is
+not known cannot be given a C type.</p>
+<h2 id="the-runtime-making-c-keep-zenos-promises">The runtime: making C keep Zeno's promises</h2>
+<p>C is looser than Zeno. Three examples:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Zeno says</th>
+<th>C says</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>a + b</code> overflows</td>
+<td>OverflowError</td>
+<td>undefined; anything may happen</td>
+</tr>
+<tr>
+<td><code>a // 0</code></td>
+<td>ZeroDivisionError</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td><code>-7 // 2</code></td>
+<td><code>-4</code>, rounds down</td>
+<td><code>-3</code>, rounds toward zero</td>
+</tr>
+</tbody>
+</table>
+<p>So whole-number arithmetic goes through functions in <code>runtime.c</code>. <code>zeno_add</code>
+asks the processor whether the addition overflowed, and stops the program
+with Zeno's error if it did. The last two arguments of each call are the line
+and column in the Zeno source, so the message can say where:</p>
+<pre class="out"><code>error: uncaught ZeroDivisionError: division by zero
+ --&gt; primes.zeno:15:12</code></pre>
+<p>Floats need less: C's float arithmetic already matches, apart from dividing
+by zero. But printing them does not match. <code>zeno_str_float</code> is the longest
+function in the runtime, because "the shortest digits that read back as the
+same number, and always with a <code>.0</code>" is not something C's <code>printf</code> can do in
+one step.</p>
+<h2 id="order-the-part-c-leaves-open">Order: the part C leaves open</h2>
+<pre><code class="zeno">print(next() - next())</code></pre>
+<p>Zeno promises left to right. C promises nothing about which operand of <code>-</code>,
+or which argument of a call, is worked out first. If <code>next()</code> prints or
+changes a variable, a C compiler may give a different answer from <code>zeno run</code>,
+and a different answer on a different machine.</p>
+<p>So every <code>Val</code> carries three flags: does it <em>read</em> a top-level variable, can
+it <em>fail</em>, does it <em>call</em> a function. <code>sequence</code> compiles a list of
+expressions that Zeno orders left to right, and whenever a later one could
+disturb an earlier one, it moves the earlier one into a temporary:</p>
+<pre><code>int64_t t1 = z_next();
+zeno_print(1, zeno_str_int(zeno_sub(t1, z_next(), 9, 7)));</code></pre>
+<p>When nothing can be disturbed, as in <code>a + b * 2</code>, no temporary is made and
+the C reads like the Zeno.</p>
+<p><code>and</code>, <code>or</code> and chained comparisons (<code>a &lt; f() &lt; g()</code>) have a second concern:
+the right side must not run at all unless it is needed. C's <code>&amp;&amp;</code> does that
+when the right side is a single expression. When the right side needed
+statements of its own, <code>logic</code> wraps them in an <code>if</code>.</p>
+<h2 id="classes">Classes</h2>
+<p><pre><code class="zeno">class Point {
+    x: float
+    y: float
+    function distance_to(self, other: Point) -&gt; float { ... }
+}</code></pre>
+<pre><code>struct z_Point { double z_x; double z_y; };
+static z_Point *zeno_new_Point(double z_x, double z_y);       /* Point(3.0, 4.0) */
+static const char *zeno_show_Point(z_Point *self);            /* for print */
+static bool zeno_same_Point(z_Point *a, z_Point *b);          /* for == */
+static double z_Point_distance_to(z_Point *z_self, z_Point *z_other);</code></pre></p>
+<p>A class is a C struct. The compiler writes three functions for it that you
+never wrote: one makes an object, one shows it as text, one compares two.
+A method is an ordinary C function whose first argument is the object.</p>
+<p>An object is always handled through a pointer. That is what makes
+<code>let b = a</code> a second name for the same object, as Zeno says it is: copying
+a pointer does not copy what it points to.</p>
+<p>A field with a size, such as <code>level: u8</code>, is a <code>uint8_t</code> in the struct and
+an <code>int64_t</code> everywhere else. <a href="/docs/sized-ints/"><code>sized-ints.md</code></a> follows one
+through.</p>
+<p>A generic class, such as <code>class Stack[T]</code>, is not compiled itself. Each
+type it is used with gets a struct of its own: <code>z_Stack_int</code>,
+<code>z_Stack_str</code>. <a href="/docs/generics/"><code>generics.md</code></a> has that.</p>
+<h2 id="enums-and-match">Enums and match</h2>
+<p><pre><code class="zeno">enum Shape {
+    Circle(radius: float)
+    Rect(width: float, height: float)
+    Nothing
+}</code></pre>
+<pre><code>struct z_Shape {
+    int tag;                                   /* which case: 0, 1 or 2 */
+    union {
+        struct { double z_radius; } c0;
+        struct { double z_width; double z_height; } c1;
+    } as;                                      /* room for the biggest case */
+};</code></pre></p>
+<p>A value of an enum is one case at a time, so the cases can share the same
+memory: that is what a C <code>union</code> is. The <code>tag</code> says which case is in there
+now. This pair, a tag and a union, is how every language with enums like
+these stores them.</p>
+<p><code>match</code> then becomes a chain of <code>if</code>s on the tag. A pattern such as
+<code>Rect(w, h)</code> gives the compiler two things: a test (<code>tag == 1</code>) and new
+variables to declare (<code>w</code> and <code>h</code>, read out of the union). <code>pattern</code>
+collects both, and works the same way for a pattern inside a pattern.</p>
+<p>Because the checker has already made sure every case is covered, the last
+<code>case</code> needs no test and becomes a plain <code>else</code>.</p>
+<h2 id="lists">Lists</h2>
+<p>C has no list that grows, so the runtime provides one: a length, how much
+room there is, and a pointer to the items. <code>append</code> moves the items to a
+place twice the size when the room runs out.</p>
+<p>A list must hold ints, or floats, or strings, or objects. C would want a
+separate list type for each. Instead every item sits in a <code>zeno_slot</code>, a
+union big enough for any single Zeno value:</p>
+<pre><code>typedef union { int64_t i; double f; bool b; const char *s; void *p; } zeno_slot;</code></pre>
+<p>The compiler knows what each list holds, so it knows which member to read:
+<code>xs[0]</code> on a <code>list[int]</code> becomes <code>(*zeno_list_at(z_xs, 0, 3, 7)).i</code>.
+<code>zeno_list_at</code> is where the position is checked, so <code>xs[99]</code> is an
+IndexError, not a read of some other memory.</p>
+<p>Showing a list and comparing two lists need to know how to show or compare
+one item. The runtime cannot know that, so the compiler writes a small
+function per kind of item (<code>zeno_item_repr_float</code>) and passes it in.</p>
+<p>A <code>for</code> loop over a list walks a copy of it. That matches <code>zeno run</code>, where
+the loop sees the list as it was when the loop began, even if the body adds
+to it. Only the loop ever points at the copy, so it is freed as soon as the
+loop ends.</p>
+<h2 id="values-that-may-be-none">Values that may be none</h2>
+<p><code>str or none</code> has to be stored somehow. There are two cases.</p>
+<p>A str, a list, an object, an enum value, an error and a function are all
+pointers in C already, and a pointer has a spare value: <code>NULL</code>. So for
+those, <code>none</code> is <code>NULL</code>, and <code>T or none</code> costs nothing more than <code>T</code>.</p>
+<p>A number or a bool has no spare value: every pattern of bits is some
+number. So <code>int or none</code> is a number with a flag beside it:</p>
+<pre><code>typedef struct { bool present; int64_t value; } zeno_opt_int;</code></pre>
+<p><pre><code class="zeno">function half(n: int) -&gt; int or none {
+    if n % 2 == 0 { return n // 2 }
+    return none
+}
+let h = half(8)
+if h is not none { print(h + 1) }</code></pre>
+<pre><code>static zeno_opt_int z_half(int64_t z_n) {
+    if (zeno_mod(z_n, 2, 2, 8) == 0) {
+        return (zeno_opt_int){true, zeno_floordiv(z_n, 2, 2, 28)};
+    }
+    return (zeno_opt_int){false, 0};
+}
+...
+if (z_h.present) {
+    zeno_print(1, zeno_str_int(zeno_add(z_h.value, 1, 6, 26)));
+}</code></pre></p>
+<p>Three things to see there:</p>
+<ul>
+<li><code>return n // 2</code> puts the flag on, because the function returns
+  <code>int or none</code>. Going from <code>T</code> into <code>T or none</code>, and writing <code>none</code>
+  itself, is the one place the two differ, and <code>coerce</code> in <code>emit_c.rs</code>
+  does it wherever a value arrives somewhere: a <code>return</code>, an argument, an
+  assignment, an item of a list.</li>
+<li><code>h is not none</code> reads the flag.</li>
+<li>Inside the <code>if</code>, <code>h</code> is read as <code>z_h.value</code>, the plain number. The
+  compiler cannot see for itself that the <code>if</code> has ruled <code>none</code> out. The
+  checker can (that is narrowing, in <code>docs/checker.md</code>), and it passes on
+  a note of every place where a variable is read after such a check.</li>
+</ul>
+<p>One more case. A top-level <code>var</code>, or a <code>var</code> shared with an inner function,
+can be changed by a function that is called between the check and the use:</p>
+<pre><code class="zeno">var limit: int or none = 5
+function clear() { limit = none }
+if limit is not none {
+    clear()
+    print(limit + 1)        # limit is none again by now
+}</code></pre>
+<p>For those variables only, the value is looked at once more where it is
+used (<code>zeno_still_int</code>), and the program stops with an error if it has
+gone. A local variable that nothing else can reach needs no second look.</p>
+<p>A list gives every item one slot, which has no room for a flag. In a list,
+a number that may be <code>none</code> is kept as a pointer to a copy of the number.</p>
+<h2 id="errors-try-except-and-raise">Errors: try, except and raise</h2>
+<p><pre><code class="zeno">try {
+    let port = parse_port(text)
+    print(port)
+} except ValueError as err {
+    print(f"error: {err}")
+}</code></pre>
+<pre><code>zeno_try t1;                        // a place to come back to
+t1.outer = zeno_trying;
+zeno_trying = &amp;t1;                  // from here on, errors come to t1
+if (setjmp(t1.place) == 0) {
+    z_port = z_parse_port(z_text);
+    zeno_print(1, zeno_str_int(z_port));
+    zeno_trying = t1.outer;         // finished with no error
+} else if (zeno_caught("ValueError")) {
+    zeno_error *z_err = zeno_raised;
+    zeno_print(1, zeno_join(2, "error: ", z_err-&gt;message));
+} else {
+    zeno_raise_again();             // not ours: pass it outward
+}</code></pre></p>
+<p><code>setjmp</code> is a C library function that remembers "here": where the program
+is, and what is in the processor's registers. It returns 0. Later,
+<code>longjmp</code> puts all of that back, and the program finds itself returning
+from that same <code>setjmp</code> a second time, now with 1.</p>
+<p>So a <code>try</code> remembers a place, and tells the runtime about it by putting it
+at the front of a chain (<code>zeno_trying</code>). <code>raise</code>, or any error the runtime
+finds itself (dividing by zero, a bad index), goes through one function,
+<code>zeno_raise</code>. If the chain is empty, nobody is trying: it prints the error
+and stops the program, exactly as before. Otherwise it takes the innermost
+place off the chain and jumps to it, out of however many function calls
+are in the way.</p>
+<p>That means code outside a <code>try</code> pays nothing, and a <code>try</code> in which nothing
+goes wrong pays for one <code>setjmp</code>.</p>
+<p>Details that the compiler looks after:</p>
+<ul>
+<li><strong>Leaving early.</strong> A <code>return</code>, <code>break</code> or <code>continue</code> inside a <code>try</code> body
+  jumps past the line that takes the place off the chain. So the compiler
+  writes that line before each of them.</li>
+<li><strong>Variables changed inside a <code>try</code>.</strong> C has a rule here: after the jump
+  back, a local variable that was changed since the <code>setjmp</code> may hold its
+  old value or its new one, unless it is declared <code>volatile</code>. (The C
+  compiler may have kept the new value in a register, and the jump puts
+  the registers back.) The compiler finds the variables that a <code>try</code> body
+  assigns to, and declares those <code>volatile</code>. See <code>changed_in_try</code>.</li>
+<li><strong>Raising an object.</strong> <code>raise Timeout(30 ms)</code> wraps the object in an
+  error whose kind is the class's name. <code>except Timeout as t</code> gets the
+  object back out. <code>except Error as e</code> gets the error it travelled in.</li>
+</ul>
+<h3 id="in-a-firmware-build">In a firmware build</h3>
+<p><code>zeno build --firmware</code> compiles all of this differently, with no
+<code>setjmp</code>: a function that can raise returns <code>true</code> or <code>false</code>, and each
+caller tests what came back. <a href="/docs/firmware/"><code>docs/firmware.md</code></a> is the
+walkthrough.</p>
+<h2 id="functions-as-values">Functions as values</h2>
+<p>A function held in a variable is a pointer to a small struct:</p>
+<pre><code>typedef struct zeno_closure { zeno_code code; const char *name; } zeno_closure;</code></pre>
+<p><code>code</code> is the C function to run. Calling <code>f(3)</code> becomes "call <code>f</code>'s code,
+passing <code>f</code> itself first":</p>
+<pre><code>((int64_t (*)(zeno_closure *, int64_t))z_f-&gt;code)(z_f, 3)</code></pre>
+<p>The long bracket in front turns the stored pointer back into the type it
+really is, which the compiler knows from the type of <code>f</code>.</p>
+<p>Why pass the function to itself? Because of this:</p>
+<pre><code class="zeno">function make_scaler(k: int) {
+    return function(n: int) { return n * k }
+}</code></pre>
+<p>The inner function uses <code>k</code>, which belongs to a call of <code>make_scaler</code> that
+has finished by the time the inner function runs. So when the inner
+function is made, the variables it uses are packed up with it:</p>
+<pre><code>struct zeno_env_1 { zeno_closure base; int64_t z_k; };
+
+static int64_t zeno_fn_1(zeno_closure *zeno_self, int64_t z_n) {
+    struct zeno_env_1 *env = (struct zeno_env_1 *)zeno_self;
+    return zeno_mul(z_n, env-&gt;z_k, 2, 38);
+}
+
+static zeno_closure *z_make_scaler(int64_t z_k) {
+    struct zeno_env_1 *t1 = (struct zeno_env_1 *)zeno_alloc(sizeof(struct zeno_env_1));
+    t1-&gt;base.code = (zeno_code)zeno_fn_1;
+    t1-&gt;base.name = "";
+    t1-&gt;z_k = z_k;
+    return (&amp;t1-&gt;base);
+}</code></pre>
+<p>A function together with the variables it took with it is called a
+<strong>closure</strong>. The header comes first in the struct, so a pointer to the
+whole thing is also a valid pointer to the header, and every function
+value can be handled the same way whatever it carries.</p>
+<p>How does the compiler know which variables to pack? While it compiles the
+inner function, every variable of the outer one is on offer as
+<code>env-&gt;name</code>, and each notes whether it was looked up. The ones that were
+are the ones to pack.</p>
+<p><strong>Sharing a variable.</strong> <code>k</code> above is copied, which is fine because it never
+changes. This is different:</p>
+<pre><code class="zeno">function counter() {
+    var count = 0
+    return function() {
+        count += 1
+        return count
+    }
+}</code></pre>
+<p><code>count</code> changes, and the change has to last. So a <code>var</code> that an inner
+function uses is not kept in a C variable at all. It is kept in a box on
+the heap, and the outer function and the inner one both hold a pointer to
+the box:</p>
+<pre><code>int64_t *z_count = (int64_t *)zeno_alloc(sizeof(int64_t));
+*z_count = 0;
+...
+t2-&gt;z_count = z_count;              // the inner function gets the box</code></pre>
+<p><strong>Ordinary functions as values.</strong> <code>xs.map(double)</code> passes a top-level
+function. It does not take the hidden first argument, so the compiler
+writes a small wrapper that does (<code>zeno_wrap_double</code>) and one fixed
+<code>zeno_closure</code> that points at it.</p>
+<p><strong><code>map</code>, <code>filter</code> and <code>reduce</code></strong> are loops written out where they are
+used, each calling the function on every item.</p>
+<h2 id="names">Names</h2>
+<p>Every Zeno name gets <code>z_</code> in front: <code>count</code> becomes <code>z_count</code>. That way no
+Zeno name can collide with a C keyword (<code>double</code>, <code>int</code>) or a C library
+function (<code>printf</code>, <code>abs</code>). A name declared a second time, in another block
+or function, becomes <code>z2_count</code>. Temporaries the compiler invents are <code>t1</code>,
+<code>t2</code>, and everything in the runtime starts with <code>zeno_</code>.</p>
+<h2 id="top-level-code">Top-level code</h2>
+<p>C has no code outside functions. The statements at the top of a Zeno file
+become the body of one C function, <code>zeno_program</code>, which <code>main</code> calls.
+(<code>main</code> itself only notes where the stack begins, for the garbage
+collector.) Variables declared at the top become C globals, so that
+functions can see them, and are given their values inside <code>zeno_program</code>,
+in the order the file says.</p>
+<h2 id="memory">Memory</h2>
+<p>A string built while the program runs (<code>a + b</code>, an f-string) needs memory,
+and so does every object, list and enum value that carries data, every
+function made inside another one, and the box of a variable they share.
+The runtime takes it from <code>malloc</code>, and a garbage collector in the runtime
+frees it once the program can no longer reach it.
+<a href="/docs/memory/"><code>docs/memory.md</code></a> is the walkthrough.</p>
+<p>A value marked <code>owned</code> does not wait for the collector. The compiler writes
+a call that frees it at the end of its owner's block, and on every other way
+out of that block: <code>return</code>, <code>break</code>, <code>continue</code>, and an error.
+<a href="/docs/ownership/"><code>docs/ownership.md</code></a> is the walkthrough for that. When
+every list and object is owned, <code>zeno build --no-collector</code> leaves the
+collector out of the C file: <a href="/docs/no-collector/"><code>docs/no-collector.md</code></a>.</p>
+<p>Programs that only use numbers, bools, string literals and enum cases
+without data do not allocate at all, and the collector never runs.</p>
+<h2 id="what-differs-from-zeno-run-on-purpose">What differs from <code>zeno run</code>, on purpose</h2>
+<ul>
+<li><strong>Very deep recursion.</strong> The interpreter stops at 1000 calls with a clear
+  error. The compiled program uses the real stack, so it goes much deeper,
+  and if it runs out, the operating system stops it.</li>
+<li><strong>The error report</strong> names the file, line and column but does not quote
+  the source line, because the compiled program does not carry the source.</li>
+<li><strong>A variable that became <code>none</code> again after it was checked</strong> (the
+  <code>limit</code> example above). Both stop with an error at that line, but the
+  wording differs: the interpreter complains about the operation that was
+  tried, the compiled program about the variable.</li>
+<li><strong>In a firmware build, an error the runtime finds stops the program</strong>
+  even inside a <code>try</code>. An <code>except</code> that could only be waiting for one is
+  refused when the program is built. See <a href="/docs/firmware/"><code>firmware.md</code></a>.</li>
+<li><strong><code>sum</code> of an empty list of floats</strong> prints <code>0.0</code> compiled and <code>0</code>
+  interpreted. The compiled answer is the right one: the interpreter does
+  not know what an empty list was meant to hold.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/primes.zeno</code> and find, in <code>primes.c</code>, the line each Zeno
+   line turned into.</li>
+<li>Write a program where the order of two calls matters, build it, and find
+   the temporaries. Then make the calls not matter and watch them vanish.</li>
+<li>Add <code>math.tan</code>. You need one line in <code>emit_c.rs</code> (and it should already
+   work in the interpreter and checker; if not, add it there first).</li>
+<li>Add <code>time.sleep(500 ms)</code>. What should it compile to on a PC? On a
+   microcontroller?</li>
+<li>Compile <code>examples/primes.zeno</code> with <code>-O0</code> and <code>-O2</code> and time both against
+   <code>zeno run</code>. Where does the time go in each?</li>
+<li>Build <code>examples/sensor.zeno</code> and find the <code>setjmp</code> in <code>sensor.c</code>. Which
+   variable in <code>read_all</code> became <code>volatile</code>, and why that one?</li>
+<li>In the same file, find the struct that <code>in_range</code> packs <code>low</code> and <code>high</code>
+   into. Then find the box that <code>counter</code> keeps <code>count</code> in.</li>
+<li>Make a named function inside a function compile. Start with the easy
+   half: one that is only used below the line it is written on.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/compiler.md">docs/compiler.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/vm/"><span>Previous</span>How the bytecode VM works</a><a class="next" href="/docs/llvm/"><span>Next</span>How the LLVM backend works</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#one-rule-above-all-build-must-agree-with-run">One rule above all: build must agree with run</a></li><li><a href="#what-it-compiles-so-far">What it compiles so far</a></li><li><a href="#where-the-types-come-from">Where the types come from</a></li><li><a href="#the-runtime-making-c-keep-zenos-promises">The runtime: making C keep Zeno's promises</a></li><li><a href="#order-the-part-c-leaves-open">Order: the part C leaves open</a></li><li><a href="#classes">Classes</a></li><li><a href="#enums-and-match">Enums and match</a></li><li><a href="#lists">Lists</a></li><li><a href="#values-that-may-be-none">Values that may be none</a></li><li><a href="#errors-try-except-and-raise">Errors: try, except and raise</a></li><li><a href="#functions-as-values">Functions as values</a></li><li><a href="#names">Names</a></li><li><a href="#top-level-code">Top-level code</a></li><li><a href="#memory">Memory</a></li><li><a href="#what-differs-from-zeno-run-on-purpose">What differs from zeno run, on purpose</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One owner · Zeno</title>
+<meta name="description" content="Until now a build with no collector made you write the word owned on every list and every class, and it refused a list of objects however you wrote it. Both are gone.">
+<meta property="og:title" content="One owner · Zeno">
+<meta property="og:description" content="Until now a build with no collector made you write the word owned on every list and every class, and it refused a list of objects however you wrote it. Both are gone.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/one-owner/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/one-owner/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/" aria-current="page">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>One owner</h1>
+  <p>Until now a build with no collector made you write the word <code>owned</code> on
+every list and every class, and it refused a list of objects however
+you wrote it. Both are gone.</p>
+<pre><code>cargo run -- build --no-collector --memory examples/scheduler.zeno
+./scheduler</code></pre>
+<pre><code>runs: 10
+blink ran 5 times: [2, 4, 6, 8, 10]
+sample ran 3 times: [3, 6, 9]
+log ran 2 times: [5, 10]
+busiest: blink
+blink now runs every 4
+left: 2
+retiring log
+it ran 2 times
+2 ran at tick 12
+[0, 0, 0]
+[0, 0, 7]
+[1, 2, 3]
+memory: 53 blocks made (1328 bytes), at most 504 bytes in use at once, no collector, 0 blocks left at the end
+pool: 800 bytes taken, in a pool of 32768
+text: at most 55 bytes in use at once, in a room of 1024</code></pre>
+<p><a href="/examples/scheduler/"><code>examples/scheduler.zeno</code></a> has two classes,
+a list of objects, a list inside each object and a list of lists. The
+word <code>owned</code> is not in it. It still ends with <strong>0 blocks left</strong>, and
+<code>zeno run</code> prints the same thirteen lines.</p>
+<p>This page follows on from <a href="/docs/temporaries/"><code>temporaries.md</code></a>. It is the
+third of five steps that take the rules of that build from "refuse what
+has no owner" to "whoever receives a value owns it".</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/checker.rs"><code>src/checker.rs</code></a>: <code>Rules</code> and <code>check_by</code> at the
+  top. Then, under "Owned values": <code>takes_out</code>, <code>walk</code>, <code>being_walked</code>,
+  <code>item</code>, and the end of <code>take</code>.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>: <code>Drops</code>, which names the function
+  that frees each kind of value, and <code>write_drops</code>, which writes the
+  ones a program needs.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_llvm.rs"><code>src/emit_llvm.rs</code></a>: <code>drop_list</code>, the same in IR.</li>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/main.rs"><code>src/main.rs</code></a>: <code>zeno check --no-collector</code>.</li>
+</ul>
+<h2 id="the-idea-a-build-with-no-collector-has-no-shared-values">The idea: a build with no collector has no shared values</h2>
+<p>Zeno has two kinds of lists and objects (<a href="/docs/ownership/"><code>ownership.md</code></a>).
+A <strong>shared</strong> one can be reached from many places and the collector frees
+it when the last place lets go. An <strong>owned</strong> one has one owner, which
+frees it where its block ends.</p>
+<p>A build with no collector has nothing to free a shared value with. So
+the old rule was "write <code>owned</code> everywhere", and the build refused the
+program until you had. That is a rule a compiler can follow by itself:</p>
+<blockquote>
+<p><strong>With no collector, every list and every object has one owner: whoever
+received it.</strong></p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>It is received by</th>
+<th>Example</th>
+<th>Who frees it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a variable</td>
+<td><code>let tasks = [1, 2, 3]</code></td>
+<td>the variable's block, at its <code>}</code></td>
+</tr>
+<tr>
+<td>a field</td>
+<td><code>Task("blink", 2, [])</code></td>
+<td>the object, when it is freed</td>
+</tr>
+<tr>
+<td>a list</td>
+<td><code>tasks.append(Task(...))</code></td>
+<td>the list, when it is freed</td>
+</tr>
+<tr>
+<td>a parameter</td>
+<td><code>retire(last)</code></td>
+<td>the function, when it returns</td>
+</tr>
+<tr>
+<td>a <code>borrow</code> parameter</td>
+<td><code>report(task)</code></td>
+<td>not the function: the caller still owns it</td>
+</tr>
+<tr>
+<td>nobody</td>
+<td><code>print(len(line.split()))</code></td>
+<td>the statement (<a href="/docs/temporaries/"><code>temporaries.md</code></a>)</td>
+</tr>
+</tbody>
+</table>
+<p>So in this build <code>list[int]</code> <em>means</em> <code>owned list[int]</code> and <code>class Task</code>
+<em>means</em> <code>owned class Task</code>. The rules of <a href="/docs/ownership/"><code>ownership.md</code></a>
+apply to all of them, and the two that matter day to day are:</p>
+<pre><code class="zeno">let a = [1, 2, 3]
+let b = a           # the list moves to `b`
+print(a)</code></pre>
+<pre class="out"><code>error: `a` was given away on line 2 and holds nothing now. Lend it
+instead (a `borrow` parameter), or use it before it goes</code></pre>
+<p>and a function that only looks says so:</p>
+<pre><code class="zeno">function report(task: borrow Task) -&gt; str { ... }    # looks
+function retire(task: Task) -&gt; int { ... }           # takes, and frees</code></pre>
+<p>The word <code>owned</code> still works in this build and changes nothing there.
+In a build <em>with</em> a collector it means what it always did.</p>
+<h3 id="fewer-programs-never-different-ones">Fewer programs, never different ones</h3>
+<p>The same file must mean the same thing under <code>zeno run</code>, <code>zeno build</code>
+and <code>zeno build --no-collector</code>. It does. This build adds refusals and
+nothing else: a program it accepts never gives a value two owners, and
+for such a program "one owner" and "shared" cannot be told apart from
+the output. The tests build every program of this page both ways and
+compare.</p>
+<p><code>zeno check --no-collector file.zeno</code> checks as this build would,
+without building.</p>
+<h2 id="a-list-owns-its-items">A list owns its items</h2>
+<p><code>scheduler.tasks</code> is a list of tasks. The scheduler owns the list. Who
+owns each task? The list does, and that is new in <strong>every</strong> build: an
+owned list may now hold values that have one owner. (In a build with a
+collector that needs the words: <code>owned list[Packet]</code> of an
+<code>owned class Packet</code>.)</p>
+<p>Four things can be done with an item, and each has one meaning:</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>What happens</th>
+<th>The item belongs to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tasks[0]</code>, <code>for task in tasks</code></td>
+<td>a look</td>
+<td>the list, as before</td>
+</tr>
+<tr>
+<td><code>tasks.append(task)</code></td>
+<td>the list is given the item</td>
+<td>the list, from here on</td>
+</tr>
+<tr>
+<td><code>tasks.pop()</code></td>
+<td>the item is taken out</td>
+<td>whoever receives it</td>
+</tr>
+<tr>
+<td><code>tasks[1] = Task(...)</code></td>
+<td>a new item takes the place of an old one</td>
+<td>the list. The old one is freed on the spot</td>
+</tr>
+</tbody>
+</table>
+<p>A look can do everything except keep the item. It can read it, change
+it (<code>tasks[0].every = 4</code>), call its methods and lend it to a <code>borrow</code>
+parameter. Keeping it is the one thing refused:</p>
+<pre><code class="zeno">let first = tasks[0]</code></pre>
+<pre class="out"><code>error: this item is an owned Task, which has one owner: the list. `[ ]`
+only looks at it. Use it where it is, lend it to a `borrow` parameter,
+or take it out with `pop()`</code></pre>
+<p>Three things that would put an item in two lists are refused the same
+way, each with what to write instead: <code>a + b</code>, <code>a += b</code> and <code>filter</code>.
+<code>map</code> and <code>reduce</code> are fine: they lend each item to the function and
+build something new from the answers.</p>
+<h2 id="only-the-owner-takes-an-item-out">Only the owner takes an item out</h2>
+<p><code>pop()</code> and <code>tasks[1] = ...</code> both end an item's time in the list. If
+anyone were still looking at that item, they would be looking at freed
+memory. Three small rules make sure nobody is. Each can be checked by
+reading one function, with no lifetimes to write.</p>
+<p><strong>1. Only the owner.</strong> A <code>borrow</code> parameter cannot pop, and nor can
+<code>self</code> in a method, which is a borrow too.</p>
+<pre><code class="zeno">function last(tasks: borrow list[Task]) -&gt; Task { return tasks.pop() }</code></pre>
+<pre class="out"><code>error: only the owner can take an item out of this list: somebody else
+may have been lent it. Here `tasks` is only borrowed</code></pre>
+<p><strong>2. Not while a loop is walking the list.</strong> The loop is looking at an
+item on every trip.</p>
+<pre><code class="zeno">for task in tasks {
+    if task.name == "a" { print(retire(tasks.pop())) }
+}</code></pre>
+<pre class="out"><code>error: the `for` on line 8 is walking a list that `tasks` owns, and is
+still looking at its items. Nothing can take an item out of this list
+until the loop is over</code></pre>
+<p><strong>3. Not on a line that has already looked.</strong> In
+<code>print(report(tasks[0]), retire(tasks.pop()))</code> the first look may still
+be in use when the pop happens.</p>
+<pre class="out"><code>error: this line has already looked at `tasks`, and the look might
+still be in use. Do the other thing on a line of its own first</code></pre>
+<p>For the same reason the owner cannot be given a new value inside the
+loop (<code>tasks = []</code>), or be given away there: either would free the
+list, items and all, under the loop's feet.</p>
+<p>Appending is not on this list. A <code>for</code> loop walks a copy of the list
+(decision 3.10a), so <code>tasks.append(...)</code> inside the loop, or through a
+borrow, moves nothing the loop can see.</p>
+<p>These rules refuse some programs that would be safe.
+<code>tasks.append(tasks.pop())</code> is one: write it on two lines. Rust accepts
+more, with far more machinery. Rule 3 in particular could be finer, and
+that is noted in <a href="/decisions/"><code>decisions.md</code></a> 5.15e.</p>
+<h2 id="what-the-c-looks-like">What the C looks like</h2>
+<p>Freeing a list of tasks means freeing each task and then the list. The
+compiler writes one small function for each kind of list that owns its
+items, the first time a program needs it:</p>
+<pre><code>static void zeno_list_drop_1_Task(zeno_list *list) {
+    if (list == NULL) return;
+    for (int64_t i = 0; i &lt; list-&gt;len; i++) zeno_drop_Task(((z_Task *)list-&gt;items[i].p));
+    zeno_list_drop(list);
+}</code></pre>
+<p>The <code>1</code> is how deep the lists go. A <code>list[list[Task]]</code> gets
+<code>zeno_list_drop_2_Task</code>, which calls the one above for each row. A task
+frees what it holds in the same way, and so on down:</p>
+<pre><code>static void zeno_drop_Task(z_Task *self) {
+    if (self == NULL) return;
+    zeno_text_drop(self-&gt;z_name);
+    zeno_list_drop(self-&gt;z_runs);
+    zeno_free(self);
+}
+
+static void zeno_drop_Scheduler(z_Scheduler *self) {
+    if (self == NULL) return;
+    zeno_list_drop_1_Task(self-&gt;z_tasks);
+    zeno_free(self);
+}</code></pre>
+<p>So the one line <code>zeno_drop_Scheduler(z_scheduler);</code> at the end of the
+program gives back the scheduler, its list, every task, every task's
+name and every task's list of runs.</p>
+<p><strong>A new item frees the old one.</strong> <code>scheduler.tasks[1] = Task("sample
+fast", 1, [])</code>:</p>
+<pre><code>z_Task *t9 = zeno_new_Task("sample fast", 1, zeno_list_new(0));
+zeno_slot *t10 = zeno_list_at(z_scheduler-&gt;z_tasks, 1, 91, 1);
+zeno_drop_Task(((z_Task *)(*t10).p));
+*t10 = (zeno_slot){.p = t9};</code></pre>
+<p>The new task is made first. If making it failed, the old one would
+still be in its place.</p>
+<p><strong>The copy a loop walks is freed alone.</strong> <code>for task in scheduler.tasks</code>:</p>
+<pre><code>zeno_list *t3 = zeno_list_copy(z_scheduler-&gt;z_tasks);
+for (int64_t t4 = 0; t4 &lt; t3-&gt;len; t4++) {
+    z_Task *z_task = ((z_Task *)t3-&gt;items[t4].p);
+    ...
+}
+zeno_list_drop(t3);</code></pre>
+<p><code>zeno_list_drop</code>, not <code>zeno_list_drop_1_Task</code>: the copy holds the same
+tasks as the real list, and they are the real list's to free.</p>
+<p><strong>Giving away empties the owner.</strong> <code>scheduler.add(slow)</code>:</p>
+<pre><code>z_Task *t1 = z_slow;
+z_slow = NULL;
+z_Scheduler_add(z_scheduler, t1);</code></pre>
+<p>and the <code>zeno_drop_Task(z_slow);</code> at the end of the program finds
+nothing to free. That part is unchanged from <a href="/docs/ownership/"><code>ownership.md</code></a>.</p>
+<h2 id="an-assignment-can-reach-through-a-list">An assignment can reach through a list</h2>
+<p><code>points[1].x = 30</code> and <code>grid[1][0] = 5</code> used to be refused by
+<code>zeno build</code> (not by <code>zeno run</code>). Lists of objects make them everyday
+lines, so the C backend compiles them now, in every build. The value is
+worked out first, then the list or object, then the index, which is
+the order <code>zeno run</code> uses. <code>an_assignment_can_reach_through_a_list</code> in
+<code>emit_c.rs</code> checks it with functions that print when they are called.</p>
+<h2 id="errors">Errors</h2>
+<p>The <code>except</code> block that catches an error owns it, and frees it when the
+block ends (<a href="/docs/no-collector/"><code>no-collector.md</code></a>, "Errors"). That used
+to be said by the compiler in its own words. It is the checker's now,
+because it is the same rule as a loop's item: <code>e</code> is a look.</p>
+<pre><code class="zeno">try { print(risky(5)) } except Bad as e { let again = e }</code></pre>
+<pre class="out"><code>error: `e` is the error that this `except` caught. It is freed when the
+block ends, so it cannot be kept, returned or given away. Copy out what
+is needed from it</code></pre>
+<p>One thing got wider: <code>e</code> can be lent to a <code>borrow</code> parameter now.</p>
+<h2 id="the-same-through-llvm">The same, through LLVM</h2>
+<pre><code>cargo run -- build --llvm --no-collector --memory examples/scheduler.zeno</code></pre>
+<p>The checker does all the deciding, so the LLVM backend needed only the
+frees. <code>drop_list</code> writes the IR for <code>zeno_list_drop_1_Task</code> the first
+time it is needed: a loop over the items that calls <code>@zeno.drop.Task</code>
+for each, then <code>@zeno_list_drop</code> for the list. Replacing an item reads
+as it does in C (this is <code>points[0] = Point(3)</code>, from the test
+<code>the_ir_for_a_list_that_owns_its_items</code>):</p>
+<pre><code>%t9 = call ptr @zeno_list_at(ptr %t7, i64 0, i32 5, i32 1)
+%t10 = load ptr, ptr %t9
+call void @zeno.drop.Point(ptr %t10)
+store i64 %t8, ptr %t9</code></pre>
+<p>Both builds of the scheduler print the same and give the same memory
+report, line for line.</p>
+<h2 id="what-is-still-refused">What is still refused</h2>
+<table>
+<thead>
+<tr>
+<th>Refused</th>
+<th>Why</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A list or object inside an <code>or none</code>: <code>var last: Task or none</code></td>
+<td>taking it out would have to leave a <code>none</code> behind</td>
+<td>step 4</td>
+</tr>
+<tr>
+<td>An enum case that carries values, a list of <code>int or none</code></td>
+<td>each sits in a block of its own</td>
+<td>step 4</td>
+</tr>
+<tr>
+<td>A function written where a value goes</td>
+<td>so does it, with the variables it uses</td>
+<td>step 5</td>
+</tr>
+<tr>
+<td>A function type that mentions a list or an object</td>
+<td>the type cannot say <code>borrow</code> yet</td>
+<td>step 5</td>
+</tr>
+<tr>
+<td>An error that is kept or raised again</td>
+<td>its <code>except</code> frees it</td>
+<td>step 5</td>
+</tr>
+<tr>
+<td>A function that uses a list or object declared at the top of the file</td>
+<td>the owner is the top of the file, which could give it away first</td>
+<td>noted, see below</td>
+</tr>
+<tr>
+<td>A method that pops an item or replaces a field that has one owner</td>
+<td><code>self</code> is a borrow (rule 1)</td>
+<td>noted</td>
+</tr>
+<tr>
+<td>A list or object as the <code>T</code> of a generic</td>
+<td>the copy for <code>T</code> would have to know it moves</td>
+<td>noted</td>
+</tr>
+</tbody>
+</table>
+<p>The sixth row is the one a firmware program will meet first: a table of
+numbers at the top of the file that several functions read. For now,
+lend it through a <code>borrow</code> parameter. A top-level <code>let</code> that is never
+given away could be lent to every function without being asked, and
+that is on the list for the audit that follows these five steps.</p>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li><strong>The checker</strong> (<code>checker.rs</code>): one test for each rule on this page,
+  for what it accepts and for the message of what it refuses. They are
+  the tests whose names begin <code>with_one_owner_</code>, and
+  <code>an_owned_list_can_hold_values_that_have_one_owner</code>,
+  <code>an_item_that_has_one_owner_stays_in_its_list</code> and
+  <code>only_the_owner_takes_out_what_has_one_owner</code>.</li>
+<li><strong>Both compilers</strong>: three programs with nested lists and objects, with
+  errors raised half way through a list, and with every early way out of
+  a loop, plus <code>scheduler.zeno</code>. Each must print what <code>zeno run</code> prints,
+  end with 0 blocks left, and give the same memory report through C and
+  through LLVM (<code>with_no_collector_a_list_and_an_object_need_no_word</code>,
+  <code>a_list_owns_items_that_have_one_owner</code>).</li>
+<li><strong>Over time</strong>: a loop that fills and empties a list of objects 50 times
+  and 5000 times needs the same pool
+  (<code>with_no_collector_lists_of_objects_do_not_fill_the_pool_over_time</code>).</li>
+<li><strong>The table of refusals</strong> (<code>what_a_build_with_no_collector_refuses_says_so</code>)
+  lost the rows that build now, and its program of accepted lines grew
+  by as many lines.</li>
+<li>By hand: every program was also run with each freed block overwritten,
+  so that a look at freed memory would print rubbish. None did.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>In <code>scheduler.zeno</code>, take the word <code>borrow</code> off <code>report</code> and run
+   <code>zeno check --no-collector</code>. Read the error. Why is the loop's <code>task</code>
+   not the loop's to give?</li>
+<li>Add <code>let first = scheduler.tasks[0]</code> and read the error. Fix it two
+   ways: once so that the task stays in the list, once so that it
+   leaves.</li>
+<li>Make a second list, <code>var done: list[Task] = []</code>, and move the last
+   task across with <code>done.append(scheduler.tasks.pop())</code>. That builds.
+   Now try <code>scheduler.tasks.append(scheduler.tasks.pop())</code>. Which rule
+   refuses it, and is the program it refuses really unsafe?</li>
+<li>Build the scheduler and open <code>scheduler.c</code>. Before you search for it,
+   write down what <code>zeno_list_drop_2_Task</code> must look like. Then add
+   <code>let rows = [[Task("x", 1, [])]]</code> to the program and compare.</li>
+<li>Give <code>Scheduler</code> a method <code>remove_last(self) -&gt; Task</code> that pops.
+   Rule 1 refuses it. Rust would have you write <code>&amp;mut self</code> to promise
+   that nobody else is looking. What would Zeno need: a new word, or a
+   rule about who may be lent a scheduler while a method runs? Write the
+   error message you would want to read first.</li>
+<li><code>for task in scheduler.tasks</code> copies the list before walking it, so
+   that an <code>append</code> in the loop cannot disturb the walk. When the body
+   never appends, the copy is wasted. Find <code>open_list_loop</code> in
+   <code>emit_c.rs</code> and decide what the checker would have to tell it.</li>
+<li>Build <code>examples/tour.zeno</code> with <code>--no-collector</code> and read what it is
+   refused for. That is step 4.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/one-owner.md">docs/one-owner.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/temporaries/"><span>Previous</span>What a statement owns</a><a class="next" href="/docs/firmware/"><span>Next</span>How a firmware build handles errors</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#the-idea-a-build-with-no-collector-has-no-shared-values">The idea: a build with no collector has no shared values</a></li><li><a href="#a-list-owns-its-items">A list owns its items</a></li><li><a href="#only-the-owner-takes-an-item-out">Only the owner takes an item out</a></li><li><a href="#what-the-c-looks-like">What the C looks like</a></li><li><a href="#an-assignment-can-reach-through-a-list">An assignment can reach through a list</a></li><li><a href="#errors">Errors</a></li><li><a href="#the-same-through-llvm">The same, through LLVM</a></li><li><a href="#what-is-still-refused">What is still refused</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

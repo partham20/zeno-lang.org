@@ -1,0 +1,19 @@
+let temperature = 31
+
+if temperature > 30 {
+    print("hot")
+} else if temperature > 15 {
+    print("mild")
+} else {
+    print("cold")
+}
+
+for i in range(3) {
+    print("tick", i)
+}
+
+var left = 3
+while left > 0 {
+    left -= 1
+}
+print("done, left =", left)

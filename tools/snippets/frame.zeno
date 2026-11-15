@@ -1,0 +1,22 @@
+owned class Frame {
+    channel: int
+    samples: owned list[int]
+}
+
+function capture(channel: int) -> Frame {
+    let samples: owned list[int] = [n * channel for n in range(4)]
+    return Frame(channel, samples)       # samples moves into the frame
+}
+
+function average(samples: borrow list[int]) -> int {   # only looks
+    return sum(samples) // len(samples)
+}
+
+function send(frame: Frame) -> int {     # takes the frame over, and frees it
+    return len(frame.samples)
+}
+
+let frame = capture(7)
+print(average(frame.samples))
+print(send(frame))
+print(frame.channel)

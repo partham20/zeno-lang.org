@@ -1,0 +1,10 @@
+from time import sleep
+
+function blink_for(delay: ms) -> str {
+    sleep(delay)
+    return f"waited {delay}"
+}
+
+print(blink_for(20 ms))
+print(3.3 V > 2.9 V)
+print(blink_for(20))

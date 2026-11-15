@@ -1,0 +1,13 @@
+let readings = [21.5, 22.0, -99.0, 21.0, 150.0]
+function in_range(low: float, high: float) {
+    return function(reading: float) -> bool {
+        return low <= reading <= high
+    }
+}
+
+function add(total: float, reading: float) -> float {
+    return total + reading
+}
+
+let valid = readings.filter(in_range(-40.0, 85.0))
+print(valid.reduce(add, 0.0) / len(valid))

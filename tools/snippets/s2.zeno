@@ -1,0 +1,14 @@
+let readings = [21.5, 22.0, -99.0, 21.0, 150.0]
+function average(readings, low, high) {
+    var total = 0.0
+    var count = 0
+    for reading in readings {
+        if low <= reading <= high {
+            total += reading
+            count += 1
+        }
+    }
+    return total / count
+}
+
+print(average(readings, -40.0, 85.0))

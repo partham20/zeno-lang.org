@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sensor.zeno · Zeno</title>
+<meta name="description" content="Values that may be missing, errors, and functions as values. A Zeno example, with its output.">
+<meta property="og:title" content="sensor.zeno · Zeno">
+<meta property="og:description" content="Values that may be missing, errors, and functions as values. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/sensor/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/sensor/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">Values that may be missing, errors, and functions as values</h1>
+  <p class="lede small">The whole of <code>examples/sensor.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <figure class="window"><figcaption><span class="file">sensor.zeno</span></figcaption><pre><code class="zeno"># sensor.zeno: values that may be missing, errors, and functions as values.
+#
+#     zeno run examples/sensor.zeno      run it with the interpreter
+#     zeno build examples/sensor.zeno    compile it to sensor.c and ./sensor
+#
+# A temperature sensor sends lines of text. Some lines are damaged and some
+# readings are missing. Turn the lines into numbers, keep the good ones,
+# and report on them.
+
+
+# --- A value that may be missing ---
+
+# One line from the sensor becomes a temperature, or `none` for a gap.
+function parse_line(line: str) -&gt; float or none raises ValueError {
+    let text = line.strip()
+    if text == "--" {
+        return none                       # the sensor had nothing to say
+    }
+    let value = float(text)               # a damaged line raises ValueError
+    if not -40.0 &lt;= value &lt;= 125.0 {
+        raise ValueError(f"{value} is outside what the sensor can measure")
+    }
+    return value
+}
+
+
+# --- An error of our own, carrying data ---
+
+# Any class can be raised. This one says how bad things got.
+class TooManyFaults {
+    count: int
+    limit: int
+}
+
+function read_all(lines: list[str], limit: int) -&gt; list[float or none] raises TooManyFaults {
+    var readings: list[float or none] = []
+    var faults = 0
+    for line in lines {
+        try {
+            readings.append(parse_line(line))
+        } except ValueError as err {
+            faults += 1
+            print(f"  skipped line {faults}: {err}")
+            if faults &gt; limit {
+                raise TooManyFaults(faults, limit)
+            }
+        }
+    }
+    return readings
+}
+
+
+# --- Functions as values ---
+
+# Gives back a new function that remembers `low` and `high`.
+function in_range(low: float, high: float) {
+    return function(t: float) { return low &lt;= t &lt;= high }
+}
+
+# Gives back a function that counts how often it is called. The inner
+# function changes `count`, a variable of the outer one, and the change
+# is still there on the next call.
+function counter() {
+    var count = 0
+    return function() {
+        count += 1
+        return count
+    }
+}
+
+
+let lines = ["21.5", " 22.0 ", "--", "abc", "23.5", "900", "24.0"]
+let readings = read_all(lines, 5)
+print("readings:", readings)
+
+# A reading can only be used as a number once `none` is ruled out.
+var present: list[float] = []
+for reading in readings {
+    if reading is not none {
+        present.append(reading)
+    }
+}
+
+let comfortable = present.filter(in_range(21.0, 23.0))
+let fahrenheit = present.map(function(c: float) { return c * 1.8 + 32 })
+print("present:", present)
+print("comfortable:", comfortable)
+print("fahrenheit:", fahrenheit)
+print(f"average: {sum(present) / len(present):.2f}")
+
+let next_id = counter()
+print("ids:", next_id(), next_id(), next_id())
+
+# With a limit of one fault, the same data is too damaged to use.
+try {
+    read_all(lines, 1)
+} except TooManyFaults as fault {
+    print(f"gave up after {fault.count} faults (the limit was {fault.limit})")
+}</code></pre><div class="out-label">zeno run examples/sensor.zeno</div><pre class="out"><code>  skipped line 1: cannot turn "abc" into a float
+  skipped line 2: 900.0 is outside what the sensor can measure
+readings: [21.5, 22.0, none, 23.5, 24.0]
+present: [21.5, 22.0, 23.5, 24.0]
+comfortable: [21.5, 22.0]
+fahrenheit: [70.7, 71.6, 74.30000000000001, 75.2]
+average: 22.75
+ids: 1 2 3
+  skipped line 1: cannot turn "abc" into a float
+  skipped line 2: 900.0 is outside what the sensor can measure
+gave up after 2 faults (the limit was 1)</code></pre></figure>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/sensor.zeno">examples/sensor.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/shapes/"><span>Previous</span>shapes.zeno</a><a class="next" href="/examples/generics/"><span>Next</span>generics.zeno</a></nav>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

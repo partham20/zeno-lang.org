@@ -1,0 +1,10 @@
+function counter() {
+    var count = 0
+    return function() {
+        count += 1
+        return count
+    }
+}
+
+let next_id = counter()
+print(next_id(), next_id(), next_id())

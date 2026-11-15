@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The memory pool · Zeno</title>
+<meta name="description" content="A program built with zeno build --no-collector does not use the heap. Its lists, objects and errors, and the text it keeps (text.md), live in one array of a fixed size, the pool, which is part of the program from the start.">
+<meta property="og:title" content="The memory pool · Zeno">
+<meta property="og:description" content="A program built with zeno build --no-collector does not use the heap. Its lists, objects and errors, and the text it keeps (text.md), live in one array of a fixed size, the pool, which is part of the program from the start.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/pool/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/pool/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+    </button>
+    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/" aria-current="page">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<article class="prose">
+  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <h1>The memory pool</h1>
+  <p>A program built with <code>zeno build --no-collector</code> does not use the heap.
+Its lists, objects and errors, and the text it keeps
+(<a href="/docs/text/"><code>text.md</code></a>), live in <strong>one array of a fixed size</strong>, the
+pool, which is part of the program from the start.</p>
+<pre><code>cargo run -- build --no-collector --memory examples/buffer.zeno
+./buffer
+grep -c -e malloc -e calloc -e realloc -e '[^_]free(' buffer.c    # 0</code></pre>
+<pre><code>sent 44400 samples, skipped 13 quiet frames
+refused 33 frames, the first on channel 84
+[3, 3, 3, 3]
+4
+memory: 1691 blocks made (2646299 bytes), at most 13336 bytes in use at once, no collector, 0 blocks left at the end
+pool: 25384 bytes taken, in a pool of 32768
+text: at most 53 bytes in use at once, in a room of 1024</code></pre>
+<p>The middle line of the report is new. The program asked for memory 1691
+times, 2.6 million bytes in all, and 25,384 bytes of pool were enough
+for the whole run.</p>
+<p>This page follows on from <a href="/docs/no-collector/"><code>no-collector.md</code></a>. That
+page is about the compiler: it writes a free at the end of every
+owner's block. This page is about what the free gives the block back
+<em>to</em>.</p>
+<h2 id="why">Why</h2>
+<p>Until now <code>zeno_alloc</code> was <code>calloc</code> and <code>zeno_free</code> was <code>free</code>. That
+was honest and it worked, and for firmware it has four things wrong
+with it.</p>
+<ul>
+<li><strong>MISRA C:2012 Rule 21.3</strong> says the memory functions of <code>&lt;stdlib.h&gt;</code>
+  shall not be used. That is <code>malloc</code>, <code>calloc</code>, <code>realloc</code> and <code>free</code>.</li>
+<li><strong>A small board may have no heap at all</strong>, or one you would rather
+  not link in.</li>
+<li><strong>Nobody can say how long <code>malloc</code> takes.</strong> It searches. How long
+  depends on what was freed before, in what order.</li>
+<li><strong>A heap breaks up.</strong> After enough taking and giving back in mixed
+  sizes there can be plenty of free memory and no piece of it big
+  enough. The program then fails after three weeks, not on the bench.</li>
+</ul>
+<p>A pool with fixed block sizes answers all four. How much memory the
+program can ever have is decided when it is built. Taking and giving
+are a handful of instructions whatever came before. And it cannot
+break up, for a reason that is one sentence long and comes below.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: search for "The pool". It is
+  about sixty lines, between <code>#else /* ZENO_NO_COLLECTOR */</code> and the
+  text room. <code>zeno_alloc</code>, <code>zeno_free</code>, and three things they share.</li>
+</ul>
+<p>That is the whole list. Nothing in the compiler changed, in either
+backend. The compiler writes calls to <code>zeno_alloc</code> and <code>zeno_free</code>, and
+does not care what is behind them (decision 5.9b said it would be so).</p>
+<h2 id="the-idea-a-few-sizes-and-a-list-of-spares-for-each">The idea: a few sizes, and a list of spares for each</h2>
+<p>Blocks come in fixed sizes, each twice the one before:</p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Bytes</th>
+<th>What fits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>16</td>
+<td>an object with two fields</td>
+</tr>
+<tr>
+<td>1</td>
+<td>32</td>
+<td>a list (its length, its room, where its items are), or the items of a list of 4</td>
+</tr>
+<tr>
+<td>2</td>
+<td>64</td>
+<td>the items of a list of 8</td>
+</tr>
+<tr>
+<td>3</td>
+<td>128</td>
+<td>the items of a list of 16</td>
+</tr>
+<tr>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+</tbody>
+</table>
+<p>A request gets the smallest size it fits in. 24 bytes gets a 32-byte
+block. 100 bytes gets 128.</p>
+<p>The pool keeps, for each size, a <strong>list of spare blocks</strong>: blocks of
+that size that were given back and are waiting to be used again. At
+the start every list is empty and the whole array is unused.</p>
+<pre><code>static union {
+    char bytes[ZENO_POOL];
+    uint64_t lined_up;
+} zeno_pool;
+static size_t zeno_pool_top = 0;
+static zeno_spare *zeno_pool_spare[ZENO_POOL_STEPS];</code></pre>
+<p><code>zeno_pool_top</code> says how much of the array has ever been cut into
+blocks. It only goes up. (The union is there for its second member,
+which is never used: it makes the C compiler line the array up so that
+an <code>int</code> or a <code>float</code> can sit at the start of a block.)</p>
+<p><strong>Taking a block:</strong></p>
+<pre><code>zeno_spare *block = zeno_pool_spare[step];
+if (block != NULL) {
+    zeno_pool_spare[step] = block-&gt;next;          // a spare one: take it off its list
+} else {
+    size_t whole = sizeof(zeno_head) + room;
+    if (whole &gt; (size_t)ZENO_POOL - zeno_pool_top) zeno_pool_full();
+    block = (zeno_spare *)(zeno_pool.bytes + zeno_pool_top);
+    zeno_pool_top += whole;                       // none spare: cut a new one
+    block-&gt;head.step = step;
+}</code></pre>
+<p><strong>Giving it back:</strong></p>
+<pre><code>block-&gt;head.asked = 0;
+block-&gt;next = zeno_pool_spare[block-&gt;head.step];
+zeno_pool_spare[block-&gt;head.step] = block;        // on the list for its size</code></pre>
+<p>There is no loop in either, apart from the short one that finds the
+size (at most 24 turns, usually one or two). Nothing is searched.</p>
+<h2 id="what-a-block-looks-like">What a block looks like</h2>
+<pre><code>        8 bytes              16, 32, 64 ... bytes
+   +---------------+------------------------------------+
+   | step | asked  |  what the program uses             |
+   +---------------+------------------------------------+
+                   ^
+                   what zeno_alloc returns</code></pre>
+<p>In front of each block are eight bytes of the pool's own: which size
+the block is, and how many bytes of it were asked for. <code>zeno_free</code> is
+handed only an address, so it steps back eight bytes to find out which
+list the block goes on.</p>
+<p>A spare block needs to say where the next spare one is. It says so in
+its own first bytes, which nobody is using:</p>
+<pre><code>typedef struct zeno_spare {
+    zeno_head head;
+    struct zeno_spare *next;
+} zeno_spare;</code></pre>
+<p>So the lists of spares cost no memory beyond one pointer for each
+size. This is why the smallest block is 16 bytes and not 8: a pointer
+has to fit.</p>
+<h2 id="follow-three-trips-round-a-loop">Follow three trips round a loop</h2>
+<pre><code class="zeno">owned class Frame {
+    id: int
+    bytes: owned list[int]
+}
+
+for id in range(3) {
+    let bytes: owned list[int] = [id, id + 1, id + 2]
+    let frame = Frame(id, bytes)
+    print(len(frame.bytes))
+}</code></pre>
+<pre><code>memory: 9 blocks made (192 bytes), at most 64 bytes in use at once, no collector, 0 blocks left at the end
+pool: 104 bytes taken, in a pool of 32768</code></pre>
+<p><strong>First trip.</strong> Three requests, and every list of spares is empty, so
+each one is cut from the array:</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Size it gets</th>
+<th>With its 8 bytes</th>
+<th><code>zeno_pool_top</code> after</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>the list, 24 bytes</td>
+<td>32</td>
+<td>40</td>
+<td>40</td>
+</tr>
+<tr>
+<td>its three items, 24 bytes</td>
+<td>32</td>
+<td>40</td>
+<td>80</td>
+</tr>
+<tr>
+<td>the <code>Frame</code>, 16 bytes</td>
+<td>16</td>
+<td>24</td>
+<td>104</td>
+</tr>
+</tbody>
+</table>
+<p>At the <code>}</code> the compiler's <code>zeno_drop_Frame</code> gives all three back. Two
+blocks go on the 32-byte list and one on the 16-byte list.</p>
+<p><strong>Second trip.</strong> The same three requests. This time each finds a spare
+block of its size, and <code>zeno_pool_top</code> does not move.</p>
+<p><strong>Third trip.</strong> The same again.</p>
+<p>Nine blocks were made and the pool grew three times. Make it three
+million trips and the second line of the report does not change. The
+test <code>with_no_collector_the_pool_does_not_fill_up_over_time</code> checks
+exactly that.</p>
+<h2 id="why-it-cannot-break-up">Why it cannot break up</h2>
+<p>A block is never cut in two, and two blocks are never joined. So a
+block that was 32 bytes once is 32 bytes for ever, and when it is
+spare it is there for the next 32-byte request, whole.</p>
+<p>A heap gets into trouble because it does the opposite: it cuts big
+free pieces into small ones to be thrifty, and then has to hope the
+small ones come back next to each other so that it can join them. A
+pool of fixed sizes gives up that thrift, and gets in return a promise
+that can be stated plainly:</p>
+<blockquote>
+<p>If the program got through a piece of work once, it will get through
+the same piece of work again, any number of times, in the same pool.</p>
+</blockquote>
+<p>For a control loop that runs for months, that is the promise that
+matters.</p>
+<h2 id="what-it-costs">What it costs</h2>
+<p>Nothing is free, and the costs are easy to measure with <code>--memory</code>.</p>
+<p><strong>Rounding up.</strong> A request for 40 bytes takes a 64-byte block. On
+average about a quarter of each block is unused.</p>
+<p><strong>Eight bytes in front of every block.</strong> For a 16-byte object that is
+half as much again.</p>
+<p><strong>Memory cut for one size is never used for another.</strong> This is the
+price of the promise above, and a growing list shows it best:</p>
+<pre><code class="zeno">var items: owned list[int] = []
+for n in range(100) {
+    items.append(n)
+}</code></pre>
+<pre><code>memory: 7 blocks made (2040 bytes), at most 1560 bytes in use at once, no collector, 0 blocks left at the end
+pool: 2104 bytes taken, in a pool of 32768</code></pre>
+<p>A list that is full moves to a place twice the size. This one moved
+through room for 4, 8, 16, 32, 64 and 128 items. Each old place went
+back on the list of spares for its size, and no later request was that
+size, so they sit there: 32 + 64 + 128 + 256 + 512 bytes that are
+spare and of no use to this program. The list ends up holding 1024
+bytes of items and the pool needed 2104.</p>
+<p>So a list that grows costs about twice its final size. <code>buffer.zeno</code>
+is nearly all growing lists, which is why it needs 25,384 bytes of
+pool for 13,336 bytes in use at once. Exercises 3 and 4 are two ways
+to get that back.</p>
+<h2 id="choosing-the-size">Choosing the size</h2>
+<p>The pool is <code>ZENO_POOL</code> bytes, and 32768 unless you say otherwise.
+That default is only there so that the examples run. On a board you
+choose it, and the report tells you what to choose:</p>
+<pre><code>cargo run -- build --no-collector --memory examples/buffer.zeno
+./buffer 2&gt;&amp;1 | grep pool
+cc -O2 -DZENO_POOL=25384 -o buffer buffer.c -lm</code></pre>
+<p>The number in the report is how much of the array was ever cut into
+blocks, and it is exact. The program runs in a pool of that many bytes
+and not in one a byte smaller (the test
+<code>with_no_collector_the_pool_has_an_end</code> tries both). It is exact for
+<em>that run</em>, of course: a program whose lists depend on its input needs
+the report from its worst input, and some room on top.</p>
+<p>Through LLVM it is the same flag, on the runtime file:</p>
+<pre><code>cargo run -- build --llvm --no-collector --memory examples/buffer.zeno
+clang -O2 -Wno-override-module -DZENO_POOL=25384 -o buffer buffer.ll buffer_runtime.c -lm</code></pre>
+<p>The pool lives in the runtime, which both backends share, so nothing
+in the IR changed. The two builds must still write the same report,
+and now that includes the line about the pool.</p>
+<h2 id="when-the-pool-is-full">When the pool is full</h2>
+<pre class="out"><code>error: the memory pool is full (ZENO_POOL is 1024 bytes)</code></pre>
+<p>The program stops. That is a fault, like an index past the end of a
+list or a statement that overflows the text room: a firmware build
+does not try to carry on from it.</p>
+<p>It can happen at only a few kinds of line: one that makes a list or an
+object, appends to a list, walks a list with <code>for</code> (the loop walks a
+copy), or raises an error. Every other line of the program is certain
+not to need memory.</p>
+<h2 id="a-block-given-back-twice">A block given back twice</h2>
+<pre class="out"><code>error: a block of memory was given back twice</code></pre>
+<p>The compiler writes exactly one free for each block, so this should
+never be seen. It is checked all the same, because of what would
+happen otherwise: the block would be on its list of spares twice, the
+next two requests of that size would both be handed it, and two owners
+would write over each other. That is the worst kind of bug to find,
+and the check is one comparison: <code>asked</code> is 0 while a block is spare.</p>
+<h2 id="what-this-does-not-claim">What this does not claim</h2>
+<ul>
+<li><strong>MISRA Directive 4.12 is wider than Rule 21.3.</strong> The rule bans the
+  library's functions, and this build no longer calls them. The
+  directive says dynamic memory allocation shall not be used at all,
+  and a pool you wrote yourself is still that. What the pool does is
+  take away the reasons the directive gives: memory that leaks (the
+  compiler writes every free), a heap that breaks up (it cannot), time
+  that cannot be predicted (it can), and running out with no warning
+  (the report gives the number). A project under MISRA would still
+  write a deviation for it. It is a far easier one to argue.</li>
+<li><strong><code>printf</code> is still there</strong>, and a C library's <code>printf</code> may use the
+  heap for its own purposes. So are <code>exit</code>, variable argument lists
+  and the GCC builtins: the list in <a href="/docs/firmware/"><code>firmware.md</code></a>.</li>
+<li><strong>The pool is not safe to use from an interrupt.</strong> Zeno has no
+  interrupts yet. When it does, taking and giving will need to be
+  guarded.</li>
+<li><strong>It does not bound memory for you.</strong> A loop that appends for ever
+  fills the pool. It does so at a line that says so, which a heap does
+  not promise.</li>
+<li><strong>Reading a block after giving it back is not caught.</strong> The compiler
+  is what prevents that (a value that was given away is null), and the
+  tests used to run under a tool that watches the heap. Such a tool
+  cannot see inside one big array. Exercise 6 puts some of that back.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li>Every test program for a build with no collector now runs in the
+  pool, through C and through LLVM, and must still print what
+  <code>zeno run</code> prints with 0 blocks left at the end.</li>
+<li>The C file, the IR and the runtime written beside the IR are
+  searched for <code>malloc</code>, <code>calloc</code>, <code>realloc</code> and <code>free(</code>. None may be
+  there, comments included. (The other two kinds of build are searched
+  too, and must have them, so the search is known to work.)</li>
+<li><code>with_no_collector_the_pool_has_an_end</code>: a pool that is too small
+  stops the program with the message above, and the number in the
+  report is exactly enough.</li>
+<li><code>with_no_collector_the_pool_does_not_fill_up_over_time</code>: 4000 trips
+  round a loop that makes lists of forty different lengths need the
+  same pool as 80 trips.</li>
+<li><code>the_pool_gives_a_block_back_to_its_own_size</code> drives the pool from a
+  few lines of C: a block is lined up for an <code>int</code>, a block given back
+  is handed out again for the next request of its size and is all
+  zeros, another size does not get it, and giving back twice is caught.</li>
+</ul>
+<p>By hand, <code>nm buffer</code> lists what the finished program takes from the C
+library. Nothing in the list allocates.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build the <code>Frame</code> program above with <code>--no-collector --memory</code> and
+   change <code>range(3)</code> to <code>range(3000)</code>. Which numbers in the report
+   change? Now make the list <code>[id, id + 1, id + 2, id + 3, id + 4]</code>.
+   Work out the new pool size before you run it.</li>
+<li>Compile <code>buffer.c</code> by hand with <code>-DZENO_MEMORY_REPORT
+   -DZENO_POOL=20000</code>. It stops before it prints a line, having made
+   79 blocks and taken 16,528 bytes. What asked for the block that did
+   not fit? (A frame's samples are in a block of 8192 bytes. Which
+   line of <code>buffer.zeno</code> needs a second one while the first is still
+   in use?)</li>
+<li>A comprehension over a range knows how long its list will be before
+   it starts: <code>[n * n for n in range(size)]</code>. Find where <code>emit_c.rs</code>
+   writes <code>zeno_list_new(0)</code> for a comprehension and pass the length
+   when the loop is over a range with no <code>if</code>. What does <code>buffer.zeno</code>
+   need now? Do the same in <code>emit_llvm.rs</code>: the two reports must agree
+   again.</li>
+<li>Give lists a method <code>reserve(n)</code> that makes room for <code>n</code> items in
+   one step. Where does it go in the checker, the interpreter, the VM
+   and the two compilers? What should the interpreter do with it?</li>
+<li>Add <code>-DZENO_POOL_STEPS=8</code> to a build by hand. What is the largest
+   list the program can now make? Each size costs one pointer of RAM
+   for its list of spares. How much RAM did that save, and when would
+   it be worth it?</li>
+<li>Put back a little of what the heap checker gave. In <code>zeno_free</code>,
+   fill the block with the byte <code>0xDD</code>, and in <code>zeno_alloc</code>, when the
+   block came from a list of spares, check that every byte after the
+   first pointer is still <code>0xDD</code> before wiping it. What kind of bug
+   does that catch? Wrap it in <code>#ifdef ZENO_POOL_CHECK</code> and run the
+   tests with it.</li>
+<li><code>zeno_pool_full</code> does not say which size was asked for or how much
+   of the pool is spare. Add both to the message. Then explain this
+   output: a 32 KB pool that is "full" with 20 KB of it spare.</li>
+<li>The other classic design is one pool for each <em>type</em>: so many
+   <code>Frame</code>s, so many lists of 64 items, each count chosen by the
+   programmer. What would Zeno's syntax for that look like? What could
+   the compiler then promise that this pool cannot?</li>
+<li>Give <code>zeno build</code> an option <code>--pool 4096</code> that passes
+   <code>-DZENO_POOL=4096</code> to the C compiler, and one for the text room.
+   Look at how <code>--memory</code> does it in <code>src/main.rs</code>.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/pool.md">docs/pool.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/no-collector/"><span>Previous</span>A build with no collector</a><a class="next" href="/docs/text/"><span>Next</span>Text that is kept</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why">Why</a></li><li><a href="#the-files">The files</a></li><li><a href="#the-idea-a-few-sizes-and-a-list-of-spares-for-each">The idea: a few sizes, and a list of spares for each</a></li><li><a href="#what-a-block-looks-like">What a block looks like</a></li><li><a href="#follow-three-trips-round-a-loop">Follow three trips round a loop</a></li><li><a href="#why-it-cannot-break-up">Why it cannot break up</a></li><li><a href="#what-it-costs">What it costs</a></li><li><a href="#choosing-the-size">Choosing the size</a></li><li><a href="#when-the-pool-is-full">When the pool is full</a></li><li><a href="#a-block-given-back-twice">A block given back twice</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+  <blockquote>Every journey is halfway done. Forever.</blockquote>
+  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>
