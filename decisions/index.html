@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 341 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 356 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -6901,6 +6901,218 @@ enums in one file cannot both have a <code>Dot</code>".</p>
 with every other mistake in a method's first line. A function in the
 syntax tree now knows where it is written (<code>ast::Function::span</code>),
 and the mistake is shown on the method's own line.</p>
+<hr />
+<h2 id="14-a-program-in-a-web-page">14. A program in a web page</h2>
+<p>Zeno was made for firmware, and is not a language for the web. But a
+language somebody is learning to build should be able to show
+something, and the thing everybody can open is a page. The question
+of this chapter is what the least is that makes a page written in
+Zeno, without a second Zeno to keep in step with the first.
+<a href="/docs/web/"><code>web.md</code></a> is the walkthrough.</p>
+<h3 id="141-the-interpreter-runs-in-the-page-as-webassembly">14.1 The interpreter runs in the page, as WebAssembly</h3>
+<p><code>zeno build --web</code> compiles nothing. The page it writes carries
+<code>zeno.wasm</code>, which is Zeno itself (lexer, parser, checker,
+interpreter) compiled by Rust for a browser, and the program as the
+text that was written. The browser runs the program as <code>zeno run</code>
+does.</p>
+<p><strong>Why.</strong> Every other way is a new engine. Zeno already has five that
+must agree (the interpreter, the VM, C, LLVM, and each of the last
+two in its firmware forms), and most of the work of every stage
+since the first has been holding them to one answer. This way adds
+no engine. A program in a page means what it means on a desk because
+the same code decides it, and the whole language is there on the
+first day: classes, generics, quantities, modules, packages.</p>
+<p><strong>What it costs.</strong> <code>zeno.wasm</code> is 1.1 MB and every page carries it.
+A program runs at the speed of <code>zeno run</code>. Both are fine for a page
+that waits for a click.</p>
+<p><strong>Turned down.</strong>
+- <em>Compile Zeno to JavaScript.</em> A sixth engine, and JavaScript's
+  numbers are not Zeno's: no 64-bit whole number without <code>BigInt</code>, so
+  <code>int</code> would be slow or wrong.
+- <em>Compile through C, and C to WebAssembly.</em> It reuses <code>emit_c</code>, and
+  it needs clang with a WebAssembly target or Emscripten on the
+  machine of everybody who builds a page. Compiled Zeno is also
+  strict Zeno (the builds refuse some of what <code>zeno run</code> runs), so a
+  page would have been a smaller language than a desk.
+- <em>Emit WebAssembly from <code>emit_llvm</code>.</em> The same, with LLVM in place
+  of C.</p>
+<p>One of the last two is the way to a page that is small and fast, if
+that is ever wanted. Nothing here is in its way: the <code>web</code> module
+would be the same.</p>
+<h3 id="142-the-page-is-a-module-and-an-element-is-a-value">14.2 The page is a module, and an element is a value</h3>
+<p><code>import web</code>, then <code>web.element("#count")</code> gives an <code>Element</code>, which
+has fields and methods. It is the shape of <code>board</code> and <code>Pin</code>
+(3.15): the outside world is a module, and a thing in it is a value
+of a type the checker knows.</p>
+<p><strong>Why.</strong> It was already decided once, and a second answer to the
+same question would be the ambiguity the language is trying not to
+have. It also means the checker checks a page: <code>count.text = 3</code> is
+refused before anything runs.</p>
+<p><strong>Turned down.</strong>
+- <em>The browser's own names</em> (<code>document.querySelector</code>,
+  <code>addEventListener</code>, <code>classList.add</code>). Familiar to those who know
+  them, and three ways of spelling for those who do not.
+- <em>A way to call any JavaScript</em> (<code>js.call("alert", ...)</code>). It makes
+  everything possible and nothing checked, and under <code>zeno run</code>
+  there is no JavaScript to call.
+- <em>Describing the page in Zeno</em> and letting a library work out what
+  to change, as the big front-end libraries do. That is a library to
+  write in Zeno one day, on top of this.</p>
+<h3 id="143-an-element-that-is-not-there-is-an-error">14.3 An element that is not there is an error</h3>
+<p><code>web.element("#count")</code> raises a <code>ValueError</code> if the page has no
+such element. <code>web.elements("li")</code> gives a list, which may be empty.</p>
+<p><strong>Why.</strong> The usual cause is a misspelt id, and the first run finds
+it. Giving <code>Element or none</code> would make every program test for
+<code>none</code> around every element it uses, for the sake of a mistake that
+shows itself. <code>pin(64)</code> on a board with 64 pins is an error for the
+same reason.</p>
+<p><strong>Turned down.</strong> <code>Element or none</code> (above). A silent element that
+swallows what is done to it, which hides the misspelling.</p>
+<h3 id="144-text-and-value-are-fields-the-rest-are-methods">14.4 <code>text</code> and <code>value</code> are fields. The rest are methods</h3>
+<p><code>count.text = "3"</code> and <code>box.value</code> are read and written as fields.
+Everything else (<code>add_class</code>, <code>hide</code>, <code>append</code>, <code>on</code>) is a method.</p>
+<p><strong>Why.</strong> A field is something an object has, and a method is
+something it does. The text of an element and what has been typed
+into it are had: a program reads them and writes them, and
+<code>count.text += "!"</code> works with no new rule. A class is added and
+taken away, which is doing.</p>
+<p><strong>Turned down.</strong> <code>set_text("3")</code> and <code>get_text()</code>: two names for
+what <code>=</code> says. Fields for everything (<code>item.hidden = true</code>,
+<code>item.classes.append("done")</code>): a list of classes that the program
+changes would have to be watched for changes.</p>
+<h3 id="145-a-function-the-page-calls-takes-nothing">14.5 A function the page calls takes nothing</h3>
+<p><code>button.on("click", pressed)</code> calls <code>pressed()</code>. <code>web.after(500 ms,
+tick)</code> calls <code>tick()</code>. Only <code>web.on_key(pressed)</code> hands something
+over: the key, as a str. The checker says so, in its own words, if
+the function takes anything else.</p>
+<p><strong>Why.</strong> An event object is mostly a way to find out which element
+it happened to, and a Zeno function knows that already: it is
+written where the element is in reach, and keeps it (5.5k is how a
+function does). What is left is what cannot be known any other way,
+and of that only the key was needed to write a page. So that is all
+there is, until a program needs more.</p>
+<p><strong>Turned down.</strong> An event object with fields (<code>event.key</code>,
+<code>event.x</code>, <code>event.target</code>): a new type, most of whose fields mean
+nothing for most events.</p>
+<h3 id="146-on-a-desk-the-page-is-simulated-and-calls-nothing">14.6 On a desk the page is simulated, and calls nothing</h3>
+<p>Under <code>zeno run</code> and <code>zeno test</code> there is a simulated page
+(<code>src/page.rs</code>). It has whatever element is asked for, keeps what is
+done to it, and prints a line for each change that could be seen,
+as the simulated board prints a line when a pin changes (3.15b). It
+never calls a function it was given.</p>
+<p><strong>Why.</strong> A program for a page should be testable where every other
+program is, in the same <code>zeno test</code>, with no browser installed. And
+the two engines are held to one output for a page as for everything
+else. Calling nothing is the honest version of "nobody is here": a
+test calls the function it wants to test, by its name.</p>
+<p>A selector the simulated page cannot read (<code>a[href]</code>, <code>ul &gt; li</code>) is
+an error in <code>web.elements</code>, and not an empty list. An empty list
+would say the page has none, and the simulated page does not know.</p>
+<p><strong>Turned down.</strong>
+- <em>Refuse to run a program that imports <code>web</code>.</em> Then nothing of it
+  could be tested without a browser.
+- <em>Read the HTML file,</em> to know which elements there are. It would
+  find the misspelt id, which is worth having. It needs an HTML
+  parser, which is larger than everything else in this stage. Left
+  for later (14.13).
+- <em>Call each function once,</em> to see that it runs. A click that
+  nobody made is not something the program can explain.</p>
+<h3 id="147-a-built-page-is-one-file">14.7 A built page is one file</h3>
+<p><code>todo.web.html</code> holds the page, the program, <code>web.js</code>, and
+<code>zeno.wasm</code> written as base64.</p>
+<p><strong>Why.</strong> A page opened from the disk may not load another file: the
+browser refuses, to keep a page from reading the disk. With three
+files, the first thing a learner would see is a blank page, and the
+fix is to run a web server. One file opens with a double click, and
+is hosted by copying it.</p>
+<p><strong>What it costs.</strong> Base64 makes <code>zeno.wasm</code> a third larger (1.5 MB),
+and two pages on one site each carry their own.</p>
+<p><strong>Turned down.</strong> Three files and a small web server in <code>zeno</code>
+(<code>zeno serve</code>): a server is a lot to add to make a file open.</p>
+<h3 id="148-todohtml-is-written-and-todowebhtml-is-built">14.8 <code>todo.html</code> is written, and <code>todo.web.html</code> is built</h3>
+<p>The page for <code>todo.zeno</code> is <code>todo.html</code>, beside it. If there is
+none, the page is an empty one with a place for what the program
+prints. The built page is <code>todo.web.html</code>, in the folder the command
+is run in, where every build puts what it makes.</p>
+<p><strong>Why.</strong> The file somebody writes has the plain name, as
+<code>hello.zeno</code> does, and what is built is named after it. They cannot
+be the same name: built in the program's own folder, the page would
+be written over its own source.</p>
+<p>The scripts go at the end of the body, so that every element is
+there when the program's first line runs.</p>
+<p><strong>Turned down.</strong> A name for the page given on the command line, and
+an <code>-o</code> for where the result goes: two more things to type, for a
+choice with one sensible answer. A line in the HTML that names the
+program (<code>&lt;script src="todo.zeno"&gt;</code>): then the page would say which
+program it has, the command would say which program to build, and
+they could disagree.</p>
+<h3 id="149-the-program-travels-as-its-text-named-from-its-own-folder">14.9 The program travels as its text, named from its own folder</h3>
+<p>The page carries every file of the program as it was written, under
+the name it has from the program's folder: <code>todo.zeno</code>,
+<code>drivers/uart.zeno</code>, <code>../filters/zeno.package</code>. The browser reads,
+joins and checks them as a desk does.</p>
+<p><strong>Why the text.</strong> It is what <code>zeno.wasm</code> already knows how to read,
+and an error in the page can show the line it is on. A syntax tree
+written out and read back would be a new format to keep right.</p>
+<p><strong>Why from its folder.</strong> <code>zeno build --web /home/partha/site/todo.zeno</code>
+would otherwise write <code>/home/partha/site/</code> into a page that is then
+put on the web. The names are also the ones the browser's reading of
+the program asks for, so nothing has to translate them.</p>
+<p><code>&lt;</code> in the program is written <code>&lt;</code> in the page. A browser ends
+a script at <code>&lt;/script&gt;</code> wherever it finds one, even in a str.</p>
+<h3 id="1410-an-error-that-nothing-catches-stops-the-pages-program">14.10 An error that nothing catches stops the page's program</h3>
+<p>It is shown in a box at the foot of the page, with its line, and in
+the console. After it, the page calls no more of the program's
+functions.</p>
+<p><strong>Why.</strong> It is what <code>zeno run</code> does, and for the reason it does it:
+the function that failed left its work half done, and whatever runs
+next runs on that. A page that goes on after an error is a page
+that is wrong in a way nobody is shown.</p>
+<p><strong>Turned down.</strong> Only the console: a learner does not have it open.
+Going on with the next click: above.</p>
+<h3 id="1411-no-sleep-in-a-page-and-input-is-the-browsers-question">14.11 No <code>sleep</code> in a page, and <code>input</code> is the browser's question</h3>
+<p><code>time.sleep</code> in a page stops the program with a message that says
+to use <code>web.after</code>. <code>input("Name: ")</code> asks with the browser's own
+question box.</p>
+<p><strong>Why.</strong> A page has one thread. A program that waits on it stops
+the page from drawing, and a <code>sleep</code> in a loop, which is what
+<code>blink.zeno</code> is, would hang the tab. <code>input</code> can work, because the
+browser has a question box that waits; it is ugly, and it lets every
+program that asks for a name run in a page.</p>
+<h3 id="1412-200-nested-calls-in-a-page">14.12 200 nested calls in a page</h3>
+<p>On a desk a program may nest 1000 calls. In a page, 200.</p>
+<p><strong>Why.</strong> The interpreter calls itself for each nested call, on the
+browser's stack. Chromium gave out between 700 and 1000 calls of a
+plain function, and between 400 and 500 of one that calls itself
+from inside a loop, a <code>match</code> and a <code>map</code>. When the browser stops a
+program, Zeno cannot say which line it was. 200 is where it always
+still can, with room for a browser whose stack is half the size.</p>
+<h3 id="1413-web-is-a-build-of-its-own">14.13 <code>--web</code> is a build of its own</h3>
+<p><code>zeno build --web</code> goes with none of <code>--llvm</code>, <code>--firmware</code>,
+<code>--no-collector</code> and <code>--memory</code>, and says so. <code>zeno build</code> without
+it refuses <code>import web</code>, and says to use <code>--web</code>.</p>
+<p><strong>Why.</strong> Those options say how to compile, and a page is not
+compiled. A page built with <code>--firmware</code> would be a page that is no
+different, from a command that suggested it was.</p>
+<h3 id="1414-left-for-later">14.14 Left for later</h3>
+<ul>
+<li>The simulated page does not read the HTML, so it does not find a
+  misspelt id (14.6).</li>
+<li>Events carry nothing but the key (14.5): no place of the mouse.</li>
+<li>No style of one element, no drawing, no network, nothing kept
+  between visits. Each is a name in <code>web.js</code> and a few lines in
+  <code>page.rs</code>.</li>
+<li>Only Chromium has run it.</li>
+<li>A compiled page, small and fast (14.1).</li>
+</ul>
+<h3 id="1415-this-is-version-02">14.15 This is version 0.2</h3>
+<p><code>Cargo.toml</code> says 0.2.0 from the commit that brought the <code>web</code> module
+into <code>main</code>, which was the first commit after 0.1.0 was published.</p>
+<p><strong>Why 0.2 and not 0.1.1.</strong> It adds a module, a type and a build. A
+third number is for a mend, and nothing here mends anything.</p>
+<p><strong>Why not 1.0.</strong> Nothing that ran under 0.1 changes, so nothing was
+learnt about whether the language holds up. 1.0 should mean that
+programs written by somebody else have been through it.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

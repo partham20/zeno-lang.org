@@ -21,6 +21,7 @@ import os
 import re
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import markdown
@@ -249,7 +250,7 @@ def toc_html(tokens, depth=2):
 
 DOC_ICONS = {"The front end": "tree", "The engines": "play", "Memory": "memory",
              "Firmware and hardware": "cpu", "The type system": "copies", "Memory by hand": "key",
-             "The standard library": "package", "Programs in many files": "layers", "Tools": "terminal", "The audit and 0.1": "eye",
+             "The standard library": "package", "Programs in many files": "layers", "The web": "globe", "Tools": "terminal", "The audit and 0.1": "eye",
              "More": "book"}
 
 DOC_GROUPS = [
@@ -269,6 +270,8 @@ DOC_GROUPS = [
      ["library", "reading-and-writing", "math", "dict"]),
     ("Programs in many files", "Modules, imports, folders and packages.",
      ["modules", "packages"]),
+    ("The web", "A program in a web page, built to WebAssembly.",
+     ["web"]),
     ("Tools", "Starting a program, tests, the formatter and the language server.",
      ["new", "testing", "format", "lsp"]),
     ("The audit and 0.1", "Every feature checked, the gaps real programs found, and what 0.1 holds.",
@@ -378,6 +381,25 @@ def example_meta(path):
 TYPED = {"logbook": "temp 21.5\ntemp 22.0\nhello\n"}   # keyboard input for programs that read it
 
 
+def live_page(folder, name):
+    """Build examples/<name>.html and .zeno into a page that runs in the browser, if the
+    compiler's WebAssembly build is there. Returns True when /examples/<name>/live.html is written."""
+    wasm = Path(ARGS.zeno) / "target" / "wasm32-unknown-unknown" / "release" / "zeno.wasm"
+    if not (folder / f"{name}.html").exists():
+        return False
+    if not wasm.exists():
+        print(f"  no live page for {name}: cargo build --release --target wasm32-unknown-unknown")
+        return False
+    zeno = Path(ARGS.zeno) / "target" / "release" / "zeno"
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run([str(zeno), "build", "--web", str(folder / f"{name}.zeno")], cwd=tmp, check=True,
+                       env={**os.environ, "ZENO_WASM": str(wasm)}, capture_output=True)
+        dest = SITE / "examples" / name
+        dest.mkdir(parents=True, exist_ok=True)
+        shutil.copy(Path(tmp) / f"{name}.web.html", dest / "live.html")
+    return True
+
+
 def build_examples():
     folder = Path(ARGS.zeno) / "examples"
     order = ["hello", "tour", "styles", "primes", "shapes", "sensor", "generics", "packet",
@@ -415,6 +437,10 @@ def build_examples():
             code_lines = len(code.split("\n"))
             gh = f"{GITHUB}/blob/main/examples/{name}.zeno"
         note = ""
+        live = live_page(folder, name)
+        if live:
+            note = (f'<p class="note-small">This program runs in a web page. <a href="/examples/{name}/live.html">Try it live</a>: '
+                    f'<code>zeno build --web examples/{name}.zeno</code> built it from <code>examples/{name}.html</code>, with Zeno compiled to WebAssembly.</p>')
         if lines:
             note = f'<p class="note-small">This program runs until it is stopped. The first {lines} lines are shown.</p>'
         if typed:
@@ -595,13 +621,13 @@ DONE = [
     ("The formatter and the language server", "<code>zeno format</code>, and an editor that knows Zeno.", "lsp"),
     ("The gaps programs found", "<code>+=</code> and a format on a quantity.", "gaps"),
     ("Version 0.1", "Every provisional decision read again. The list is done.", "version-0.1"),
+    ("A program in a web page", "<code>import web</code> and <code>zeno build --web</code>. Coming in 0.2.", "web"),
 ]
 NEXT = [
     ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
     ("Planned", "Bytes", "A <code>list[u8]</code> at one byte an item, <code>u64</code>, and files read as bytes."),
     ("Planned", "More with no collector", "Dicts of lists and objects, and <code>list[int or none]</code>."),
     ("Planned", "C interop", "Call C libraries, and be called from C."),
-    ("Planned", "WebAssembly", "Zeno in the browser."),
     ("Planned", "async and await", "Servers and networking."),
 ]
 
