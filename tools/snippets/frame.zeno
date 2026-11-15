@@ -8,11 +8,11 @@ function capture(channel: int) -> Frame {
     return Frame(channel, samples)       # samples moves into the frame
 }
 
-function average(samples: borrow list[int]) -> int {   # only looks
+function average(samples: owned list[int]) -> int {   # only looks
     return sum(samples) // len(samples)
 }
 
-function send(frame: Frame) -> int {     # takes the frame over, and frees it
+function send(frame: take Frame) -> int {   # takes it over, and frees it
     return len(frame.samples)
 }
 

@@ -11,15 +11,15 @@
 <meta property="og:url" content="https://zeno-lang.org/decisions/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://zeno-lang.org/decisions/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
-<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the content</a>
@@ -29,9 +29,9 @@
   <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
     </button>
-    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
   </div>
 </header>
 <main id="content">
@@ -41,9 +41,9 @@
   <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li></ul>
 </aside>
 <article class="prose">
-  <p class="eyebrow">Design decisions</p>
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 166 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 202 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -1302,6 +1302,8 @@ All four arrived at "automatic by default, exact where asked for".</p>
 <p><code>owned class Name</code>, <code>owned list[T]</code>, and <code>borrow</code> in front of a parameter's
 type. They are whole words <em>(principle 3)</em>, and they are not reserved: they
 mean something only in those positions, so no existing program breaks.</p>
+<p><em>Superseded by 5.19a to 5.19c:</em> the word on a parameter is now <code>take</code>,
+it marks the parameter that takes, and both words are reserved.</p>
 <p><em>Turned down:</em> <code>&amp;x</code> and <code>&amp;mut x</code> at each use, as in Rust. Punctuation, and
 it puts a mark at every call where one in the signature says the same.
 <em>Turned down:</em> a mark at the call (<code>send(move p)</code>). It would make each
@@ -1325,6 +1327,8 @@ variable holds a Packet", and a variable that holds an owned value owns it.
 The parameter means the same. The exception is the one that gets a word.
 A method's <code>self</code> is always a borrow, since calling a method on an object
 that then vanished would surprise everyone.</p>
+<p><em>Superseded by 5.19a:</em> a parameter looks unless it says <code>take</code>. <code>self</code>
+still always looks.</p>
 <p><em>Turned down:</em> borrow by default, with a word for taking (Mojo, Swift). It
 makes the common case shorter. But then <code>p: Packet</code> would mean two
 different things on a <code>let</code> and on a parameter. Provisional.</p>
@@ -1499,6 +1503,8 @@ build a line and keep it for later.</p>
 helps <code>print</code>, and <code>if name.upper() == "ON"</code> still needs somewhere to put
 <code>"ON"</code>.</p>
 <h3 id="59d-the-except-that-catches-an-error-frees-it">5.9d The <code>except</code> that catches an error frees it</h3>
+<p><em>(Changed by 5.17: the <code>except</code> name owns the error now, and frees it
+only if it still has it when the block ends.)</em></p>
 <p>An error is made only by <code>raise</code>. The <code>except</code> block that catches it
 frees it when the block ends, however the block is left. Inside the
 block the error can be read. It cannot be kept, passed to a function or
@@ -2639,6 +2645,7 @@ parameters only look and each now needs the word. It stays as it is:
 ("this holds the task"), and the error for a forgotten <code>borrow</code> names
 the fix in its first line. <em>(Provisional, and a question for the
 audit: count how often each is written in real programs.)</em></p>
+<p><em>Superseded by 5.19a.</em> The count was made: see there.</p>
 <h3 id="515c-a-list-owns-its-items-in-every-build">5.15c A list owns its items, in every build</h3>
 <p>An owned list may hold values that have one owner: objects of an owned
 class, and with no collector other lists. Rule 6 of 5.8 ("shared may
@@ -2746,7 +2753,8 @@ order.</strong> It is the interpreter's, and four engines must agree. The
 test uses functions that print when they are called, so a change of
 order fails it.</p>
 <h3 id="515j-what-a-no-collector-build-still-refuses-provisional">5.15j What a no-collector build still refuses <em>(provisional)</em></h3>
-<p>This replaces the list in 5.9g.</p>
+<p>This replaces the list in 5.9g. <em>(Step 4 took the first row off it. The
+list as it stands is in 5.16i.)</em></p>
 <ul>
 <li>A list or object inside an <code>or none</code>, an enum case with values, a
   list of <code>int or none</code>. <em>(Step 4.)</em></li>
@@ -2767,19 +2775,669 @@ one <code>print</code> that shows two lists is enough for the C and LLVM builds
 to report text-room peaks a byte or more apart. What is printed is the
 same. The fix described there still stands, and the test programs
 still avoid the mix.</p>
+<h3 id="516-with-no-collector-an-enum-value-that-carries-something-has-one-owner">5.16 With no collector, an enum value that carries something has one owner</h3>
+<p><code>Wait(250)</code> and <code>Blink([2, 3, 5])</code> are kept in a block from the pool,
+as an object is, and whoever receives one owns it and frees it. The
+walkthrough is <code>docs/enums-and-none.md</code>.</p>
+<p><strong>Why.</strong> It is 5.15 again, for the last kind of value that was made
+and never freed. One rule for lists, objects and enum values means
+there is nothing new to learn: a programmer who has read
+<code>docs/one-owner.md</code> already knows what <code>let b = a</code> does to a command.
+<em>(Principle: unambiguous and intuitive. One rule, not one per kind of
+value.)</em></p>
+<p><strong>Turned down: keep the value in place, with no block, like a C tagged
+union passed by value.</strong> It would need no pool at all for a <code>Wait</code>. But
+a case may carry a list, which has one owner, so a copy of the value
+would give that list two. Copying would then have to be refused for
+some enums and not others, depending on what the cases carry. List
+slots are 8 bytes, so an enum bigger than that could not sit in a list
+without a second way of storing it. And the two backends would each
+need a second representation of every enum. A block of the case's own
+size (5.16d) costs a <code>Wait</code> 16 bytes of pool and keeps one
+representation everywhere.</p>
+<h3 id="516a-a-case-that-carries-nothing-is-a-fixed-value-and-a-plain-enum-is-copied">5.16a A case that carries nothing is a fixed value, and a plain enum is copied</h3>
+<p>There is one <code>Stop</code> in a program, placed before it starts. Making it
+takes no memory and freeing it does nothing. An enum in which no case
+carries anything (a <code>Mode</code> that is <code>Idle</code>, <code>Busy</code> or <code>Halted</code>) is
+not owned at all: its values are copied like numbers in every build.</p>
+<p><strong>Why.</strong> A state or a mode is the commonest enum in firmware, and
+making every <code>Idle</code> cost a block, or making <code>let b = a</code> take <code>a</code> away
+for a value with nothing in it, would be a surprise with no safety
+bought. <strong>Why the type decides and not the case.</strong> A variable of type
+<code>Command</code> has one owner even at a moment when it holds <code>Stop</code>. Which
+case a value is at some line is not known when the program is checked,
+and a rule that depended on it could not be read off the page.</p>
+<h3 id="516b-what-may-be-none-can-have-one-owner-in-every-build">5.16b What may be <code>none</code> can have one owner, in every build</h3>
+<p><code>Command or none</code>, <code>Packet or none</code> and <code>list[int] or none</code> are owned
+when the thing inside is. <code>none</code> owns nothing. This holds in a build
+with a collector too, when the words are written
+(<code>owned list[int] or none</code>, a <code>Packet or none</code> of an <code>owned class</code>).</p>
+<p><strong>Why now.</strong> The old refusal (<code>docs/ownership.md</code> said "taking one
+back out would have to leave a hole") mixed up two things. A <em>variable</em> that may be <code>none</code> is an ordinary
+owner: it is given away whole, and the checker already knows a
+given-away variable holds nothing. Only a <em>field</em> has the hole
+problem, and a field is already protected by the rule that nothing
+moves out of an object. So nothing new was needed, only the refusal
+taken away.</p>
+<p><strong>How it is written down in the checker.</strong> <code>or none</code> is always the
+outermost part of the type: an owner is "maybe (owned X)" and a look
+is "maybe (look at X)". So <code>borrow Packet or none</code> reads as it is
+written, a look at a packet or at nothing, and <code>is not none</code> narrows
+both the same way. <strong>Turned down: an owned "maybe X".</strong> Narrowing would
+then have to rebuild the type from the inside, and a look at it would
+be a third shape.</p>
+<p><strong>Still refused inside a function type and the <code>[ ]</code> of a generic</strong>,
+with every other value that has one owner (5.15j).</p>
+<h3 id="516c-match-looks-and-a-name-in-a-pattern-is-a-copy-or-a-look">5.16c <code>match</code> looks, and a name in a pattern is a copy or a look</h3>
+<p><code>match</code> never takes anything out of the value it is given. In
+<code>case Blink(pins)</code> the name is a look at the list. In <code>case Wait(ms)</code>
+and <code>case Say(text)</code> the number and the text are copied. <code>case other</code>
+is a look at the whole value.</p>
+<p><strong>Why.</strong> Reading a command must not use it up: <code>cost(command)</code> and
+then <code>run(command)</code> is the ordinary shape. Rust lets a <code>match</code> move
+parts out, and then has "partially moved" values that can be used in
+some ways and not others. That is hard to hold in the head, and the
+unambiguity rule is against it. If taking a part out is ever wanted
+it will be a word of its own, not a second meaning of <code>match</code>.</p>
+<p><strong>Why text is copied.</strong> Text is copied whenever it is kept (5.9l), so
+this is the existing rule and not a new one. The copy is freed when
+the <code>case</code> ends.</p>
+<h3 id="516d-while-a-case-holds-a-look-the-owner-cannot-change">5.16d While a <code>case</code> holds a look, the owner cannot change</h3>
+<p>If a pattern gave a name to a part that is looked at, then for the
+length of that <code>case</code> the owner of the matched value cannot be given
+away, be given a new value, or have items taken out. A <code>case</code> with no
+such name is free to do all three.</p>
+<p><strong>Why.</strong> The look points into the owner's block. <code>state = Stop</code> would
+free that block under it. This is the loop rule of 5.15e, for the same
+reason, and the checker keeps both in one list (<code>owned.walked</code>, with
+<code>Looking::Loop</code> or <code>Looking::Case</code>), so the messages differ and the
+mechanism does not.</p>
+<p><strong>Why only when there is a look.</strong> A state machine is
+<code>match state { case Waiting(ms) { state = Running } ... }</code>. <code>ms</code> is a
+number, copied out, and nothing points into the old state. Refusing
+that would make the most natural use of an enum impossible. The
+message for the refused case says what to do: write <code>_</code> for a name
+that is not needed.</p>
+<h3 id="516e-borrow-can-be-written-on-an-enum-that-carries-values-in-every-build">5.16e <code>borrow</code> can be written on an enum that carries values, in every build</h3>
+<p><code>function cost(command: borrow Command)</code>. With a collector it changes
+nothing about memory.</p>
+<p><strong>Why.</strong> The same file has to build with and without a collector
+(5.15a). If <code>borrow</code> on an enum were an error with a collector, a
+program written for <code>--no-collector</code> would not run under <code>zeno run</code>.
+On an enum that carries nothing it is still an error, with a message
+that says to pass the value as it is: there is nothing to lend.</p>
+<h3 id="516f-in-c-each-case-takes-its-own-size-from-the-pool">5.16f In C, each case takes its own size from the pool</h3>
+<p><code>zeno_new_Command_Wait</code> asks for <code>offsetof(z_Command, as) +
+sizeof(as.c1)</code>, not <code>sizeof(z_Command)</code>. This is in every C build.</p>
+<p><strong>Why.</strong> The LLVM backend has always made a struct for each case
+(5.11h), and the two backends must give the same memory report
+(5.11t). And on a small pool it matters: one large case would
+otherwise make every small one pay for it. <strong>The cost.</strong> A value can
+never change its case in place, since its block may be too small for
+another. Zeno has no way to write that, and "a new value takes the
+place of the old one" is the rule everywhere else, so nothing is lost.</p>
+<h3 id="516g-found-on-the-way-a-case-pattern-on-a-value-that-may-be-none">5.16g Found on the way: a case pattern on a value that may be <code>none</code></h3>
+<p><code>case Stop</code> and <code>case Wait(ms)</code> on a <code>Command or none</code> were compiled
+wrongly by both backends, with or without a collector: the first as a
+new name that matches anything, the second refused. The interpreter
+and the VM were right. Both backends now test "is it there" and then
+the tag.</p>
+<p><strong>Why it is written down.</strong> Four engines must agree, and this one
+slipped through because no test matched an enum case against an
+optional subject. <code>a_case_of_an_enum_matches_a_value_that_may_be_none</code>
+does now.</p>
+<h3 id="516h-listint-or-none-stays-refused-with-no-collector-provisional">5.16h <code>list[int or none]</code> stays refused with no collector <em>(provisional)</em></h3>
+<p>A number that may be <code>none</code> is kept in a small block of its own when
+it sits in a list (5.11i). Giving those blocks an owner would mean a
+deep copy in every place a list is copied, as text needed (5.9x).</p>
+<p><strong>Why not now.</strong> There is a way to write it today that costs less and
+says more: an enum <code>Reading</code> with a <code>Missing</code> case and a
+<code>Value(n: int)</code> case, and a <code>list[Reading]</code>. <code>Missing</code> takes no memory and the list owns each
+<code>Value</code>. The compiler's message says so. The right fix is to keep the
+pair in the slot without a block, which touches the slot's size, and
+is for later. <em>(Keep whatever works.)</em></p>
+<h3 id="516i-what-a-no-collector-build-still-refuses-provisional">5.16i What a no-collector build still refuses <em>(provisional)</em></h3>
+<p>This replaces the list in 5.15j. <em>(Replaced in turn by 5.17g: the
+step 5 items below build now.)</em></p>
+<ul>
+<li>A function written where a value goes, a function type that mentions
+  a list or an object, an error that is kept or raised again.
+  <em>(Step 5.)</em></li>
+<li>A value that has one owner inside a function type or as what a type
+  parameter stands for.</li>
+<li><code>list[int or none]</code> (5.16h).</li>
+</ul>
+<p><strong>For the audit that follows these steps</strong>, all of them about what is
+intuitive rather than what is safe:</p>
+<ul>
+<li>A function cannot use a list or object declared at the top of the
+  file (5.15j). A top-level <code>let</code> that is never given away could be
+  lent to every function without being passed.</li>
+<li>A method cannot take out what its object owns, because <code>self</code> is a
+  borrow (5.15e). <code>machine.waiting.pop()</code> has to be written outside
+  the class today.</li>
+<li>A plain parameter takes and <code>borrow</code> looks (5.15b). Most functions
+  only look, so most parameters carry the word. <code>examples/tour.zeno</code>
+  and <code>examples/shapes.zeno</code> do not build with no collector for want
+  of it. Whether looking should be the plain form is a question about
+  the direction of the language, and is the owner's to answer.
+  <em>(Answered: 5.17h.)</em></li>
+<li>After <code>case none</code>, a later <code>case name</code> still has the type
+  <code>T or none</code>. The checker could narrow it.</li>
+</ul>
+<h3 id="517-with-no-collector-an-error-has-one-owner-raise-takes-it-and-except-owns-it">5.17 With no collector, an error has one owner: <code>raise</code> takes it and <code>except</code> owns it</h3>
+<p>An error used to be the one value that lived by a special rule: its
+<code>except</code> freed it, so it could not be kept, handed on or raised again,
+and it could only be made by <code>raise</code>. Now it is a value like any other.
+<code>raise x</code> takes <code>x</code>. The <code>except</code> that catches it receives it, and the
+name after <code>as</code> owns it. At the end of the block the name frees it,
+unless it was kept, returned, given away or raised again.</p>
+<p><strong>Why.</strong> Every other rule in this build is "whoever receives a value
+owns it". One exception to that is one more thing to remember, and the
+programs it refused are ordinary firmware: log the last fault, keep a
+list of them, pass a fault up after noting it. With lists and objects
+owned (5.15) nothing stood in the way any more.</p>
+<p><strong>Turned down: keep the old rule and add <code>e.copy()</code>.</strong> A copy of an
+object that holds a list is a deep copy, which costs pool and time the
+reader cannot see from the word.</p>
+<p><strong>Unambiguous and intuitive.</strong> There is one rule for every value now.
+Nothing new is written: <code>raise fault</code>, <code>faults.append(fault)</code> and
+<code>last = fault</code> mean what they mean for any owner, and the messages for
+"given away" and "only borrowed" are the ones already known.</p>
+<h3 id="517a-an-error-of-a-kind-zeno-knows-has-one-owner-too-and-can-be-made-anywhere">5.17a An error of a kind Zeno knows has one owner too, and can be made anywhere</h3>
+<p><code>ValueError("x")</code> makes an error whether or not <code>raise</code> stands in front
+of it. <code>let ready = ValueError("made early")</code> is allowed, and so is a
+parameter of type <code>ValueError</code>, a <code>list[ValueError]</code>, and
+<code>borrow ValueError</code>.</p>
+<p><strong>Why.</strong> "Only <code>raise</code> can make one" existed because nothing else could
+free it. With an owner, that reason is gone, and an error made ahead of
+time is useful (one error for every caller of a table of checks).</p>
+<p><strong>In the checker</strong> such an error is an owned <code>Error(kind)</code>. An error
+that is an object of a class needed nothing: with no collector an
+object already has one owner.</p>
+<h3 id="517b-with-no-collector-a-function-value-has-one-owner-and-a-function-of-the-program-is-a-fixed-value">5.17b With no collector, a function value has one owner, and a function of the program is a fixed value</h3>
+<p>A function written where a value goes (<code>function(n: int) -&gt; int { ... }</code>)
+is kept in a small block with what it uses. That block has one owner,
+like a list. A function of the program, used by name (<code>double</code>), is not
+in a block: it is one fixed value that is never freed, like an enum case
+that carries nothing (5.16a). The <strong>type</strong> says which rules apply:</p>
+<ul>
+<li><code>var f: function(int) -&gt; int</code> can hold either kind. It is an owner:
+  giving it away empties it, and a new value frees the old one. Freeing
+  a function of the program does nothing.</li>
+<li><code>let f = double</code>, with no type written, holds that one function. It is
+  not an owner, and can be used any number of times.</li>
+</ul>
+<p><strong>Why the type decides and not the value.</strong> The checker must know at
+every line whether a name still holds something, without running the
+program. A variable that can hold either kind has to follow the stricter
+rule.</p>
+<p><strong>Turned down: counting who holds each function.</strong> That is a small
+collector, and this build promises none. <strong>Turned down: copying the
+block when it is kept twice.</strong> A copy is easy for numbers, but a function
+that keeps text would copy the text too, and a hidden copy is exactly
+what this build is for avoiding.</p>
+<p><strong>For the audit.</strong> <code>var f = double</code> followed by <code>f = other</code> is refused,
+because without a written type the variable holds that one function. The
+message says to write the type. Inferring <code>function(int) -&gt; int</code> for a
+<code>var</code> would be less surprising.</p>
+<h3 id="517c-what-a-function-written-where-a-value-goes-may-use-from-outside-it">5.17c What a function written where a value goes may use from outside it</h3>
+<table>
+<thead>
+<tr>
+<th>It uses</th>
+<th>What happens</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a <code>let</code> number, bool or plain enum</td>
+<td>the value is copied into the block</td>
+<td>it never changes, so a copy is the same thing</td>
+</tr>
+<tr>
+<td>a <code>let</code> text</td>
+<td>a copy of the text is kept in the block and freed with it</td>
+<td>text is kept by copy everywhere in this build (5.9l)</td>
+</tr>
+<tr>
+<td>a <code>var</code> of the function around it</td>
+<td><strong>refused</strong></td>
+<td>the two would share one variable, and with no collector nothing is shared</td>
+</tr>
+<tr>
+<td>a <code>var</code> or <code>let</code> at the top of the file</td>
+<td>used where it is</td>
+<td>it is the program's, and lives as long as the program</td>
+</tr>
+<tr>
+<td>a list, an object, or anything else with one owner</td>
+<td>it is <strong>looked at</strong> (5.17d)</td>
+<td>taking it would silently empty the variable</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why refuse the <code>var</code>.</strong> In <code>zeno run</code> the inner function and the outer
+one see the same variable, so a change by one is seen by the other. To
+do that, the variable has to live in a block that both hold, which is
+two owners. Copying it instead would compile, and print something else
+than <code>zeno run</code> prints. A refusal is the only honest answer. The message
+says what to write: <code>let</code> if it does not change, an object if it does.</p>
+<p><strong>Turned down: a word such as <code>move</code> on the function, as Rust has.</strong>
+It would be a second way to write a function, for a case that has an
+answer already: give the function a parameter.</p>
+<h3 id="517d-a-function-that-looks-at-a-value-belongs-to-the-line-that-writes-it">5.17d A function that looks at a value belongs to the line that writes it</h3>
+<p>A function that uses a list or an object from outside looks at it, and
+a look must be gone before the owner is. So the function is itself a
+look: the statement that writes it owns it and frees it. It can be
+passed to <code>map</code>, <code>filter</code>, <code>reduce</code> or a <code>borrow</code> parameter. It cannot
+be put in a variable, returned or given away, and it cannot take an item
+out of what it looks at. While that statement runs, the value it uses
+counts as being looked at, so it cannot be given away on the same line.</p>
+<p><strong>Why.</strong> This is the common case: <code>readings.map(function(r) { ... })</code>
+with something from the surroundings in the body. It is safe with no
+new rule, because a borrow that lasts one statement is what a <code>borrow</code>
+parameter already is.</p>
+<p><strong>Turned down: let it be kept, and stop the owner from changing until
+the function is gone.</strong> That is a borrow with a lifetime, which Rust
+needs names and annotations for. One statement is a lifetime nobody has
+to write.</p>
+<p><strong>Provisional.</strong> A function that uses another function value which has
+an owner (<code>function(n) { return f(f(n)) }</code> where <code>f</code> is a parameter)
+looks at it, so it cannot be returned. Writing "compose" needs a way to
+take a value into a function. To be looked at with real programs.</p>
+<h3 id="517e-a-function-type-says-what-each-parameter-does-in-every-build">5.17e A function type says what each parameter does, in every build</h3>
+<p><code>function(borrow list[int]) -&gt; int</code> is a function that looks at a list.
+<code>function(Packet) -&gt; int</code> takes the packet. A function can return a list
+or an object, and the caller owns it. Each parameter inside a function
+type is read by the same rule as a parameter of a function, so a call
+through a function value lends or gives exactly as a call by name does.
+A function fits such a type only if its parameters do the same thing.</p>
+<p>This holds with a collector as well, for <code>owned class</code> and
+<code>owned list</code>. It replaces the refusal of a value with one owner inside a
+function type (5.16i).</p>
+<p><strong>Why.</strong> Before, a function type could not say <code>borrow</code>, so no function
+value could be handed a list, and <code>map</code> over a list of objects was the
+only way in. <strong>Still refused:</strong> a value with one owner as what a type
+parameter stands for (<code>same[T](x: T)</code> with a list), because the copy for
+<code>T</code> would have to know that it moves.</p>
+<h3 id="517f-in-c-and-ir-a-drop-entry-in-the-block-only-with-no-collector">5.17f In C and IR: a <code>drop</code> entry in the block, only with no collector</h3>
+<p>A function value is <code>{ code, name }</code> followed by what it uses. With no
+collector there is a third entry, <code>drop</code>: the function that frees this
+block. It is <code>zeno_closure_release</code> when the block keeps no text, a
+function written for that one literal when it does (it frees the text
+first), and NULL for a function of the program. The owner calls
+<code>zeno_closure_drop</code>, which does nothing for NULL.</p>
+<p>Every literal gets a block of its own, even one that uses nothing.
+<strong>Why.</strong> Two values made by the same literal are different functions in
+<code>zeno run</code> (<code>==</code> says so), and one rule for every literal is simpler
+than two. It costs one small block of three words.</p>
+<p>A build with a collector has no <code>drop</code> entry and is unchanged.</p>
+<h3 id="517g-what-a-no-collector-build-still-refuses-provisional">5.17g What a no-collector build still refuses <em>(provisional)</em></h3>
+<p>This replaces the list in 5.16i.</p>
+<ul>
+<li>A function that uses a <code>var</code> of the function around it (5.17c), and
+  keeping a function that looks (5.17d). Both by design.</li>
+<li>A value that has one owner as what a type parameter stands for.</li>
+<li><code>list[int or none]</code> (5.16h).</li>
+<li>A function that can raise, used as a value (the <code>--firmware</code> rule,
+  since errors travel as values in this build).</li>
+<li>A method used as a value (<code>let m = counter.bump</code>).</li>
+</ul>
+<h3 id="517h-decided-a-plain-parameter-will-look-and-a-word-will-take">5.17h Decided: a plain parameter will look, and a word will take</h3>
+<p>Asked of the owner of the language on 2026-11-15, and answered: a plain
+parameter should look at a list or an object, and a word should mark
+the parameter that takes it. Today it is the other way round (5.15b):
+plain takes and <code>borrow</code> looks.</p>
+<p><strong>Why.</strong> Most functions only look, so today most parameters carry a
+word and the rare one that takes carries none. The common thing should
+be the plain thing, and the thing that empties the caller's variable
+should be the one that is visible.</p>
+<p><strong>When.</strong> In the audit stage, after manual memory. It touches the
+checker, both backends' tests, every example and every page that shows
+<code>borrow</code>, so it is done in one piece and not mixed into another stage.
+The word is to be chosen then, with the reasons written here.</p>
+<p><strong>The audit's list</strong>, carried on from 5.16i: functions reaching
+top-level lists and objects, methods taking out what the object owns,
+narrowing after <code>case none</code>, the order C evaluates arguments in (5.9q),
+<code>list[int] + list[str]</code> under <code>--strict</code>, <code>list[int or none]</code>, and
+<code>var f = double</code> (5.17b).</p>
+<h3 id="518-memory-by-hand-lives-beside-the-other-two-and-only-inside-unsafe">5.18 Memory by hand lives beside the other two, and only inside <code>unsafe { }</code></h3>
+<p>Asked by the owner of the language: can C-like manual memory still be
+used, with the collector and with one owner already in place? Yes. A
+program asks for memory with <code>allocate</code>, uses it through a pointer, and
+gives it back with <code>free</code>. The lines that Zeno cannot check go inside
+<code>unsafe { }</code> (docs/unsafe.md).</p>
+<p><strong>Why have it.</strong> Firmware needs two things that neither the collector
+nor one owner can give: a register at an address the data sheet names,
+and now and then a block of bytes laid out exactly as the program says.
+Without them the language stops one step short of the hardware.</p>
+<p><strong>Why the block.</strong> A wrong pointer damages something far from the line
+that is wrong. If every such line is inside a marked block, the search
+for the mistake has an end: <code>grep -n unsafe</code>. Everything outside the
+blocks keeps every promise Zeno made before this stage.</p>
+<p><strong>Turned down: no block, as in C.</strong> Then any line may be the one, and
+the promises hold nowhere. <strong>Turned down: a flag for the whole file or
+build.</strong> It says "somewhere in here", which is what the block is for
+avoiding.</p>
+<p><strong>Checked against "unambiguous and intuitive".</strong> One word, one meaning
+(5.18a). One way to write each thing (5.18c, 5.18d). The messages say
+what to write. The one thing that is not intuitive, that a compiled
+program does not check, is said in every message of <code>zeno run</code> (5.18e).</p>
+<h3 id="518a-unsafe-is-a-reserved-word-and-the-block-is-a-statement-that-opens-a-scope">5.18a <code>unsafe</code> is a reserved word, and the block is a statement that opens a scope</h3>
+<p><code>unsafe { ... }</code> is a statement, like the body of an <code>if</code>. What is
+declared inside ends with it. The word cannot be used as a name.</p>
+<p><strong>Why reserved.</strong> The first version made <code>unsafe</code> an ordinary name
+except in front of <code>{</code>. It worked, and it meant that <code>if unsafe {</code> was
+a condition while <code>unsafe {</code> was the block: one word with two meanings,
+told apart by where it stands. Nothing is lost by reserving it.</p>
+<p><strong>Why a statement.</strong> <code>if</code> and <code>match</code> are statements in Zeno. A block
+that gives a value would be the only one. <code>let x = unsafe { p[0] }</code> is
+refused, and the message says to put the whole line inside.</p>
+<p><strong>Why it opens a scope.</strong> Every <code>{ }</code> in Zeno does. One that did not
+would be a surprise of its own. The cost is real: a value read inside
+the block and used after it needs a <code>var</code> declared before the block, or
+the <code>return</code> goes inside, as <code>Queue.get</code> does in <code>driver.zeno</code>.</p>
+<p><strong>Turned down: <code>unsafe function</code>, as Rust has.</strong> It would be a second
+way to mark the same thing. A function that takes a pointer is safe to
+call. Only the lines that use the pointer are not.</p>
+<p><strong>For the audit.</strong> <code>owned</code>, <code>borrow</code> and <code>strict</code> are still ordinary
+names except in one place each. They should be looked at with the same
+eyes.</p>
+<h3 id="518b-five-things-need-the-block-and-nothing-else-does">5.18b Five things need the block, and nothing else does</h3>
+<p>Reading through a pointer, writing through one, <code>free</code>, reading a
+register and writing a register. Making a pointer or a register,
+passing it, keeping it in a field or a list, <code>p + n</code>, <code>p - n</code>, <code>==</code> and
+<code>print</code> are safe anywhere.</p>
+<p><strong>Why.</strong> Those five are exactly the things that can damage memory or
+hardware. An address that points nowhere harms nothing until it is
+used, so working one out is not marked. If harmless lines needed the
+block too, the blocks would grow, and a big block says less.</p>
+<p><strong>Why <code>allocate</code> is safe.</strong> It can fail in one way, by running out,
+and that stops the program with a message. It damages nothing.</p>
+<p>A function written inside the block starts safe again. It is a new
+function and may be called from anywhere, so its body needs its own
+block. The checker counts blocks per function (<code>Frame.unsafe_blocks</code>).</p>
+<h3 id="518c-pointert-points-at-numbers-of-one-size">5.18c <code>pointer[T]</code> points at numbers of one size</h3>
+<p><code>T</code> is <code>int</code>, <code>float</code>, or one of <code>u8 u16 u32 i8 i16 i32</code>. <code>p[i]</code> is
+item <code>i</code>. <code>p + n</code> and <code>p - n</code> move by items. Two pointers compare with
+<code>==</code>.</p>
+<p><strong>Why <code>pointer[u8]</code>.</strong> It is written like <code>list[int]</code>, which every
+Zeno programmer already reads. <strong>Turned down: <code>*u8</code>, <code>ptr[u8]</code>.</strong> The
+syntax direction is whole words and little punctuation.</p>
+<p><strong>Why numbers only.</strong> A bool has no size the language promises. An
+object or a list has an owner or the collector, and a raw pointer to
+one would be a second way to reach it that neither knows about.</p>
+<p><strong>Why items and not bytes.</strong> <code>(p + 1)[0]</code> and <code>p[1]</code> must be the same
+thing. It is also what C does, so nothing has to be unlearned.</p>
+<p><strong>Why <code>1 + p</code> is refused.</strong> One way to write it: the pointer, then how
+far. The message says so.</p>
+<p><strong>Turned down for now: <code>&lt;</code> between pointers, <code>p - q</code>, reading a
+<code>pointer[u8]</code> as a <code>pointer[u32]</code>, the address of a variable.</strong> Nothing
+written so far needs them, and each is a new way to be wrong. They can
+be added when a program asks.</p>
+<p>What is written through a pointer follows the sized-number rules
+(2.8 to 2.8c and docs/sized-ints.md), so <code>p[0] = 300</code> on a <code>pointer[u8]</code> is an
+error as you compile, and arithmetic needs <code>u8(...)</code>.</p>
+<h3 id="518d-allocateu8-16-and-freep">5.18d <code>allocate(u8, 16)</code> and <code>free(p)</code></h3>
+<p>The type of one item first, then how many. The memory is all zero.
+Fewer than one item stops the program. <code>free</code> wants the pointer that
+<code>allocate</code> gave.</p>
+<p><strong>Why the type first.</strong> The type decides what comes back, so it is
+read first. <code>register(u32, address)</code> has the same order.</p>
+<p><strong>Why whole words.</strong> <strong>Turned down: <code>malloc</code></strong>, a name that says
+nothing to someone who has not met C. <strong>Turned down: <code>alloc</code></strong>, an
+abbreviation. <code>free</code> is already the whole word.</p>
+<p><strong>Why zero.</strong> C's <code>malloc</code> gives whatever was there before. A program
+that read it would print one thing under <code>zeno run</code> and another when
+compiled. Zeroing costs one <code>calloc</code>.</p>
+<p><strong>Why running out stops the program.</strong> Giving back <code>none</code> would put a
+check on every <code>allocate</code>, for a case most programs cannot recover
+from. <em>Provisional</em>: firmware that must survive it will want
+<code>pointer[u8] or none</code>.</p>
+<p>There is no null pointer. A pointer that may be missing is
+<code>pointer[u8] or none</code>, checked like any other value that may be <code>none</code>.</p>
+<h3 id="518e-zeno-run-checks-every-use-of-a-pointer-and-a-compiled-program-checks-nothing">5.18e <code>zeno run</code> checks every use of a pointer, and a compiled program checks nothing</h3>
+<p><code>zeno run</code> and the VM keep the block behind each pointer: its length
+and whether it was freed. Out of bounds, use after <code>free</code>, a second
+<code>free</code>, and <code>free</code> of a pointer into the middle each stop the program
+at that line. A compiled program has the address only, as in C.</p>
+<p><strong>Why not check when compiled.</strong> A check needs the length and a freed
+mark to travel with every pointer. Then a pointer is no longer an
+address: it cannot be handed to C or taken from it, and every access
+costs a comparison. Zeno has a checked sequence already. It is called
+a list. A pointer is for when the check is what you want to leave out.</p>
+<p><strong>Why check in <code>zeno run</code>.</strong> It is the cheapest place to find these
+mistakes, and it makes <code>zeno run</code> the tool that C programmers reach
+for a sanitizer for. Every message says that a compiled program would
+not have stopped, so nobody learns the wrong thing from it.</p>
+<p>This is the one place where <code>zeno run</code> and a compiled program may
+differ, and only for a program that is wrong.</p>
+<h3 id="518f-memory-by-hand-comes-from-the-heap-outside-the-collector-or-from-the-pool">5.18f Memory by hand comes from the heap, outside the collector, or from the pool</h3>
+<p>In an ordinary build and with <code>--firmware</code>, <code>allocate</code> is <code>calloc</code>. The
+collector does not scan the block and never frees it. With
+<code>--no-collector</code> there is no heap (5.9k), so it comes from the pool.</p>
+<p><strong>Why outside the collector.</strong> The program said it would free it. A
+collector that freed it too would free it twice. The block holds only
+numbers (5.18c), so there is nothing in it for the collector to find.</p>
+<p><code>--memory</code> adds one line where there is a collector: how many blocks
+<code>allocate</code> gave and how many were never freed. With no collector the
+ordinary report already says it: blocks left at the end.</p>
+<p>An object that holds a pointer does not free what it points at when
+its owner frees the object. Memory asked for by hand is given back by
+hand.</p>
+<h3 id="518g-a-register-is-its-own-type-registeru32-from-board">5.18g A register is its own type: <code>Register[u32]</code>, from <code>board</code></h3>
+<p><code>register(u32, 0x4002_0014)</code> gives a <code>Register[u32]</code>. <code>r.read()</code> and
+<code>r.write(v)</code> go inside <code>unsafe { }</code>. The size is <code>u8</code>, <code>u16</code> or <code>u32</code>.</p>
+<p><strong>Turned down: a register as a pointer at a fixed address, as C writes
+it.</strong> That needs turning a number into a pointer, which is the most
+dangerous thing a pointer can do, and it would be needed in every
+driver. And memory and a register are not the same: the C compiler may
+skip or repeat a memory access, and must not do that to a register.
+Two types let each be compiled as what it is: <code>[ ]</code> for one, one
+<code>volatile</code> access for the other.</p>
+<p><strong>Why <code>read()</code> and <code>write(v)</code>, and not a field.</strong> Reading a register
+can change the hardware. It should look like something that happens,
+which a call does and a field does not.</p>
+<p><strong>Why the capital letter.</strong> What the language has built in is written
+small (<code>int</code>, <code>list</code>, <code>pointer</code>). What comes from a module is written
+like a class (<code>Pin</code>, <code>Register</code>).</p>
+<p><strong>Why unsigned only.</strong> A register is a pattern of bits.</p>
+<p><strong>No helpers such as <code>set_bit</code>.</strong> <code>|</code>, <code>&amp;</code> and <code>~</code> already do it, and
+keep whatever works.</p>
+<h3 id="518h-the-simulated-board-prints-every-write-to-a-register">5.18h The simulated board prints every write to a register</h3>
+<p>A pin that is driven high twice prints one line, because it is still
+high. A register prints a line for every write, also one that changes
+nothing.</p>
+<p><strong>Why.</strong> On real hardware a write is an event. The same byte written
+twice to a serial port is two bytes sent. The first version printed
+only on a change, and the driver example then lost a line whenever two
+equal bytes followed each other.</p>
+<h3 id="518i-found-on-the-way">5.18i Found on the way</h3>
+<ul>
+<li><code>bool</code> used as a value (<code>allocate(bool, 4)</code>) said "<code>bool</code> is not
+  defined". It is defined, as a type. The message now says that.</li>
+<li>The C backend wrote an unreachable second <code>return</code> after
+  <code>unsafe { return p[0] }</code>. A block that ends in <code>return</code> now ends the
+  function.</li>
+</ul>
+<p><strong>For the audit</strong>, added to the list in 5.17h: the three words that are
+names except in one place (5.18a); a <code>--firmware</code> build cannot catch an
+<code>OverflowError</code> that <code>u8(...)</code> raises, which <code>zeno run</code> can; and
+messages that say "1 blocks" or "1 item(s)".</p>
+<h3 id="519-the-audit-every-part-of-the-language-is-held-against-unambiguous-and-intuitive">5.19 The audit: every part of the language is held against "unambiguous and intuitive"</h3>
+<p>The owner of the language asked for it in one sentence: the entire
+language must be unambiguous and intuitive. Each feature was read again
+with five questions, and what failed one was changed or written down
+with its reason (docs/audit.md).</p>
+<ol>
+<li>Is there one obvious way to write it?</li>
+<li>Can any line be read two ways, by the parser or by a person?</li>
+<li>Does anything happen that the line does not say?</li>
+<li>Is every word a plain word, with one meaning?</li>
+<li>When it is refused, does the message say what to write instead?</li>
+</ol>
+<p><strong>Why these five.</strong> They are principles 1, 2 and 4 turned into
+questions that have a yes or a no. "Intuitive" on its own cannot be
+tested. "Does the line say what happens" can.</p>
+<p><strong>What an audit may change.</strong> Anything, including what earlier
+decisions settled, as long as the earlier entry stays in this file with
+a line that says what replaced it. The reasons of the time are part of
+the record.</p>
+<h3 id="519a-a-parameter-looks-unless-it-says-take">5.19a A parameter looks, unless it says <code>take</code></h3>
+<pre><code class="zeno">function report(task: Task) -&gt; str { ... }            # looks
+function retire(task: take Task) -&gt; int { ... }       # takes, and frees</code></pre>
+<p>A parameter written with its type alone looks at the list, object,
+function or error it is given. The caller still has it afterwards. A
+parameter that takes the value over says <code>take</code> in front of its type,
+and then the caller's variable holds nothing. This carries out 5.17h,
+and replaces 5.8c and 5.15b, where plain took and <code>borrow</code> looked.</p>
+<p><strong>Why.</strong> Question 3. <code>retire(task)</code> emptied the caller's variable, and
+nothing on either line said so: the reader had to know that a parameter
+with no word takes. Now the line that empties a variable is the one
+that carries a word.</p>
+<p><strong>The count that 5.15b asked for.</strong> In the example programs 10
+parameters only looked and 7 took. In the programs the C backend is
+tested with, which are longer, 57 looked and 12 took. Under the old
+rule the larger group carried a word. Under this one the smaller does.
+The count alone would not have settled it for the examples. The reason
+above does.</p>
+<p><strong>Why it is safe to make looking the default.</strong> A look cannot be kept,
+returned or given away, and the checker already enforced that for
+<code>borrow</code>. So a forgotten <code>take</code> is always an error at the line that
+tries to keep the value, and the message names the word. A forgotten
+<code>borrow</code> used to be silent until the caller used its variable again.</p>
+<p><strong><code>self</code> always looks</strong>, as before. A method that made its own object
+vanish would surprise everyone.</p>
+<p><strong>Turned down: a mark at the call as well</strong> (<code>retire(take task)</code>). It
+would show the move where it happens. But the checker reports any use
+after a move with the line of the move, and one way to write a call is
+worth more than a second reminder. <em>(Provisional, as in 5.8a.)</em></p>
+<h3 id="519b-the-word-is-take-and-it-stands-in-front-of-the-type">5.19b The word is <code>take</code>, and it stands in front of the type</h3>
+<p><code>frame: take Frame</code>, and in a function type <code>function(take Frame) -&gt; int</code>.</p>
+<p><strong>Why <code>take</code>.</strong> It is what the function does, said from the function's
+side, in the word the messages already used ("takes the value over").
+It reads as a sentence: "send takes a frame".</p>
+<p><strong>Turned down: <code>owned</code>.</strong> It already says what a value <em>is</em> ("this list
+has one owner"). On a parameter it would also have to say what the
+function <em>does</em>, and in an ordinary build <code>xs: owned list[int]</code> is
+needed for the first meaning. One word, two meanings: question 4.
+<strong>Turned down: <code>move</code>.</strong> It describes the call from the caller's side,
+and it is a term from C++ and Rust more than a plain word.
+<strong>Turned down: <code>keep</code>.</strong> A function that takes a frame and sends it
+does not keep it. <strong>Turned down: <code>own</code>.</strong> One letter from <code>owned</code>.</p>
+<p><strong>Why in front of the type and not the name.</strong> <code>owned</code> goes there, and
+a function type has no parameter names to put it in front of.</p>
+<p><strong><code>take</code> on a number is refused.</strong> A number, a <code>bool</code> and a text are
+copied, so there is nothing to take, and a word that did nothing would
+be noise. The message says to write the type alone.</p>
+<h3 id="519c-owned-take-and-strict-are-reserved-words-and-borrow-is-gone">5.19c <code>owned</code>, <code>take</code> and <code>strict</code> are reserved words, and <code>borrow</code> is gone</h3>
+<p>A word of the language is never also a name. <code>let take = 3</code>,
+<code>let owned = 1</code> and <code>queue.take()</code> are refused, and the message says
+where the word goes. This replaces the part of 5.8a that left the
+words unreserved, and finishes what 5.18a began with <code>unsafe</code>.</p>
+<p><strong>Why.</strong> Question 2. <code>strict</code> on the first line set a mode and on the
+second line was a variable. <code>owned</code> in front of <code>class</code> was a word and
+in front of <code>=</code> was a name. The parser could always tell, so nothing
+was ambiguous to the machine. A person had to stop and work it out.
+One rule with no exceptions is easier to hold than "reserved, except
+these three".</p>
+<p><strong>What it costs.</strong> <code>take</code> is a good name for a method of a queue.
+<code>driver.zeno</code> had one and now calls it <code>get</code>. That is the whole cost
+found so far.</p>
+<p><strong>Type names stay unreserved</strong> (<code>int</code>, <code>list</code>, <code>pointer</code>). They are
+names, of types, and a type and a variable never stand in the same
+place.</p>
+<p><strong><code>borrow</code> is no longer a word.</strong> Writing it in front of a type gives
+"<code>borrow</code> is no longer a word. A parameter looks at what it is given
+without one: write the type alone. A parameter that takes the value
+over says <code>take</code>". Everywhere else it is an ordinary name again.</p>
+<p><strong>Why not keep <code>borrow</code> as an optional word.</strong> Then there would be two
+ways to write a parameter that looks: question 1.</p>
+<h3 id="519d-where-values-are-shared-owned-listt-on-a-parameter-looks-at-any-list">5.19d Where values are shared, <code>owned list[T]</code> on a parameter looks at any list</h3>
+<p>In a build with a collector there are two kinds of list, and a
+parameter can ask for either:</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Means</th>
+<th>Accepts</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xs: list[int]</code></td>
+<td>a shared list, which the function may keep</td>
+<td>shared lists</td>
+</tr>
+<tr>
+<td><code>xs: owned list[int]</code></td>
+<td>a look at a list</td>
+<td>any list, owned or shared</td>
+</tr>
+<tr>
+<td><code>xs: take owned list[int]</code></td>
+<td>the function takes an owned list over</td>
+<td>owned lists</td>
+</tr>
+</tbody>
+</table>
+<p>An owned list passed to a plain <code>list[int]</code> is refused, and the message
+says to write <code>owned list[int]</code>. An <code>owned class</code> needs no word: its
+type already says that it has one owner, so <code>frame: Frame</code> looks and
+<code>frame: take Frame</code> takes.</p>
+<p><strong>Why the middle row accepts a shared list.</strong> Anyone may look at a
+shared value. A function that only reads a list should be usable with
+every list, and this is how to write that function once.</p>
+<p><strong><code>take</code> on a shared value changes nothing.</strong> <code>take Point</code>, where
+<code>Point</code> is a plain class in a build with a collector, is allowed and
+does what <code>Point</code> does. So a program written for a build with no
+collector, where the word matters, is the same program in every build.</p>
+<h3 id="519e-one-program-that-a-build-with-no-collector-accepts-and-an-ordinary-build-refuses">5.19e One program that a build with no collector accepts and an ordinary build refuses</h3>
+<p>5.15a promised that the rules for one owner only ever refuse. There is
+now one case the other way round:</p>
+<pre><code class="zeno">function total(xs: list[int]) -&gt; int { return len(xs) }
+let window: owned list[int] = [0, 0]
+print(total(window))</code></pre>
+<p>With no collector every list has one owner and <code>xs</code> looks, so this is
+fine. With a collector <code>xs: list[int]</code> is a shared list that <code>total</code>
+may keep, and <code>window</code> cannot go there.</p>
+<p><strong>Why it is left.</strong> Accepting it with a collector would let a shared
+place hold an owned list (rule 6 of 5.8). Refusing it with no collector
+would mean that the word <code>owned</code> changes something in that build,
+which 5.15 says it does not. The message names the fix, and the fixed
+program (<code>xs: owned list[int]</code>) builds both ways. A program that never
+writes <code>owned</code>, or writes it on every list it means, never meets this.</p>
+<h3 id="519f-what-take-cannot-do-yet">5.19f What <code>take</code> cannot do yet</h3>
+<ul>
+<li>A type parameter cannot be taken: <code>function keep[T](x: take T)</code> is
+  refused, because <code>T</code> may be a number. A value with one owner cannot
+  fill a type parameter at all yet (noted in docs/generics.md).</li>
+<li>A parameter with no type is only allowed where values are shared
+  (<code>--no-collector</code> needs every type written), so the question of what
+  it does with an owner does not come up.</li>
+</ul>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
 </main>
 <footer class="foot">
-  <blockquote>Every journey is halfway done. Forever.</blockquote>
-  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><span class="tortoise"></span>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
   </div>
-  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
 </footer>
 <script src="/assets/main.js"></script>
 </body>

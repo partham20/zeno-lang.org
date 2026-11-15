@@ -11,15 +11,15 @@
 <meta property="og:url" content="https://zeno-lang.org/docs/ownership/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://zeno-lang.org/docs/ownership/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
-<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the content</a>
@@ -29,16 +29,16 @@
   <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
     </button>
-    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
   </div>
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/" aria-current="page">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/" aria-current="page">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>More</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a></nav>
 <article class="prose">
-  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>Owned values: memory freed at a line you can point to</h1>
   <p>Until this stage, every list and object in a compiled Zeno program was
 <strong>shared</strong>. <code>let b = a</code> makes a second name for the same list, and a garbage
@@ -81,48 +81,62 @@ either way, so the rules are enforced however the program is run.</p>
 
 let window: owned list[int] = [0, 0, 0, 0]
 
-function average(samples: borrow list[int]) -&gt; int { ... }</code></pre>
+function average(samples: owned list[int]) -&gt; int { ... }    # looks
+function send(frame: take Frame) -&gt; int { ... }              # takes</code></pre>
 <ul>
 <li><strong><code>owned class</code></strong>: every object of the class has exactly one owner. That
   is decided once, where the class is declared, and not at each use.</li>
 <li><strong><code>owned list[T]</code></strong>: a list with exactly one owner. Its items are
   ordinary values (numbers, text, shared objects).</li>
-<li><strong><code>borrow</code></strong>, on a parameter: the function may look at the value and
-  change what is inside it, and may not keep it.</li>
+<li><strong><code>take</code></strong>, on a parameter: the function takes the value over. A
+  parameter without the word only looks: the function may read the value
+  and change what is inside it, and may not keep it.</li>
 </ul>
-<p><code>owned</code> and <code>borrow</code> are not reserved words. They only mean something in
-those three positions, so a program with a variable called <code>owned</code> still
-works.</p>
+<p><code>owned</code> and <code>take</code> are reserved words, like every word of the language.
+A word is never also a name, so nobody has to work out which one a line
+means. (The word for looking used to be <code>borrow</code>, and a plain parameter
+took. The audit turned that round: <a href="/docs/audit/"><code>audit.md</code></a>.)</p>
 <h2 id="the-rules">The rules</h2>
 <p><strong>1. One owner.</strong> A variable, a parameter, or a field of an owned object
 holds the value. Nothing else does.</p>
 <p><strong>2. Storing it somewhere gives it away.</strong> Assigning it to another variable,
-passing it to a parameter that takes it, putting it in a field, or returning
+passing it to a parameter that says <code>take</code>, putting it in a field, or returning
 it, moves it. The old name holds nothing afterwards, and using it is an
 error:</p>
 <pre><code class="zeno">let frame = capture(7, 4)
 print(send(frame))        # `frame` moves into `send`
 print(frame.channel)</code></pre>
-<pre class="out"><code>error: `frame` was given away on line 2 and holds nothing now. Lend it
-instead (a `borrow` parameter), or use it before it goes</code></pre>
+<pre class="out"><code>error: `frame` was given away on line 2 and holds nothing now. Use it
+before it goes, or give it only to what looks: a parameter without
+`take`</code></pre>
 <p><strong>3. Looking is free.</strong> Reading a field, calling a method, printing,
 indexing, comparing, looping over it: none of these moves anything.</p>
-<p><strong>4. A function that only looks says <code>borrow</code>.</strong> The caller keeps the value.
-A borrowed value cannot be stored, returned or passed on to something that
-keeps it, so it can never outlive the call:</p>
-<pre><code class="zeno">function keep(p: borrow Packet) -&gt; Packet { return p }</code></pre>
-<pre class="out"><code>error: `p` is only borrowed here, so it cannot be kept, returned or given
-away. To keep it, take it as an owned parameter instead</code></pre>
-<p>A <code>borrow</code> parameter also accepts a shared value. Anyone may look at those.</p>
+<p><strong>4. A parameter looks, unless it says <code>take</code>.</strong> The caller keeps the
+value. What is only looked at cannot be stored, returned or passed on to
+something that keeps it, so it can never outlive the call:</p>
+<pre><code class="zeno">function keep(p: Packet) -&gt; Packet { return p }</code></pre>
+<pre class="out"><code>error: `p` is only looked at here: its owner still has it. So it cannot
+be kept, returned or given away. If it is a parameter, write `take` in
+front of its type to take the value over</code></pre>
+<p>A parameter written <code>owned list[int]</code> looks at any list, owned or
+shared. Anyone may look at a shared one. A parameter written plain
+<code>list[int]</code> is the shared list of every earlier page, which the function
+may keep, so an owned list cannot go there:</p>
+<pre class="out"><code>error: `xs` of `total` is written `list[int]`, which is a shared list
+that the function may keep, and this list has one owner. Write the
+parameter as `owned list[int]`: then it only looks, and any list can be
+passed to it</code></pre>
 <p><strong>5. It is freed where its owner's block ends.</strong> That is the closing <code>}</code>,
 or a <code>return</code>, <code>break</code> or <code>continue</code> that leaves the block early. A <code>var</code>
 that is given a new value frees the old one at that line.</p>
 <p><strong>6. Owned may hold shared. Shared may not hold owned.</strong> A shared list can
 be reached from many places. If it held an owned value, each of those
 places would think the value was still there after its owner had freed it.
-So a shared list, an <code>or none</code>, an enum case and an ordinary class cannot
-hold an owned value. An owned class can, and so can an owned list: it owns
-its items and frees them with itself (<a href="/docs/one-owner/"><code>one-owner.md</code></a>).</p>
+So a shared list and an ordinary class cannot hold an owned value. An
+owned class can, and so can an owned list: it owns its items and frees
+them with itself (<a href="/docs/one-owner/"><code>one-owner.md</code></a>). An <code>or none</code> can too:
+<code>var last: Packet or none</code> owns a packet or nothing
+(<a href="/docs/enums-and-none/"><code>enums-and-none.md</code></a>).</p>
 <p>That is the whole of it. There are no lifetimes to write and no <code>&amp;</code>.</p>
 <h2 id="how-the-checker-knows">How the checker knows</h2>
 <p>The checker already works out a type for every expression. An owned value
@@ -180,11 +194,13 @@ with nothing in it. Give it away after the loop, or just before a `break`</code>
   (nothing has to be saved before the move) and it is rarely what anyone
   meant. Put the look on a line of its own.</li>
 <li><strong>An owned value stays in the function whose block holds it.</strong> A function
-  cannot reach an owned variable declared somewhere else, including at the
-  top of the file, and a function written inside another cannot carry one
-  away. Pass it in as a <code>borrow</code> parameter. This is what makes it safe to
-  free the value when the block ends: nothing outside the block ever knew
-  where it was.</li>
+  cannot reach an owned variable declared somewhere else, and a function
+  written inside another cannot carry one away. Pass it in as a
+  parameter. This is what makes it safe to free the value when the block
+  ends: nothing outside the block ever knew where it was. The one
+  exception is a <code>let</code> at the top of the file. It is there until the
+  program ends, so every function may look at it, and in return the top
+  of the file may not give it away (<a href="/docs/audit/"><code>audit.md</code></a>).</li>
 <li><strong>An owned value made in the middle of a statement, and only looked
   at, belongs to the statement.</strong> In <code>print(look(make()))</code> nobody is
   given what <code>make()</code> returns, so the statement frees it when it is
@@ -218,7 +234,8 @@ when handed NULL. So the compiler does not need to know, at the end of a
 block, which owners still hold something. It asks each one, and the pointer
 itself is the answer. (Here the C compiler can see that <code>z_data</code> is NULL
 and removes the call.)</p>
-<p>A function that takes a value over is an owner like any other:</p>
+<p>A function that takes a value over (<code>p: take Packet</code>) is an owner like
+any other:</p>
 <pre><code>static int64_t z_send(z_Packet *z_p) {
     ...
     int64_t t13 = z_Packet_size(z_p);   // the answer is worked out first
@@ -324,15 +341,20 @@ lives in a slot (<code>alloca ptr</code>), giving it away is a <code>load</code>
 errors today, with a message that says so, and can be allowed later without
 breaking any program that works now.</p>
 <ul>
-<li><strong>An owned value inside an <code>or none</code>, an enum case or a function
-  type.</strong> Taking one back out would have to leave a hole. (An owned list
-  can hold owned values: <code>pop()</code> takes one out and leaves no hole. See
-  <a href="/docs/one-owner/"><code>one-owner.md</code></a>.)</li>
+<li><strong>An owned value inside an enum case in a build with a collector, or
+  as what a type parameter stands for.</strong> (An owned list can hold owned
+  values, and so can an <code>or none</code>: see <a href="/docs/one-owner/"><code>one-owner.md</code></a> and
+  <a href="/docs/enums-and-none/"><code>enums-and-none.md</code></a>. With no collector an enum
+  case can hold them as well, because there the enum value itself has
+  one owner. A function type can mention one, and says what each
+  parameter does with it, as in <code>function(take Packet) -&gt; int</code>:
+  <a href="/docs/functions-and-errors/"><code>functions-and-errors.md</code></a>.)</li>
 <li><strong>Moving a field out of an object</strong> (<code>let d = packet.data</code>). Same reason.</li>
-<li><strong>Replacing an owned field through a borrow</strong>, which includes <code>self</code> in a
-  method. Somebody else may have been lent the old value at that moment.
-  Only the owner of the object may write <code>packet.data = [...]</code>. A method
-  can still change what is <em>in</em> the list (<code>self.data.append(x)</code>).</li>
+<li><strong>Replacing an owned field through a look.</strong> Somebody else may have
+  been lent the old value at that moment. Only the owner of the object
+  may write <code>packet.data = [...]</code>. A method may do it for its own object
+  (<code>self.data = [...]</code>), and then only the owner of the object may call
+  that method (<a href="/docs/audit/"><code>audit.md</code></a>).</li>
 <li><strong>A shared list becoming an owned one.</strong> Only a list that was just
   made can start life owned: one written out (<code>[1, 2]</code>), a
   comprehension, or what <code>split</code>, <code>map</code>, <code>filter</code> or <code>+</code> gives. Only
@@ -349,7 +371,7 @@ breaking any program that works now.</p>
   no collector at all, for a program where everything is owned, is
   <code>zeno build --no-collector</code>: see <a href="/docs/no-collector/"><code>no-collector.md</code></a>.
   That build takes its blocks from a fixed pool (<a href="/docs/pool/"><code>pool.md</code></a>).</li>
-<li>The borrow checker is small on purpose. It refuses some programs that
+<li>The checker for owners is small on purpose. It refuses some programs that
   would be safe, such as the one-line rule above. Rust accepts more, with
   far more machinery.</li>
 </ul>
@@ -381,7 +403,7 @@ breaking any program that works now.</p>
    two lines in <code>read</code> (<code>checker.rs</code>) that produce the message.</li>
 <li>Open <code>buffer.c</code> and find where <code>frame</code> is freed when the loop does
    <code>continue</code>, and where it is freed when it does not. Why are both needed?</li>
-<li>Write a function <code>longest(a: borrow list[int], b: borrow list[int])</code> that
+<li>Write a function <code>longest(a: owned list[int], b: owned list[int])</code> that
    returns the longer of the two. What does the checker say? Why must it?
    What could the function return instead?</li>
 <li>In <code>leave_loop</code>, a value given away just before a <code>break</code> is allowed.
@@ -391,9 +413,10 @@ breaking any program that works now.</p>
 <li><code>for x in items</code> copies the list. For an owned list that nobody else can
    change during the loop, is the copy needed? What would the checker have
    to know to leave it out?</li>
-<li>Allow an owned value inside an <code>or none</code>. Start with <code>let p: Packet or
-   none = none</code>: what should <code>let q = p</code> mean, and what does <code>p</code> hold
-   afterwards?</li>
+<li>An owned value can sit inside an <code>or none</code>
+   (<a href="/docs/enums-and-none/"><code>enums-and-none.md</code></a>). With
+   <code>let p: Packet or none = none</code>, what does <code>let q = p</code> mean, and what
+   does <code>p</code> hold afterwards? Try it, then read that page.</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/ownership.md">docs/ownership.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/memory/"><span>Previous</span>How memory is managed</a><a class="next" href="/docs/no-collector/"><span>Next</span>A build with no collector</a></nav>
@@ -402,14 +425,20 @@ breaking any program that works now.</p>
 </div>
 </main>
 <footer class="foot">
-  <blockquote>Every journey is halfway done. Forever.</blockquote>
-  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><span class="tortoise"></span>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
   </div>
-  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
 </footer>
 <script src="/assets/main.js"></script>
 </body>

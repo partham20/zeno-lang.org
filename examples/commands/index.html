@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>commands.zeno · Zeno</title>
+<meta name="description" content="Commands from a serial console, and a small machine that runs them. A Zeno example, with its output.">
+<meta property="og:title" content="commands.zeno · Zeno">
+<meta property="og:description" content="Commands from a serial console, and a small machine that runs them. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/commands/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/commands/">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/><rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/><rect x="29.5" y="2" width="1" height="28"/></svg><span>zeno</span></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">Commands from a serial console, and a small machine that runs them</h1>
+  <p class="lede small">The whole of <code>examples/commands.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">commands.zeno</span></figcaption><pre><code class="zeno"># Commands from a serial console, and a small machine that runs them.
+#
+# An enum whose cases carry values, and values that may be `none`, in a
+# build with no garbage collector:
+#
+#     zeno run examples/commands.zeno
+#     zeno build --no-collector --memory examples/commands.zeno &amp;&amp; ./commands
+#
+# A `Command` that carries something is kept in a block of its own, like
+# an object, and has one owner, which frees it. docs/enums-and-none.md is
+# the walkthrough.
+
+enum Command {
+    Stop                          # carries nothing: one fixed value
+    Wait(ms: int)
+    Set(pin: int, on: bool)
+    Say(text: str)                # the command has its own copy of the text
+    Blink(pins: list[int])        # and owns this list
+}
+
+# What the machine is doing. No case carries anything, so each `Mode` is
+# one fixed value, and is copied like a number.
+enum Mode {
+    Idle
+    Busy
+    Halted
+}
+
+# One line of text is a command, or is not: `none` says so, and the
+# caller cannot forget to ask.
+function parse(line: str) -&gt; Command or none {
+    let words = line.split()
+    if len(words) == 0 {
+        return none
+    }
+    try {
+        match words[0] {
+            case "stop" { return Stop }
+            case "wait" {
+                if len(words) == 2 { return Wait(int(words[1])) }
+            }
+            case "set" {
+                if len(words) == 3 { return Set(int(words[1]), words[2] == "on") }
+            }
+            case "say" { return Say(line) }
+            case "blink" { return Blink([int(word) for word in words if word != "blink"]) }
+            case _ { }
+        }
+    } except ValueError as mistake {
+        print("  (", mistake.message, ")")
+    }
+    return none
+}
+
+# A parameter only looks at the command. `match` looks too: a number
+# or a text that a case carries is copied out, and `pins` is a look at
+# the list, which stays in the command.
+function cost(command: Command) -&gt; int {
+    match command {
+        case Stop { return 0 }
+        case Wait(ms) { return ms }
+        case Set(_, _) { return 1 }
+        case Say(text) { return len(text) }
+        case Blink(pins) { return 100 * len(pins) }
+    }
+}
+
+class Machine {
+    mode: Mode
+    clock: int
+    waiting: list[Command]        # the list owns each command in it
+    last: Command or none         # what ran last, when something has
+
+    # `take`: the machine takes the command, and its list keeps it.
+    function queue(self, command: take Command) {
+        self.waiting.append(command)
+    }
+
+    function busy_for(self) -&gt; int {
+        var total = 0
+        for command in self.waiting {
+            total += cost(command)
+        }
+        return total
+    }
+}
+
+# Run one command. It is the caller's to give: `command` is freed when
+# this returns, unless it is given on.
+function run(machine: Machine, command: take Command) -&gt; Mode {
+    machine.clock += cost(command)
+    match command {
+        case Stop { return Halted }
+        case Say(text) { print(f"[{machine.clock}] says: {text}") }
+        case other { print(f"[{machine.clock}] {other}") }
+    }
+    return Busy
+}
+
+let machine = Machine(Idle, 0, [], none)
+for line in ["wait 9", "stop", "wait 250", "set 13 on", "jump 3", "say hello there", "blink 2 3 5", "wait soon"] {
+    let command = parse(line)
+    if command is none {
+        print("not a command:", line)
+    } else {
+        machine.queue(command)    # `command` holds nothing after this line
+    }
+}
+print(len(machine.waiting), "commands, busy for", machine.busy_for())
+
+# Take the commands out last first, and run each until one halts.
+while machine.mode != Halted and len(machine.waiting) &gt; 0 {
+    let next = machine.waiting.pop()
+    machine.mode = run(machine, next)
+}
+print(machine.mode, "with", len(machine.waiting), "left")
+
+# A new value takes the place of the old one, which is freed on the spot.
+machine.last = parse("say goodbye")
+machine.last = parse("set 4 off")
+match machine.last {
+    case none { print("nothing ran last") }
+    case Set(pin, on) { print("last: pin", pin, "on:", on) }
+    case _ { print("last: something else") }
+}
+print(machine)</code></pre><div class="out-label">zeno run examples/commands.zeno</div><pre class="out"><code>not a command: jump 3
+  ( cannot turn "soon" into an int )
+not a command: wait soon
+6 commands, busy for 575
+[300] Blink([2, 3, 5])
+[315] says: say hello there
+[316] Set(13, true)
+[566] Wait(250)
+Halted with 1 left
+last: pin 4 on: false
+Machine(mode=Halted, clock=566, waiting=[Wait(9)], last=Set(4, false))</code></pre></figure>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/commands.zeno">examples/commands.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/packet/"><span>Previous</span>packet.zeno</a><a class="next" href="/examples/handlers/"><span>Next</span>handlers.zeno</a></nav>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><span class="tortoise"></span>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

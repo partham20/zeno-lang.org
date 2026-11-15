@@ -31,7 +31,9 @@ python3 tools/build.py --zeno ../zeno-lang
 ```
 
 The home page's text is in `tools/home.html`, the guide's text is in
-`tools/build.py`, and the samples are in `tools/snippets/`.
+`tools/build.py`, and the samples are in `tools/snippets/`. The line icons
+are in `tools/icons.py` (write `<!--ICON:name-->` in `home.html`), and the
+reasons behind the look, colours, type and motion are in `tools/DESIGN.md`.
 
 To look at the site, serve the folder, since links start at the site root:
 

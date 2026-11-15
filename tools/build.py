@@ -24,6 +24,9 @@ from pathlib import Path
 
 import markdown
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from icons import icon  # noqa: E402
+
 SITE = Path(__file__).resolve().parent.parent
 TOOLS = SITE / "tools"
 SNIPPETS = TOOLS / "snippets"
@@ -62,7 +65,7 @@ def snippet(name):
 def window(title, code, output=None, out_label="output", lang="zeno"):
     """A code window, and under it what Zeno printed."""
     cls = ' class="zeno"' if lang == "zeno" else ""
-    body = f'<figure class="window"><figcaption><span class="file">{esc(title)}</span></figcaption>'
+    body = f'<figure class="window"><figcaption>{icon("code")}<span class="file">{esc(title)}</span></figcaption>'
     body += f"<pre><code{cls}>{esc(code)}</code></pre>"
     if output is not None:
         body += f'<div class="out-label">{esc(out_label)}</div><pre class="out"><code>{esc(output)}</code></pre>'
@@ -101,15 +104,15 @@ def layout(path, title, description, body, active=None, home=False):
 <meta property="og:url" content="{ORIGIN}{path}">
 <meta property="og:image" content="{ORIGIN}/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="{ORIGIN}{path}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
-<script>try {{ var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; }} catch (e) {{}}</script>
+<script>document.documentElement.classList.add("js"); try {{ var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; }} catch (e) {{}}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the content</a>
@@ -119,23 +122,29 @@ def layout(path, title, description, body, active=None, home=False):
   <nav aria-label="Main">{nav}</nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+      {icon("sun", "icon sun")}{icon("moon", "icon moon")}
     </button>
-    <a class="button small" href="{GITHUB}">GitHub</a>
+    <a class="button small ghost" href="{GITHUB}">{icon("github")}GitHub</a>
   </div>
 </header>
 <main id="content"{' class="home"' if home else ''}>
 {body}
 </main>
 <footer class="foot">
-  <blockquote>Every journey is halfway done. Forever.</blockquote>
-  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><span class="tortoise"></span>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="{GITHUB}">Source on GitHub</a></div>
   </div>
-  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
 </footer>
 <script src="/assets/main.js"></script>
 </body>
@@ -149,8 +158,9 @@ def layout(path, title, description, body, active=None, home=False):
     PAGES.append(path)
 
 
-def page_head(eyebrow, title, lede):
-    return (f'<header class="page-head"><p class="eyebrow">{eyebrow}</p>'
+def page_head(eyebrow, title, lede, ico=None):
+    mark = icon(ico) if ico else ""
+    return (f'<header class="page-head"><p class="eyebrow">{mark}{eyebrow}</p>'
             f"<h1>{title}</h1><p class=\"lede\">{lede}</p></header>")
 
 
@@ -224,13 +234,16 @@ def toc_html(tokens, depth=2):
 
 # --- Docs --------------------------------------------------------------------
 
+DOC_ICONS = {"The front end": "tree", "The engines": "play", "Memory": "memory",
+             "Firmware and hardware": "cpu", "The type system": "copies", "More": "book"}
+
 DOC_GROUPS = [
     ("The front end", "From text to a checked program.",
      ["lexer", "parser", "checker"]),
     ("The engines", "Four ways to run the same program.",
      ["interpreter", "vm", "compiler", "llvm"]),
     ("Memory", "A collector, owners, and a fixed pool.",
-     ["memory", "ownership", "no-collector", "pool", "text", "temporaries", "one-owner"]),
+     ["memory", "ownership", "no-collector", "pool", "text", "temporaries", "one-owner", "unsafe"]),
     ("Firmware and hardware", "Errors as values, pins and clocks, sized numbers.",
      ["firmware", "board", "sized-ints"]),
     ("The type system", "Code written once for many types.",
@@ -270,7 +283,7 @@ def build_docs():
         page = f"""<div class="doc-layout">
 {sidebar(name)}
 <article class="prose">
-  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <p class="eyebrow">{icon("book")}<a href="/docs/">Docs</a></p>
   <h1>{esc(title)}</h1>
   {body}
   <p class="source">This page is <a href="{GITHUB}/blob/main/docs/{name}.md">docs/{name}.md</a> in the language repository.</p>
@@ -282,14 +295,15 @@ def build_docs():
 
     groups = ""
     for group, blurb, names in DOC_GROUPS:
-        cards = "".join(
-            f'<a class="card" href="/docs/{n}/"><b>{esc(meta[n][0])}</b><span>{esc(meta[n][1])}</span></a>'
+        items = "".join(
+            f'<li><a href="/docs/{n}/"><b>{esc(meta[n][0])}</b><span>{esc(meta[n][1])}</span></a></li>'
             for n in names if n in meta)
-        groups += f'<section class="doc-group"><div class="doc-group-head"><h2>{group}</h2><p>{blurb}</p></div><div class="cards">{cards}</div></section>'
+        groups += (f'<section class="doc-group"><div class="doc-group-head">{icon(DOC_ICONS.get(group, "book"))}'
+                   f'<h2>{group}</h2><p>{blurb}</p></div><ul class="index">{items}</ul></section>')
     body = page_head("Docs", "How the compiler works",
                      "Zeno is written in Rust with no dependencies, and each stage has a walkthrough. "
                      "Read them in order to see a language being built, from the first token to LLVM IR. "
-                     "Most end with things to try.") + groups
+                     "Most end with things to try.", "book") + groups
     layout("/docs/", "How the compiler works", "Walkthroughs of every stage of the Zeno compiler, from the lexer to the LLVM backend.", body, "/docs/")
 
 
@@ -304,7 +318,7 @@ def build_decisions():
   {toc_html(toc, depth=2)}
 </aside>
 <article class="prose">
-  <p class="eyebrow">Design decisions</p>
+  <p class="eyebrow">{icon("scale")}Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
   <p class="lede">Every choice in the language, the reason for it, and what was turned down. {count} decisions so far. Ones marked <em>provisional</em> may still change.</p>
   {body}
@@ -318,6 +332,7 @@ def build_decisions():
 
 SNIPPET_EXAMPLES = Path(".")
 FOREVER = {"blink": 24}     # programs that never stop: show their first lines
+FIRMWARE = {"signal", "blink", "buffer", "memory", "scheduler", "driver", "packet", "commands", "handlers"}
 
 
 def example_meta(path):
@@ -338,7 +353,8 @@ def example_meta(path):
 def build_examples():
     folder = Path(ARGS.zeno) / "examples"
     order = ["hello", "tour", "styles", "primes", "shapes", "sensor", "generics", "packet",
-             "signal", "blink", "buffer", "memory", "labels", "words", "scheduler"]
+             "commands", "handlers", "signal", "blink", "buffer", "memory", "labels", "words",
+             "scheduler", "driver"]
     names = [n for n in order if (folder / f"{n}.zeno").exists()]
     names += sorted(p.stem for p in folder.glob("*.zeno") if p.stem not in names)
     cards = ""
@@ -353,7 +369,7 @@ def build_examples():
         prev_link = f'<a class="prev" href="/examples/{names[i-1]}/"><span>Previous</span>{names[i-1]}.zeno</a>' if i else "<span></span>"
         next_link = f'<a class="next" href="/examples/{names[i+1]}/"><span>Next</span>{names[i+1]}.zeno</a>' if i + 1 < len(names) else "<span></span>"
         page = f"""<div class="narrow">
-  <p class="eyebrow"><a href="/examples/">Examples</a></p>
+  <p class="eyebrow">{icon("code")}<a href="/examples/">Examples</a></p>
   <h1 class="example-title">{esc(title)}</h1>
   <p class="lede small">The whole of <code>examples/{name}.zeno</code>, and what <code>zeno run</code> prints for it.</p>
   {window(f"{name}.zeno", code, output, f"zeno run examples/{name}.zeno")}
@@ -363,12 +379,13 @@ def build_examples():
 </div>"""
         layout(f"/examples/{name}/", f"{name}.zeno", f"{title}. A Zeno example, with its output.", page, "/examples/")
         lines_count = len(code.split("\n"))
-        cards += (f'<a class="card" href="/examples/{name}/"><code>{name}.zeno</code><b>{esc(title)}</b>'
-                  f'<span>{lines_count} lines</span></a>')
+        kind = "cpu" if name in FIRMWARE else "code"
+        cards += (f'<li><a href="/examples/{name}/">{icon(kind)}<b>{esc(title)}</b>'
+                  f'<span><code>{name}.zeno</code></span><small>{lines_count} lines</small></a></li>')
     body = page_head("Examples", "Programs to read and run",
-                     "Every example in the language repository, from one line to a scheduler that builds "
-                     "with no garbage collector. Each page shows what <code>zeno run</code> printed.") + \
-        f'<div class="cards examples">{cards}</div>'
+                     "Every example in the language repository, from one line to a driver that works memory by hand. "
+                     "Each page shows what <code>zeno run</code> printed. The chip marks a firmware program.", "code") + \
+        f'<ul class="index examples">{cards}</ul>'
     layout("/examples/", "Examples", "Example Zeno programs, from one line to firmware, each with its output.", body, "/examples/")
 
 
@@ -377,7 +394,7 @@ def build_examples():
 GUIDE = [
     ("install", "Install", None, """
 <p>Zeno is built from source. You need <a href="https://rustup.rs">Rust</a>, and a C compiler if you want <code>zeno build</code>. For <code>zeno build --llvm</code> you also need clang 15 or later. There is nothing else to install.</p>
-<figure class="window shell"><figcaption><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd">Copy</button></figcaption>
+<figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="install-cmd"><code>git clone https://github.com/partham20/zeno-lang
 cd zeno-lang
 cargo build --release
@@ -418,10 +435,20 @@ cargo build --release
     ("generics", "Generics", "stack", """
 <p><code>class Stack[T]</code> and <code>function largest[T]</code> are written once, with <code>T</code> standing for a type. A call never says what <code>T</code> is: the checker works it out, and the compilers make one copy for each type used, so a <code>Stack[u8]</code> is as small as one written for bytes by hand.</p>"""),
     ("ownership", "Owned values", "frame", """
-<p>Most values are shared, and a garbage collector frees them. A value marked <code>owned</code> has one owner instead, and is freed the moment its owner's block ends. A <code>borrow</code> parameter only looks. Giving the value away empties the old name, and the checker points at any later use.</p>"""),
+<p>Most values are shared, and a garbage collector frees them. A value marked <code>owned</code> has one owner instead, and is freed the moment its owner's block ends. A parameter only looks at what it is given, unless it says <code>take</code>. Giving the value away empties the old name, and the checker points at any later use.</p>"""),
     ("board", "Pins and time", "board", """
 <p><code>from board import led, pin</code> and <code>from time import sleep, now</code> give a program pins and a clock. On a computer the board is simulated and prints each pin as it changes. A compiled program meets a real board through four C functions.</p>"""),
 ]
+
+
+LESSON_ICONS = {"install": "terminal", "first": "play", "variables": "type", "typos": "scan", "numbers": "chart",
+                "overflow": "gauge", "control": "loop", "truth": "check", "functions": "function", "closures": "braces",
+                "lists": "words", "classes": "package", "enums": "layers", "none": "none", "errors": "alert",
+                "units": "ruler", "sized": "memory", "generics": "copies", "ownership": "key", "board": "board"}
+
+
+def icons_in(text):
+    return re.sub(r"<!--ICON:([\w-]+)-->", lambda m: icon(m.group(1)), text)
 
 
 def build_learn():
@@ -432,11 +459,11 @@ def build_learn():
         code = sample(snip) if snip else ""
         wide = "" if snip else " wide"
         sections += f"""<section class="lesson{wide}" id="{sid}">
-  <div class="lesson-text"><span class="num">{i:02d}</span><h2>{title}</h2>{prose}</div>
+  <div class="lesson-text"><div class="lesson-head">{icon(LESSON_ICONS.get(sid, "book"))}Step {i} of {len(GUIDE)}</div><h2>{title}</h2>{icons_in(prose)}</div>
   <div class="lesson-code">{code}</div>
 </section>"""
     commands = """
-<section class="lesson" id="commands"><div class="lesson-text"><span class="num">∞</span><h2>The commands</h2>
+<section class="lesson" id="commands"><div class="lesson-text"><div class="lesson-head"><!--ICON:terminal-->Reference</div><h2>The commands</h2>
 <p>One program, <code>zeno</code>, does everything. Every command checks the program first, and nothing runs if the check fails.</p></div>
 <div class="lesson-code"><dl class="cmd-list">
 <dt><code>zeno run file.zeno</code></dt><dd>Check it, then run it with the interpreter.</dd>
@@ -448,18 +475,18 @@ def build_learn():
 <dt><code>zeno build --firmware</code></dt><dd>Errors as return values, no <code>setjmp</code>.</dd>
 <dt><code>zeno build --no-collector</code></dt><dd>No garbage collector and no heap: one fixed pool.</dd>
 <dt><code>zeno build --memory</code></dt><dd>The program reports its memory use as it ends.</dd>
-<dt><code>zeno bytecode · parse · tokens</code></dt><dd>Look inside: the instructions, the syntax tree, the tokens.</dd>
+<dt><code>zeno bytecode</code>, <code>parse</code>, <code>tokens</code></dt><dd>Look inside: the instructions, the syntax tree, the tokens.</dd>
 </dl></div></section>
 <section class="next-steps" id="next"><h2>Where next</h2><div class="cards">
-<a class="card" href="/examples/"><b>Read the examples</b><span>Fifteen whole programs, each with its output.</span></a>
-<a class="card" href="/docs/"><b>See how it works</b><span>A walkthrough of every compiler stage.</span></a>
-<a class="card" href="/decisions/"><b>Read the reasons</b><span>Why each part of the language is the way it is.</span></a>
+<a class="card" href="/examples/"><!--ICON:code--><b>Read the examples</b><span>Whole programs, each with its output.</span></a>
+<a class="card" href="/docs/"><!--ICON:book--><b>See how it works</b><span>A walkthrough of every compiler stage.</span></a>
+<a class="card" href="/decisions/"><!--ICON:scale--><b>Read the reasons</b><span>Why each part of the language is the way it is.</span></a>
 </div></section>"""
     body = f"""<div class="learn-layout">
 <aside class="learn-toc"><h4>The guide</h4><ol>{toc}</ol></aside>
 <div class="learn-main">
-{page_head("Learn", "The Zeno guide", "Everything in the language, a step at a time. Every sample on this page was run with <code>zeno run</code>, and what is under it is exactly what Zeno printed, error messages included. If you know Python or C, you can read it in twenty minutes.")}
-{sections}{commands}
+{page_head("Learn", "The Zeno guide", "Everything in the language, a step at a time. Every sample on this page was run with <code>zeno run</code>, and what is under it is exactly what Zeno printed, error messages included. If you know Python or C, you can read it in twenty minutes.", "compass")}
+{sections}{icons_in(commands)}
 </div></div>"""
     layout("/learn/", "The Zeno guide", "Learn Zeno: install it, then the whole language a step at a time, with the real output of every sample.", body, "/learn/")
 
@@ -474,7 +501,7 @@ DONE = [
     ("Compile to C", "The whole language, as portable C.", "compiler"),
     ("Garbage collector", "A small mark-and-sweep collector in the compiled program.", "memory"),
     ("Errors as values", "<code>--firmware</code>: no <code>setjmp</code>, every caller tests.", "firmware"),
-    ("Owned values and borrows", "Freed at a line you can point to.", "ownership"),
+    ("Owned values", "Freed at a line you can point to.", "ownership"),
     ("No collector", "<code>--no-collector</code> leaves the collector out.", "no-collector"),
     ("Bytecode VM", "<code>zeno run --vm</code>, two to three times as fast.", "vm"),
     ("LLVM backend", "<code>zeno build --llvm</code>, with every flag.", "llvm"),
@@ -485,12 +512,11 @@ DONE = [
     ("Kept text", "Text that is built and kept, with no collector.", "text"),
     ("Statement-owned values", "A list nobody keeps is freed by its statement.", "temporaries"),
     ("One owner", "Whoever receives a value owns it, with no collector.", "one-owner"),
+    ("Enums, none, closures and errors with one owner", "The whole language builds with no collector.", "one-owner"),
+    ("Memory by hand", "<code>unsafe { }</code>, raw pointers, <code>allocate</code>, <code>free</code> and registers.", "unsafe"),
 ]
 NEXT = [
-    ("In progress", "Enums with data, and values that may be <code>none</code>, with no collector", "Stored in place, sized to the largest case."),
-    ("In progress", "Functions that capture variables, with no collector", "And errors that are kept or raised again."),
-    ("Next", "Manual memory", "<code>unsafe { }</code> with raw pointers, <code>alloc</code> and <code>free</code>, and memory-mapped registers."),
-    ("Next", "An audit for clarity", "Every part of the language checked against one rule: unambiguous and intuitive."),
+    ("In progress", "An audit for clarity", "Every part of the language checked against one rule: unambiguous and intuitive. A parameter now looks, and <code>take</code> takes."),
     ("Planned", "Standard library", "Files, text and collections."),
     ("Planned", "Modules", "Programs across many files."),
     ("Planned", "Package manager", "Share and reuse code."),
@@ -503,22 +529,30 @@ NEXT = [
 
 def build_roadmap():
     done = "".join(
-        f'<li><a href="/docs/{doc}/"><b>{t}</b><span>{d}</span></a></li>' for t, d, doc in DONE)
+        f'<li><a href="/docs/{doc}/">{icon("check")}<b>{t}</b><span>{d}</span></a></li>' for t, d, doc in DONE)
     upcoming = "".join(
-        f'<li class="{s.split()[0].lower()}"><i>{s}</i><b>{t}</b><span>{d}</span></li>' for s, t, d in NEXT)
+        f'<li class="{s.split()[0].lower()}">{icon("clock" if s == "In progress" else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
+        for s, t, d in NEXT)
     body = page_head("Roadmap", "Where Zeno stands",
                      "The goal is one language for every job you would reach for C, C++, Python, JavaScript, Java or Rust to do. "
-                     "Each use case arrives with a piece of the compiler. This is the order they have come in, and the order the rest will.") + f"""
+                     "Each use case arrives with a piece of the compiler. This is the order they have come in, and the order the rest will.", "map") + f"""
 <div class="roadmap">
-  <section><h2><span class="dot good"></span>Done</h2><p class="muted">{len(DONE)} stages, each with a walkthrough. Every test program is run on all four engines and must print the same.</p><ol class="done-list">{done}</ol></section>
-  <section><h2><span class="dot"></span>Coming</h2><p class="muted">In order. The syntax may still change before a first release.</p><ul class="next-list">{upcoming}</ul></section>
+  <section><h2>{icon("check")}Done</h2><p class="muted">{len(DONE)} stages, each with a walkthrough. Every test program is run on all four engines and must print the same.</p><ol class="done-list">{done}</ol></section>
+  <section><h2>{icon("clock")}Coming</h2><p class="muted">In order. The syntax may still change before a first release.</p><ul class="next-list">{upcoming}</ul></section>
 </div>"""
     layout("/roadmap/", "Roadmap", "What the Zeno compiler can do today, and what comes next.", body, "/roadmap/")
 
 
+def lines_of_code():
+    root = Path(ARGS.zeno)
+    files = list((root / "src").rglob("*.rs")) + list(root.glob("runtime/*.[ch]")) + list((root / "src").rglob("*.c"))
+    total = sum(len(f.read_text(errors="ignore").splitlines()) for f in set(files))
+    return f"{round(total, -3):,}"
+
+
 def build_about():
     body = f"""<div class="narrow prose about">
-<p class="eyebrow">About</p>
+<p class="eyebrow">{icon("info")}About</p>
 <h1>A language built to learn from</h1>
 <p class="lede">Zeno is a programming language built from scratch by Partha, a firmware engineer, to learn how languages work by making one. It takes what he likes from C, C++, Python, JavaScript, Java and Rust, and leaves out what gets in the way.</p>
 <h2>The rule above the rules</h2>
@@ -531,17 +565,17 @@ def build_about():
 <h2>Status</h2>
 <p>Zeno is young. It runs programs, checks them, and compiles them to C and to LLVM, but the syntax can still change and there is no standard library yet. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
-<p>The compiler is plain Rust with no dependencies, about 31,000 lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
+<p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 </div>"""
     layout("/about/", "About", "Zeno is a programming language built from scratch by a firmware engineer, to learn by building.", body, "/about/")
 
 
 def build_404():
-    body = """<div class="narrow lost">
-<p class="eyebrow">404</p>
+    body = f"""<div class="narrow lost">
+<p class="eyebrow">{icon("compass")}404</p>
 <h1>Halfway there, forever</h1>
 <p class="lede">This page does not exist. Like Achilles, you got close.</p>
-<figure class="window"><figcaption><span class="file">zeno run</span></figcaption><pre class="out"><code>error: this page is not declared. Create it with `let` or `var` first</code></pre></figure>
+<figure class="window"><figcaption>{icon("terminal")}<span class="file">zeno run</span></figcaption><pre class="out"><code>error: this page is not declared. Create it with `let` or `var` first</code></pre></figure>
 <p class="actions"><a class="button" href="/">Go home</a><a class="button ghost" href="/learn/">Read the guide</a></p>
 </div>"""
     layout("/404.html", "Page not found", "This page does not exist.", body)
@@ -559,8 +593,10 @@ def build_home():
 
     source = re.sub(r"<!--CODE:(\w+)(?::(\d+))?-->", code, source)
     source = re.sub(r"<!--OUT:(\w+)-->", lambda m: esc(run_zeno(SNIPPETS / f"{m.group(1)}.zeno")), source)
+    source = re.sub(r"<!--WINDOW:(\w+)-->", lambda m: sample(m.group(1)), source)
+    source = icons_in(source)
     assert "<!--" not in source.replace("<!-- ", "")
-    layout("/", "Zeno: a programming language that reads like plain English",
+    layout("/", "Zeno: code that reads like what it means",
            "Zeno is a small programming language that reads like plain English and is checked before it runs. "
            "Whole-word keywords, optional types, and builds small enough for a microcontroller.",
            source, home=True)

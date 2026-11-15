@@ -11,15 +11,15 @@
 <meta property="og:url" content="https://zeno-lang.org/docs/no-collector/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://zeno-lang.org/docs/no-collector/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
-<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the content</a>
@@ -29,16 +29,16 @@
   <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
     </button>
-    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
   </div>
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/" aria-current="page">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/" aria-current="page">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>More</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a></nav>
 <article class="prose">
-  <p class="eyebrow"><a href="/docs/">Docs</a></p>
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>A build with no collector</h1>
   <p><code>zeno build --no-collector</code> compiles a Zeno program to C that has no
 garbage collector in it. Not a collector that is switched off: the code is
@@ -108,6 +108,11 @@ each has such a line.</p>
 <td>when its owner's block ends</td>
 </tr>
 <tr>
+<td>An enum value that carries something (<code>Wait(250)</code>)</td>
+<td>the pool</td>
+<td>when its owner's block ends (<a href="/docs/enums-and-none/"><code>enums-and-none.md</code></a>)</td>
+</tr>
+<tr>
 <td>A list or object that is made and given to nobody</td>
 <td>the pool</td>
 <td>when the statement that made it is over</td>
@@ -123,9 +128,19 @@ each has such a line.</p>
 <td>when the variable, field or list that keeps it is done with it</td>
 </tr>
 <tr>
-<td>An error that was raised</td>
+<td>An error</td>
 <td>the pool</td>
-<td>when the <code>except</code> block that caught it ends</td>
+<td>when its owner's block ends. The <code>except</code> that catches it is its first owner (<a href="/docs/functions-and-errors/"><code>functions-and-errors.md</code></a>)</td>
+</tr>
+<tr>
+<td>A function written where a value goes</td>
+<td>the pool</td>
+<td>when its owner's block ends, or after one line if it looks at a list or an object</td>
+</tr>
+<tr>
+<td>Memory asked for with <code>allocate</code></td>
+<td>the pool</td>
+<td>when the program says <code>free</code>, and not before (<a href="/docs/unsafe/"><code>unsafe.md</code></a>)</td>
 </tr>
 </tbody>
 </table>
@@ -197,21 +212,27 @@ copied to be kept.</p>
 gives the text back, and then runs its body. A <code>for</code> gives it back
 before the first trip, and a <code>match</code> as soon as a case is chosen.</p>
 <h2 id="errors">Errors</h2>
-<p><code>raise Overload(channel, peak)</code> makes an object, and an error to carry it.
-Neither has an owner in the usual sense: the error leaves the function
-that made it. So this build gives it one rule of its own. <strong>The <code>except</code>
-block that catches an error frees it when the block ends</strong>, however the
-block is left:</p>
+<p><code>raise Overload(channel, peak)</code> makes an object, and a small wrapper to
+carry it out of the function. <code>raise</code> takes the error, and <strong>the
+<code>except</code> that catches it owns it</strong>: the name after <code>as</code> is an owner
+like any other. If the block ends with the error still in that name,
+it is freed there, however the block is left:</p>
 <pre><code>if (zeno_is(zeno_caught_1, "Overload")) {
     z_Overload *z_overload = (z_Overload *)zeno_caught_1-&gt;object;
+    zeno_caught_1-&gt;object = NULL;             /* the name owns the object now */
     zeno_list_append(z_refused, (zeno_slot){.i = z_overload-&gt;z_channel});
-    zeno_error_drop(zeno_caught_1);
+    zeno_drop_Overload(z_overload);           /* still here, so it is freed */
+    zeno_error_drop(zeno_caught_1);           /* and the wrapper */
 }</code></pre>
-<p>Inside the block the error can be read, printed, asked for its fields
-and lent to a <code>borrow</code> parameter. It cannot be kept, given away or
-raised again. Copy out what you need. The other half of the rule: an error can only be made by <code>raise</code>, as
-in <code>raise ValueError("too hot")</code>. <code>let e = ValueError("too hot")</code> is
-refused, because no <code>except</code> would ever free it.</p>
+<p>Inside the block the error can be read, printed and passed to a
+parameter that looks. It can also be kept (<code>last = overload</code>), put in a list,
+returned, and raised again (<code>raise overload</code>). Then the name gave it
+away and holds nothing, and the line that frees it frees nothing. An
+error can be made anywhere, not only by <code>raise</code>:
+<code>let ready = ValueError("too hot")</code> is an owner too.
+<a href="/docs/functions-and-errors/"><code>functions-and-errors.md</code></a> walks through all
+of it. (Until that step an error could only be read inside its
+<code>except</code>.)</p>
 <p>The error's message is often built text (<code>raise ValueError(f"{n} is too
 big")</code>), which would be gone before the <code>except</code> runs. So in this build
 the error keeps its own copy of the message, in the same block as itself.</p>
@@ -266,40 +287,38 @@ line and says what to write instead where there is something.</p>
 </thead>
 <tbody>
 <tr>
-<td>A list or object used after it was given away (<code>let b = a</code>, then <code>a</code>)</td>
+<td>A list, object or enum value used after it was given away (<code>let b = a</code>, then <code>a</code>)</td>
 <td>it has one owner (<a href="/docs/one-owner/"><code>one-owner.md</code></a>)</td>
 </tr>
 <tr>
-<td>A list or object inside an <code>or none</code></td>
-<td>taking it out would leave a hole</td>
+<td>A function that uses a <code>var</code> of the function around it</td>
+<td>the two would share the variable, and nothing is shared. Use <code>let</code>, or an object</td>
 </tr>
 <tr>
-<td>An error that is kept, given away, or raised again</td>
-<td>its <code>except</code> frees it</td>
+<td>Keeping a function that uses a list or an object from outside it</td>
+<td>it only looks, so it lives for the line that writes it (<a href="/docs/functions-and-errors/"><code>functions-and-errors.md</code></a>)</td>
 </tr>
 <tr>
-<td>An error made anywhere but in <code>raise</code></td>
-<td>no <code>except</code> would free it</td>
-</tr>
-<tr>
-<td>An enum case that carries values</td>
-<td>it sits in a block of its own</td>
-</tr>
-<tr>
-<td>A function written where a value goes</td>
-<td>so does it, with the variables it uses</td>
+<td>A list or an object as what a type parameter stands for</td>
+<td>the copy for <code>T</code> would have to know it moves</td>
 </tr>
 <tr>
 <td>A list of <code>int or none</code></td>
-<td>each item sits in a block of its own</td>
+<td>each item sits in a block of its own. Use an enum with a case for the missing value</td>
 </tr>
 </tbody>
 </table>
-<p>Six things you might expect on this list are not. A plain list or
+<p>Ten things you might expect on this list are not. A plain list or
 object is fine: whoever receives it owns it. A list of objects or of
 lists is fine: the list owns its items
-(<a href="/docs/one-owner/"><code>one-owner.md</code></a>). A named function
+(<a href="/docs/one-owner/"><code>one-owner.md</code></a>). An enum case that carries values is
+fine: the value has one owner, like an object. A list, an object or an
+enum value that may be <code>none</code> is fine: <code>none</code> owns nothing
+(<a href="/docs/enums-and-none/"><code>enums-and-none.md</code></a>). A named function
 used as a value (<code>items.reduce(add, 0)</code>) is fine: it takes no memory.
+A function written where a value goes is fine: it has one owner. An
+error that is kept or raised again is fine: so does it
+(<a href="/docs/functions-and-errors/"><code>functions-and-errors.md</code></a>).
 Text that is kept is fine: the keeper has a copy
 (<a href="/docs/text/"><code>text.md</code></a>). A list that is made and only looked at is fine,
 whatever makes it (<code>x in [1, 2]</code>, <code>count(line.split())</code>,
@@ -307,9 +326,8 @@ whatever makes it (<code>x in [1, 2]</code>, <code>count(line.split())</code>,
 walks is fine (<code>for pin in [2, 3, 5]</code>, <code>for word in line.split()</code>,
 <code>for ch in text</code>): the loop frees it. Both are in
 <a href="/docs/temporaries/"><code>temporaries.md</code></a>.</p>
-<p>Most of these are provisional. An enum value and a function value
-could be owned by whoever receives them, as lists and objects now are.
-Those are the next steps.</p>
+<p>The first two rows are by design: with no collector nothing is shared.
+The other two are provisional.</p>
 <h2 id="what-this-does-not-claim">What this does not claim</h2>
 <ul>
 <li><strong>Memory is still taken and given back while the program runs.</strong> It
@@ -333,7 +351,8 @@ Those are the next steps.</p>
 An owner is a slot that is set to null when it gives its value away
 and dropped where its block ends. The text room's top is a global the
 IR loads before a statement that builds text and stores back after it.
-An <code>except</code> drops the error it caught. The runtime file beside the IR
+An <code>except</code> owns the error it caught, and drops it if it still has it
+when the block ends. The runtime file beside the IR
 is the one from this page, and what is refused is refused in the same
 words. <a href="/docs/llvm/"><code>llvm.md</code></a>, "Owned values" and "With no collector",
 walks through the IR.</p>
@@ -373,9 +392,10 @@ tests of the pool itself.</p>
    are gone? (Look at where the text went.)</li>
 <li>In <code>buffer.zeno</code>, take the word <code>owned</code> off <code>refused</code> and build
    with <code>--no-collector</code>. Nothing changes: in this build the list has
-   one owner either way. Then try keeping an error:
+   one owner either way. Then keep an error:
    <code>var last: Overload or none = none</code> and <code>last = overload</code> in the
-   <code>except</code>. Read the error.</li>
+   <code>except</code>. Build with <code>--memory</code>. Which line of <code>buffer.c</code> frees the
+   error now?</li>
 <li>Compile <code>buffer.c</code> by hand with <code>-DZENO_TEXT_ROOM=32</code>. Which statement
    stops the program? What is the smallest room it runs in, and does the
    report agree?</li>
@@ -391,14 +411,14 @@ tests of the pool itself.</p>
 <li><code>print(42)</code> builds the text <code>"42"</code> and then prints it. Give the runtime
    a <code>zeno_put_int</code> that prints a number with no text room, and make the
    compiler use it when <code>print</code> has one argument.</li>
-<li><code>look([1, 2, 3])</code> used to be refused, where <code>look</code> takes a
-   <code>borrow list[int]</code>. It builds now: find the line in the C that frees
+<li><code>look([1, 2, 3])</code> used to be refused, where <code>look</code> has a parameter
+   <code>xs: list[int]</code> that only looks. It builds now: find the line in the C that frees
    the list, then make <code>look</code> fail (give it a <code>raises</code>) and find the
    second line that does. <a href="/docs/temporaries/"><code>temporaries.md</code></a> says how
    both got there.</li>
-<li><code>raise e</code> inside <code>except ... as e</code> is refused. It could be a move: the
-   error goes back to <code>zeno_raised</code> and the block no longer frees it. What
-   would the checker have to know?</li>
+<li><code>raise e</code> inside <code>except ... as e</code> used to be refused. It is a move
+   now. Write one, find the <code>zeno_error_of</code> call in the C, and explain
+   why the old wrapper can still be freed on the next line.</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/no-collector.md">docs/no-collector.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/ownership/"><span>Previous</span>Owned values: memory freed at a line you can point to</a><a class="next" href="/docs/pool/"><span>Next</span>The memory pool</a></nav>
@@ -407,14 +427,20 @@ tests of the pool itself.</p>
 </div>
 </main>
 <footer class="foot">
-  <blockquote>Every journey is halfway done. Forever.</blockquote>
-  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><span class="tortoise"></span>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
   </div>
-  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
 </footer>
 <script src="/assets/main.js"></script>
 </body>

@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Zeno: a programming language that reads like plain English</title>
+<title>Zeno: code that reads like what it means</title>
 <meta name="description" content="Zeno is a small programming language that reads like plain English and is checked before it runs. Whole-word keywords, optional types, and builds small enough for a microcontroller.">
-<meta property="og:title" content="Zeno: a programming language that reads like plain English">
+<meta property="og:title" content="Zeno: code that reads like what it means">
 <meta property="og:description" content="Zeno is a small programming language that reads like plain English and is checked before it runs. Whole-word keywords, optional types, and builds small enough for a microcontroller.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#faf8f3" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://zeno-lang.org/">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/assets/style.css">
-<script>try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
 </head>
 <body>
 <a class="skip" href="#content">Skip to the content</a>
@@ -29,159 +29,114 @@
   <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
-      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/></svg>
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
     </button>
-    <a class="button small" href="https://github.com/partham20/zeno-lang">GitHub</a>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
   </div>
 </header>
 <main id="content" class="home">
 <section class="hero">
-  <div class="hero-text">
-    <p class="eyebrow">A programming language, built from scratch</p>
-    <h1>Reads like plain English. <em>Checked before it runs.</em></h1>
-    <p class="lede">Zeno is one small language for a quick script and for a microcontroller. Keywords are whole words, punctuation is kept only where it helps, and the compiler finds the mistake and says what to write instead.</p>
-    <div class="actions">
-      <a class="button" href="#tour">Take the tour</a>
-      <a class="button ghost" href="/learn/">Read the guide</a>
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <h1 data-in>Code that reads like what it means.</h1>
+      <p class="lede" data-in style="--d:.1s">Zeno is a programming language for a quick script and for a microcontroller. Keywords are whole words, punctuation stays only where it helps, and every program is checked before it runs.</p>
+      <div class="actions" data-in style="--d:.2s">
+        <a class="button" href="/learn/">Read the guide</a>
+        <a class="button ghost" href="#tour">Take the tour</a>
+      </div>
+      <div class="meta" data-in style="--d:.3s">
+        <span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Checked before it runs</span>
+        <span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx=".8"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></svg>Builds with no heap</span>
+        <span><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></svg>Four engines</span>
+      </div>
     </div>
-  </div>
-  <div class="hero-code">
-    <figure class="window">
-      <figcaption><span class="file">readings.zeno</span></figcaption>
-      <pre><code class="zeno">enum Reading {
-    Value(celsius: float)
-    Gap
-}
 
-function describe(reading: Reading) -&gt; str {
-    match reading {
-        case Value(c) { return f"{c:.1f} °C" }
-        case Gap { return "no reading" }
-    }
-}
-
-for reading in [Value(21.5), Gap, Value(22.04)] {
-    print(describe(reading))
+    <div class="morph-stage" data-in style="--d:.15s">
+      <figure class="morph" id="morph" aria-label="A line of C-style code losing its punctuation until it is Zeno">
+        <div class="morph-top">
+          <div class="morph-lang" aria-hidden="true"><span class="on" id="lang-c">C-style</span><span id="lang-z">Zeno</span></div>
+          <button class="morph-replay" id="replay" type="button"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3l3 3-3 3"/><path d="M20 6H9a5 5 0 0 0-5 5v1M7 21l-3-3 3-3"/><path d="M4 18h11a5 5 0 0 0 5-5v-1"/></svg>Play again</button>
+        </div>
+<pre><code id="morph-code">if <span class="s" data-step="1">(</span><span class="s" data-step="2">!</span><span class="w" data-step="2">not </span>ready <span class="s" data-step="3">&amp;&amp;</span><span class="w" data-step="3">and</span> (retries &gt; 3 <span class="s" data-step="4">||</span><span class="w" data-step="4">or</span> timed_out)<span class="s" data-step="1">)</span> {
+    <span class="s long" data-step="5">throw new </span><span class="w" data-step="5">raise </span>Timeout("gave up")<span class="s" data-step="6">;</span>
+} else if <span class="s" data-step="7">(</span>count != 0<span class="s" data-step="7">)</span> {
+    print("retrying")<span class="s" data-step="6">;</span>
 }</code></pre>
-      <div class="out-label">zeno run readings.zeno</div>
-      <pre class="out"><code>21.5 °C
-no reading
-22.0 °C</code></pre>
-    </figure>
+        <div class="morph-foot" aria-hidden="true">
+          <div><b id="n-sym">0</b>symbols gone</div>
+          <div><b id="n-word">0</b>words in</div>
+          <div><b id="n-char">0</b>characters</div>
+        </div>
+      </figure>
+    </div>
   </div>
 </section>
 
-<section class="facts" aria-label="Zeno in numbers">
-  <div><b>0</b><span>dependencies. The whole compiler is plain Rust and one C file.</span></div>
-  <div><b>4</b><span>ways to run a program: interpreter, bytecode VM, C and LLVM.</span></div>
-  <div><b>300</b><span>tests, near enough. Each program must print the same on every engine.</span></div>
-  <div><b>0</b><span>bytes of heap in a firmware build. Memory is one fixed pool.</span></div>
+<section class="band" id="why">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>Two rules shape every line.</h2>
+      <p>Most languages inherit their punctuation. Zeno asks each mark what it tells the reader, keeps the ones everyone already reads, and turns the rest into words.</p>
+    </div>
+    <div class="ledger">
+      <div class="kept">
+        <h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Kept, because it helps</h3>
+        <dl>
+          <div class="row"><dt>{ }</dt><dd>You always see where a block ends, and a stray space cannot change what the code does.</dd></div>
+          <div class="row"><dt>( ) [ ] ,</dt><dd>Calls, lists and items. Everyone already reads these.</dd></div>
+          <div class="row"><dt>: -&gt;</dt><dd>A name is set apart from its type at a glance.</dd></div>
+          <div class="row"><dt>#</dt><dd>A comment. One character, hard to miss.</dd></div>
+          <div class="row"><dt>&amp; | ^ &lt;&lt; &gt;&gt;</dt><dd>Bit operators, written the way every datasheet writes a register.</dd></div>
+        </dl>
+      </div>
+      <div class="dropped">
+        <h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/></svg>Dropped, because it repeats</h3>
+        <dl>
+          <div class="row"><dt>;</dt><dd>The line break already ends the statement.</dd></div>
+          <div class="row"><dt>&amp;&amp; || !</dt><dd><code>and</code>, <code>or</code> and <code>not</code> say it in words.</dd></div>
+          <div class="row"><dt>( )<span>&nbsp;around a condition</span></dt><dd><code>if x &gt; 0 {</code> needs no help.</dd></div>
+          <div class="row"><dt>fn =&gt; ?</dt><dd>Every keyword is a word you can say aloud: <code>function</code>, <code>match</code>, <code>case</code>.</dd></div>
+          <div class="row"><dt>truthiness</dt><dd>A condition is <code>true</code> or <code>false</code>. An empty list is not quietly false.</dd></div>
+        </dl>
+      </div>
+    </div>
+    <p class="after"><a href="/decisions/">Read the reason for every choice</a></p>
+  </div>
 </section>
 
-<section id="why" class="section">
-  <header class="section-head">
-    <span class="step">1/2</span>
-    <h2>Two rules shape the syntax</h2>
-    <p>Most languages inherit their punctuation. Zeno asks each mark to justify itself, and keeps the ones a reader already knows.</p>
-  </header>
-
-  <div class="compare">
-    <figure class="window plain">
-      <figcaption><span class="file">Elsewhere</span></figcaption>
-      <pre><code>if (!ready &amp;&amp; (retries &gt; 3 || timed_out)) {
-    throw new Error("gave up");
-}</code></pre>
-    </figure>
-    <figure class="window">
-      <figcaption><span class="file">Zeno</span></figcaption>
-      <pre><code class="zeno">if not ready and (retries > 3 or timed_out) {
-    raise Timeout("gave up")
-}</code></pre>
-    </figure>
-  </div>
-
-  <div class="rules">
-    <article>
-      <h3>1. Words over symbols</h3>
-      <p>Every keyword is a word you can read aloud: <code>function</code>, <code>and</code>, <code>or</code>, <code>not</code>, <code>match</code>, <code>case</code>, <code>raise</code>. There is no <code>fn</code>, <code>&amp;&amp;</code>, <code>=&gt;</code> or <code>?</code>.</p>
-    </article>
-    <article>
-      <h3>2. Punctuation has to earn its place</h3>
-      <p>A mark stays only if it tells the reader something the line does not already say.</p>
-    </article>
-  </div>
-
-  <div class="ledger">
-    <div>
-      <h4>Kept</h4>
-      <dl>
-        <dt><code>{ }</code></dt><dd>You always see where a block ends, and a stray space cannot change what the code does.</dd>
-        <dt><code>( ) [ ] ,</code></dt><dd>Calls, lists and items. Everyone already reads these.</dd>
-        <dt><code>: -&gt;</code></dt><dd>A name is separated from its type at a glance.</dd>
-        <dt><code>#</code></dt><dd>A comment. One character, hard to miss.</dd>
-        <dt><code>&amp; | ^ ~ &lt;&lt; &gt;&gt;</code></dt><dd>Bit operators, written the way every datasheet writes a register.</dd>
-      </dl>
+<section class="band" id="tour">
+  <div class="wrap">
+    <div class="head">
+      <h2>A tour, with the compiler's own answers.</h2>
+      <p>Every sample was run with <code>zeno run</code>. What is printed under it is exactly what Zeno said, error messages included.</p>
     </div>
-    <div>
-      <h4>Dropped</h4>
-      <dl>
-        <dt><code>;</code></dt><dd>The line break already ends the statement.</dd>
-        <dt><code>:</code> after <code>if</code></dt><dd>The brace already opens the block.</dd>
-        <dt><code>( )</code> around conditions</dt><dd><code>if x &gt; 0 {</code> needs no help.</dd>
-        <dt><code>&amp;&amp; || !</code></dt><dd><code>and</code>, <code>or</code> and <code>not</code> read better.</dd>
-        <dt>Truthiness</dt><dd>A condition is <code>true</code> or <code>false</code>. An empty list is not quietly "false".</dd>
-      </dl>
-    </div>
-  </div>
-
-  <div class="pillars">
-    <article><h3>Types are optional</h3><p>Write <code>function area(w: float, h: float) -&gt; float</code>, or just <code>function area(w, h)</code>. Start loose and add types as the program grows. Where they are left out, the checker works them out when it can.</p></article>
-    <article><h3>No surprise <code>none</code></h3><p>A value can be <code>none</code> only if its type says <code>or none</code>, and you must check before you use it.</p></article>
-    <article><h3>Errors are checked</h3><p>A function says what it <code>raises</code>. <code>try</code> and <code>except</code> read as they do in Python, and cost little enough for a microcontroller.</p></article>
-    <article><h3>Enums carry data</h3><p>Each case can hold its own values, and a <code>match</code> has to cover every case before the program runs.</p></article>
-    <article><h3>Numbers do not wrap by accident</h3><p>Arithmetic overflow is an error. A <code>u8</code> is one byte, and wrapping is something you ask for with <code>u8.wrap(n)</code>.</p></article>
-    <article><h3>Units are types</h3><p><code>500 ms</code> and <code>3.3 V</code> are quantities. A function that wants milliseconds will not take a bare number.</p></article>
-  </div>
-  <p class="more"><a href="/decisions/">Every design decision, with its reason <span aria-hidden="true">→</span></a></p>
-</section>
-
-<section id="tour" class="section">
-  <header class="section-head">
-    <span class="step">1/4</span>
-    <h2>A tour, with the compiler's answers</h2>
-    <p>Each sample below was run with <code>zeno run</code>. What you see under it is exactly what Zeno printed, error messages included.</p>
-  </header>
-
-  <div class="tour">
-    <div class="tabs" role="tablist" aria-label="Language tour">
-      <button role="tab" aria-selected="true" aria-controls="p-basics" id="t-basics">Basics</button>
-      <button role="tab" aria-selected="false" aria-controls="p-functions" id="t-functions" tabindex="-1">Functions</button>
-      <button role="tab" aria-selected="false" aria-controls="p-shapes" id="t-shapes" tabindex="-1">Enums and match</button>
-      <button role="tab" aria-selected="false" aria-controls="p-ports" id="t-ports" tabindex="-1">Errors</button>
-      <button role="tab" aria-selected="false" aria-controls="p-users" id="t-users" tabindex="-1">none</button>
-      <button role="tab" aria-selected="false" aria-controls="p-delay" id="t-delay" tabindex="-1">Units</button>
-      <button role="tab" aria-selected="false" aria-controls="p-packet" id="t-packet" tabindex="-1">Sized numbers</button>
-      <button role="tab" aria-selected="false" aria-controls="p-stack" id="t-stack" tabindex="-1">Generics</button>
-      <button role="tab" aria-selected="false" aria-controls="p-frame" id="t-frame" tabindex="-1">Ownership</button>
+    <div class="tour-bar">
+      <div class="segmented" role="tablist" aria-label="Language tour" data-group="tour">
+        <button role="tab" aria-selected="true" aria-controls="p-basics" id="t-basics">Basics</button>
+        <button role="tab" aria-selected="false" aria-controls="p-functions" id="t-functions" tabindex="-1">Functions</button>
+        <button role="tab" aria-selected="false" aria-controls="p-shapes" id="t-shapes" tabindex="-1">Enums</button>
+        <button role="tab" aria-selected="false" aria-controls="p-ports" id="t-ports" tabindex="-1">Errors</button>
+        <button role="tab" aria-selected="false" aria-controls="p-users" id="t-users" tabindex="-1">Missing values</button>
+        <button role="tab" aria-selected="false" aria-controls="p-delay" id="t-delay" tabindex="-1">Units</button>
+        <button role="tab" aria-selected="false" aria-controls="p-packet" id="t-packet" tabindex="-1">Sized numbers</button>
+        <button role="tab" aria-selected="false" aria-controls="p-stack" id="t-stack" tabindex="-1">Generics</button>
+        <button role="tab" aria-selected="false" aria-controls="p-frame" id="t-frame" tabindex="-1">Ownership</button>
+      </div>
     </div>
 
     <div class="panel" role="tabpanel" id="p-basics" aria-labelledby="t-basics">
-      <p class="note">A variable says once whether it can change. <code>let</code> is set once, <code>var</code> changes, and a plain <code>=</code> updates. Assigning to a misspelt name is an error, never a new variable.</p>
-      <figure class="window"><figcaption><span class="file">basics.zeno</span></figcaption>
-      <pre><code class="zeno">let name = "Zeno"            # let: set once
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 8.5h8M12 8.5v8"/></svg>Say once if it changes</h3><p><code>let</code> is set once, <code>var</code> can change, and a plain <code>=</code> updates. A type goes after the name, and only where you want one.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">basics.zeno</span></figcaption><pre><code class="zeno">let name = "Zeno"            # let: set once
 var count = 3                # var: can change
 count = count + 1            # plain = updates it
 const LIMIT = 10             # const: fixed when the program is built
 
 let ports: list[int] = [80, 443, 8080]   # a type, only where you want one
-print(name, count, LIMIT, ports)</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>Zeno 4 10 [80, 443, 8080]</code></pre></figure>
+print(name, count, LIMIT, ports)</code></pre><div class="out-label">output</div><pre class="out"><code>Zeno 4 10 [80, 443, 8080]</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-functions" aria-labelledby="t-functions" hidden>
-      <p class="note">Types are written where you want them and left out where you do not. Functions are values: pass them around, return them, or write one in place.</p>
-      <figure class="window"><figcaption><span class="file">functions.zeno</span></figcaption>
-      <pre><code class="zeno">function area(width: float, height: float) -&gt; float {
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4.5c-2.5-.5-4 .5-4.5 3L8 18c-.5 2.2-2 2.7-3.5 2.3M6.5 11h7"/><path d="M15 12l4 6M19 12l-4 6"/></svg>Functions are values</h3><p>Types are written where you want them. Arguments can be named, parameters can have defaults, and a function with no name is written in place.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">functions.zeno</span></figcaption><pre><code class="zeno">function area(width: float, height: float) -&gt; float {
     return width * height
 }
 
@@ -199,16 +154,13 @@ function greet(who: str, excited: bool = false) -&gt; str {
 let triple = function(n) { return n * 3 }   # functions are values
 print(area(2.0, 3.5), loose_area(2, 3))
 print(greet("Achilles"), greet("tortoise", excited=true))
-print([1, 2, 3].map(triple), [n * n for n in range(6) if n % 2 == 0])</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>7.0 6
+print([1, 2, 3].map(triple), [n * n for n in range(6) if n % 2 == 0])</code></pre><div class="out-label">output</div><pre class="out"><code>7.0 6
 Hello, Achilles. Hello, tortoise!
 [3, 6, 9] [0, 4, 16]</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-shapes" aria-labelledby="t-shapes" hidden>
-      <p class="note">This program forgets one case. Zeno refuses to run it, names the case, and says how to fix it.</p>
-      <figure class="window"><figcaption><span class="file">shapes.zeno</span></figcaption>
-      <pre><code class="zeno">enum Shape {
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></svg>Every case, or nothing runs</h3><p>Each case of an enum can carry values, and <code>match</code> takes them apart. This program forgets one case, so Zeno names it and stops.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">shapes.zeno</span></figcaption><pre><code class="zeno">enum Shape {
     Circle(radius: float)
     Rect(width: float, height: float)
     Dot
@@ -221,8 +173,7 @@ function area(shape: Shape) -&gt; float {
     }
 }
 
-print(area(Rect(2.0, 3.0)))</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>error: this `match` does not handle Dot. Add a `case` for it, or a final `case _`
+print(area(Rect(2.0, 3.0)))</code></pre><div class="out-label">output</div><pre class="out"><code>error: this `match` does not handle Dot. Add a `case` for it, or a final `case _`
  --&gt; shapes.zeno:8:5
   |
 8 |     match shape {
@@ -230,11 +181,9 @@ print(area(Rect(2.0, 3.0)))</code></pre>
 
 1 error found. Nothing was run.</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-ports" aria-labelledby="t-ports" hidden>
-      <p class="note">A function declares what it <code>raises</code>. An error passes up until a <code>try</code> catches it. Comparisons chain, as they do in maths.</p>
-      <figure class="window"><figcaption><span class="file">ports.zeno</span></figcaption>
-      <pre><code class="zeno">function parse_port(text: str) -&gt; int raises ValueError {
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.2v.1"/></svg>Errors you can see coming</h3><p>A function says what it <code>raises</code>, and the checker makes sure someone handles it. Comparisons chain, as they do in maths.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">ports.zeno</span></figcaption><pre><code class="zeno">function parse_port(text: str) -&gt; int raises ValueError {
     let port = int(text)             # int() may raise; it passes up
     if not 1 &lt;= port &lt;= 65535 {      # comparisons chain, as in maths
         raise ValueError("port out of range")
@@ -247,15 +196,12 @@ try {
     print("listening on", parse_port("99999"))
 } except ValueError as err {
     print(f"error: {err}")
-}</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>listening on 8080
+}</code></pre><div class="out-label">output</div><pre class="out"><code>listening on 8080
 error: port out of range</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-users" aria-labelledby="t-users" hidden>
-      <p class="note">A value that may be missing has to be checked first. The first <code>print</code> skips the check, so nothing runs.</p>
-      <figure class="window"><figcaption><span class="file">users.zeno</span></figcaption>
-      <pre><code class="zeno">function find_user(id: int) -&gt; str or none {
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/></svg>No surprise none</h3><p>A value can be missing only if its type says <code>or none</code>, and it has to be checked before use. The first <code>print</code> skips the check.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">users.zeno</span></figcaption><pre><code class="zeno">function find_user(id: int) -&gt; str or none {
     if id == 1 {
         return "partha"
     }
@@ -267,8 +213,7 @@ print(user.upper())              # not allowed: it might be none
 
 if user is not none {
     print(user.upper())          # allowed inside this check
-}</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>error: this is str or none. Check it with `is not none` before using `.upper`
+}</code></pre><div class="out-label">output</div><pre class="out"><code>error: this is str or none. Check it with `is not none` before using `.upper`
  --&gt; users.zeno:9:7
   |
 9 | print(user.upper())              # not allowed: it might be none
@@ -276,11 +221,9 @@ if user is not none {
 
 1 error found. Nothing was run.</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-delay" aria-labelledby="t-delay" hidden>
-      <p class="note">A number can carry its unit. Passing a bare <code>20</code> where milliseconds are wanted is caught before the program runs.</p>
-      <figure class="window"><figcaption><span class="file">delay.zeno</span></figcaption>
-      <pre><code class="zeno">from time import sleep
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5"/></svg>Units are part of the type</h3><p><code>500 ms</code> and <code>3.3 V</code> are quantities. A function that wants milliseconds will not take a bare number.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">delay.zeno</span></figcaption><pre><code class="zeno">from time import sleep
 
 function blink_for(delay: ms) -&gt; str {
     sleep(delay)
@@ -289,8 +232,7 @@ function blink_for(delay: ms) -&gt; str {
 
 print(blink_for(20 ms))
 print(3.3 V &gt; 2.9 V)
-print(blink_for(20))</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>error: `delay` of `blink_for` should be a quantity in ms, but this is int
+print(blink_for(20))</code></pre><div class="out-label">output</div><pre class="out"><code>error: `delay` of `blink_for` should be a quantity in ms, but this is int
   --&gt; delay.zeno:10:17
    |
 10 | print(blink_for(20))
@@ -298,11 +240,9 @@ print(blink_for(20))</code></pre>
 
 1 error found. Nothing was run.</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-packet" aria-labelledby="t-packet" hidden>
-      <p class="note"><code>u8</code>, <code>u16</code>, <code>u32</code>, <code>i8</code>, <code>i16</code> and <code>i32</code> have a size. Arithmetic gives a full <code>int</code>, <code>u8(n)</code> checks that <code>n</code> fits, and <code>u8.wrap(n)</code> cuts on purpose.</p>
-      <figure class="window"><figcaption><span class="file">packet.zeno</span></figcaption>
-      <pre><code class="zeno">class Header {
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v10M11 7v10M15 7v10M3 20h18"/></svg>A u8 is one byte</h3><p>Sized numbers and the bit operators, for registers and packets. <code>u8(n)</code> checks that <code>n</code> fits, and <code>u8.wrap(n)</code> cuts on purpose.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">packet.zeno</span></figcaption><pre><code class="zeno">class Header {
     sensor: u8          # one byte in the compiled struct
     value: u16          # two bytes
 }
@@ -311,8 +251,7 @@ let total = 200 + 100            # arithmetic gives a full int: nothing wraps by
 print(total, u8.wrap(total))     # wrapping is something you ask for
 let flags = 0b1010 &lt;&lt; 4 | 0x03   # the operators every datasheet uses
 print(f"{flags:02x}", Header(sensor=3, value=u16(64000)))
-print(u8(total))                 # 300 does not fit in a byte</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>300 44
+print(u8(total))                 # 300 does not fit in a byte</code></pre><div class="out-label">output</div><pre class="out"><code>300 44
 a3 Header(sensor=3, value=64000)
 error: uncaught OverflowError: 300 does not fit in a u8 (0 to 255)
   --&gt; packet.zeno:10:7
@@ -320,11 +259,9 @@ error: uncaught OverflowError: 300 does not fit in a u8 (0 to 255)
 10 | print(u8(total))                 # 300 does not fit in a byte
    |       ^</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-stack" aria-labelledby="t-stack" hidden>
-      <p class="note">Write a class or function once, with <code>T</code> standing for a type. The call never says what <code>T</code> is. Each use is checked, and compiled as if written by hand for that type.</p>
-      <figure class="window"><figcaption><span class="file">stack.zeno</span></figcaption>
-      <pre><code class="zeno">class Stack[T] {
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>Written once, for any type</h3><p><code>T</code> stands for a type, and a call never has to say which. Each use is compiled as if written by hand for that type.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">stack.zeno</span></figcaption><pre><code class="zeno">class Stack[T] {
     items: list[T]
 
     function push(self, item: T) {
@@ -351,14 +288,11 @@ function largest[T](items: list[T]) -&gt; T {
 
 let bytes: Stack[u8] = Stack([])
 bytes.push(u8(72))
-print(bytes.top(), largest([3.1 V, 3.3 V, 2.9 V]), largest(["boot", "ready"]))</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>72 3.3 V ready</code></pre></figure>
+print(bytes.top(), largest([3.1 V, 3.3 V, 2.9 V]), largest(["boot", "ready"]))</code></pre><div class="out-label">output</div><pre class="out"><code>72 3.3 V ready</code></pre></figure>
     </div>
-
     <div class="panel" role="tabpanel" id="p-frame" aria-labelledby="t-frame" hidden>
-      <p class="note">An <code>owned</code> value has one owner and is freed where that owner's block ends. <code>borrow</code> lends it for a call. Use it after giving it away, and the checker points at the line.</p>
-      <figure class="window"><figcaption><span class="file">frame.zeno</span></figcaption>
-      <pre><code class="zeno">owned class Frame {
+      <div><h3><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2.5 2.5M14 9l2 2"/></svg>One owner, freed on time</h3><p>An <code>owned</code> value is freed where its owner's block ends. A parameter only looks, unless it says <code>take</code>. Use a value after giving it away, and the checker points at the line.</p></div>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">frame.zeno</span></figcaption><pre><code class="zeno">owned class Frame {
     channel: int
     samples: owned list[int]
 }
@@ -368,19 +302,18 @@ function capture(channel: int) -&gt; Frame {
     return Frame(channel, samples)       # samples moves into the frame
 }
 
-function average(samples: borrow list[int]) -&gt; int {   # only looks
+function average(samples: owned list[int]) -&gt; int {   # only looks
     return sum(samples) // len(samples)
 }
 
-function send(frame: Frame) -&gt; int {     # takes the frame over, and frees it
+function send(frame: take Frame) -&gt; int {   # takes it over, and frees it
     return len(frame.samples)
 }
 
 let frame = capture(7)
 print(average(frame.samples))
 print(send(frame))
-print(frame.channel)</code></pre>
-      <div class="out-label">output</div><pre class="out"><code>error: `frame` was given away on line 21 and holds nothing now. Lend it instead (a `borrow` parameter), or use it before it goes
+print(frame.channel)</code></pre><div class="out-label">output</div><pre class="out"><code>error: `frame` was given away on line 21 and holds nothing now. Use it before it goes, or give it only to what looks: a parameter without `take`
   --&gt; frame.zeno:22:7
    |
 22 | print(frame.channel)
@@ -388,19 +321,45 @@ print(frame.channel)</code></pre>
 
 1 error found. Nothing was run.</code></pre></figure>
     </div>
+    <p class="after"><a href="/learn/">The whole language, a step at a time</a></p>
   </div>
-  <p class="more"><a href="/learn/">The whole language in the guide <span aria-hidden="true">→</span></a></p>
 </section>
 
-<section id="styles" class="section">
-  <header class="section-head">
-    <span class="step">1/8</span>
-    <h2>One job, four ways</h2>
-    <p>A sensor gives five readings. Throw away the ones out of range and average the rest. Zeno does not make you pick a style, and every version prints <code>21.5</code>.</p>
-  </header>
-  <pre class="given"><code class="zeno">let readings = [21.5, 22.0, -99.0, 21.0, 150.0]</code></pre>
-  <div class="four">
-    <figure class="window"><figcaption><span class="file">Typed, around a class</span></figcaption><pre><code class="zeno">class Sensor {
+<section class="band" id="catches">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>Mistakes stop at the checker.</h2>
+      <p>Nothing runs until the whole program makes sense. Each message points at the line and says what to write instead.</p>
+    </div>
+    <ul class="catches">
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7.5 12h9"/></svg><h3>A misspelt name</h3><p>Plain <code>=</code> only updates, so a typo cannot quietly make a new variable.</p><div class="eg"><b>cuont = count + 1</b><i>count = count + 1</i></div></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></svg><h3>A forgotten case</h3><p>A <code>match</code> must handle every case of the enum.</p><div class="eg"><b>no case for Dot</b><i>case Dot { return 0.0 }</i></div></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/></svg><h3>A value that may be missing</h3><p>Anything that can be <code>none</code> is checked before it is used.</p><div class="eg"><b>user.upper()</b><i>if user is not none { }</i></div></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5"/></svg><h3>A number with no unit</h3><p>Milliseconds stay milliseconds, all the way down.</p><div class="eg"><b>blink_for(20)</b><i>blink_for(20 ms)</i></div></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><h3>A condition that is not a yes or no</h3><p>There is no truthiness to remember.</p><div class="eg"><b>if items {</b><i>if len(items) &gt; 0 {</i></div></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2.5 2.5M14 9l2 2"/></svg><h3>A value used after it was given away</h3><p>Ownership is checked, with no garbage collector needed.</p><div class="eg"><b>print(frame.channel)</b><i>send(frame) last</i></div></li>
+    </ul>
+  </div>
+</section>
+
+<section class="band" id="styles">
+  <div class="wrap">
+    <div class="head">
+      <h2>One job, four ways.</h2>
+      <p>A sensor gives five readings. Throw away the ones out of range and average the rest. Zeno does not make you pick a style.</p>
+    </div>
+    <div class="styles-row">
+      <div>
+        <div class="segmented" role="tablist" aria-label="Four styles" data-group="styles">
+          <button role="tab" aria-selected="true" aria-controls="p-s1" id="t-s1"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H8a2 2 0 0 0-2 2v3.5a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 6 14.5V18a2 2 0 0 0 2 2h1M15 4h1a2 2 0 0 1 2 2v3.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0-2.5 2.5V18a2 2 0 0 1-2 2h-1"/></svg>Typed, around a class</button>
+          <button role="tab" aria-selected="false" aria-controls="p-s2" id="t-s2" tabindex="-1"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h13"/></svg>No types written</button>
+          <button role="tab" aria-selected="false" aria-controls="p-s3" id="t-s3" tabindex="-1"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4.5c-2.5-.5-4 .5-4.5 3L8 18c-.5 2.2-2 2.7-3.5 2.3M6.5 11h7"/><path d="M15 12l4 6M19 12l-4 6"/></svg>Around functions</button>
+          <button role="tab" aria-selected="false" aria-controls="p-s4" id="t-s4" tabindex="-1"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 4c-6 0-12 4-13.5 12L5 20M7 16h7c3-1.5 5-5 6-12M9.5 12.5h6.5"/></svg>The short way</button>
+        </div>
+      </div>
+      <div>
+        <pre class="given"><code class="zeno">let readings = [21.5, 22.0, -99.0, 21.0, 150.0]</code></pre>
+        <div class="styles-panel" role="tabpanel" id="p-s1" aria-labelledby="t-s1"><figure class="window"><figcaption><span class="file">s1.zeno</span></figcaption><pre><code class="zeno">class Sensor {
     low: float
     high: float
 
@@ -417,8 +376,8 @@ print(frame.channel)</code></pre>
     }
 }
 
-print(Sensor(-40.0, 85.0).average(readings))</code></pre></figure>
-    <figure class="window"><figcaption><span class="file">No types written</span></figcaption><pre><code class="zeno">function average(readings, low, high) {
+print(Sensor(-40.0, 85.0).average(readings))</code></pre></figure></div>
+        <div class="styles-panel" role="tabpanel" id="p-s2" aria-labelledby="t-s2" hidden><figure class="window"><figcaption><span class="file">s2.zeno</span></figcaption><pre><code class="zeno">function average(readings, low, high) {
     var total = 0.0
     var count = 0
     for reading in readings {
@@ -430,8 +389,8 @@ print(Sensor(-40.0, 85.0).average(readings))</code></pre></figure>
     return total / count
 }
 
-print(average(readings, -40.0, 85.0))</code></pre></figure>
-    <figure class="window"><figcaption><span class="file">Around functions</span></figcaption><pre><code class="zeno">function in_range(low: float, high: float) {
+print(average(readings, -40.0, 85.0))</code></pre></figure></div>
+        <div class="styles-panel" role="tabpanel" id="p-s3" aria-labelledby="t-s3" hidden><figure class="window"><figcaption><span class="file">s3.zeno</span></figcaption><pre><code class="zeno">function in_range(low: float, high: float) {
     return function(reading: float) -&gt; bool {
         return low &lt;= reading &lt;= high
     }
@@ -442,37 +401,25 @@ function add(total: float, reading: float) -&gt; float {
 }
 
 let valid = readings.filter(in_range(-40.0, 85.0))
-print(valid.reduce(add, 0.0) / len(valid))</code></pre></figure>
-    <figure class="window"><figcaption><span class="file">The short way</span></figcaption><pre><code class="zeno">let kept = [r for r in readings if -40.0 &lt;= r &lt;= 85.0]
-print(sum(kept) / len(kept))</code></pre></figure>
+print(valid.reduce(add, 0.0) / len(valid))</code></pre></figure></div>
+        <div class="styles-panel" role="tabpanel" id="p-s4" aria-labelledby="t-s4" hidden><figure class="window"><figcaption><span class="file">s4.zeno</span></figcaption><pre><code class="zeno">let kept = [r for r in readings if -40.0 &lt;= r &lt;= 85.0]
+print(sum(kept) / len(kept))</code></pre></figure></div>
+        <p class="result"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>All four print <code>21.5</code></p>
+      </div>
+    </div>
   </div>
-  <p class="more"><a href="/examples/">Fifteen whole programs to read <span aria-hidden="true">→</span></a></p>
 </section>
 
-<section id="firmware" class="section">
-  <header class="section-head">
-    <span class="step">1/16</span>
-    <h2>The same language, on a microcontroller</h2>
-    <p>Firmware is where Zeno started. The program below is a traffic light written as a state machine. On a computer the board is simulated, and each line of the log is what a logic analyser clipped to that pin would show.</p>
-  </header>
-
-  <div class="board-row">
-    <figure class="window">
-      <figcaption><span class="file">signal.zeno</span></figcaption>
-      <pre><code class="zeno">from board import pin, led
-from time import sleep
-
-enum Light {
-    Red
-    Green
-    Amber
-}
-
-let red = pin(2)
-let amber = pin(3)
-let green = pin(4)
-
-function hold(light: Light) -> ms {
+<section class="band dark" id="firmware">
+  <div class="wrap">
+    <div class="head">
+      <h2>The same language, on a microcontroller.</h2>
+      <p>Firmware is where Zeno started. This traffic light is a state machine on three pins. On a computer the board is simulated, and each line of the log is what a logic analyser on that pin would show.</p>
+    </div>
+    <div class="device-row">
+      <figure class="window">
+        <figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">signal.zeno, the main loop</span></figcaption>
+        <pre><code class="zeno">function hold(light: Light) -> ms {
     match light {
         case Red { return 40 ms }
         case Green { return 30 ms }
@@ -482,144 +429,128 @@ function hold(light: Light) -> ms {
 
 var light = Red
 for step in range(7) {
-    show(light)             # old lamp off, new lamp on
-    led.toggle()            # a heartbeat
+    show(light)
+    led.toggle()                 # a heartbeat: the program is alive
     sleep(hold(light))
     light = after(light)
 }</code></pre>
-    </figure>
-
-    <div class="board" aria-label="Simulated board running signal.zeno">
-      <div class="lamps" aria-hidden="true">
-        <span class="lamp red" id="lamp-2"></span>
-        <span class="lamp amber" id="lamp-3"></span>
-        <span class="lamp green" id="lamp-4"></span>
-        <span class="lamp led" id="lamp-led"></span>
-      </div>
-      <div class="lamp-names" aria-hidden="true"><span>pin 2</span><span>pin 3</span><span>pin 4</span><span>led</span></div>
-      <pre class="out log" id="log" aria-live="off"><code>pin 2 on
+      </figure>
+      <div class="device" aria-label="A simulated board running signal.zeno">
+        <div class="device-top"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8" cy="12" r="1.6"/><circle cx="12.5" cy="12" r="1.6"/><path d="M16.5 10.5h2M16.5 13.5h2"/></svg>Simulated board, 25 times slower</div>
+        <div class="lamps" aria-hidden="true">
+          <span class="lamp red" id="lamp-2"></span>
+          <span class="lamp amber" id="lamp-3"></span>
+          <span class="lamp green" id="lamp-4"></span>
+          <span class="lamp led" id="lamp-led"></span>
+        </div>
+        <div class="lamp-names" aria-hidden="true"><span>pin 2</span><span>pin 3</span><span>pin 4</span><span>led</span></div>
+        <pre class="log" id="log" aria-live="off"><code>pin 2 on
 led on</code></pre>
-      <p class="caption">The simulated board, slowed down 25 times. The excerpt leaves out <code>show</code> and <code>after</code>; the whole program is in <code>examples/signal.zeno</code>.</p>
+      </div>
     </div>
-  </div>
+    <p class="caption">The excerpt leaves out <code>show</code> and <code>after</code>. The whole program is <a href="/examples/signal/">examples/signal.zeno</a>.</p>
 
-  <div class="flags">
-    <article>
-      <code class="flag">zeno build --firmware</code>
-      <p>Errors become return values that every caller tests. The C that comes out has no <code>setjmp</code>.</p>
-    </article>
-    <article>
-      <code class="flag">zeno build --no-collector</code>
-      <p>For a program where every value has an owner. The garbage collector is left out of the build altogether.</p>
-    </article>
-    <article>
-      <code class="flag">A fixed memory pool</code>
-      <p>No <code>malloc</code> and no <code>free</code>. Lists and objects live in one array whose size you choose when the C is compiled.</p>
-    </article>
-    <article>
-      <code class="flag">A real board is four C functions</code>
-      <p>A compiled program meets its board through four functions, so real hardware can be put underneath the same source.</p>
-    </article>
-  </div>
+    <ul class="facts">
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.2v.1"/></svg><h3>Errors as values</h3><p><code>--firmware</code> turns every error into a return value the caller tests. No <code>setjmp</code>.</p></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg><h3>No garbage collector</h3><p><code>--no-collector</code> leaves it out. Every value has one owner and is freed on a line you can point to.</p></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 10h17M3.5 15h17M10 4v16"/></svg><h3>One fixed pool</h3><p>No <code>malloc</code>. Lists and objects live in one array whose size you choose.</p></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg><h3>Four C functions to a board</h3><p>A compiled program meets real hardware through four functions you write once.</p></li>
+    </ul>
 
-  <figure class="window report">
-    <figcaption><span class="file">zeno build --no-collector --memory examples/buffer.zeno</span></figcaption>
-    <pre class="out"><code>memory: 1691 blocks made (2646563 bytes), at most 13336 bytes in use at once, no collector, 0 blocks left at the end
-pool: 25384 bytes taken, in a pool of 32768</code></pre>
-  </figure>
-  <p class="aside">That program makes 2.6 MB of values over its run and never holds more than 13 KB, because each one is freed at a line you can point to.</p>
-  <p class="more"><a href="/docs/firmware/">How the firmware build works <span aria-hidden="true">→</span></a></p>
+    <figure class="window report">
+      <figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/></svg><span class="file">zeno build --no-collector --memory examples/buffer.zeno</span></figcaption>
+      <pre class="out"><code>memory: 1691 blocks made (2646563 bytes), at most 13336 bytes in use at once, no collector, 0 blocks left at the end
+pool: 25384 bytes taken, in a pool of 32768
+text: at most 53 bytes in use at once, in a room of 1024</code></pre>
+    </figure>
+    <p class="aside">That program makes 2.6 MB of values over its run and never holds more than 13 KB at once.</p>
+    <p class="after"><a href="/docs/firmware/">How the firmware build works</a></p>
+  </div>
 </section>
 
-<section id="inside" class="section">
-  <header class="section-head">
-    <span class="step">1/32</span>
-    <h2>Inside the compiler</h2>
-    <p>Zeno is written in Rust with no dependencies, so every stage is there to read. One front end feeds four engines, and the tests hold them to the same output.</p>
-  </header>
-
-  <div class="pipeline" role="img" aria-label="Source goes through the lexer, the parser and the checker, then to one of four engines: the interpreter, the bytecode VM, the C backend or the LLVM backend.">
-    <div class="stages">
-      <div class="stage"><b>Source</b><span>.zeno</span></div>
-      <div class="stage"><b>Lexer</b><span>text to tokens</span></div>
-      <div class="stage"><b>Parser</b><span>tokens to a syntax tree</span></div>
-      <div class="stage"><b>Checker</b><span>types, <code>none</code>, errors, ownership</span></div>
+<section class="band" id="inside">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>One front end, four engines.</h2>
+      <p>The compiler is plain Rust with no dependencies, so every stage is there to read. The tests run each program on all four engines, and they must print the same.</p>
     </div>
-    <div class="engines">
-      <div class="engine"><b>Interpreter</b><code>zeno run</code><span>Walks the syntax tree. The reference for what a program means.</span></div>
-      <div class="engine"><b>Bytecode VM</b><code>zeno run --vm</code><span>A stack machine, two to three times as fast.</span></div>
-      <div class="engine"><b>C backend</b><code>zeno build</code><span>Portable C, for any chip with a C compiler.</span></div>
-      <div class="engine"><b>LLVM backend</b><code>zeno build --llvm</code><span>Textual LLVM IR, built with clang. No LLVM library needed.</span></div>
+    <div class="diagram" id="diagram" role="img" aria-label="Source goes through the lexer, the parser and the checker, then to one of four engines: the interpreter, the bytecode VM, the C backend or the LLVM backend.">
+      <svg class="lines" aria-hidden="true"></svg>
+      <div class="stages">
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg><b>Source</b><span>A <code>.zeno</code> file.</span></div>
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h13"/></svg><b>Lexer</b><span>Text into tokens.</span></div>
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><path d="M12 7v4M12 11l-5.2 5.3M12 11l5.2 5.3"/></svg><b>Parser</b><span>Tokens into a syntax tree.</span></div>
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg><b>Checker</b><span>Types, <code>none</code>, errors and owners.</span></div>
+      </div>
+      <div class="engines">
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z"/></svg><b>Interpreter</b><span>Walks the tree. The reference for what a program means.</span><code>zeno run</code></div>
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 6h14M5 10h14M5 14h14M5 18h9"/></svg><b>Bytecode VM</b><span>A stack machine, two to three times as fast.</span><code>zeno run --vm</code></div>
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15 9.3a3.8 3.8 0 1 0 0 5.4"/></svg><b>C backend</b><span>Portable C, for any chip with a C compiler.</span><code>zeno build</code></div>
+        <div class="node"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19c3-1 4-4 4-7a4 4 0 0 1 8 0c0 3 1 6 4 7"/><path d="M9.5 9.5L7 5M14.5 9.5L17 5"/><circle cx="10.5" cy="12.5" r=".6"/><circle cx="13.5" cy="12.5" r=".6"/></svg><b>LLVM backend</b><span>LLVM IR, built with clang.</span><code>zeno build --llvm</code></div>
+      </div>
     </div>
+    <div class="after-diagram">
+      <div><h3>Memory, three ways</h3><p>A small collector by default, <code>owned</code> values freed where their owner ends, or no collector at all on a fixed pool.</p></div>
+      <div><h3>Every stage is written up</h3><p>Each part of the compiler has a walkthrough that ends with things to try.</p></div>
+      <div><h3>Every decision has a reason</h3><p>One document records each choice, why it was made, and what was turned down.</p></div>
+    </div>
+    <p class="after"><a href="/docs/">Walk through the compiler</a></p>
   </div>
-
-  <div class="pillars three">
-    <article><h3>Memory, three ways</h3><p>A small mark-and-sweep collector by default. <code>owned</code> values freed where their owner ends. Or no collector at all, on a fixed pool.</p></article>
-    <article><h3>Every stage is documented</h3><p>Each part of the compiler has a walkthrough that ends in things to try, from the lexer to the LLVM backend.</p></article>
-    <article><h3>Every decision has a reason</h3><p>One document records each design choice, why it was made and what was turned down. If you disagree, you can see what you are disagreeing with.</p></article>
-  </div>
-  <p class="more"><a href="/docs/">Walk through every stage of the compiler <span aria-hidden="true">→</span></a></p>
 </section>
 
-<section id="roadmap" class="section">
-  <header class="section-head">
-    <span class="step">1/64</span>
-    <h2>One language, every job</h2>
-    <p>The goal is that anything you would reach for C, C++, Python, JavaScript, Java or Rust to do, you can do in Zeno. That is a long road. This is where it stands.</p>
-  </header>
-
-  <ul class="jobs">
-    <li class="now"><b>Scripts and automation</b><span>Interpreter and bytecode VM</span><i>Works today</i></li>
-    <li class="now"><b>Microcontrollers and firmware</b><span>Compiles to C with no heap, on a simulated board</span><i>Works today</i></li>
-    <li class="now"><b>Native programs</b><span>Through C or LLVM</span><i>Works today</i></li>
-    <li><b>Manual memory</b><span><code>unsafe { }</code>, raw pointers, memory-mapped registers</span><i>Next</i></li>
-    <li><b>Standard library</b><span>Files, text, collections, and modules across files</span><i>Planned</i></li>
-    <li><b>Tooling</b><span>Package manager, formatter, editor support</span><i>Planned</i></li>
-    <li><b>Calling C libraries</b><span>C interop, in both directions</span><i>Planned</i></li>
-    <li><b>Web front ends</b><span>A WebAssembly backend</span><i>Planned</i></li>
-    <li><b>Servers and networking</b><span><code>async</code> and <code>await</code></span><i>Planned</i></li>
-    <li><b>Data and numerics</b><span>Fast arrays and operator overloading</span><i>Planned</i></li>
-  </ul>
-
-  <p class="aside">Zeno is young and the syntax can still change. It is a language to learn from and experiment with, and not yet one to ship a product on.</p>
-  <p class="more"><a href="/roadmap/">The full roadmap <span aria-hidden="true">→</span></a></p>
+<section class="band" id="road">
+  <div class="wrap">
+    <div class="head">
+      <h2>One language, every job.</h2>
+      <p>The goal is that anything you would reach for C, C++, Python, JavaScript, Java or Rust to do, you can do in Zeno. This is where that road stands.</p>
+    </div>
+    <ol class="track">
+      <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/></svg></span><b>Scripts</b><span>An interpreter and a bytecode VM.</span><small>Works today</small></li>
+      <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx=".8"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></svg></span><b>Firmware</b><span>C with no heap, no collector, memory by hand.</span><small>Works today</small></li>
+      <li class="next"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg></span><b>A clarity audit</b><span>Every feature checked: unambiguous and intuitive.</span><small>In progress</small></li>
+      <li><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></span><b>Library and modules</b><span>Files, text, collections, programs across files.</span><small>Planned</small></li>
+      <li><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 3.5 5.5 3.5 8.5s-1 6-3.5 8.5c-2.5-2.5-3.5-5.5-3.5-8.5s1-6 3.5-8.5z"/></svg></span><b>Web and servers</b><span>WebAssembly, <code>async</code> and C interop.</span><small>Planned</small></li>
+    </ol>
+    <p class="after"><a href="/roadmap/">The full roadmap</a></p>
+  </div>
 </section>
 
-<section id="start" class="section">
-  <header class="section-head">
-    <span class="step">1/128</span>
-    <h2>Run it yourself</h2>
-    <p>You need <a href="https://rustup.rs">Rust</a> to build Zeno, and a C compiler for <code>zeno build</code>. There is nothing else to install.</p>
-  </header>
-
-  <figure class="window shell">
-    <figcaption><span class="file">Terminal</span><button class="copy" type="button" data-copy="shell">Copy</button></figcaption>
-    <pre id="shell"><code>git clone https://github.com/partham20/zeno-lang
+<section class="band" id="start">
+  <div class="wrap start">
+    <div>
+      <h2>Run it yourself.</h2>
+      <p>You need <a href="https://rustup.rs">Rust</a> to build Zeno, and a C compiler for <code>zeno build</code>. There is nothing else to install.</p>
+      <div class="actions">
+        <a class="button" href="/learn/#install">Install and first steps</a>
+        <a class="button ghost" href="/examples/">Browse the examples</a>
+      </div>
+    </div>
+    <figure class="window shell">
+      <figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/></svg><span class="file">Terminal</span><button class="copy" type="button" data-copy="shell"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></svg><span>Copy</span></button></figcaption>
+      <pre id="shell"><code>git clone https://github.com/partham20/zeno-lang
 cd zeno-lang
-cargo run -- run examples/tour.zeno</code></pre>
-  </figure>
-
-  <div class="commands">
-    <div><code>zeno run file.zeno</code><span>Check a program, then run it.</span></div>
-    <div><code>zeno run --vm file.zeno</code><span>The same, on the bytecode VM.</span></div>
-    <div><code>zeno check --strict file.zeno</code><span>Every type must be known, as firmware needs.</span></div>
-    <div><code>zeno build file.zeno</code><span>Compile to C, then to a program.</span></div>
-    <div><code>zeno build --llvm file.zeno</code><span>Compile through LLVM IR and clang.</span></div>
-    <div><code>zeno bytecode file.zeno</code><span>Show the VM's instructions, one per line.</span></div>
+cargo build --release
+./target/release/zeno run examples/tour.zeno</code></pre>
+    </figure>
   </div>
-  <p class="more"><a href="/learn/#install">Install and the first steps <span aria-hidden="true">→</span></a></p>
 </section>
 
 </main>
 <footer class="foot">
-  <blockquote>Every journey is halfway done. Forever.</blockquote>
-  <p>Zeno is named after Zeno of Elea, whose paradox says Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, and so on without end. It is a fitting name for a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><span class="tortoise"></span>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
   </div>
-  <div class="foot-row"><span>Made by Partha</span><span>Built with no framework and no build step</span></div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
 </footer>
 <script src="/assets/main.js"></script>
 </body>

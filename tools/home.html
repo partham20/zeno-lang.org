@@ -1,223 +1,186 @@
 <section class="hero">
-  <div class="hero-text">
-    <p class="eyebrow">A programming language, built from scratch</p>
-    <h1>Reads like plain English. <em>Checked before it runs.</em></h1>
-    <p class="lede">Zeno is one small language for a quick script and for a microcontroller. Keywords are whole words, punctuation is kept only where it helps, and the compiler finds the mistake and says what to write instead.</p>
-    <div class="actions">
-      <a class="button" href="#tour">Take the tour</a>
-      <a class="button ghost" href="/learn/">Read the guide</a>
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <h1 data-in>Code that reads like what it means.</h1>
+      <p class="lede" data-in style="--d:.1s">Zeno is a programming language for a quick script and for a microcontroller. Keywords are whole words, punctuation stays only where it helps, and every program is checked before it runs.</p>
+      <div class="actions" data-in style="--d:.2s">
+        <a class="button" href="/learn/">Read the guide</a>
+        <a class="button ghost" href="#tour">Take the tour</a>
+      </div>
+      <div class="meta" data-in style="--d:.3s">
+        <span><!--ICON:check-->Checked before it runs</span>
+        <span><!--ICON:cpu-->Builds with no heap</span>
+        <span><!--ICON:layers-->Four engines</span>
+      </div>
     </div>
-  </div>
-  <div class="hero-code">
-    <figure class="window">
-      <figcaption><span class="file">readings.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:readings--></code></pre>
-      <div class="out-label">zeno run readings.zeno</div>
-      <pre class="out"><code><!--OUT:readings--></code></pre>
-    </figure>
-  </div>
-</section>
 
-<section class="facts" aria-label="Zeno in numbers">
-  <div><b>0</b><span>dependencies. The whole compiler is plain Rust and one C file.</span></div>
-  <div><b>4</b><span>ways to run a program: interpreter, bytecode VM, C and LLVM.</span></div>
-  <div><b>300</b><span>tests, near enough. Each program must print the same on every engine.</span></div>
-  <div><b>0</b><span>bytes of heap in a firmware build. Memory is one fixed pool.</span></div>
-</section>
-
-<section id="why" class="section">
-  <header class="section-head">
-    <span class="step">1/2</span>
-    <h2>Two rules shape the syntax</h2>
-    <p>Most languages inherit their punctuation. Zeno asks each mark to justify itself, and keeps the ones a reader already knows.</p>
-  </header>
-
-  <div class="compare">
-    <figure class="window plain">
-      <figcaption><span class="file">Elsewhere</span></figcaption>
-      <pre><code>if (!ready &amp;&amp; (retries &gt; 3 || timed_out)) {
-    throw new Error("gave up");
+    <div class="morph-stage" data-in style="--d:.15s">
+      <figure class="morph" id="morph" aria-label="A line of C-style code losing its punctuation until it is Zeno">
+        <div class="morph-top">
+          <div class="morph-lang" aria-hidden="true"><span class="on" id="lang-c">C-style</span><span id="lang-z">Zeno</span></div>
+          <button class="morph-replay" id="replay" type="button"><!--ICON:loop-->Play again</button>
+        </div>
+<pre><code id="morph-code">if <span class="s" data-step="1">(</span><span class="s" data-step="2">!</span><span class="w" data-step="2">not </span>ready <span class="s" data-step="3">&amp;&amp;</span><span class="w" data-step="3">and</span> (retries &gt; 3 <span class="s" data-step="4">||</span><span class="w" data-step="4">or</span> timed_out)<span class="s" data-step="1">)</span> {
+    <span class="s long" data-step="5">throw new </span><span class="w" data-step="5">raise </span>Timeout("gave up")<span class="s" data-step="6">;</span>
+} else if <span class="s" data-step="7">(</span>count != 0<span class="s" data-step="7">)</span> {
+    print("retrying")<span class="s" data-step="6">;</span>
 }</code></pre>
-    </figure>
-    <figure class="window">
-      <figcaption><span class="file">Zeno</span></figcaption>
-      <pre><code class="zeno">if not ready and (retries > 3 or timed_out) {
-    raise Timeout("gave up")
-}</code></pre>
-    </figure>
-  </div>
-
-  <div class="rules">
-    <article>
-      <h3>1. Words over symbols</h3>
-      <p>Every keyword is a word you can read aloud: <code>function</code>, <code>and</code>, <code>or</code>, <code>not</code>, <code>match</code>, <code>case</code>, <code>raise</code>. There is no <code>fn</code>, <code>&amp;&amp;</code>, <code>=&gt;</code> or <code>?</code>.</p>
-    </article>
-    <article>
-      <h3>2. Punctuation has to earn its place</h3>
-      <p>A mark stays only if it tells the reader something the line does not already say.</p>
-    </article>
-  </div>
-
-  <div class="ledger">
-    <div>
-      <h4>Kept</h4>
-      <dl>
-        <dt><code>{ }</code></dt><dd>You always see where a block ends, and a stray space cannot change what the code does.</dd>
-        <dt><code>( ) [ ] ,</code></dt><dd>Calls, lists and items. Everyone already reads these.</dd>
-        <dt><code>: -&gt;</code></dt><dd>A name is separated from its type at a glance.</dd>
-        <dt><code>#</code></dt><dd>A comment. One character, hard to miss.</dd>
-        <dt><code>&amp; | ^ ~ &lt;&lt; &gt;&gt;</code></dt><dd>Bit operators, written the way every datasheet writes a register.</dd>
-      </dl>
-    </div>
-    <div>
-      <h4>Dropped</h4>
-      <dl>
-        <dt><code>;</code></dt><dd>The line break already ends the statement.</dd>
-        <dt><code>:</code> after <code>if</code></dt><dd>The brace already opens the block.</dd>
-        <dt><code>( )</code> around conditions</dt><dd><code>if x &gt; 0 {</code> needs no help.</dd>
-        <dt><code>&amp;&amp; || !</code></dt><dd><code>and</code>, <code>or</code> and <code>not</code> read better.</dd>
-        <dt>Truthiness</dt><dd>A condition is <code>true</code> or <code>false</code>. An empty list is not quietly "false".</dd>
-      </dl>
+        <div class="morph-foot" aria-hidden="true">
+          <div><b id="n-sym">0</b>symbols gone</div>
+          <div><b id="n-word">0</b>words in</div>
+          <div><b id="n-char">0</b>characters</div>
+        </div>
+      </figure>
     </div>
   </div>
-
-  <div class="pillars">
-    <article><h3>Types are optional</h3><p>Write <code>function area(w: float, h: float) -&gt; float</code>, or just <code>function area(w, h)</code>. Start loose and add types as the program grows. Where they are left out, the checker works them out when it can.</p></article>
-    <article><h3>No surprise <code>none</code></h3><p>A value can be <code>none</code> only if its type says <code>or none</code>, and you must check before you use it.</p></article>
-    <article><h3>Errors are checked</h3><p>A function says what it <code>raises</code>. <code>try</code> and <code>except</code> read as they do in Python, and cost little enough for a microcontroller.</p></article>
-    <article><h3>Enums carry data</h3><p>Each case can hold its own values, and a <code>match</code> has to cover every case before the program runs.</p></article>
-    <article><h3>Numbers do not wrap by accident</h3><p>Arithmetic overflow is an error. A <code>u8</code> is one byte, and wrapping is something you ask for with <code>u8.wrap(n)</code>.</p></article>
-    <article><h3>Units are types</h3><p><code>500 ms</code> and <code>3.3 V</code> are quantities. A function that wants milliseconds will not take a bare number.</p></article>
-  </div>
-  <p class="more"><a href="/decisions/">Every design decision, with its reason <span aria-hidden="true">→</span></a></p>
 </section>
 
-<section id="tour" class="section">
-  <header class="section-head">
-    <span class="step">1/4</span>
-    <h2>A tour, with the compiler's answers</h2>
-    <p>Each sample below was run with <code>zeno run</code>. What you see under it is exactly what Zeno printed, error messages included.</p>
-  </header>
+<section class="band" id="why">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>Two rules shape every line.</h2>
+      <p>Most languages inherit their punctuation. Zeno asks each mark what it tells the reader, keeps the ones everyone already reads, and turns the rest into words.</p>
+    </div>
+    <div class="ledger">
+      <div class="kept">
+        <h3><!--ICON:check-->Kept, because it helps</h3>
+        <dl>
+          <div class="row"><dt>{ }</dt><dd>You always see where a block ends, and a stray space cannot change what the code does.</dd></div>
+          <div class="row"><dt>( ) [ ] ,</dt><dd>Calls, lists and items. Everyone already reads these.</dd></div>
+          <div class="row"><dt>: -&gt;</dt><dd>A name is set apart from its type at a glance.</dd></div>
+          <div class="row"><dt>#</dt><dd>A comment. One character, hard to miss.</dd></div>
+          <div class="row"><dt>&amp; | ^ &lt;&lt; &gt;&gt;</dt><dd>Bit operators, written the way every datasheet writes a register.</dd></div>
+        </dl>
+      </div>
+      <div class="dropped">
+        <h3><!--ICON:none-->Dropped, because it repeats</h3>
+        <dl>
+          <div class="row"><dt>;</dt><dd>The line break already ends the statement.</dd></div>
+          <div class="row"><dt>&amp;&amp; || !</dt><dd><code>and</code>, <code>or</code> and <code>not</code> say it in words.</dd></div>
+          <div class="row"><dt>( )<span>&nbsp;around a condition</span></dt><dd><code>if x &gt; 0 {</code> needs no help.</dd></div>
+          <div class="row"><dt>fn =&gt; ?</dt><dd>Every keyword is a word you can say aloud: <code>function</code>, <code>match</code>, <code>case</code>.</dd></div>
+          <div class="row"><dt>truthiness</dt><dd>A condition is <code>true</code> or <code>false</code>. An empty list is not quietly false.</dd></div>
+        </dl>
+      </div>
+    </div>
+    <p class="after"><a href="/decisions/">Read the reason for every choice</a></p>
+  </div>
+</section>
 
-  <div class="tour">
-    <div class="tabs" role="tablist" aria-label="Language tour">
-      <button role="tab" aria-selected="true" aria-controls="p-basics" id="t-basics">Basics</button>
-      <button role="tab" aria-selected="false" aria-controls="p-functions" id="t-functions" tabindex="-1">Functions</button>
-      <button role="tab" aria-selected="false" aria-controls="p-shapes" id="t-shapes" tabindex="-1">Enums and match</button>
-      <button role="tab" aria-selected="false" aria-controls="p-ports" id="t-ports" tabindex="-1">Errors</button>
-      <button role="tab" aria-selected="false" aria-controls="p-users" id="t-users" tabindex="-1">none</button>
-      <button role="tab" aria-selected="false" aria-controls="p-delay" id="t-delay" tabindex="-1">Units</button>
-      <button role="tab" aria-selected="false" aria-controls="p-packet" id="t-packet" tabindex="-1">Sized numbers</button>
-      <button role="tab" aria-selected="false" aria-controls="p-stack" id="t-stack" tabindex="-1">Generics</button>
-      <button role="tab" aria-selected="false" aria-controls="p-frame" id="t-frame" tabindex="-1">Ownership</button>
+<section class="band" id="tour">
+  <div class="wrap">
+    <div class="head">
+      <h2>A tour, with the compiler's own answers.</h2>
+      <p>Every sample was run with <code>zeno run</code>. What is printed under it is exactly what Zeno said, error messages included.</p>
+    </div>
+    <div class="tour-bar">
+      <div class="segmented" role="tablist" aria-label="Language tour" data-group="tour">
+        <button role="tab" aria-selected="true" aria-controls="p-basics" id="t-basics">Basics</button>
+        <button role="tab" aria-selected="false" aria-controls="p-functions" id="t-functions" tabindex="-1">Functions</button>
+        <button role="tab" aria-selected="false" aria-controls="p-shapes" id="t-shapes" tabindex="-1">Enums</button>
+        <button role="tab" aria-selected="false" aria-controls="p-ports" id="t-ports" tabindex="-1">Errors</button>
+        <button role="tab" aria-selected="false" aria-controls="p-users" id="t-users" tabindex="-1">Missing values</button>
+        <button role="tab" aria-selected="false" aria-controls="p-delay" id="t-delay" tabindex="-1">Units</button>
+        <button role="tab" aria-selected="false" aria-controls="p-packet" id="t-packet" tabindex="-1">Sized numbers</button>
+        <button role="tab" aria-selected="false" aria-controls="p-stack" id="t-stack" tabindex="-1">Generics</button>
+        <button role="tab" aria-selected="false" aria-controls="p-frame" id="t-frame" tabindex="-1">Ownership</button>
+      </div>
     </div>
 
     <div class="panel" role="tabpanel" id="p-basics" aria-labelledby="t-basics">
-      <p class="note">A variable says once whether it can change. <code>let</code> is set once, <code>var</code> changes, and a plain <code>=</code> updates. Assigning to a misspelt name is an error, never a new variable.</p>
-      <figure class="window"><figcaption><span class="file">basics.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:basics--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:basics--></code></pre></figure>
+      <div><h3><!--ICON:type-->Say once if it changes</h3><p><code>let</code> is set once, <code>var</code> can change, and a plain <code>=</code> updates. A type goes after the name, and only where you want one.</p></div>
+      <!--WINDOW:basics-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-functions" aria-labelledby="t-functions" hidden>
-      <p class="note">Types are written where you want them and left out where you do not. Functions are values: pass them around, return them, or write one in place.</p>
-      <figure class="window"><figcaption><span class="file">functions.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:functions--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:functions--></code></pre></figure>
+      <div><h3><!--ICON:function-->Functions are values</h3><p>Types are written where you want them. Arguments can be named, parameters can have defaults, and a function with no name is written in place.</p></div>
+      <!--WINDOW:functions-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-shapes" aria-labelledby="t-shapes" hidden>
-      <p class="note">This program forgets one case. Zeno refuses to run it, names the case, and says how to fix it.</p>
-      <figure class="window"><figcaption><span class="file">shapes.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:shapes--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:shapes--></code></pre></figure>
+      <div><h3><!--ICON:layers-->Every case, or nothing runs</h3><p>Each case of an enum can carry values, and <code>match</code> takes them apart. This program forgets one case, so Zeno names it and stops.</p></div>
+      <!--WINDOW:shapes-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-ports" aria-labelledby="t-ports" hidden>
-      <p class="note">A function declares what it <code>raises</code>. An error passes up until a <code>try</code> catches it. Comparisons chain, as they do in maths.</p>
-      <figure class="window"><figcaption><span class="file">ports.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:ports--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:ports--></code></pre></figure>
+      <div><h3><!--ICON:alert-->Errors you can see coming</h3><p>A function says what it <code>raises</code>, and the checker makes sure someone handles it. Comparisons chain, as they do in maths.</p></div>
+      <!--WINDOW:ports-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-users" aria-labelledby="t-users" hidden>
-      <p class="note">A value that may be missing has to be checked first. The first <code>print</code> skips the check, so nothing runs.</p>
-      <figure class="window"><figcaption><span class="file">users.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:users--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:users--></code></pre></figure>
+      <div><h3><!--ICON:none-->No surprise none</h3><p>A value can be missing only if its type says <code>or none</code>, and it has to be checked before use. The first <code>print</code> skips the check.</p></div>
+      <!--WINDOW:users-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-delay" aria-labelledby="t-delay" hidden>
-      <p class="note">A number can carry its unit. Passing a bare <code>20</code> where milliseconds are wanted is caught before the program runs.</p>
-      <figure class="window"><figcaption><span class="file">delay.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:delay--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:delay--></code></pre></figure>
+      <div><h3><!--ICON:ruler-->Units are part of the type</h3><p><code>500 ms</code> and <code>3.3 V</code> are quantities. A function that wants milliseconds will not take a bare number.</p></div>
+      <!--WINDOW:delay-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-packet" aria-labelledby="t-packet" hidden>
-      <p class="note"><code>u8</code>, <code>u16</code>, <code>u32</code>, <code>i8</code>, <code>i16</code> and <code>i32</code> have a size. Arithmetic gives a full <code>int</code>, <code>u8(n)</code> checks that <code>n</code> fits, and <code>u8.wrap(n)</code> cuts on purpose.</p>
-      <figure class="window"><figcaption><span class="file">packet.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:packet--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:packet--></code></pre></figure>
+      <div><h3><!--ICON:memory-->A u8 is one byte</h3><p>Sized numbers and the bit operators, for registers and packets. <code>u8(n)</code> checks that <code>n</code> fits, and <code>u8.wrap(n)</code> cuts on purpose.</p></div>
+      <!--WINDOW:packet-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-stack" aria-labelledby="t-stack" hidden>
-      <p class="note">Write a class or function once, with <code>T</code> standing for a type. The call never says what <code>T</code> is. Each use is checked, and compiled as if written by hand for that type.</p>
-      <figure class="window"><figcaption><span class="file">stack.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:stack--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:stack--></code></pre></figure>
+      <div><h3><!--ICON:copies-->Written once, for any type</h3><p><code>T</code> stands for a type, and a call never has to say which. Each use is compiled as if written by hand for that type.</p></div>
+      <!--WINDOW:stack-->
     </div>
-
     <div class="panel" role="tabpanel" id="p-frame" aria-labelledby="t-frame" hidden>
-      <p class="note">An <code>owned</code> value has one owner and is freed where that owner's block ends. <code>borrow</code> lends it for a call. Use it after giving it away, and the checker points at the line.</p>
-      <figure class="window"><figcaption><span class="file">frame.zeno</span></figcaption>
-      <pre><code class="zeno"><!--CODE:frame--></code></pre>
-      <div class="out-label">output</div><pre class="out"><code><!--OUT:frame--></code></pre></figure>
+      <div><h3><!--ICON:key-->One owner, freed on time</h3><p>An <code>owned</code> value is freed where its owner's block ends. A parameter only looks, unless it says <code>take</code>. Use a value after giving it away, and the checker points at the line.</p></div>
+      <!--WINDOW:frame-->
+    </div>
+    <p class="after"><a href="/learn/">The whole language, a step at a time</a></p>
+  </div>
+</section>
+
+<section class="band" id="catches">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>Mistakes stop at the checker.</h2>
+      <p>Nothing runs until the whole program makes sense. Each message points at the line and says what to write instead.</p>
+    </div>
+    <ul class="catches">
+      <li><!--ICON:scan--><h3>A misspelt name</h3><p>Plain <code>=</code> only updates, so a typo cannot quietly make a new variable.</p><div class="eg"><b>cuont = count + 1</b><i>count = count + 1</i></div></li>
+      <li><!--ICON:layers--><h3>A forgotten case</h3><p>A <code>match</code> must handle every case of the enum.</p><div class="eg"><b>no case for Dot</b><i>case Dot { return 0.0 }</i></div></li>
+      <li><!--ICON:none--><h3>A value that may be missing</h3><p>Anything that can be <code>none</code> is checked before it is used.</p><div class="eg"><b>user.upper()</b><i>if user is not none { }</i></div></li>
+      <li><!--ICON:ruler--><h3>A number with no unit</h3><p>Milliseconds stay milliseconds, all the way down.</p><div class="eg"><b>blink_for(20)</b><i>blink_for(20 ms)</i></div></li>
+      <li><!--ICON:check--><h3>A condition that is not a yes or no</h3><p>There is no truthiness to remember.</p><div class="eg"><b>if items {</b><i>if len(items) &gt; 0 {</i></div></li>
+      <li><!--ICON:key--><h3>A value used after it was given away</h3><p>Ownership is checked, with no garbage collector needed.</p><div class="eg"><b>print(frame.channel)</b><i>send(frame) last</i></div></li>
+    </ul>
+  </div>
+</section>
+
+<section class="band" id="styles">
+  <div class="wrap">
+    <div class="head">
+      <h2>One job, four ways.</h2>
+      <p>A sensor gives five readings. Throw away the ones out of range and average the rest. Zeno does not make you pick a style.</p>
+    </div>
+    <div class="styles-row">
+      <div>
+        <div class="segmented" role="tablist" aria-label="Four styles" data-group="styles">
+          <button role="tab" aria-selected="true" aria-controls="p-s1" id="t-s1"><!--ICON:braces-->Typed, around a class</button>
+          <button role="tab" aria-selected="false" aria-controls="p-s2" id="t-s2" tabindex="-1"><!--ICON:words-->No types written</button>
+          <button role="tab" aria-selected="false" aria-controls="p-s3" id="t-s3" tabindex="-1"><!--ICON:function-->Around functions</button>
+          <button role="tab" aria-selected="false" aria-controls="p-s4" id="t-s4" tabindex="-1"><!--ICON:feather-->The short way</button>
+        </div>
+      </div>
+      <div>
+        <pre class="given"><code class="zeno">let readings = [21.5, 22.0, -99.0, 21.0, 150.0]</code></pre>
+        <div class="styles-panel" role="tabpanel" id="p-s1" aria-labelledby="t-s1"><figure class="window"><figcaption><span class="file">s1.zeno</span></figcaption><pre><code class="zeno"><!--CODE:s1:1--></code></pre></figure></div>
+        <div class="styles-panel" role="tabpanel" id="p-s2" aria-labelledby="t-s2" hidden><figure class="window"><figcaption><span class="file">s2.zeno</span></figcaption><pre><code class="zeno"><!--CODE:s2:1--></code></pre></figure></div>
+        <div class="styles-panel" role="tabpanel" id="p-s3" aria-labelledby="t-s3" hidden><figure class="window"><figcaption><span class="file">s3.zeno</span></figcaption><pre><code class="zeno"><!--CODE:s3:1--></code></pre></figure></div>
+        <div class="styles-panel" role="tabpanel" id="p-s4" aria-labelledby="t-s4" hidden><figure class="window"><figcaption><span class="file">s4.zeno</span></figcaption><pre><code class="zeno"><!--CODE:s4:1--></code></pre></figure></div>
+        <p class="result"><!--ICON:check-->All four print <code><!--OUT:s4--></code></p>
+      </div>
     </div>
   </div>
-  <p class="more"><a href="/learn/">The whole language in the guide <span aria-hidden="true">→</span></a></p>
 </section>
 
-<section id="styles" class="section">
-  <header class="section-head">
-    <span class="step">1/8</span>
-    <h2>One job, four ways</h2>
-    <p>A sensor gives five readings. Throw away the ones out of range and average the rest. Zeno does not make you pick a style, and every version prints <code>21.5</code>.</p>
-  </header>
-  <pre class="given"><code class="zeno">let readings = [21.5, 22.0, -99.0, 21.0, 150.0]</code></pre>
-  <div class="four">
-    <figure class="window"><figcaption><span class="file">Typed, around a class</span></figcaption><pre><code class="zeno"><!--CODE:s1:1--></code></pre></figure>
-    <figure class="window"><figcaption><span class="file">No types written</span></figcaption><pre><code class="zeno"><!--CODE:s2:1--></code></pre></figure>
-    <figure class="window"><figcaption><span class="file">Around functions</span></figcaption><pre><code class="zeno"><!--CODE:s3:1--></code></pre></figure>
-    <figure class="window"><figcaption><span class="file">The short way</span></figcaption><pre><code class="zeno"><!--CODE:s4:1--></code></pre></figure>
-  </div>
-  <p class="more"><a href="/examples/">Fifteen whole programs to read <span aria-hidden="true">→</span></a></p>
-</section>
-
-<section id="firmware" class="section">
-  <header class="section-head">
-    <span class="step">1/16</span>
-    <h2>The same language, on a microcontroller</h2>
-    <p>Firmware is where Zeno started. The program below is a traffic light written as a state machine. On a computer the board is simulated, and each line of the log is what a logic analyser clipped to that pin would show.</p>
-  </header>
-
-  <div class="board-row">
-    <figure class="window">
-      <figcaption><span class="file">signal.zeno</span></figcaption>
-      <pre><code class="zeno">from board import pin, led
-from time import sleep
-
-enum Light {
-    Red
-    Green
-    Amber
-}
-
-let red = pin(2)
-let amber = pin(3)
-let green = pin(4)
-
-function hold(light: Light) -> ms {
+<section class="band dark" id="firmware">
+  <div class="wrap">
+    <div class="head">
+      <h2>The same language, on a microcontroller.</h2>
+      <p>Firmware is where Zeno started. This traffic light is a state machine on three pins. On a computer the board is simulated, and each line of the log is what a logic analyser on that pin would show.</p>
+    </div>
+    <div class="device-row">
+      <figure class="window">
+        <figcaption><!--ICON:code--><span class="file">signal.zeno, the main loop</span></figcaption>
+        <pre><code class="zeno">function hold(light: Light) -> ms {
     match light {
         case Red { return 40 ms }
         case Green { return 30 ms }
@@ -227,130 +190,108 @@ function hold(light: Light) -> ms {
 
 var light = Red
 for step in range(7) {
-    show(light)             # old lamp off, new lamp on
-    led.toggle()            # a heartbeat
+    show(light)
+    led.toggle()                 # a heartbeat: the program is alive
     sleep(hold(light))
     light = after(light)
 }</code></pre>
-    </figure>
-
-    <div class="board" aria-label="Simulated board running signal.zeno">
-      <div class="lamps" aria-hidden="true">
-        <span class="lamp red" id="lamp-2"></span>
-        <span class="lamp amber" id="lamp-3"></span>
-        <span class="lamp green" id="lamp-4"></span>
-        <span class="lamp led" id="lamp-led"></span>
-      </div>
-      <div class="lamp-names" aria-hidden="true"><span>pin 2</span><span>pin 3</span><span>pin 4</span><span>led</span></div>
-      <pre class="out log" id="log" aria-live="off"><code>pin 2 on
+      </figure>
+      <div class="device" aria-label="A simulated board running signal.zeno">
+        <div class="device-top"><!--ICON:board-->Simulated board, 25 times slower</div>
+        <div class="lamps" aria-hidden="true">
+          <span class="lamp red" id="lamp-2"></span>
+          <span class="lamp amber" id="lamp-3"></span>
+          <span class="lamp green" id="lamp-4"></span>
+          <span class="lamp led" id="lamp-led"></span>
+        </div>
+        <div class="lamp-names" aria-hidden="true"><span>pin 2</span><span>pin 3</span><span>pin 4</span><span>led</span></div>
+        <pre class="log" id="log" aria-live="off"><code>pin 2 on
 led on</code></pre>
-      <p class="caption">The simulated board, slowed down 25 times. The excerpt leaves out <code>show</code> and <code>after</code>; the whole program is in <code>examples/signal.zeno</code>.</p>
+      </div>
     </div>
-  </div>
+    <p class="caption">The excerpt leaves out <code>show</code> and <code>after</code>. The whole program is <a href="/examples/signal/">examples/signal.zeno</a>.</p>
 
-  <div class="flags">
-    <article>
-      <code class="flag">zeno build --firmware</code>
-      <p>Errors become return values that every caller tests. The C that comes out has no <code>setjmp</code>.</p>
-    </article>
-    <article>
-      <code class="flag">zeno build --no-collector</code>
-      <p>For a program where every value has an owner. The garbage collector is left out of the build altogether.</p>
-    </article>
-    <article>
-      <code class="flag">A fixed memory pool</code>
-      <p>No <code>malloc</code> and no <code>free</code>. Lists and objects live in one array whose size you choose when the C is compiled.</p>
-    </article>
-    <article>
-      <code class="flag">A real board is four C functions</code>
-      <p>A compiled program meets its board through four functions, so real hardware can be put underneath the same source.</p>
-    </article>
-  </div>
+    <ul class="facts">
+      <li><!--ICON:alert--><h3>Errors as values</h3><p><code>--firmware</code> turns every error into a return value the caller tests. No <code>setjmp</code>.</p></li>
+      <li><!--ICON:zap--><h3>No garbage collector</h3><p><code>--no-collector</code> leaves it out. Every value has one owner and is freed on a line you can point to.</p></li>
+      <li><!--ICON:pool--><h3>One fixed pool</h3><p>No <code>malloc</code>. Lists and objects live in one array whose size you choose.</p></li>
+      <li><!--ICON:chip-pin--><h3>Four C functions to a board</h3><p>A compiled program meets real hardware through four functions you write once.</p></li>
+    </ul>
 
-  <figure class="window report">
-    <figcaption><span class="file">zeno build --no-collector --memory examples/buffer.zeno</span></figcaption>
-    <pre class="out"><code>memory: 1691 blocks made (2646563 bytes), at most 13336 bytes in use at once, no collector, 0 blocks left at the end
-pool: 25384 bytes taken, in a pool of 32768</code></pre>
-  </figure>
-  <p class="aside">That program makes 2.6 MB of values over its run and never holds more than 13 KB, because each one is freed at a line you can point to.</p>
-  <p class="more"><a href="/docs/firmware/">How the firmware build works <span aria-hidden="true">→</span></a></p>
+    <figure class="window report">
+      <figcaption><!--ICON:terminal--><span class="file">zeno build --no-collector --memory examples/buffer.zeno</span></figcaption>
+      <pre class="out"><code>memory: 1691 blocks made (2646563 bytes), at most 13336 bytes in use at once, no collector, 0 blocks left at the end
+pool: 25384 bytes taken, in a pool of 32768
+text: at most 53 bytes in use at once, in a room of 1024</code></pre>
+    </figure>
+    <p class="aside">That program makes 2.6 MB of values over its run and never holds more than 13 KB at once.</p>
+    <p class="after"><a href="/docs/firmware/">How the firmware build works</a></p>
+  </div>
 </section>
 
-<section id="inside" class="section">
-  <header class="section-head">
-    <span class="step">1/32</span>
-    <h2>Inside the compiler</h2>
-    <p>Zeno is written in Rust with no dependencies, so every stage is there to read. One front end feeds four engines, and the tests hold them to the same output.</p>
-  </header>
-
-  <div class="pipeline" role="img" aria-label="Source goes through the lexer, the parser and the checker, then to one of four engines: the interpreter, the bytecode VM, the C backend or the LLVM backend.">
-    <div class="stages">
-      <div class="stage"><b>Source</b><span>.zeno</span></div>
-      <div class="stage"><b>Lexer</b><span>text to tokens</span></div>
-      <div class="stage"><b>Parser</b><span>tokens to a syntax tree</span></div>
-      <div class="stage"><b>Checker</b><span>types, <code>none</code>, errors, ownership</span></div>
+<section class="band" id="inside">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>One front end, four engines.</h2>
+      <p>The compiler is plain Rust with no dependencies, so every stage is there to read. The tests run each program on all four engines, and they must print the same.</p>
     </div>
-    <div class="engines">
-      <div class="engine"><b>Interpreter</b><code>zeno run</code><span>Walks the syntax tree. The reference for what a program means.</span></div>
-      <div class="engine"><b>Bytecode VM</b><code>zeno run --vm</code><span>A stack machine, two to three times as fast.</span></div>
-      <div class="engine"><b>C backend</b><code>zeno build</code><span>Portable C, for any chip with a C compiler.</span></div>
-      <div class="engine"><b>LLVM backend</b><code>zeno build --llvm</code><span>Textual LLVM IR, built with clang. No LLVM library needed.</span></div>
+    <div class="diagram" id="diagram" role="img" aria-label="Source goes through the lexer, the parser and the checker, then to one of four engines: the interpreter, the bytecode VM, the C backend or the LLVM backend.">
+      <svg class="lines" aria-hidden="true"></svg>
+      <div class="stages">
+        <div class="node"><!--ICON:edit--><b>Source</b><span>A <code>.zeno</code> file.</span></div>
+        <div class="node"><!--ICON:words--><b>Lexer</b><span>Text into tokens.</span></div>
+        <div class="node"><!--ICON:tree--><b>Parser</b><span>Tokens into a syntax tree.</span></div>
+        <div class="node"><!--ICON:check--><b>Checker</b><span>Types, <code>none</code>, errors and owners.</span></div>
+      </div>
+      <div class="engines">
+        <div class="node"><!--ICON:play--><b>Interpreter</b><span>Walks the tree. The reference for what a program means.</span><code>zeno run</code></div>
+        <div class="node"><!--ICON:stack--><b>Bytecode VM</b><span>A stack machine, two to three times as fast.</span><code>zeno run --vm</code></div>
+        <div class="node"><!--ICON:c--><b>C backend</b><span>Portable C, for any chip with a C compiler.</span><code>zeno build</code></div>
+        <div class="node"><!--ICON:dragon--><b>LLVM backend</b><span>LLVM IR, built with clang.</span><code>zeno build --llvm</code></div>
+      </div>
     </div>
+    <div class="after-diagram">
+      <div><h3>Memory, three ways</h3><p>A small collector by default, <code>owned</code> values freed where their owner ends, or no collector at all on a fixed pool.</p></div>
+      <div><h3>Every stage is written up</h3><p>Each part of the compiler has a walkthrough that ends with things to try.</p></div>
+      <div><h3>Every decision has a reason</h3><p>One document records each choice, why it was made, and what was turned down.</p></div>
+    </div>
+    <p class="after"><a href="/docs/">Walk through the compiler</a></p>
   </div>
-
-  <div class="pillars three">
-    <article><h3>Memory, three ways</h3><p>A small mark-and-sweep collector by default. <code>owned</code> values freed where their owner ends. Or no collector at all, on a fixed pool.</p></article>
-    <article><h3>Every stage is documented</h3><p>Each part of the compiler has a walkthrough that ends in things to try, from the lexer to the LLVM backend.</p></article>
-    <article><h3>Every decision has a reason</h3><p>One document records each design choice, why it was made and what was turned down. If you disagree, you can see what you are disagreeing with.</p></article>
-  </div>
-  <p class="more"><a href="/docs/">Walk through every stage of the compiler <span aria-hidden="true">→</span></a></p>
 </section>
 
-<section id="roadmap" class="section">
-  <header class="section-head">
-    <span class="step">1/64</span>
-    <h2>One language, every job</h2>
-    <p>The goal is that anything you would reach for C, C++, Python, JavaScript, Java or Rust to do, you can do in Zeno. That is a long road. This is where it stands.</p>
-  </header>
-
-  <ul class="jobs">
-    <li class="now"><b>Scripts and automation</b><span>Interpreter and bytecode VM</span><i>Works today</i></li>
-    <li class="now"><b>Microcontrollers and firmware</b><span>Compiles to C with no heap, on a simulated board</span><i>Works today</i></li>
-    <li class="now"><b>Native programs</b><span>Through C or LLVM</span><i>Works today</i></li>
-    <li><b>Manual memory</b><span><code>unsafe { }</code>, raw pointers, memory-mapped registers</span><i>Next</i></li>
-    <li><b>Standard library</b><span>Files, text, collections, and modules across files</span><i>Planned</i></li>
-    <li><b>Tooling</b><span>Package manager, formatter, editor support</span><i>Planned</i></li>
-    <li><b>Calling C libraries</b><span>C interop, in both directions</span><i>Planned</i></li>
-    <li><b>Web front ends</b><span>A WebAssembly backend</span><i>Planned</i></li>
-    <li><b>Servers and networking</b><span><code>async</code> and <code>await</code></span><i>Planned</i></li>
-    <li><b>Data and numerics</b><span>Fast arrays and operator overloading</span><i>Planned</i></li>
-  </ul>
-
-  <p class="aside">Zeno is young and the syntax can still change. It is a language to learn from and experiment with, and not yet one to ship a product on.</p>
-  <p class="more"><a href="/roadmap/">The full roadmap <span aria-hidden="true">→</span></a></p>
+<section class="band" id="road">
+  <div class="wrap">
+    <div class="head">
+      <h2>One language, every job.</h2>
+      <p>The goal is that anything you would reach for C, C++, Python, JavaScript, Java or Rust to do, you can do in Zeno. This is where that road stands.</p>
+    </div>
+    <ol class="track">
+      <li class="done"><span class="pin"><!--ICON:terminal--></span><b>Scripts</b><span>An interpreter and a bytecode VM.</span><small>Works today</small></li>
+      <li class="done"><span class="pin"><!--ICON:cpu--></span><b>Firmware</b><span>C with no heap, no collector, memory by hand.</span><small>Works today</small></li>
+      <li class="next"><span class="pin"><!--ICON:eye--></span><b>A clarity audit</b><span>Every feature checked: unambiguous and intuitive.</span><small>In progress</small></li>
+      <li><span class="pin"><!--ICON:package--></span><b>Library and modules</b><span>Files, text, collections, programs across files.</span><small>Planned</small></li>
+      <li><span class="pin"><!--ICON:globe--></span><b>Web and servers</b><span>WebAssembly, <code>async</code> and C interop.</span><small>Planned</small></li>
+    </ol>
+    <p class="after"><a href="/roadmap/">The full roadmap</a></p>
+  </div>
 </section>
 
-<section id="start" class="section">
-  <header class="section-head">
-    <span class="step">1/128</span>
-    <h2>Run it yourself</h2>
-    <p>You need <a href="https://rustup.rs">Rust</a> to build Zeno, and a C compiler for <code>zeno build</code>. There is nothing else to install.</p>
-  </header>
-
-  <figure class="window shell">
-    <figcaption><span class="file">Terminal</span><button class="copy" type="button" data-copy="shell">Copy</button></figcaption>
-    <pre id="shell"><code>git clone https://github.com/partham20/zeno-lang
+<section class="band" id="start">
+  <div class="wrap start">
+    <div>
+      <h2>Run it yourself.</h2>
+      <p>You need <a href="https://rustup.rs">Rust</a> to build Zeno, and a C compiler for <code>zeno build</code>. There is nothing else to install.</p>
+      <div class="actions">
+        <a class="button" href="/learn/#install">Install and first steps</a>
+        <a class="button ghost" href="/examples/">Browse the examples</a>
+      </div>
+    </div>
+    <figure class="window shell">
+      <figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="shell"><!--ICON:copy--><span>Copy</span></button></figcaption>
+      <pre id="shell"><code>git clone https://github.com/partham20/zeno-lang
 cd zeno-lang
-cargo run -- run examples/tour.zeno</code></pre>
-  </figure>
-
-  <div class="commands">
-    <div><code>zeno run file.zeno</code><span>Check a program, then run it.</span></div>
-    <div><code>zeno run --vm file.zeno</code><span>The same, on the bytecode VM.</span></div>
-    <div><code>zeno check --strict file.zeno</code><span>Every type must be known, as firmware needs.</span></div>
-    <div><code>zeno build file.zeno</code><span>Compile to C, then to a program.</span></div>
-    <div><code>zeno build --llvm file.zeno</code><span>Compile through LLVM IR and clang.</span></div>
-    <div><code>zeno bytecode file.zeno</code><span>Show the VM's instructions, one per line.</span></div>
+cargo build --release
+./target/release/zeno run examples/tour.zeno</code></pre>
+    </figure>
   </div>
-  <p class="more"><a href="/learn/#install">Install and the first steps <span aria-hidden="true">→</span></a></p>
 </section>
