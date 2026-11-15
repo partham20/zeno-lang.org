@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A Keywords · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a class="here" href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="design.html" rel="previous">← <span class="number">35</span> Why Zeno Is as It Is</a>
+<a class="next" href="operators.html" rel="next"><span class="number">B</span> Operators →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="app-keywords"><span
+class="number">A</span> Keywords</h2>
+<p>These 37 words are the keywords of Zeno. A keyword is never a name: a
+variable, function or field cannot be called <code>match</code> or
+<code>take</code>, and the compiler says so if one is.</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Word</th>
+<th style="text-align: left;">Means</th>
+<th style="text-align: left;">Chapter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>and</code></td>
+<td style="text-align: left;">true when both sides are</td>
+<td style="text-align: left;"><a
+href="numbers.html#ch-numbers">5</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>as</code></td>
+<td style="text-align: left;">names what is caught:
+<code>except ValueError as e</code></td>
+<td style="text-align: left;"><a
+href="errors.html#ch-errors">14</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>assert</code></td>
+<td style="text-align: left;">in a test: this must be so</td>
+<td style="text-align: left;"><a
+href="testing.html#ch-testing">25</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>break</code></td>
+<td style="text-align: left;">leave the loop now</td>
+<td style="text-align: left;"><a
+href="control-flow.html#ch-control-flow">7</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>case</code></td>
+<td style="text-align: left;">one arm of a <code>match</code></td>
+<td style="text-align: left;"><a
+href="enums.html#ch-enums">12</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>class</code></td>
+<td style="text-align: left;">declares a class</td>
+<td style="text-align: left;"><a
+href="classes.html#ch-classes">11</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>const</code></td>
+<td style="text-align: left;">a value fixed for the whole program</td>
+<td style="text-align: left;"><a
+href="values.html#ch-values">4</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>continue</code></td>
+<td style="text-align: left;">go on with the next turn of the loop</td>
+<td style="text-align: left;"><a
+href="control-flow.html#ch-control-flow">7</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>else</code></td>
+<td style="text-align: left;">the other branch of an
+<code>if</code></td>
+<td style="text-align: left;"><a
+href="control-flow.html#ch-control-flow">7</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>enum</code></td>
+<td style="text-align: left;">declares an enum</td>
+<td style="text-align: left;"><a
+href="enums.html#ch-enums">12</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>except</code></td>
+<td style="text-align: left;">catches an error of a kind</td>
+<td style="text-align: left;"><a
+href="errors.html#ch-errors">14</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>false</code></td>
+<td style="text-align: left;">the <code>bool</code> that is not
+true</td>
+<td style="text-align: left;"><a
+href="numbers.html#ch-numbers">5</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>for</code></td>
+<td style="text-align: left;">goes through the items of something</td>
+<td style="text-align: left;"><a
+href="control-flow.html#ch-control-flow">7</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>from</code></td>
+<td style="text-align: left;"><code>from math import sqrt</code>; and
+<code>needs ... from</code> in a package</td>
+<td style="text-align: left;"><a
+href="modules.html#ch-modules">21</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>function</code></td>
+<td style="text-align: left;">declares a function, or writes one in
+place</td>
+<td style="text-align: left;"><a
+href="functions.html#ch-functions">8</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>if</code></td>
+<td style="text-align: left;">runs a block when a condition holds</td>
+<td style="text-align: left;"><a
+href="control-flow.html#ch-control-flow">7</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>import</code></td>
+<td style="text-align: left;">brings in a module</td>
+<td style="text-align: left;"><a
+href="modules.html#ch-modules">21</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>in</code></td>
+<td style="text-align: left;">is it in there? and
+<code>for x in xs</code></td>
+<td style="text-align: left;"><a
+href="lists.html#ch-lists">9</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>interface</code></td>
+<td style="text-align: left;">declares an interface</td>
+<td style="text-align: left;"><a
+href="interfaces.html#ch-interfaces">20</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>is</code></td>
+<td style="text-align: left;">with <code>none</code> only:
+<code>x is none</code>; and <code>class C is I</code></td>
+<td style="text-align: left;"><a
+href="none.html#ch-none">13</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>let</code></td>
+<td style="text-align: left;">declares a name that keeps its value</td>
+<td style="text-align: left;"><a
+href="values.html#ch-values">4</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>match</code></td>
+<td style="text-align: left;">runs the case that fits a value</td>
+<td style="text-align: left;"><a
+href="enums.html#ch-enums">12</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>none</code></td>
+<td style="text-align: left;">nothing here</td>
+<td style="text-align: left;"><a
+href="none.html#ch-none">13</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>not</code></td>
+<td style="text-align: left;">turns a <code>bool</code> round</td>
+<td style="text-align: left;"><a
+href="numbers.html#ch-numbers">5</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>or</code></td>
+<td style="text-align: left;">true when either side is;
+<code>T or none</code></td>
+<td style="text-align: left;"><a
+href="numbers.html#ch-numbers">5</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>owned</code></td>
+<td style="text-align: left;">a class or list with one owner</td>
+<td style="text-align: left;"><a
+href="ownership.html#ch-ownership">30</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>private</code></td>
+<td style="text-align: left;">for its own file only</td>
+<td style="text-align: left;"><a
+href="modules.html#ch-modules">21</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>raise</code></td>
+<td style="text-align: left;">raises an error</td>
+<td style="text-align: left;"><a
+href="errors.html#ch-errors">14</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>raises</code></td>
+<td style="text-align: left;">in a heading: the errors a function may
+raise</td>
+<td style="text-align: left;"><a
+href="errors.html#ch-errors">14</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>return</code></td>
+<td style="text-align: left;">gives a value back and ends the call</td>
+<td style="text-align: left;"><a
+href="functions.html#ch-functions">8</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>strict</code></td>
+<td style="text-align: left;">as a file’s first line: every type must be
+known</td>
+<td style="text-align: left;"><a
+href="types.html#ch-types">16</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>take</code></td>
+<td style="text-align: left;">on a parameter: the function takes the
+value over</td>
+<td style="text-align: left;"><a
+href="ownership.html#ch-ownership">30</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>true</code></td>
+<td style="text-align: left;">the <code>bool</code> that is</td>
+<td style="text-align: left;"><a
+href="numbers.html#ch-numbers">5</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>try</code></td>
+<td style="text-align: left;">runs a block whose errors may be
+caught</td>
+<td style="text-align: left;"><a
+href="errors.html#ch-errors">14</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>unsafe</code></td>
+<td style="text-align: left;">a block for what Zeno cannot check</td>
+<td style="text-align: left;"><a
+href="unsafe.html#ch-unsafe">33</a></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>var</code></td>
+<td style="text-align: left;">declares a name whose value can
+change</td>
+<td style="text-align: left;"><a
+href="values.html#ch-values">4</a></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>while</code></td>
+<td style="text-align: left;">repeats a block while a condition
+holds</td>
+<td style="text-align: left;"><a
+href="control-flow.html#ch-control-flow">7</a></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 class="unnumbered" id="words-that-are-not-keywords">Words that are
+not keywords</h3>
+<p>A few words have a meaning in one place and are ordinary names
+everywhere else, because in that place no name could stand:</p>
+<ul>
+<li><p><code>test</code>, before a string at the top of a file, starts a
+test (<a href="testing.html#ch-testing">Testing</a>).</p></li>
+<li><p><code>package</code>, <code>needs</code> and <code>at</code> are
+the words of a <code>zeno.package</code> file (<a
+href="packages.html#ch-packages">Packages</a>).</p></li>
+<li><p>The names of the built-in types (<code>int</code>,
+<code>str</code>, <code>list</code>, <code>u8</code> and the rest), of
+the units (<code>ms</code>, <code>V</code>) and of the built-in
+functions (<code>print</code>, <code>len</code>) are names declared by
+Zeno, which a program may declare again in an inner block.</p></li>
+</ul>
+<h3 class="unnumbered" id="words-from-other-languages">Words from other
+languages</h3>
+<p>These are not Zeno, and each gets a message with the Zeno spelling:
+<code>def</code> and <code>fn</code> (<code>function</code>),
+<code>elif</code> (<code>else if</code>), <code>&amp;&amp;</code>,
+<code>||</code> and <code>!</code> (<code>and</code>, <code>or</code>,
+<code>not</code>), and a <code>;</code> at the end of a line. So do the
+names other languages give to nothing and to the two truths:
+<code>None</code>, <code>null</code>, <code>nil</code>,
+<code>NULL</code>, <code>nullptr</code> and <code>undefined</code> are
+told that Zeno spells it <code>none</code>, and <code>True</code> and
+<code>False</code> that it spells them <code>true</code> and
+<code>false</code>.</p>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="design.html" rel="previous">← <span class="number">35</span> Why Zeno Is as It Is</a>
+<a class="next" href="operators.html" rel="next"><span class="number">B</span> Operators →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

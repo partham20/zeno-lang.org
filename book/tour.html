@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3 A Tour of Zeno · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a class="here" href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="first-program.html" rel="previous">← <span class="number">2</span> A First Program</a>
+<a class="next" href="the-language.html" rel="next">The Language →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-tour"><span
+class="number">3</span> A Tour of Zeno</h2>
+<p>This chapter runs through the whole language quickly, one small
+program at a time, so that you know what is coming and where it is
+explained. Nothing here has to be understood yet. Each section names the
+chapter that goes through it properly.</p>
+<h3 class="unnumbered"
+id="values-that-change-and-values-that-do-not"><span
+class="number">3.1</span> Values that change, and values that do
+not</h3>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name = <span class="st">&quot;Zeno&quot;</span>         <span class="co"># let: set once, never changes</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = <span class="dv">3</span>             <span class="co"># var: can change later</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>count = count + <span class="dv">1</span>         <span class="co"># plain = changes a var</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> LIMIT = <span class="dv">100</span>         <span class="co"># const: fixed when the program is built</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(name, count, LIMIT)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Zeno 4 100</code></pre>
+<p>A name is declared once, with <code>let</code>, <code>var</code> or
+<code>const</code>, and from then on plain <code>=</code> changes it. A
+misspelt name is therefore a mistake, and never a new variable. (<a
+href="values.html#ch-values">Values and Variables</a>.)</p>
+<h3 class="unnumbered" id="lists-and-a-comprehension"><span
+class="number">3.2</span> Lists, and a comprehension</h3>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">21.5</span>, <span class="dv">22.0</span>, -<span class="dv">99.0</span>, <span class="dv">21.0</span>, <span class="dv">150.0</span>]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> kept = [r <span class="kw">for</span> r <span class="kw">in</span> readings <span class="kw">if</span> -<span class="dv">40.0</span> &lt;= r &lt;= <span class="dv">85.0</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>print(kept, sum(kept) / len(kept))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[21.5, 22.0, 21.0] 21.5</code></pre>
+<p>Comparisons chain as they do in mathematics:
+<code>-40.0 &lt;= r &lt;= 85.0</code> means what it looks like. (<a
+href="lists.html#ch-lists">Lists</a>, <a
+href="numbers.html#ch-numbers">Numbers and Operators</a>.)</p>
+<h3 class="unnumbered" id="functions-with-types-or-without"><span
+class="number">3.3</span> Functions, with types or without</h3>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> describe(t: <span class="dt">float</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> t &lt; <span class="dv">18.0</span> {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;cold&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">else</span> <span class="kw">if</span> t &lt; <span class="dv">24.0</span> {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;comfortable&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="st">&quot;warm&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> average(values) {</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum(values) / len(values)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> t <span class="kw">in</span> [<span class="dv">12.0</span>, <span class="dv">21.5</span>, <span class="dv">30.0</span>] {</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    print(t, describe(t))</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>print(average([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>12.0 cold
+21.5 comfortable
+30.0 warm
+2.5</code></pre>
+<p>Types are optional. Where they are written, they are checked before
+the program runs. Where they are left out, Zeno works them out from how
+the function is used. (<a
+href="functions.html#ch-functions">Functions</a>, <a
+href="types.html#ch-types">Types, Written and Worked Out</a>.)</p>
+<h3 class="unnumbered" id="classes"><span class="number">3.4</span>
+Classes</h3>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> math</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Point {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    x: <span class="dt">float</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    y: <span class="dt">float</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> distance_to(<span class="kw">self</span>, other: Point) -&gt; <span class="dt">float</span> {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> math.sqrt((<span class="kw">self</span>.x - other.x) ** <span class="dv">2</span> + (<span class="kw">self</span>.y - other.y) ** <span class="dv">2</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> origin = Point(<span class="dv">0.0</span>, <span class="dv">0.0</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> here = Point(x=<span class="dv">3.0</span>, y=<span class="dv">4.0</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>print(origin, here, origin.distance_to(here))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Point(x=0.0, y=0.0) Point(x=3.0, y=4.0) 5.0</code></pre>
+<p>A class lists its fields, and gets a way to build one for free. It
+has no parent class: what classes share is said with an interface. (<a
+href="classes.html#ch-classes">Classes</a>, <a
+href="interfaces.html#ch-interfaces">Interfaces</a>.)</p>
+<h3 class="unnumbered" id="enums-that-carry-values-and-match"><span
+class="number">3.5</span> Enums that carry values, and match</h3>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Reading {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    Value(celsius: <span class="dt">float</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    Fault(code: <span class="dt">int</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    Missing</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> show(r: Reading) -&gt; <span class="dt">str</span> {</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> r {</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Value(c) { <span class="kw">return</span> <span class="st">f&quot;{c:.1f} degrees&quot;</span> }</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Fault(code) { <span class="kw">return</span> <span class="st">f&quot;fault {code}&quot;</span> }</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Missing { <span class="kw">return</span> <span class="st">&quot;no reading&quot;</span> }</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> r <span class="kw">in</span> [Value(<span class="dv">21.5</span>), Fault(<span class="dv">7</span>), Missing] {</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    print(show(r))</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>21.5 degrees
+fault 7
+no reading</code></pre>
+<p>Leave a <code>case</code> out and Zeno names it before the program
+runs. (<a href="enums.html#ch-enums">Enums and match</a>.)</p>
+<h3 class="unnumbered" id="no-surprise-none"><span
+class="number">3.6</span> No surprise none</h3>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> find_user(id: <span class="dt">int</span>) -&gt; <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> id == <span class="dv">1</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ada&quot;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> user = find_user(<span class="dv">2</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>print(user.upper())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: this is str or none. Check it with `is not none` before using `.upper`
+ --&gt; main.zeno:9:7
+  |
+9 | print(user.upper())
+  |       ^
+
+1 error found. Nothing was run.</code></pre>
+<p>A value can be <code>none</code> only if its type says
+<code>or none</code>, and then Zeno will not let it be used until the
+program has asked:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> find_user(id: <span class="dt">int</span>) -&gt; <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> id == <span class="dv">1</span> {</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ada&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> id <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>] {</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> user = find_user(id)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> user <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        print(id, <span class="st">&quot;nobody&quot;</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">else</span> {</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        print(id, user.upper())</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>1 ADA
+2 nobody</code></pre>
+<p>(<a href="none.html#ch-none">Values That May Be Missing</a>.)</p>
+<h3 class="unnumbered" id="errors-that-are-checked"><span
+class="number">3.7</span> Errors that are checked</h3>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> parse_port(text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> port = <span class="dt">int</span>(text)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> <span class="kw">not</span> <span class="dv">1</span> &lt;= port &lt;= <span class="dv">65535</span> {</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">f&quot;{port} is not a port&quot;</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> port</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> text <span class="kw">in</span> [<span class="st">&quot;8080&quot;</span>, <span class="st">&quot;99999&quot;</span>, <span class="st">&quot;http&quot;</span>] {</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;port&quot;</span>, parse_port(text))</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError <span class="kw">as</span> err {</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;refused:&quot;</span>, err)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>port 8080
+refused: 99999 is not a port
+refused: cannot turn &quot;http&quot; into an int</code></pre>
+<p>A function says what it <code>raises</code>, and Zeno checks that
+every error is either caught or passed on on purpose. (<a
+href="errors.html#ch-errors">Errors</a>.)</p>
+<h3 class="unnumbered" id="functions-are-values"><span
+class="number">3.8</span> Functions are values</h3>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> counter() {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> count = <span class="dv">0</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="kw">function</span>() {</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        count += <span class="dv">1</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> count</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> next_id = counter()</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>print(next_id(), next_id(), next_id())</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>print([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>].map(<span class="kw">function</span>(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> { <span class="kw">return</span> n * <span class="dv">2</span> }))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>1 2 3
+[2, 4, 6]</code></pre>
+<p>(<a href="function-values.html#ch-function-values">Functions as
+Values</a>.)</p>
+<h3 class="unnumbered" id="dicts"><span class="number">3.9</span>
+Dicts</h3>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ages = [<span class="st">&quot;Ada&quot;</span>: <span class="dv">36</span>, <span class="st">&quot;Alan&quot;</span>: <span class="dv">41</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>ages[<span class="st">&quot;Grace&quot;</span>] = <span class="dv">85</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> name, age <span class="kw">in</span> ages {</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    print(name, age)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Ada 36
+Alan 41
+Grace 85</code></pre>
+<p>(<a href="dicts.html#ch-dicts">Dicts</a>.)</p>
+<h3 class="unnumbered"
+id="numbers-with-units-and-numbers-with-a-size"><span
+class="number">3.10</span> Numbers with units, and numbers with a
+size</h3>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> delay = <span class="dv">1500</span> ms</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>print(delay, delay.s, <span class="dv">1</span> s + <span class="dv">250</span> ms)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame: <span class="dt">u8</span> = <span class="dv">200</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>print(<span class="dt">u8</span>.wrap(frame + <span class="dv">100</span>), frame &amp; <span class="dv">0x0F</span>, frame &gt;&gt; <span class="dv">4</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>1500 ms 1.5 s 1250 ms
+44 8 12</code></pre>
+<p>A number can carry a unit, and units that measure the same thing work
+together. A whole number can have a size, and a number that does not fit
+is an error unless you ask for it to wrap. (<a
+href="units.html#ch-units">Units</a>, <a
+href="sized-numbers.html#ch-sized-numbers">Sized Numbers and
+Bits</a>.)</p>
+<h3 class="unnumbered" id="generics"><span class="number">3.11</span>
+Generics</h3>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> largest[T](items: <span class="dt">list</span>[T]) -&gt; T {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> best = items[<span class="dv">0</span>]</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> item <span class="kw">in</span> items {</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> item &gt; best {</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>            best = item</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> best</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>print(largest([<span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">4</span>]), largest([<span class="st">&quot;pear&quot;</span>, <span class="st">&quot;fig&quot;</span>]), largest([<span class="dv">3.3</span> V, <span class="dv">5</span> V]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>9 pear 5 V</code></pre>
+<p>Written once, checked for each type it is used with, and compiled as
+if it had been written by hand for that type. (<a
+href="generics.html#ch-generics">Generics</a>.)</p>
+<h3 class="unnumbered" id="and-on-a-board"><span
+class="number">3.12</span> And on a board</h3>
+<div class="zenofile">
+<p>blink.zeno</p>
+</div>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> led</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> time <span class="kw">import</span> sleep</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> <span class="cn">true</span> {</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    led.toggle()</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    sleep(<span class="dv">500</span> ms)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno check blink.zeno
+No errors found.</code></pre>
+<p>On a computer the board is simulated, and <code>zeno run</code>
+prints each change of a pin. The same program builds for firmware with
+no garbage collector, no heap and no <code>setjmp</code>. (<a
+href="board.html#ch-board">Pins, Time and the Board</a>, <a
+href="firmware.html#ch-firmware">Firmware Builds</a>, <a
+href="no-collector.html#ch-no-collector">Building with No
+Collector</a>.)</p>
+<div class="tryit">
+<ol>
+<li><p>Take one of the programs in this chapter, break it on purpose,
+and read the message.</p></li>
+<li><p>In the enum program, add a fourth case <code>Calibrating</code>
+to <code>Reading</code> and run it before changing
+<code>show</code>.</p></li>
+<li><p>In the error program, take <code>raises ValueError</code> off
+<code>parse_port</code> and run <code>zeno check --strict</code> on the
+file.</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="first-program.html" rel="previous">← <span class="number">2</span> A First Program</a>
+<a class="next" href="the-language.html" rel="next">The Language →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

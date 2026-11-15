@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>8 Functions · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a class="here" href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="control-flow.html" rel="previous">← <span class="number">7</span> Deciding and Repeating</a>
+<a class="next" href="lists.html" rel="next"><span class="number">9</span> Lists →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-functions"><span
+class="number">8</span> Functions</h2>
+<p>A <em>function</em> is a block of code with a name, which the rest of
+the program can run by calling it. Functions are how a program is cut
+into pieces small enough to understand one at a time.</p>
+<h3 class="unnumbered" id="declaring-and-calling"><span
+class="number">8.1</span> Declaring and calling</h3>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> area(width: <span class="dt">float</span>, height: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> width * height</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(area(<span class="dv">2.0</span>, <span class="dv">3.0</span>))</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>print(area(<span class="dv">1.5</span>, <span class="dv">4.0</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>6.0
+6.0</code></pre>
+<p>The first line is the function’s <em>heading</em>: the word
+<code>function</code>, a name, the <em>parameters</em> in brackets with
+their types, and after <code>-&gt;</code> the type of what it gives
+back. Calling it gives each parameter a value, the <em>arguments</em>,
+and <code>return</code> hands a value back to the caller and ends the
+call.</p>
+<div class="why">
+<p><code>function</code> is a whole word that someone who has never seen
+the language can read aloud. <code>fn</code> and <code>def</code> have
+to be learnt, and editor completion makes the extra letters free.
+(Decision 1.4.)</p>
+</div>
+<p>A function that gives nothing back leaves out the <code>-&gt;</code>
+part. Its call is then worth <code>none</code>:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> announce(what: <span class="dt">str</span>) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;now:&quot;</span>, what)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> result = announce(<span class="st">&quot;lunch&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>print(result)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>now: lunch
+none</code></pre>
+<h3 class="unnumbered" id="types-are-optional-here-too"><span
+class="number">8.2</span> Types are optional here too</h3>
+<p>The types in a heading can be left out:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add(a, b) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> a + b</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>print(add(<span class="dv">1</span>, <span class="dv">2</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>3</code></pre>
+<p>Zeno works out what it can. Here every call passes two ints, so
+<code>a</code> and <code>b</code> are ints, and the function gives an
+int. If a call disagrees with how the function uses its parameters, the
+mistake is reported inside the function, with a note that names the line
+the type was worked out from:</p>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> shout(text) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> text.upper()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>print(shout(<span class="dv">5</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: int has no field or method `upper`
+ --&gt; main.zeno:2:12
+  |
+2 |     return text.upper()
+  |            ^
+  = note: `text` was worked out to be int from line 4. Give `text` a type to have each call checked against it instead
+
+1 error found. Nothing was run.</code></pre>
+<p>When the types are written, every call is checked against them, and a
+wrong call is reported at the call:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> shout(text: <span class="dt">str</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> text.upper()</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>print(shout(<span class="dv">5</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `text` of `shout` should be str, but this is int
+ --&gt; main.zeno:4:13
+  |
+4 | print(shout(5))
+  |             ^
+
+1 error found. Nothing was run.</code></pre>
+<p>That is the reason to write types on anything that other people call.
+<a href="types.html#ch-types">Types, Written and Worked Out</a> says
+exactly what Zeno works out, and when it cannot.</p>
+<h3 class="unnumbered" id="returning-on-every-path"><span
+class="number">8.3</span> Returning on every path</h3>
+<p>A function that promises to return a value must return one on every
+way through it. Zeno finds the way that falls off the end:</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> sign(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &gt; <span class="dv">0</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">1</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">else</span> <span class="kw">if</span> n &lt; <span class="dv">0</span> {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> -<span class="dv">1</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `sign` can reach its end without returning the int it promises
+ --&gt; main.zeno:1:1
+  |
+1 | function sign(n: int) -&gt; int {
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>In C, falling off the end of a function that promised a value returns
+whatever was lying in a register. In Python it returns
+<code>None</code>, which then fails somewhere else. Here it is an error
+at the function. (Decision 3.13.)</p>
+</div>
+<h3 class="unnumbered" id="default-values"><span
+class="number">8.4</span> Default values</h3>
+<p>A parameter can have a default, used when the call leaves it out:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> greet(who: <span class="dt">str</span>, excited: <span class="dt">bool</span> = <span class="cn">false</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> excited {</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">f&quot;Hello, {who}!&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="st">f&quot;Hello, {who}.&quot;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>print(greet(<span class="st">&quot;Ada&quot;</span>))</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>print(greet(<span class="st">&quot;Ada&quot;</span>, <span class="cn">true</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Hello, Ada.
+Hello, Ada!</code></pre>
+<p>A default is worked out afresh on every call, so a default list is a
+new empty list each time:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> with_one(items: <span class="dt">list</span>[<span class="dt">int</span>] = []) -&gt; <span class="dt">list</span>[<span class="dt">int</span>] {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    items.append(<span class="dv">1</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> items</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>print(with_one(), with_one())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[1] [1]</code></pre>
+<div class="why">
+<p>In Python, <code>def add(item, to=[])</code> makes the list once, and
+every call shares it, so the second call finds the first call’s item. It
+is one of the most reported surprises in that language. (Decision
+3.5.)</p>
+</div>
+<h3 class="unnumbered" id="named-arguments"><span
+class="number">8.5</span> Named arguments</h3>
+<p>Any argument can be given by the name of its parameter, which makes a
+call readable without looking the function up:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> set_timer(millis: <span class="dt">int</span>, repeat: <span class="dt">bool</span>, start_now: <span class="dt">bool</span>) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    print(millis, repeat, start_now)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>set_timer(<span class="dv">500</span>, <span class="cn">true</span>, <span class="cn">false</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>set_timer(millis=<span class="dv">500</span>, repeat=<span class="cn">true</span>, start_now=<span class="cn">false</span>)</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>set_timer(<span class="dv">500</span>, repeat=<span class="cn">true</span>, start_now=<span class="cn">false</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>500 true false
+500 true false
+500 true false</code></pre>
+<p>Plain arguments come first and named ones after them. A name that is
+not a parameter, or a parameter given twice, is a mistake:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> move(x: <span class="dt">int</span>, y: <span class="dt">int</span>) {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    print(x, y)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>move(<span class="dv">1</span>, z=<span class="dv">2</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `move` needs a value for `y`
+ --&gt; main.zeno:4:1
+  |
+4 | move(1, z=2)
+  | ^
+
+error: `move` has no argument named `z`
+ --&gt; main.zeno:4:11
+  |
+4 | move(1, z=2)
+  |           ^
+
+2 errors found. Nothing was run.</code></pre>
+<h3 class="unnumbered" id="parameters-do-not-change"><span
+class="number">8.6</span> Parameters do not change</h3>
+<p>A parameter holds what the caller passed, all the way through the
+function. It cannot be given another value; if the function needs a
+changing value, it makes a <code>var</code> of its own:</p>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> count_down(start: <span class="dt">int</span>) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> start &gt; <span class="dv">0</span> {</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>        start -= <span class="dv">1</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `start` cannot be changed. Declare it with `var` to allow that
+ --&gt; main.zeno:3:9
+  |
+3 |         start -= 1
+  |         ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> count_down(start: <span class="dt">int</span>) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> n = start</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> n &gt; <span class="dv">0</span> {</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        print(n)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        n -= <span class="dv">1</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>count_down(<span class="dv">3</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>3
+2
+1</code></pre>
+<p>A list or an object passed as an argument is the caller’s own, not a
+copy, so a function <em>can</em> change what is inside it, and the
+caller sees the change. <a href="lists.html#ch-lists">Lists</a>
+returns to this.</p>
+<h3 class="unnumbered"
+id="calling-a-function-above-where-it-is-written"><span
+class="number">8.7</span> Calling a function above where it is
+written</h3>
+<p>A function can be used anywhere in its file, above or below the place
+it is declared. That lets a file read from the top, with the main logic
+first and the helpers below:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>print(fahrenheit(<span class="dv">100.0</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> fahrenheit(celsius: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> celsius * <span class="dv">1.8</span> + <span class="dv">32.0</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>212.0</code></pre>
+<p>The same goes for classes and enums. Variables are different: a
+<code>let</code> or <code>var</code> exists only from its line on.</p>
+<h3 class="unnumbered" id="functions-that-call-themselves"><span
+class="number">8.8</span> Functions that call themselves</h3>
+<p>A function may call itself. This is called <em>recursion</em>, and it
+suits problems that contain smaller copies of themselves:</p>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> factorial(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &lt;= <span class="dv">1</span> {</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">1</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * factorial(n - <span class="dv">1</span>)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> fib(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &lt; <span class="dv">2</span> {</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> n</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> fib(n - <span class="dv">1</span>) + fib(n - <span class="dv">2</span>)</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>print(factorial(<span class="dv">20</span>), fib(<span class="dv">20</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2432902008176640000 6765</code></pre>
+<h3 class="unnumbered" id="functions-inside-functions"><span
+class="number">8.9</span> Functions inside functions</h3>
+<p>A function can be declared inside another. It is then a name of that
+block, like a variable, and can use the variables that were declared
+above it in the blocks around it:</p>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> report(readings: <span class="dt">list</span>[<span class="dt">float</span>]) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> limit = <span class="dv">25.0</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> flag(r: <span class="dt">float</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> r &gt; limit {</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="st">&quot;high&quot;</span></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ok&quot;</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> r <span class="kw">in</span> readings {</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>        print(r, flag(r))</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>report([<span class="dv">21.0</span>, <span class="dv">27.5</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>21.0 ok
+27.5 high</code></pre>
+<p>What such a function can see is fixed by where it is written: the
+variables above it, never one declared further down. A function used
+before a variable it needs has been declared is refused, with the
+reason:</p>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> result = inner()</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> base = <span class="dv">5</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> base * <span class="dv">2</span></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> result</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `base` is declared further down than the first use of `inner`, which needs it. Use `inner` below the line that declares `base`
+ --&gt; main.zeno:5:16
+  |
+5 |         return base * 2
+  |                ^
+
+1 error found. Nothing was run.</code></pre>
+<p>Functions are also values, which can be stored, passed and returned,
+and a function written inside another can go on using its variables
+after the outer one has returned. That is the subject of <a
+href="function-values.html#ch-function-values">Functions as
+Values</a>.</p>
+<div class="summary">
+<p>A function has a heading,
+<code>function name(parameters) -&gt; type</code>, and a body. Types can
+be written or left out. A function that promises a value must return one
+on every path, and one that promises nothing returns <code>none</code>.
+Defaults are worked out on every call, arguments can be named,
+parameters never change, and functions can be called from above where
+they are written, call themselves, and live inside other functions.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Write
+<code>function clamp(x: float, low: float, high: float) -&gt; float</code>
+and call it with named arguments in a different order from the
+heading.</p></li>
+<li><p>Remove the types from <code>clamp</code> and call it with ints.
+Then add a call with a str. Where is the mistake reported?</p></li>
+<li><p>Write <code>power(base: int, exponent: int) -&gt; int</code> that
+calls itself, using
+<code>base ** exponent == base * base ** (exponent - 1)</code>.</p></li>
+<li><p>Write a function with a <code>while true</code> loop and a
+<code>return</code> inside it. Does Zeno ask for a <code>return</code>
+after the loop?</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="control-flow.html" rel="previous">← <span class="number">7</span> Deciding and Repeating</a>
+<a class="next" href="lists.html" rel="next"><span class="number">9</span> Lists →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

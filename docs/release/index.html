@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Releasing Zeno: one zeno for each kind of machine · Zeno</title>
+<meta name="description" content="Every page so far ran Zeno with cargo run --, which builds the compiler from its source first. That is right for somebody working on Zeno, and wrong for somebody who only wants to use it: they should not need Rust at all. A release is the answer: a…">
+<meta property="og:title" content="Releasing Zeno: one zeno for each kind of machine · Zeno">
+<meta property="og:description" content="Every page so far ran Zeno with cargo run --, which builds the compiler from its source first. That is right for somebody working on Zeno, and wrong for somebody who only wants to use it: they should not need Rust at all. A release is the answer: a…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/release/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/release/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><h4>More</h4><a href="/docs/found-by-the-book/">What writing the book found</a><a href="/docs/release/" aria-current="page">Releasing Zeno: one zeno for each kind of machine</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Releasing Zeno: one zeno for each kind of machine</h1>
+  <p>Every page so far ran Zeno with <code>cargo run --</code>, which builds the
+compiler from its source first. That is right for somebody working on
+Zeno, and wrong for somebody who only wants to use it: they should not
+need Rust at all. A release is the answer: a <code>zeno</code> that is already
+built, for the machine they have, to download and run.</p>
+<p>This page is about how a release is made. The decisions are chapter 12
+of <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-a-release-is">What a release is</h2>
+<p>A release is a version number, the source as it was at that moment, and
+one file to download for each kind of machine:</p>
+<table>
+<thead>
+<tr>
+<th>Machine</th>
+<th>File</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linux, x86-64: most PCs and servers</td>
+<td><code>zeno-0.1.0-linux-x86_64.tar.gz</code></td>
+</tr>
+<tr>
+<td>Linux, ARM64: a Raspberry Pi 3, 4 or 5 with a 64-bit system, ARM servers</td>
+<td><code>zeno-0.1.0-linux-arm64.tar.gz</code></td>
+</tr>
+<tr>
+<td>Linux, 32-bit ARMv7: a Raspberry Pi 2 or later with a 32-bit system</td>
+<td><code>zeno-0.1.0-linux-armv7.tar.gz</code></td>
+</tr>
+<tr>
+<td>Linux, 32-bit ARMv6: a Raspberry Pi 1 or Zero</td>
+<td><code>zeno-0.1.0-linux-armv6.tar.gz</code></td>
+</tr>
+<tr>
+<td>Linux, 32-bit x86</td>
+<td><code>zeno-0.1.0-linux-x86.tar.gz</code></td>
+</tr>
+<tr>
+<td>macOS, Apple silicon</td>
+<td><code>zeno-0.1.0-macos-arm64.tar.gz</code></td>
+</tr>
+<tr>
+<td>macOS, Intel</td>
+<td><code>zeno-0.1.0-macos-x86_64.tar.gz</code></td>
+</tr>
+<tr>
+<td>Windows, x86-64</td>
+<td><code>zeno-0.1.0-windows-x86_64.zip</code></td>
+</tr>
+<tr>
+<td>Windows, 32-bit x86</td>
+<td><code>zeno-0.1.0-windows-x86.zip</code></td>
+</tr>
+<tr>
+<td>Windows, ARM64</td>
+<td><code>zeno-0.1.0-windows-arm64.zip</code></td>
+</tr>
+</tbody>
+</table>
+<p>Each file unpacks to a folder with <code>zeno</code> in it (<code>zeno.exe</code> on
+Windows), this README, the <code>docs</code>, the <code>examples</code> and the <code>editors</code>
+folder. <code>zeno</code> is one file that needs nothing else installed: put it
+anywhere on the <code>PATH</code> and it works.</p>
+<p>Beside them is <code>SHA256SUMS.txt</code>, with one line for each file. It is
+how to know that a download arrived whole:</p>
+<pre><code>sha256sum --check --ignore-missing SHA256SUMS.txt</code></pre>
+<h2 id="making-one">Making one</h2>
+<p>Two lines make a release:</p>
+<pre><code>git tag v0.1.0
+git push origin v0.1.0</code></pre>
+<p>The tag is the letter <code>v</code> and the version in <code>Cargo.toml</code>. Pushing it
+starts <a href="https://github.com/partham20/zeno-lang/blob/main/.github/workflows/release.yml"><code>.github/workflows/release.yml</code></a>
+on GitHub's machines, which does the rest:</p>
+<ol>
+<li>It checks that the tag and <code>Cargo.toml</code> name the same version, so a
+   <code>zeno</code> that says <code>0.1.0</code> cannot be released as <code>v0.2.0</code>.</li>
+<li>On Linux it runs the whole test suite (<code>cargo test</code>). If a test
+   fails, nothing is released. On macOS and Windows it runs the suite
+   too, to see what it says there, and puts the count on the summary
+   page of the run.</li>
+<li>It builds <code>zeno</code> ten times, once for each row of the table.</li>
+<li>It runs <a href="https://github.com/partham20/zeno-lang/blob/main/tools/release-check.sh"><code>tools/release-check.sh</code></a> on
+   each build (see below).</li>
+<li>It packs each build with the docs and the examples.</li>
+<li>When all ten are done, it makes the release from
+   <code>docs/releases/0.1.0.md</code>, which is the text people read on the
+   release page, and puts the ten files and <code>SHA256SUMS.txt</code> on it.</li>
+</ol>
+<p>If any of the ten fails, there is no release: a release with a hole in
+the table is worse than one a day later.</p>
+<p>The same workflow can be started by hand, from the Actions page of the
+repository ("Run workflow"). Then it does steps 2 to 5 and releases
+nothing. That is the way to find out whether <code>main</code> could be released,
+without releasing it.</p>
+<p>There is a box to tick there, "publish". With it the workflow does
+step 6 as well, and makes the tag itself, named after the version in
+<code>Cargo.toml</code>. That is a release from a web page, with no <code>git</code> at
+hand: tick the box, press the button, and wait about six minutes.</p>
+<h2 id="where-each-one-is-built">Where each one is built</h2>
+<p>GitHub lends three kinds of machine: Linux on x86-64, macOS on Apple
+silicon, and Windows on x86-64. Ten builds come out of those three
+because Rust can build for a processor it is not running on:</p>
+<ul>
+<li>The Linux machine builds all five Linux rows. They are linked against
+  <strong>musl</strong>, a small C library that is put into the program itself. A
+  Linux program usually borrows the C library of the system it runs on,
+  and then it only runs on systems with one at least as new. With musl
+  the one <code>zeno</code> runs on every Linux, old or new, whatever is installed.</li>
+<li>The macOS machine builds both macOS rows.</li>
+<li>The Windows machine builds all three Windows rows. Those carry their
+  C library too, so <code>zeno.exe</code> asks for no <code>.dll</code> to be installed.</li>
+</ul>
+<p>How each is linked is in <a href="https://github.com/partham20/zeno-lang/blob/main/.cargo/config.toml"><code>.cargo/config.toml</code></a>.
+Building Zeno for the machine you are on uses none of it.</p>
+<h2 id="checking-a-build-before-it-goes-out">Checking a build before it goes out</h2>
+<p>A build that has never been run is a guess. So each build is run before
+it is packed, by <code>tools/release-check.sh</code>:</p>
+<pre><code>tools/release-check.sh target/release/zeno</code></pre>
+<pre><code>zeno 0.1.0
+27 examples run, and print the same through both engines
+5 tests: 5 passed, 0 failed.
+every example is laid out as `zeno format` lays it out
+`zeno new` makes a program that runs and whose tests pass
+ok</code></pre>
+<p>A build for another processor cannot run on the machine that built it.
+For the ARM builds for Linux the script is given an emulator, a program
+that acts as the other processor:</p>
+<pre><code>tools/release-check.sh target/aarch64-unknown-linux-musl/release/zeno qemu-aarch64</code></pre>
+<p>The Intel build for macOS runs on the Apple silicon machine, because
+macOS translates it. The 32-bit builds run as they are, because a
+64-bit x86 processor runs 32-bit programs.</p>
+<p>One build is not run: Windows for ARM64. GitHub's Windows machine
+cannot run it and there is no emulator there to give it to. It is built
+by the same compiler from the same source as the other two Windows
+builds, which are run, and the release page says that it was not.</p>
+<h2 id="what-a-released-zeno-needs">What a released <code>zeno</code> needs</h2>
+<p>For <code>zeno run</code>, <code>check</code>, <code>test</code>, <code>format</code>, <code>new</code> and <code>lsp</code>: nothing.</p>
+<p><code>zeno build</code> writes C and hands it to the machine's C compiler, so it
+needs one: <code>cc</code>, or whatever <code>CC</code> names. <code>zeno build --llvm</code> needs
+clang. <code>zeno fetch</code> needs git. The release does not bring them,
+because they are different on every machine and most machines that
+build programs have them.</p>
+<p>On Windows the C compiler is MinGW's gcc, named with <code>set CC=gcc</code>,
+and <code>zeno build --llvm</code> uses the clang that comes with Visual Studio.
+The program is <code>hello.exe</code>, run with <code>.\hello</code>.</p>
+<h2 id="line-ends">Line ends</h2>
+<p>Windows ends a line with two characters and everything else with one.
+Zeno reads a program with either. <code>zeno format</code> writes one, on every
+machine, so a file has one layout wherever it was formatted. The
+repository says the same thing to git in <code>.gitattributes</code>, so the
+examples are the same bytes on Windows as on Linux.</p>
+<h2 id="what-the-first-release-found">What the first release found</h2>
+<p>Until this release Zeno had only ever run on one kind of machine:
+Linux on x86-64. Running the tests somewhere else for the first time
+found three things, all about compiled programs.</p>
+<p><strong>A last digit.</strong> <code>examples/sensor.zeno</code> turns Celsius into Fahrenheit
+with <code>c * 1.8 + 32</code>. For 23.5 <code>zeno run</code> prints <code>74.30000000000001</code>,
+and so did the compiled program, on x86-64. On a Mac with Apple
+silicon the compiled program printed <code>74.3</code>.</p>
+<p>Neither is wrong as arithmetic. A float cannot hold 42.3 exactly, so
+the multiplication is rounded, and then the addition is rounded again.
+ARM64 has one instruction that multiplies and adds and rounds once,
+at the end. It is a little faster and a little closer to the true
+answer, and a C compiler is allowed to use it without being asked.
+But then the same program gives two answers, and which one depends on
+the processor. Zeno's promise is that a compiled program prints what
+<code>zeno run</code> prints, so the C that Zeno writes now begins by telling the
+compiler to keep the two steps apart (decision 12.5). The same lines
+mend 32-bit x86, where gcc had the same effect for a different reason.</p>
+<p><strong>A line end.</strong> On Windows a compiled program printed <code>"\r\n"</code> where
+<code>zeno run</code> printed <code>"\n"</code>, because that is what C does there unless
+it is told not to. It is told not to now (decision 12.6).</p>
+<p>Both were found by a test that had always passed, and both were
+mended before the release. A test only tests the machines it is run
+on.</p>
+<h2 id="what-windows-found">What Windows found</h2>
+<p>Of the tests of Zeno itself, 337 of 454 passed the first time they
+were run on Windows. Now all of them do. What was in the way, in the
+order it was found (decisions 12.8 and 12.9):</p>
+<p><strong>Waiting.</strong> <code>zeno build --llvm</code> did not work at all. The runtime
+waited with <code>nanosleep</code> and read the clock with <code>clock_gettime</code>, and
+Microsoft's C library has neither. On Windows it now uses <code>Sleep</code> and
+the performance counter:</p>
+<pre><code>#ifdef _WIN32
+static void zeno_board_sleep(double seconds) {
+    fflush(stdout);
+    Sleep((unsigned long)(seconds * 1000.0 + 0.5));
+}
+#else
+    ... nanosleep ...
+#endif</code></pre>
+<p>Behind that were three smaller things of the same kind: <code>setjmp</code>
+takes a second argument there, the linker does not know <code>-lm</code>, and a
+program is called <code>hello.exe</code>.</p>
+<p><strong>A path.</strong> Windows writes <code>drivers\uart.zeno</code> and takes
+<code>drivers/uart.zeno</code> too. Zeno now writes every path it makes with
+<code>/</code>, so a message is the same on every system, and so that the file
+an editor has open is the file an <code>import</code> finds.</p>
+<p><strong>A word in Tamil.</strong> <code>program.arguments()</code> in a compiled program
+gave <code>?????</code> for <code>தமிழ்</code>, because Windows hands <code>main</code> its words in
+an older encoding. The runtime now asks for them the way Windows
+keeps them.</p>
+<p><strong>Line ends, again.</strong> <code>zeno fetch</code> got a package with <code>\r\n</code> in
+every file, because that is how git is set on Windows. It is told to
+leave them.</p>
+<h2 id="a-trial-on-one-machine">A trial on one machine</h2>
+<p>Each of those was tried on a real Windows machine before it was kept,
+with <code>.github/workflows/trial.yml</code>. On the Actions page choose
+"trial", press "Run workflow" and pick the machine. It builds Zeno,
+runs <code>tools/release-check.sh</code>, compiles three examples both ways and
+runs every test, and writes what it found at the top of the run's
+page. It releases nothing, and costs a quarter of what a run of the
+release workflow does, or less.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build a release <code>zeno</code> for your own machine with <code>cargo build
+   --release</code> and run <code>tools/release-check.sh target/release/zeno</code>.</li>
+<li>Change the <code>print</code> in <code>examples/hello.zeno</code> and run the check again.
+   Which line stops it, and what does it say?</li>
+<li>Run <code>zeno run</code> on a file saved with Windows line ends (most editors
+   can save one). Then run <code>zeno format --check</code> on it, and <code>zeno
+   format</code>, and look at the file again.</li>
+<li>Add the Rust target for another processor (<code>rustup target add
+   aarch64-unknown-linux-musl</code>), build for it with <code>cargo build
+   --release --target aarch64-unknown-linux-musl</code>, and ask <code>file</code> what
+   the result is. What happens if you try to run it?</li>
+<li>Read <code>.github/workflows/release.yml</code> and find the line that stops a
+   release when the tag and <code>Cargo.toml</code> disagree.</li>
+<li><code>print(23.5 * 1.8 + 32)</code> prints <code>74.30000000000001</code>. Work out by
+   hand what the answer "should" be, and then explain to yourself why
+   Zeno prints the longer number on purpose. Build the program with
+   <code>zeno build</code> and look in the <code>.c</code> file for the lines that begin
+   <code>#pragma</code>.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/release.md">docs/release.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/found-by-the-book/"><span>Previous</span>What writing the book found</a><span></span></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-release-is">What a release is</a></li><li><a href="#making-one">Making one</a></li><li><a href="#where-each-one-is-built">Where each one is built</a></li><li><a href="#checking-a-build-before-it-goes-out">Checking a build before it goes out</a></li><li><a href="#what-a-released-zeno-needs">What a released zeno needs</a></li><li><a href="#line-ends">Line ends</a></li><li><a href="#what-the-first-release-found">What the first release found</a></li><li><a href="#what-windows-found">What Windows found</a></li><li><a href="#a-trial-on-one-machine">A trial on one machine</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

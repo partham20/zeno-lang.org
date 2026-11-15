@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>35 Why Zeno Is as It Is · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a class="here" href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="inside.html" rel="previous">← <span class="number">34</span> Inside Zeno</a>
+<a class="next" href="keywords.html" rel="next"><span class="number">A</span> Keywords →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</h2>
+<p>Every chapter of this book has had boxes that give the reason for a
+choice. This last chapter steps back and looks at the choices together:
+the principles they come from, what Zeno took from the languages before
+it, what it left out on purpose, and what version 0.1 does not have
+yet.</p>
+<h3 class="unnumbered" id="unambiguous-and-intuitive"><span
+class="number">35.1</span> Unambiguous and intuitive</h3>
+<p>One sentence was set down at the start, and every feature was held to
+it: <em>the entire language must be unambiguous and intuitive</em>.
+Unambiguous means a line has one reading, and a reader never has to work
+out which of two things a symbol means. Intuitive means the reading it
+has is the one a newcomer would guess. When the two pulled apart, a
+message from the compiler bridged them: <code>elif</code>,
+<code>&amp;&amp;</code>, <code>def</code> and <code>;</code> are each
+met with the Zeno spelling.</p>
+<h3 class="unnumbered" id="the-five-principles"><span
+class="number">35.2</span> The five principles</h3>
+<p>Most decisions fall out of five principles. When two choices are
+otherwise equal, the one higher on the list wins.</p>
+<ol>
+<li><p><strong>Catch the mistake as early as possible.</strong> Before
+the program runs is better than while it runs; while it runs is better
+than a wrong answer. Zeno should never quietly do something the
+programmer did not mean.</p></li>
+<li><p><strong>Read like plain words.</strong> Code is read far more
+often than it is written. A whole word beats a symbol or an
+abbreviation.</p></li>
+<li><p><strong>Punctuation has to earn its place.</strong> A mark stays
+only if removing it would make code harder to read or easier to get
+wrong.</p></li>
+<li><p><strong>One way to say a thing, with one meaning.</strong> An
+operator or keyword should not change meaning with the values it is
+given.</p></li>
+<li><p><strong>Nothing a microcontroller cannot afford.</strong> Every
+feature must compile to small, predictable C with no hidden
+runtime.</p></li>
+</ol>
+<p>Where Python already had a spelling that passed these tests, Zeno
+used it, because more people can read Python than any other
+language.</p>
+<h3 class="unnumbered" id="what-came-from-where"><span
+class="number">35.3</span> What came from where</h3>
+<p>Zeno set out to blend the good parts of the big languages. Here is
+where each part came from:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">From</th>
+<th style="text-align: left;">Zeno took</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Python</td>
+<td
+style="text-align: left;"><code>and</code>/<code>or</code>/<code>not</code>,
+<code>in</code>,
+<code>try</code>/<code>except</code>/<code>raise</code>, f-strings,
+comprehensions, <code>import</code> and <code>from</code>,
+<code>//</code> and <code>**</code>, the precedence of the bit
+operators, chained comparisons</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">C</td>
+<td style="text-align: left;">braces, <code>0x</code> numbers, the bit
+operators, compiling to C itself, integer promotion (without its silent
+cut)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C++</td>
+<td style="text-align: left;">generics checked for each use, compiled to
+a copy for each type</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rust</td>
+<td style="text-align: left;"><code>let</code>, one owner for a value,
+<code>unsafe</code> blocks, the sized number names, enums that carry
+data and a <code>match</code> that must be complete</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Java</td>
+<td style="text-align: left;"><code>interface</code>, and a class that
+says which ones it is</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JavaScript</td>
+<td style="text-align: left;">functions as values with closures, written
+in place</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Go and Swift</td>
+<td style="text-align: left;">no semicolons; Go’s square brackets for
+generics and its one layout for every file</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kotlin and TypeScript</td>
+<td style="text-align: left;">a checker that follows
+<code>if x is not none</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 class="unnumbered" id="what-was-left-out-and-why"><span
+class="number">35.4</span> What was left out, and why</h3>
+<p>As much of Zeno’s design is in what it does not have:</p>
+<dl>
+<dt>No null that can appear anywhere.</dt>
+<dd>
+<p>Only <code>T or none</code> can be <code>none</code>, and it must be
+asked about.</p>
+</dd>
+<dt>No quiet conversions.</dt>
+<dd>
+<p>An <code>int</code> does not become a <code>float</code>, a
+<code>bool</code> or a <code>str</code> by itself, and nothing is true
+or false but a <code>bool</code>.</p>
+</dd>
+<dt>No wrapping arithmetic by default.</dt>
+<dd>
+<p>An overflow is an error; wrapping is a word, <code>wrap</code>.</p>
+</dd>
+<dt>No negative indexes.</dt>
+<dd>
+<p>A position below zero is a mistake, not the other end of the
+list.</p>
+</dd>
+<dt>No inheritance.</dt>
+<dd>
+<p>A class is read in one place; interfaces do what inheritance was
+mostly for.</p>
+</dd>
+<dt>No constructor of your own.</dt>
+<dd>
+<p>The fields are the constructor, and a named function builds what
+needs checking.</p>
+</dd>
+<dt>No exceptions that unwind.</dt>
+<dd>
+<p>Errors are declared with <code>raises</code> and compile to jumps or
+to return values, with no tables and no cost where they are not
+used.</p>
+</dd>
+<dt>No mutable default arguments shared between calls,</dt>
+<dd>
+<p>no <code>is</code> for comparing values, no <code>elif</code>, no
+<code>lambda</code>, no <code>=&gt;</code>.</p>
+</dd>
+</dl>
+<p>Each of these is something a language before Zeno had, and that
+somebody, somewhere, lost an afternoon to.</p>
+<h3 class="unnumbered" id="how-decisions-were-made"><span
+class="number">35.5</span> How decisions were made</h3>
+<p>Every decision in Zeno has a written reason, in the file
+<code>docs/decisions.md</code> of the repository: what was decided, why,
+and what was turned down. A decision made on less than it deserved was
+marked <em>provisional</em>. Before version 0.1 each of the eighty or so
+was read again and given one of three answers: settled, a stated limit
+of 0.1, or changed. A choice with no good reason should not be in the
+language, and if a better reason turns up for the opposite choice, the
+choice should change.</p>
+<p>The decisions are numbered, and the boxes in this book cite them, so
+anyone who wants the full argument for a rule can find it.</p>
+<h3 class="unnumbered" id="what-0.1-does-not-have"><span
+class="number">35.6</span> What 0.1 does not have</h3>
+<p>Every limit is refused today with a message, so each can be added
+later without changing what any program written now means. The main
+ones:</p>
+<ul>
+<li><p><strong>On a board:</strong> reading a pin, an analogue converter
+or a serial port, interrupts and timers. These must be designed against
+real hardware.</p></li>
+<li><p><strong>Numbers:</strong> a <code>u64</code>, units made from
+other units, and reading a file as bytes.</p></li>
+<li><p><strong>Types:</strong> unions other than <code>or none</code>,
+interfaces with type parameters, and bounds on generics.</p></li>
+<li><p><strong>The library:</strong> <code>sort</code> by a function,
+reading a file in pieces, <code>program.exit</code>, random
+numbers.</p></li>
+<li><p><strong>Builds:</strong> compiling for another processor in one
+step, and a few corners such as a named function inside a
+function.</p></li>
+</ul>
+<p><a href="limits.html#app-limits">Appendix G</a> has the full
+list.</p>
+<h3 class="unnumbered" id="the-name"><span class="number">35.7</span>
+The name</h3>
+<p>Zeno is named after Zeno of Elea, whose paradoxes say that Achilles
+can never catch the tortoise: before he reaches it, he must reach
+halfway, and before that, halfway to halfway, for ever. And after the
+quantum Zeno effect, where a system watched closely enough never
+changes. Its motto is <em>every journey is halfway done, forever</em>: a
+fitting name for a language that will always be almost finished, and a
+good thing for a language to be, since it means there is always the next
+half to build.</p>
+<div class="summary">
+<p>Zeno is held to one sentence, unambiguous and intuitive, and five
+principles: catch mistakes early, read like words, earn every mark, one
+way with one meaning, nothing a microcontroller cannot afford. It takes
+from Python, C, C++, Rust, Java, JavaScript, Go, Swift, Kotlin and
+TypeScript, leaves out what has cost programmers most, and writes the
+reason for every choice down.</p>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="inside.html" rel="previous">← <span class="number">34</span> Inside Zeno</a>
+<a class="next" href="keywords.html" rel="next"><span class="number">A</span> Keywords →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

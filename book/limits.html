@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>G What Version 0.1 Leaves Out · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a class="here" href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="error-kinds.html" rel="previous">← <span class="number">F</span> Kinds of Error</a>
+
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</h2>
+<p>Before version 0.1, every decision in <code>docs/decisions.md</code>
+was read again, and thirty were answered "a limit of 0.1": the thing is
+left out of this version, and a program that asks for it is told so.
+Each can be added later without changing what any program written now
+means. The numbers are the decisions, for anyone who wants the
+argument.</p>
+<h3 class="unnumbered" id="on-a-board"><span class="number">G.1</span>
+On a board</h3>
+<dl>
+<dt>Inputs.</dt>
+<dd>
+<p>Reading a pin, an analogue converter or a serial port, and interrupts
+and timers. This was the one item taken off the list for 0.1, because it
+has to be designed against real hardware. The simulated board can write
+pins and registers and read registers.</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="numbers"><span class="number">G.2</span>
+Numbers</h3>
+<dl>
+<dt>No <code>u64</code>.</dt>
+<dd>
+<p>Sized numbers stop at 32 bits, and <code>int</code> is the 64-bit
+signed number (2.8d).</p>
+</dd>
+<dt>A <code>list[u8]</code> takes eight bytes an item.</dt>
+<dd>
+<p>The type is checked as bytes, but stored as whole numbers
+(5.13a).</p>
+</dd>
+<dt>Units made of units.</dt>
+<dd>
+<p>Two quantities cannot be multiplied or divided into a third, as
+<code>V</code> times <code>A</code> into <code>W</code>, and a program
+cannot name a unit of its own (1.15).</p>
+</dd>
+<dt>No bytes from a file.</dt>
+<dd>
+<p>Files are read and written as text (6.16).</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="types"><span class="number">G.3</span>
+Types</h3>
+<dl>
+<dt>Unions.</dt>
+<dd>
+<p>Only <code>or none</code> can follow a type: <code>int or str</code>
+is refused (1.13). An enum that carries data does the same work.</p>
+</dd>
+<dt>Generic interfaces and bounds.</dt>
+<dd>
+<p>An interface cannot take a type parameter, so a generic function
+cannot ask that its <code>T</code> has a method (3.16d).</p>
+</dd>
+<dt>Generic enums.</dt>
+<dd>
+<p>An enum cannot take a type parameter, and a generic function cannot
+be kept as a value (3.16e).</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="the-library"><span class="number">G.4</span>
+The library</h3>
+<dl>
+<dt><code>sort</code> by a function.</dt>
+<dd>
+<p><code>sort</code> uses the natural order of numbers and text
+(6.6).</p>
+</dd>
+<dt>Files in pieces.</dt>
+<dd>
+<p>A file is read whole, or as a list of lines (6.12, 6.20).</p>
+</dd>
+<dt><code>program.exit</code> and the environment.</dt>
+<dd>
+<p>A program ends at its last line or with an uncaught error, and cannot
+read environment variables (6.19).</p>
+</dd>
+<dt>A few functions of mathematics.</dt>
+<dd>
+<p>No <code>hypot</code>, no hyperbolic functions, no <code>gcd</code>
+or <code>clamp</code>, and no random numbers (6.21).</p>
+</dd>
+<dt>A library written in Zeno.</dt>
+<dd>
+<p>The library is built into the compiler, not written in Zeno
+itself.</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="builds"><span class="number">G.5</span>
+Builds</h3>
+<dl>
+<dt>A named function inside a function</dt>
+<dd>
+<p>runs under <code>zeno run</code>, but is refused by a build. Write it
+at the top, or as a function value.</p>
+</dd>
+<dt>One file at a time.</dt>
+<dd>
+<p>A build compiles the whole program at once (7.11).</p>
+</dd>
+<dt>Another processor in one step.</dt>
+<dd>
+<p>A build writes C for the C compiler you name; compiling for a board
+is a second step on the <code>cc</code> line.</p>
+</dd>
+<dt>GCC and Clang built-ins.</dt>
+<dd>
+<p>Checked arithmetic uses them, so the C wants one of those two
+compilers (5.5e).</p>
+</dd>
+<dt><code>setjmp</code> in an ordinary build.</dt>
+<dd>
+<p>An ordinary build uses it for <code>try</code>, and a firmware build
+does not use it at all (5.11l, 12.8).</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="firmware-and-no-collector"><span
+class="number">G.6</span> Firmware and no collector</h3>
+<dl>
+<dt>A raising function as a value.</dt>
+<dd>
+<p>In a firmware build, a function that says <code>raises</code> cannot
+be passed around, because a function type does not say whether it raises
+(5.5l).</p>
+</dd>
+<dt>Lists of maybe.</dt>
+<dd>
+<p><code>list[int or none]</code> is refused with no collector; an enum
+with a case for the missing value is the answer (5.16h).</p>
+</dd>
+<dt>Dicts of lists or objects</dt>
+<dd>
+<p>with no collector (10.14).</p>
+</dd>
+<dt>Some moves of an owned value</dt>
+<dd>
+<p>that have no rule yet for what is left behind (5.8i, 5.15e,
+5.17d).</p>
+</dd>
+<dt><code>raise e</code> with no collector,</dt>
+<dd>
+<p>raising again an error that was caught (5.9d).</p>
+</dd>
+<dt>The pool’s size</dt>
+<dd>
+<p>is set on the C compiler’s line, not in the program (5.9j); spare
+blocks are not filled with a pattern to catch their use (5.9k).</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="interfaces"><span class="number">G.7</span>
+Interfaces</h3>
+<dl>
+<dt>Functions of an interface</dt>
+<dd>
+<p>have no defaults for parameters, no type parameters, and cannot be
+private (10.5).</p>
+</dd>
+<dt>An owned class as an interface,</dt>
+<dd>
+<p>and an interface with type parameters of its own (10.10).</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="tools"><span class="number">G.8</span>
+Tools</h3>
+<dl>
+<dt>Hover on a field.</dt>
+<dd>
+<p>The language server shows the type of a name, but not yet of a field
+(9.11).</p>
+</dd>
+<dt>Choosing tests.</dt>
+<dd>
+<p><code>zeno test</code> runs every test in the files it is given, and
+cannot run one by name or test a compiled program. <code>assert</code>
+takes no message, and is only for tests (10.21).</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="not-limits"><span class="number">G.9</span>
+Not limits</h3>
+<p>Three things are not on this list, because they are decided: Zeno has
+no inheritance, no second way to write a function, and no second name
+for a module. The reasons are in <a href="design.html#ch-design">Why
+Zeno Is as It Is</a>.</p>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="error-kinds.html" rel="previous">← <span class="number">F</span> Kinds of Error</a>
+
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

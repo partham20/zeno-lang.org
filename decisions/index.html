@@ -28,7 +28,7 @@
 <div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
 <header class="nav">
   <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
-  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 322 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 341 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -5494,7 +5494,7 @@ of shapes: a <code>Square</code> could be stored into it through the other name.
 <p>With no type to go by, all the values are one type, and a mix says
 so. A message for a number names the fix:</p>
 <pre class="out"><code>error: the values of this dict are float here, but this one is int.
-Write the number with a decimal point, as in `1.0`</code></pre>
+Write a number with a decimal point, as in `1.0`, and convert a value with `float( )`</code></pre>
 <h3 id="1014-with-no-collector-a-dict-holds-plain-values-was-provisional-115">10.14 With no collector a dict holds plain values <em>(was provisional: 11.5)</em></h3>
 <pre class="out"><code>error: with no collector a value of a dict is an int, a float, a bool or
 a str for now, and this is list[int]. Keep those in a list, and the
@@ -6530,6 +6530,377 @@ with type parameters and the bounds that come with them, a file read
 in pieces, and a library written in Zeno. Each can be added without
 changing what a program written today means, because each is refused
 today and not quietly given some other meaning.</p>
+<hr />
+<h2 id="12-releases">12. Releases</h2>
+<p>The walkthrough is <a href="/docs/release/"><code>release.md</code></a>.</p>
+<h3 id="121-a-release-is-a-tag-and-a-machine-builds-it">12.1 A release is a tag, and a machine builds it</h3>
+<pre><code>git tag v0.1.0
+git push origin v0.1.0</code></pre>
+<p>Pushing a tag starts <code>.github/workflows/release.yml</code>, which runs the
+tests, builds <code>zeno</code> for every kind of machine, checks each build,
+packs it and makes the release. Nobody builds a released <code>zeno</code> by
+hand.</p>
+<p><strong>Why.</strong> A release built by hand depends on what was on that machine
+that day, and nobody can say afterwards what that was. Built from a
+tag, a release is exactly the source at that tag, built the same way
+each time, and the file that says how is in the repository beside the
+source.</p>
+<p><strong>The tag and <code>Cargo.toml</code> must agree.</strong> The tag is <code>v</code> and the
+version in <code>Cargo.toml</code>, and the workflow stops if they differ.
+Otherwise a <code>zeno</code> that prints <code>0.1.0</code> could be on a page that says
+<code>0.2.0</code>, and the first question about any problem ("which version?")
+would have two answers.</p>
+<p><strong>All or nothing.</strong> If the build for one kind of machine fails, no
+release is made. A table with a hole in it tells somebody with that
+machine that Zeno is not for them, when the truth is that a build
+broke.</p>
+<p><strong>Started by hand, it releases nothing, unless asked.</strong> The same
+workflow can be started from the Actions page. It then builds and
+checks everything and stops, which is how a change to the workflow is
+tried. With the "publish" box ticked it goes on to make the release,
+and the tag with it, from the version in <code>Cargo.toml</code>. The box is
+there because a tag cannot be pushed from everywhere the source can
+be, and a release should not wait for one machine. It is off unless
+ticked, so a trial can never turn into a release by accident.</p>
+<p><strong>Turned down.</strong> Building everything on one Linux machine: macOS
+programs cannot be linked there without Apple's files, and nothing
+would have been run on macOS or Windows. A <code>curl ... | sh</code> installer,
+and packages for apt, Homebrew and winget: each is a thing to keep
+working, and one file to unpack is enough for 0.1.</p>
+<h3 id="122-ten-kinds-of-machine">12.2 Ten kinds of machine</h3>
+<p>Linux on x86-64, ARM64, 32-bit x86, ARMv7 and ARMv6. macOS on Apple
+silicon and Intel. Windows on x86-64, 32-bit x86 and ARM64.</p>
+<p><strong>The rule.</strong> A kind of machine is in the list if Rust builds for it
+with nothing more than Rust brings, and people have it on a desk. The
+two 32-bit ARM builds are there for the Raspberry Pi, which is where
+firmware people are most likely to meet Linux on ARM.</p>
+<p><strong>Left out.</strong> Linux on RISC-V: Rust needs a separate C toolchain to
+link it, and no build would have been run. The BSDs, for the same
+reason. Both can build Zeno from source with <code>cargo build --release</code>,
+because Zeno depends on nothing but Rust.</p>
+<p><strong>The names say the system and the processor.</strong> The file is
+<code>zeno-0.1.0-linux-arm64.tar.gz</code>, not
+<code>zeno-0.1.0-aarch64-unknown-linux-musl.tar.gz</code>. The second is Rust's
+name for the same thing, and only means something to a person who
+already knows Rust. <em>(Principle: unambiguous and intuitive.)</em></p>
+<h3 id="123-a-released-zeno-is-one-file-that-needs-nothing">12.3 A released <code>zeno</code> is one file that needs nothing</h3>
+<p>The Linux builds are linked against musl, a C library that is put
+into the program. The Windows builds carry Microsoft's C library the
+same way.</p>
+<p><strong>Why.</strong> A Linux program normally borrows the C library of the system
+it runs on, and runs only where that library is at least as new as
+the one it was built against. A <code>zeno</code> built on this year's Ubuntu
+would not start on a Raspberry Pi with a system from three years ago.
+With the library inside it, one file runs on every Linux. On Windows
+the same choice means no "install the Visual C++ runtime" before the
+first run.</p>
+<p><strong>What it costs.</strong> A few hundred kilobytes in each file.</p>
+<p><strong>The names for a debugger are taken out</strong> (<code>strip = true</code> in
+<code>Cargo.toml</code>), which makes each file about a seventh smaller. A report
+of a crash in <code>zeno</code> itself then has no function names in it. Zeno's
+own mistakes are reported as messages, not crashes, so this costs
+little.</p>
+<h3 id="124-a-build-is-run-before-it-is-released">12.4 A build is run before it is released</h3>
+<p><code>tools/release-check.sh</code> runs each build: the version it says, every
+example through both engines, the tests in the examples, the
+formatter, and <code>zeno new</code>. The ARM builds for Linux run under an
+emulator. The Intel build for macOS runs under Apple's translation.</p>
+<p><strong>Why.</strong> "It compiled" says that the compiler was content. It does
+not say that the program starts. The check is small on purpose: it
+needs no C compiler and takes seconds, so it can run ten times.</p>
+<p><strong>The one build that is not run</strong> is Windows on ARM64: there is no
+machine to run it on and no emulator there. It is released anyway,
+because the same source built by the same compiler for the other two
+Windows machines does run, and the release page says plainly that
+this one was not. Leaving it out would help nobody who has such a
+machine, and saying nothing would be claiming a check that was not
+made.</p>
+<p><strong>The whole test suite</strong> must pass on Linux before anything is
+released. It is also run on macOS and on Windows, where a failure is
+shown and does not stop the release: those runs are there to find out
+what is different on those systems. For 0.1.0 all the tests pass on
+macOS, and what Windows says is in 12.7. On macOS three examples are
+also compiled through C and through LLVM and must print what <code>zeno
+run</code> prints.</p>
+<h3 id="125-a-compiled-program-rounds-as-zeno-run-does">12.5 A compiled program rounds as <code>zeno run</code> does</h3>
+<p>Making the first release found a program that printed
+<code>74.30000000000001</code> with <code>zeno run</code> and <code>74.3</code> when compiled on a
+Mac. The line was <code>c * 1.8 + 32</code>.</p>
+<p>Some processors have one instruction for "multiply, then add" that
+rounds once instead of twice. It is faster, and now and then the last
+digit is different. ARM64 has it, and a C compiler is allowed to use
+it without being asked. On 32-bit x86, gcc does a similar thing for
+another reason: it uses the old float instructions, which work to
+more digits than a float holds.</p>
+<p><strong>The decision.</strong> The C that Zeno writes tells the C compiler not to
+do either. Every float operation is one operation, rounded once, on
+every machine, as it is in <code>zeno run</code>.</p>
+<p><strong>Why.</strong> "A compiled program prints what <code>zeno run</code> prints" is the
+promise the tests are built on, and a program that gives one answer
+on the desk and another on the board is exactly what Zeno is for
+avoiding. The speed given up is small, and code that needs the fused
+instruction can ask for it by name when Zeno has a function for it.</p>
+<p><strong>Where it is said.</strong> In the C itself (two <code>#pragma</code> lines at the top
+of the runtime), not in a flag that <code>zeno build</code> passes. A firmware
+build is usually compiled by the board's own toolchain from the C
+that Zeno wrote, with flags Zeno never sees. What is written in the
+file goes wherever the file goes.</p>
+<p><strong>A limit of 0.1.</strong> clang on 32-bit x86 has no such line to be given,
+and on the systems where it is set up for processors older than 2001
+(Debian and Ubuntu) it needs <code>-msse2</code>. gcc on the same machine is
+told by the file.</p>
+<h3 id="126-a-compiled-program-on-windows-prints-n">12.6 A compiled program on Windows prints <code>\n</code></h3>
+<p>On Windows a C program that prints <code>"\n"</code> writes <code>"\r\n"</code>, unless it
+asks for its bytes to be left alone. <code>zeno run</code> writes <code>"\n"</code> on
+every system. So a compiled program asks, before <code>main</code> starts.</p>
+<p><strong>Why.</strong> The same promise as 12.5. A program whose output is
+compared, counted or sent down a wire should give the same bytes
+however it was run. A Windows terminal shows both the same way.</p>
+<p><strong>Reading is unchanged.</strong> A program in a file with Windows line ends
+runs (the lexer skips <code>"\r"</code>), <code>lines()</code> and <code>input()</code> take a
+<code>"\r\n"</code> as one line end, and <code>zeno format</code> writes <code>"\n"</code>, so a file
+has one layout on every system.</p>
+<h3 id="127-what-windows-does-not-have-yet">12.7 What Windows does not have yet</h3>
+<p><code>zeno.exe</code> is checked like every other build, and <code>zeno build</code> makes
+programs that print what <code>zeno run</code> prints, through C with MinGW's
+gcc and through LLVM with the clang that comes with Visual Studio
+(three examples are compared each way). These are the limits:</p>
+<ul>
+<li><code>zeno build</code> needs a C compiler that takes gcc's options.
+  Microsoft's own compiler (<code>cl</code>) takes different ones and has not
+  been tried.</li>
+<li>A path in a Zeno program or a <code>zeno.package</code> is text, where <code>\</code>
+  starts an escape, so it is written with <code>/</code>, which Windows accepts.</li>
+<li>What a compiled program prints to a Windows console has not been
+  looked at. The bytes are UTF-8, as they are into a file or another
+  program, where they are the same as <code>zeno run</code> gives. A console set
+  to an older code page may show a word in Tamil wrongly. No machine
+  at hand has a Windows console to look at, and a mend that cannot be
+  tried is not one to put in.</li>
+</ul>
+<p>The first release (0.1.0) had two more, both mended since: 12.8 and
+12.9.</p>
+<h3 id="128-a-compiled-program-on-windows-asks-windows">12.8 A compiled program on Windows asks Windows</h3>
+<p>The first trial on Windows found that <code>zeno build --llvm</code> did not
+work there. Four things were in the way, and each is a place where C
+on Windows is not C elsewhere.</p>
+<p><strong>Waiting and the clock.</strong> The runtime used <code>nanosleep</code> and
+<code>clock_gettime</code>. Linux, macOS and MinGW have them. Microsoft's C
+library does not. On Windows the runtime now calls <code>Sleep</code> and the
+performance counter, which every C compiler there can reach.</p>
+<p><strong><code>setjmp</code>.</strong> A <code>try</code> is built on it. Microsoft's takes a second
+thing, the frame of the calling function, which its <code>longjmp</code> uses
+to run clean-up code on the way back. A C compiler adds it unasked,
+because in C <code>setjmp</code> is a macro. LLVM IR has no macros, so on
+Windows the IR that Zeno writes passes <code>null</code> there, which asks for
+a plain jump, as on every other system.</p>
+<p><strong><code>-lm</code> and <code>.exe</code>.</strong> The maths library is part of the C library on
+Windows, and Visual Studio's linker stops when asked for it. And a
+program there is called <code>hello.exe</code>, which gcc adds and clang does
+not. Zeno leaves out the first and writes the second.</p>
+<p><strong>Arguments.</strong> <code>main</code> is given its words through the machine's code
+page, so a word in Tamil arrived as <code>?????</code>. The runtime asks Windows
+for the command line as Windows keeps it and turns each word into
+UTF-8, in a buffer on the stack: a build with no collector has no
+heap on Windows either.</p>
+<p><strong>Why this way.</strong> One runtime, with the Windows calls behind
+<code>#ifdef _WIN32</code>, for both compilers. The three functions are declared
+by hand in the runtime and <code>&lt;windows.h&gt;</code> is not read: it is very
+large and defines thousands of names, <code>min</code> and <code>max</code> among them,
+that a program's own names could meet.</p>
+<p><strong>Turned down.</strong> Using MinGW's <code>nanosleep</code> where there is one and
+<code>Sleep</code> otherwise: two ways to wait on one system, and only one of
+them tried by any given build. Telling people to use MinGW's clang:
+the clang most Windows machines have is the one Visual Studio brings.</p>
+<p><strong>Tried how.</strong> Here, with a Windows compiler and an emulator. Then
+on a Windows machine (12.10), where every test of Zeno now passes.</p>
+<h3 id="129-a-path-zeno-makes-is-written-with">12.9 A path Zeno makes is written with <code>/</code></h3>
+<p><code>import drivers.uart</code> reads <code>drivers/uart.zeno</code>. On Windows that was
+<code>drivers\uart.zeno</code>, since Windows puts <code>\</code> between the parts of a
+path, and takes <code>/</code> as well.</p>
+<p><strong>The decision.</strong> Every path Zeno puts together is written with <code>/</code>,
+on every system: in a message, and wherever a path is kept as text
+(<code>modules::shown</code>). A path the person typed is shown as they typed
+it.</p>
+<p><strong>Why.</strong> Three things went wrong with two ways. A path in a
+<code>zeno.package</code> is written with <code>/</code> (12.7), so joined the Windows way
+it came out as <code>lib/filters\zeno.package</code>. An editor names a file
+with <code>/</code> on every system, so the file it has open and the file an
+<code>import</code> asks for were two names for one file, and the editor's text
+was not used. And every message with a path in it had two spellings,
+one of which no test saw. It is the reasoning of 12.6: one way, on
+every system.</p>
+<p><strong>Turned down.</strong> Writing <code>\</code> throughout on Windows. It is what
+Windows people are used to, but the <code>zeno.package</code> would have to be
+turned round too, and <code>\</code> in Zeno text is an escape.</p>
+<p><strong>With it.</strong> <code>zeno fetch</code> tells git to leave line ends alone, so a
+fetched package is the same bytes on every machine. Git on Windows is
+usually set to write <code>\r\n</code>.</p>
+<h3 id="1210-a-trial-on-one-machine">12.10 A trial on one machine</h3>
+<p><code>.github/workflows/trial.yml</code> builds Zeno on one kind of machine,
+chosen when it is started, compiles three examples through C and
+through LLVM, and runs every test. It writes what it found on the
+summary page of the run. Nothing is packed or released.</p>
+<p><strong>Why.</strong> A mend for Windows can only be seen to work on Windows. The
+release workflow shows it too, on ten machines, and a month of
+GitHub's free time is about twenty such runs. A trial on Windows
+costs a quarter of one, and on Linux less.</p>
+<hr />
+<h2 id="13-what-writing-the-book-found">13. What writing the book found</h2>
+<p>The Zeno Book runs every sample it prints through the real compiler.
+Writing it was the first time the whole language was used by somebody
+who was trying to explain it and not to build it, and it found places
+where the checker let through what the rest of Zeno then refused, or
+said less than it knew. Each is a place where a program was accepted
+and then failed, which is the thing the checker is for preventing.</p>
+<h3 id="131-zeno-check-no-collector-says-what-the-build-would-say">13.1 <code>zeno check --no-collector</code> says what the build would say</h3>
+<p><code>var readings: list[int or none] = [1, none, 3]</code> passed <code>zeno check
+--no-collector</code> and was refused by <code>zeno build --no-collector</code>.</p>
+<p>Most of what a build with no collector refuses, the checker finds. A
+few things only the compiler meets, as it works out where each value
+is kept. <code>check --no-collector</code> now runs the compiler as well and
+throws the C away.</p>
+<p><strong>Why.</strong> "No errors found" from a command named after a build has to
+mean that the build goes through. Otherwise the command answers a
+question nobody asked.</p>
+<p><strong>Turned down.</strong> Teaching the checker each of the compiler's
+refusals: two lists of the same rules, which would drift apart again.</p>
+<h3 id="132-none-is-tested-for-with-is-and-only-where-it-can-be-none">13.2 <code>none</code> is tested for with <code>is</code>, and only where it can be <code>none</code></h3>
+<pre><code class="zeno">let x: int or none = find(xs, 3)
+if x is none { ... }       # the way to ask
+if x == none { ... }       # refused: write `is none`
+let n = 3
+if n is none { ... }       # refused: an int is never `none`</code></pre>
+<p>Both were accepted before. <code>x == none</code> gave the same answer as <code>x is
+none</code>, so there were two ways to ask one question. <code>n is none</code> gave
+<code>false</code> every time, which is a mistake that looks like a test.</p>
+<p><strong>Why <code>is</code> only.</strong> <code>==</code> compares two values, and <code>none</code> is the lack
+of one. Decision 1.13 says absence is tested with <code>is none</code>, and the
+parser already refuses <code>is</code> in front of anything but <code>none</code>. The
+other half belongs with it: <code>none</code> is tested with <code>is</code> and nothing
+else. Two values that may each be <code>none</code>
+are still compared with <code>==</code>, because that compares values.</p>
+<p><strong>Why <code>n is none</code> is an error.</strong> It is the rule of 2.5a: a comparison
+whose answer is already known is a mistake.</p>
+<p><strong>A name that was narrowed may be tested again.</strong> After <code>if x is not
+none</code>, or after <code>x = 3</code>, the checker knows <code>x</code> is there. <code>x is none</code>
+is then also always false, but it is not refused: the name was
+declared <code>int or none</code>, and a second test is caution, not a mistake.
+The rule looks at the type the name was declared with.</p>
+<h3 id="133-a-field-of-an-enum-case-is-taken-out-with-match">13.3 A field of an enum case is taken out with <code>match</code></h3>
+<pre><code class="zeno">enum Shape {
+    Circle(radius: float)
+    Square(side: float)
+}
+let shape = Circle(2.0)
+print(shape.radius)        # refused</code></pre>
+<p>This was accepted outside strict mode and failed when the program
+ran, if the value was a <code>Square</code>. It is refused now, in every mode,
+and the message writes the <code>match</code> out:</p>
+<pre><code>`radius` belongs to the case `Circle`, and which case a `Shape` is, is
+only known inside a `match`. Take it out there:
+`match ... { case Circle(radius) { ... } }`</code></pre>
+<p><strong>Why.</strong> An enum value is one of its cases, and <code>match</code> is where the
+program finds out which. A field read outside it is a guess about the
+case that nothing checks. There is one way to open an enum value now,
+and it is the one that cannot be wrong.</p>
+<h3 id="134-a-const-is-written-from-what-the-compiler-can-work-out">13.4 A <code>const</code> is written from what the compiler can work out</h3>
+<p>Decision 1.7 says a <code>const</code> is fixed when the program is built. The
+checker treated it as a <code>let</code>, so <code>const N = len(name)</code> and <code>const P
+= k</code> for a <code>var k</code> were accepted.</p>
+<p>A <code>const</code> is now written from: numbers, text, <code>true</code> and <code>false</code>,
+quantities, other <code>const</code>s, a case of an enum that carries nothing, a
+constant of a module (<code>math.pi</code>), operators on those, a list or a
+dict of them, and the conversions between kinds of number (<code>u8(n)</code>,
+<code>u8.wrap(n)</code>, <code>int(x)</code>, <code>float(n)</code>). Anything else is refused, with
+<code>let</code> named as the word for a value worked out once while the program
+runs.</p>
+<p><strong>Why a list, when the list can still be added to (3.9).</strong> A table of
+numbers is the commonest <code>const</code> in firmware, and what <code>const</code>
+promises is where the value comes from, not that it never changes.
+A list nobody may change is still the open question of 3.9.</p>
+<p><strong>Why no calls.</strong> <code>len("abc")</code> could be worked out by the compiler,
+and so could any function of constants, with enough work. The rule
+that fits in a sentence is "no calls, except to change the kind of a
+number", and nothing has needed more.</p>
+<h3 id="135-a-parameter-with-a-default-comes-after-those-without">13.5 A parameter with a default comes after those without</h3>
+<p><code>function f(a = 1, b)</code> is refused where it is declared.</p>
+<p><strong>Why.</strong> A call gives its arguments in order, so <code>f(2)</code> gives <code>a</code> and
+leaves <code>b</code> without a value: the default of <code>a</code> could only ever be
+used by naming every argument after it. It is the rule of Python and
+C++, and for the same reason.</p>
+<p><strong>Not for the fields of a class.</strong> A class lists what it holds in the
+order it holds it, and objects with several fields are usually made
+with names. <code>class P { x: int = 0  y: int }</code> stays.</p>
+<p><strong>One mistake, one message.</strong> <code>f(b=5, 1)</code> used to give three errors:
+the order, "<code>b</code> was given twice", and "needs a value for <code>a</code>". The
+second and third came from counting a plain argument that was in the
+wrong place. After the first, nothing more is said about that call.</p>
+<h3 id="136-messages-that-say-what-zeno-writes">13.6 Messages that say what Zeno writes</h3>
+<ul>
+<li><code>None</code>, <code>null</code>, <code>nil</code>, <code>NULL</code>, <code>nullptr</code> and <code>undefined</code> are "not
+  defined. Zeno spells it <code>none</code>", and <code>True</code> and <code>False</code> the same
+  for <code>true</code> and <code>false</code>. A program may still use those names for
+  things of its own: the hint is only given when the name means
+  nothing.</li>
+<li><code>elif</code> at the start of a line gets "Zeno spells <code>elif</code> as <code>else
+  if</code>". It did only after a <code>}</code> on the same line.</li>
+<li>A whole number where a float goes: "Write a number with a decimal
+  point, as in <code>1.0</code>, and convert a value with <code>float( )</code>". Before,
+  only the first half was said, also when the number was in a
+  variable and had no decimal point to add.</li>
+<li><code>min</code>, <code>max</code> and <code>sum</code> on quantities say that they work on plain
+  numbers, and that quantities are compared with <code>&lt;</code> and <code>&gt;</code> and
+  added with <code>+</code>. They do not take quantities yet (a limit of 0.1).</li>
+</ul>
+<h3 id="137-a-whole-quantity-prints-without-0">13.7 A whole quantity prints without <code>.0</code></h3>
+<p><code>print(3.0)</code> is <code>3.0</code>, and <code>print(3 V)</code> is <code>3 V</code>, although a quantity
+is a float inside.</p>
+<p><strong>Settled as it is.</strong> The <code>.0</code> of a float is there to say "this is a
+float and not an int", because both exist and behave differently. A
+quantity has only one kind, so there is nothing to tell apart, and
+<code>3 V</code> is how a person writes three volts. A format gives the decimals
+when they are wanted: <code>f"{supply:.1f}"</code> is <code>3.0 V</code> (10.29).</p>
+<h3 id="138-found-and-left-for-later">13.8 Found and left for later</h3>
+<p>(Three more were on this list at first, and are in 13.9.)</p>
+<ul>
+<li>For <code>let x: str = first([1])</code> the error is reported at the
+  argument (<code>items</code> should be <code>list[str]</code>), not at <code>x</code>. A list that
+  is written out waits for the place to say what kind of number it
+  holds (3.16b, so that <code>[1, 2]</code> can be a <code>list[u8]</code>), and here the
+  place said <code>str</code>. The message is true and in the wrong order.</li>
+<li><code>Box([])</code> outside strict mode has a <code>T</code> that nothing says, and
+  becomes a value of unknown type without a word. Strict mode asks
+  for the type.</li>
+<li><code>min</code>, <code>max</code> and <code>sum</code> do not take quantities. The message says
+  what does (13.6).</li>
+</ul>
+<h3 id="139-three-messages-that-were-left-and-then-were-not">13.9 Three messages that were left, and then were not</h3>
+<p>13.8 first listed five things. Three were mended a few hours later,
+once the release was no longer waiting on them.</p>
+<p><strong>A field that may be <code>none</code>.</strong> After <code>if user.name is not none {</code>,
+<code>user.name + "!"</code> is still refused: a field belongs to an object that
+any call may reach and change, so a test of it is not remembered
+(3.12 is about what a test says of a variable). The message said
+"Check for <code>none</code> first", to somebody who just had. Now it says what
+to do:</p>
+<pre><code>`name` is a field, and a field can be given a new value between a
+test and its use, so a test of it is not remembered. Copy it into a
+variable with `let`, and test that for `none`</code></pre>
+<p><strong>Why not remember the test.</strong> It would be right only until the
+first call between the test and the use, and the checker would have
+to prove there is none. A variable of the function's own cannot be
+changed by anybody else, which is the whole reason a test of one is
+remembered.</p>
+<p><strong>Two enums with a case of one name.</strong> <code>Dot</code> in <code>Shape</code> and <code>Dot</code> in
+<code>Mark</code> gave "<code>Dot</code> is already declared in this block", which is true
+of a <code>let</code> and says nothing about enums. Now: "<code>Dot</code> is already a
+case of the enum <code>Shape</code>. A case is written by its name alone, so two
+enums in one file cannot both have a <code>Dot</code>".</p>
+<p><strong>A method without <code>self</code>.</strong> It was shown on the line of the class,
+with every other mistake in a method's first line. A function in the
+syntax tree now knows where it is written (<code>ast::Function::span</code>),
+and the mistake is shown on the method's own line.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
@@ -6543,7 +6914,7 @@ today and not quietly given some other meaning.</p>
   <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
   <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
-    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
   </div>

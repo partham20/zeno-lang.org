@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>31 Firmware · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a class="here" href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="ownership.html" rel="previous">← <span class="number">30</span> Ownership</a>
+<a class="next" href="no-collector.html" rel="next"><span class="number">32</span> Building with No Collector →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-firmware"><span
+class="number">31</span> Firmware</h2>
+<p>Firmware is a program that runs on a board with no operating system
+under it: it starts when the power comes on and runs until it goes off.
+It is held to rules a desktop program is not, and often to a written
+coding standard such as MISRA C. <code>zeno build --firmware</code>
+writes C for that world. This chapter is about what it changes, how to
+put a real board under the program, and what it does not yet claim.</p>
+<h3 class="unnumbered" id="errors-as-values"><span
+class="number">31.1</span> Errors as values</h3>
+<p>An ordinary build compiles <code>try</code> with C’s
+<code>setjmp</code> and <code>longjmp</code>: a <code>raise</code> jumps
+straight back to the <code>try</code>, out of however many functions are
+in between. That is cheap, and it is exactly what standards for
+safety-critical firmware forbid. MISRA C bans
+<code>&lt;setjmp.h&gt;</code> outright, because the jump skips what the
+functions in between still meant to do, can leave local variables with
+no defined value, and hides paths from the tools that measure stack
+depth and test coverage.</p>
+<p>A firmware build carries errors as ordinary return values instead.
+The Zeno does not change:</p>
+<div class="zenofile">
+<p>speed.zeno</p>
+</div>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> parse_speed(text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> n = <span class="dt">int</span>(text)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &lt; <span class="dv">0</span> <span class="kw">or</span> n &gt; <span class="dv">100</span> {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">f&quot;a speed is 0 to 100, and {n} is not&quot;</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> text <span class="kw">in</span> [<span class="st">&quot;40&quot;</span>, <span class="st">&quot;fast&quot;</span>, <span class="st">&quot;250&quot;</span>] {</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;speed&quot;</span>, parse_speed(text))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;refused:&quot;</span>, e.message)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --firmware speed.zeno
+Wrote speed.c
+Built speed. Run it with ./speed
+$ ./speed
+speed 40
+refused: cannot turn &quot;fast&quot; into an int
+refused: a speed is 0 to 100, and 250 is not
+$ grep setjmp speed.c | wc -l
+0</code></pre>
+<p>It prints what <code>zeno run</code> prints, and there is no
+<code>setjmp</code> in the C (<code>grep</code> found 0 lines). Here is
+what <code>parse_speed</code> became:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --firmware speed.zeno &gt; /dev/null
+$ grep -A11 &quot;^static bool z_parse_speed.*{$&quot; speed.c
+static bool z_parse_speed(const char *z2_text, int64_t *zeno_result) {
+    int64_t t4;
+    if (!zeno_parse_int(z2_text, 2, 13, &amp;t4)) return false;
+    int64_t z_n = t4;
+    if ((z_n &lt; 0) || (z_n &gt; 100)) {
+        zeno_note(zeno_error_new(&quot;ValueError&quot;, zeno_join(3, &quot;a speed is 0 to 100, and &quot;, zeno_str_int(z_n), &quot; is not&quot;), NULL), 4, 9);
+        return false;
+    }
+    *zeno_result = z_n;
+    return true;
+}</code></pre>
+<p>Three things changed. The function returns <code>true</code> when it
+worked and <code>false</code> when it raised, and its answer goes out
+through one more parameter. A <code>raise</code> notes the error, with
+its line and column, and returns <code>false</code>. And a call to
+something that can raise, <code>int(text)</code> here, is followed at
+once by a test. Only the functions that say <code>raises</code> are
+compiled this way; the rest are plain C, with no tests after calls to
+them. That is why <code>raises</code> must be written in a build (<a
+href="errors.html#ch-errors">When Things Go Wrong</a>).</p>
+<h3 class="unnumbered" id="faults"><span class="number">31.2</span>
+Faults</h3>
+<p>Zeno has two sorts of error that <code>zeno run</code> can catch:</p>
+<ul>
+<li><p>errors <strong>the program raises itself</strong>:
+<code>raise</code>, and <code>int</code> or <code>float</code> of
+text;</p></li>
+<li><p>errors <strong>the runtime finds</strong>: a division by zero, a
+position past the end, a key that is not there, an overflow,
+<code>pop</code> on an empty list.</p></li>
+</ul>
+<p>A firmware build carries the first sort as values. The second sort is
+a <em>fault</em>: the program stops there, with the message
+<code>zeno run</code> gives for an uncaught error, and no
+<code>except</code> sees it. To carry a division by zero as a value,
+every function would have to be one that can fail, and nearly every line
+would need a test after it. The firmware answer is to test first:</p>
+<div class="sourceCode" id="cb4" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> divisor != <span class="dv">0</span> {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    rate = total // divisor</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>The compiler does not leave this to be found when the board resets. A
+<code>try</code> that hopes to catch a fault is refused before anything
+is built:</p>
+<div class="zenofile">
+<p>divide.zeno</p>
+</div>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">4</span>, <span class="dv">0</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> n <span class="kw">in</span> readings {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        print(<span class="dv">100</span> // n)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ZeroDivisionError {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;no reading&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --firmware divide.zeno
+error: nothing in this `try` can be caught. In a firmware build, an error the program raises itself (and `int` or `float` of text) travels as a value and can be caught. A division by zero, a bad index, a key that is not in a dict or an overflow stops the program. Test for it before it happens, or build without `--firmware`
+ --&gt; divide.zeno:3:5
+  |
+3 |     try {
+  |     ^</code></pre>
+<p>A <code>FileError</code> is the exception to the exception: no check
+the program could make rules out a missing file, so it is always a
+value, and can always be caught.</p>
+<div class="why">
+<p>The line between the two sorts is the line between what the program
+can check beforehand and what it cannot. A bad index can be ruled out by
+testing the length; a missing file cannot. Firmware held to a standard
+is expected to test, and the build makes the cases it did not test
+visible. (Decisions 4.1 and 5.5l.)</p>
+</div>
+<h3 class="unnumbered" id="a-real-board-underneath-1"><span
+class="number">31.3</span> A real board underneath</h3>
+<p>The board module meets the hardware in four C functions (<a
+href="board.html#ch-board">The Board</a>). For a real board, write
+them in a header over the vendor’s library, and tell the C compiler
+where it is with <code>-DZENO_BOARD</code>:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --firmware --no-collector blink.zeno
+$ cc -O2 -DZENO_BOARD=&#39;&quot;my_board.h&quot;&#39; -o blink blink.c -lm</code></pre>
+<p>With ST’s HAL for an STM32, where the LED of a Nucleo board is on
+port A pin 5, the header would look like this. It is a sketch, and has
+not been run on hardware:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>#define ZENO_PINS 16
+
+static void zeno_board_write(int pin, bool level) {
+    if (pin == ZENO_LED) pin = 5;
+    HAL_GPIO_WritePin(GPIOA, (uint16_t)(1u &lt;&lt; pin),
+                      level ? GPIO_PIN_SET : GPIO_PIN_RESET);
+}
+static bool zeno_board_read(int pin) {
+    if (pin == ZENO_LED) pin = 5;
+    return HAL_GPIO_ReadPin(GPIOA, (uint16_t)(1u &lt;&lt; pin)) == GPIO_PIN_SET;
+}
+static void zeno_board_sleep(double seconds) {
+    HAL_Delay((uint32_t)(seconds * 1000.0));
+}
+static double zeno_board_now(void) { return (double)HAL_GetTick(); }</code></pre>
+<p>To the Zeno program the LED is always pin 13, and the board is free
+to wire that number to wherever its LED really is. The same flag works
+for an LLVM build, on the <code>clang</code> line.</p>
+<p>A board whose clock moves only when the program sleeps makes a
+program that waits run in no time. That is how firmware is tested on a
+desk, and Zeno’s own tests do exactly that.</p>
+<h3 class="unnumbered" id="what-the-c-of-blink-looks-like"><span
+class="number">31.4</span> What the C of blink looks like</h3>
+<p>All of <code>blink</code>’s program, in a firmware build with no
+collector, is three lines of C:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>while (true) {
+    zeno_pin_toggle(ZENO_LED);
+    zeno_sleep((500.0 / 1000.0));
+}</code></pre>
+<p>A pin is a number, <code>500 ms</code> has become seconds, and
+nothing in it takes memory or can raise.</p>
+<h3 class="unnumbered" id="what-this-does-not-claim"><span
+class="number">31.5</span> What this does not claim</h3>
+<p>Removing <code>setjmp</code> removes one obstacle to MISRA, not all
+of them. The C that a firmware build writes in version 0.1 still uses
+variable argument lists in the runtime, calls <code>printf</code> and
+<code>exit</code>, and uses GCC and Clang built-ins for checked
+arithmetic. Taking memory from the heap, which MISRA also bans, is
+answered by <code>--no-collector</code>, in the next chapter. None of
+these is hidden, and each is a later piece of work. A function that can
+raise cannot yet be passed around as a value in a firmware build,
+because a function type does not say whether it raises.</p>
+<div class="summary">
+<p><code>zeno build --firmware</code> carries errors the program raises
+as return values, tested after each call, with no <code>setjmp</code>.
+Errors the runtime finds are faults that stop the program, and a
+<code>try</code> that hopes to catch one is refused. A real board goes
+under the program as a header of four functions, named with
+<code>-DZENO_BOARD</code>.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Build <code>speed.zeno</code> with and without
+<code>--firmware</code>, and compare the C of <code>parse_speed</code>
+in the two.</p></li>
+<li><p>Rewrite the <code>divide.zeno</code> example so that a firmware
+build accepts it.</p></li>
+<li><p>Write a board header of your own for the simulated board that
+prints <code>HIGH</code> and <code>LOW</code>, and build
+<code>blink</code> with it.</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="ownership.html" rel="previous">← <span class="number">30</span> Ownership</a>
+<a class="next" href="no-collector.html" rel="next"><span class="number">32</span> Building with No Collector →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

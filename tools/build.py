@@ -15,6 +15,7 @@ host can serve this folder as it is. Needs Python 3.9+, `markdown` and `pymdown-
 """
 
 import argparse
+import shutil
 import html
 import os
 import re
@@ -80,7 +81,7 @@ def sample(name, title=None):
 
 # --- Layout ------------------------------------------------------------------
 
-NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Docs", "/docs/"),
+NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Book", "/book/"), ("Docs", "/docs/"),
        ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
 
 # The wordmark, "Almost": the name in lowercase strokes, and an o whose ring
@@ -149,7 +150,7 @@ def layout(path, title, description, body, active=None, home=False):
   <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
   <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
-    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="{GITHUB}">Source on GitHub</a></div>
   </div>
@@ -681,6 +682,18 @@ def build_home():
            source, home=True)
 
 
+def build_book():
+    """Copy The Zeno Book, built in the language repository, to /book/."""
+    src = Path(ARGS.zeno) / "book" / "dist" / "html"
+    if not (src / "index.html").exists():
+        sys.exit("build the book first: python3 book/tools/build.py")
+    dest = SITE / "book"
+    shutil.rmtree(dest, ignore_errors=True)
+    shutil.copytree(src, dest)
+    for page in sorted(dest.glob("*.html")):
+        PAGES.append("/book/" if page.name == "index.html" else f"/book/{page.name}")
+
+
 def build_sitemap():
     urls = "".join(f"<url><loc>{ORIGIN}{p}</loc></url>" for p in PAGES if p != "/404.html")
     (SITE / "sitemap.xml").write_text(
@@ -703,6 +716,7 @@ def main():
     build_decisions()
     build_roadmap()
     build_about()
+    build_book()
     build_404()
     build_sitemap()
     print(f"wrote {len(PAGES)} pages")

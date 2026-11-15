@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>14 When Things Go Wrong · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a class="here" href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="none.html" rel="previous">← <span class="number">13</span> Values That May Be Missing</a>
+<a class="next" href="function-values.html" rel="next"><span class="number">15</span> Functions as Values →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-errors"><span
+class="number">14</span> When Things Go Wrong</h2>
+<p>A correct program can still meet things that go wrong: a line that
+should hold a number holds a word, a divisor turns out to be zero, a
+file is not there. Zeno calls these <em>errors</em>, and gives a program
+three words to deal with them: <code>raise</code> to say that something
+has gone wrong, <code>try</code> and <code>except</code> to deal with
+it, and <code>raises</code> to say in a function’s heading what it may
+raise.</p>
+<h3 class="unnumbered" id="bugs-and-errors"><span
+class="number">14.1</span> Bugs and errors</h3>
+<p>Zeno draws a line between two kinds of thing that go wrong.</p>
+<p>A <em>bug</em> is a mistake in the program itself: a misspelt name,
+<code>"abc" - 1</code>, calling something that is not a function. The
+checker finds almost all of them before the program runs, and the
+program does not start until they are fixed.</p>
+<p>An <em>error</em> is something that can go wrong in a correct
+program: bad input, a division by a value that turned out to be zero, a
+position that came from outside. These happen while the program runs,
+and the program can catch them and carry on.</p>
+<div class="why">
+<p>Catching a bug hides it. A program that catches "this name does not
+exist" and carries on has a mistake in it that nobody will ever see.
+Since the checker reports bugs before the program runs, there is nothing
+of that kind left to catch. (Decision 4.1.)</p>
+</div>
+<h3 class="unnumbered" id="an-error-that-is-not-caught"><span
+class="number">14.2</span> An error that is not caught</h3>
+<p>An error that nothing catches stops the program, with its kind, its
+message and the line it came from:</p>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">20.5</span>, <span class="dv">21.0</span>]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>print(readings[<span class="dv">2</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught IndexError: index 2 is out of range for a list of length 2
+ --&gt; main.zeno:2:7
+  |
+2 | print(readings[2])
+  |       ^</code></pre>
+<p>Here <code>IndexError</code> is the <em>kind</em> of error, and the
+rest is its <em>message</em>. Every error has both.</p>
+<h3 class="unnumbered" id="try-and-except"><span
+class="number">14.3</span> try and except</h3>
+<p>Code that may raise an error goes in a <code>try</code> block. If an
+error is raised inside it, the rest of the block is skipped, and the
+<code>except</code> that names its kind runs instead:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> text <span class="kw">in</span> [<span class="st">&quot;40&quot;</span>, <span class="st">&quot;fast&quot;</span>, <span class="st">&quot;7&quot;</span>] {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> speed = <span class="dt">int</span>(text)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;speed&quot;</span>, speed)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;not a number:&quot;</span>, text)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>speed 40
+not a number: fast
+speed 7</code></pre>
+<p>If nothing is raised, the <code>except</code> block does not run at
+all.</p>
+<p><code>except Kind as e</code> gives the error a name.
+<code>e.message</code> is its message and <code>e.kind</code> the name
+of its kind:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    print(<span class="dt">int</span>(<span class="st">&quot;fast&quot;</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    print(e.kind, <span class="st">&quot;says:&quot;</span>, e.message)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>ValueError says: cannot turn &quot;fast&quot; into an int</code></pre>
+<p>A <code>try</code> can have several <code>except</code>s. The first
+that fits is the one that runs:</p>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> show(xs: <span class="dt">list</span>[<span class="dt">int</span>], at: <span class="dt">int</span>, by: <span class="dt">int</span>) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        print(xs[at] // by)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> IndexError <span class="kw">as</span> e {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;position:&quot;</span>, e.message)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ZeroDivisionError {</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;cannot divide by zero&quot;</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>show([<span class="dv">10</span>, <span class="dv">20</span>], <span class="dv">1</span>, <span class="dv">5</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>show([<span class="dv">10</span>, <span class="dv">20</span>], <span class="dv">9</span>, <span class="dv">5</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>show([<span class="dv">10</span>, <span class="dv">20</span>], <span class="dv">0</span>, <span class="dv">0</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>4
+position: index 9 is out of range for a list of length 2
+cannot divide by zero</code></pre>
+<p>An error that no <code>except</code> names goes on as if the
+<code>try</code> were not there, up to whoever called this code, and so
+on until something catches it or the program stops.</p>
+<h3 class="unnumbered" id="the-kinds-of-error"><span
+class="number">14.4</span> The kinds of error</h3>
+<p>The kinds that Zeno itself raises are these:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Kind</th>
+<th style="text-align: left;">Raised when</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>ValueError</code></td>
+<td style="text-align: left;">a value is the right type but cannot be
+used: <code>int("fast")</code>, <code>2 ** -1</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>IndexError</code></td>
+<td style="text-align: left;">a position is outside a list or a
+text</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>KeyError</code></td>
+<td style="text-align: left;">a dict has no such key</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ZeroDivisionError</code></td>
+<td style="text-align: left;">a number is divided by zero</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>OverflowError</code></td>
+<td style="text-align: left;">a whole number is too big for its
+type</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>FileError</code></td>
+<td style="text-align: left;">a file cannot be read or written</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>Error</code></td>
+<td style="text-align: left;">anything else; and
+<code>except Error</code> catches every kind</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code>except Error</code> catches any error at all, which is useful
+at the very top of a program, to report what went wrong and stop
+tidily:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> big = <span class="dv">9223372036854775807</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    print(big + <span class="dv">1</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> Error <span class="kw">as</span> e {</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;stopped:&quot;</span>, e.kind, e.message)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>stopped: OverflowError the result is too big for an int</code></pre>
+<p><a href="error-kinds.html#app-error-kinds">Appendix F</a> lists
+every message that the library and the runtime give.</p>
+<h3 class="unnumbered" id="raise"><span class="number">14.5</span>
+raise</h3>
+<p>A program raises an error of its own with <code>raise</code> and the
+kind, with a message that says what went wrong:</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> check_speed(speed: <span class="dt">int</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> speed &lt; <span class="dv">0</span> <span class="kw">or</span> speed &gt; <span class="dv">100</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">f&quot;a speed is 0 to 100, and {speed} is not&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> speed</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> s <span class="kw">in</span> [<span class="dv">40</span>, <span class="dv">250</span>] {</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;set to&quot;</span>, check_speed(s))</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        print(e.message)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>set to 40
+a speed is 0 to 100, and 250 is not</code></pre>
+<p>A message is for the person who reads it when something goes wrong.
+The best ones say what was expected and what was found, as Zeno’s own
+messages do.</p>
+<p>Only an error can be raised, not a piece of text:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">raise</span> <span class="st">&quot;something went wrong&quot;</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: only an error can be raised, and this is str
+ --&gt; main.zeno:1:1
+  |
+1 | raise &quot;something went wrong&quot;
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<h4 class="unnumbered" id="raising-again">Raising again</h4>
+<p>An <code>except</code> block that cannot fully deal with an error can
+do what it can, then raise the same error again, so that the caller sees
+it:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    print(<span class="dt">int</span>(<span class="st">&quot;fast&quot;</span>))</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;noted:&quot;</span>, e.message)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">raise</span> e</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>noted: cannot turn &quot;fast&quot; into an int
+error: uncaught ValueError: cannot turn &quot;fast&quot; into an int
+ --&gt; main.zeno:5:5
+  |
+5 |     raise e
+  |     ^</code></pre>
+<h3 class="unnumbered" id="raises-what-a-function-may-raise"><span
+class="number">14.6</span> raises: what a function may raise</h3>
+<p><code>raises</code> after a function’s heading lists the errors it
+may raise, so that whoever calls it can see them without reading the
+body:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> read_volts(text: <span class="dt">str</span>) -&gt; <span class="dt">float</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">float</span>(text)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>print(read_volts(<span class="st">&quot;3.3&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>3.3</code></pre>
+<p>It follows the rule of every type in Zeno: it can be left out, and
+then Zeno works it out from the body and passes it on to callers. When
+it is written, it must be complete. A function that says what it raises
+and then leaves something out is told so:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> read_volts(text: <span class="dt">str</span>) -&gt; <span class="dt">float</span> <span class="kw">raises</span> KeyError {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">float</span>(text)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `read_volts` can raise ValueError here but does not say so. Add `raises ValueError` to it, or catch the error
+ --&gt; main.zeno:2:12
+  |
+2 |     return float(text)
+  |            ^
+
+1 error found. Nothing was run.</code></pre>
+<p>In strict mode (<code>--strict</code>, <a
+href="types.html#ch-types">Types, Written and Worked Out</a>), as in
+every compiled program, it must always be written, so that every heading
+is a complete promise:</p>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> read_volts(text: <span class="dt">str</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">float</span>(text)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>print(read_volts(<span class="st">&quot;3.3&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno check --strict main.zeno
+error: `read_volts` can raise ValueError here but does not say so. Add `raises ValueError` to it, or catch the error
+ --&gt; main.zeno:2:12
+  |
+2 |     return float(text)
+  |            ^
+
+1 error found. Nothing was run.</code></pre>
+<h4 class="unnumbered" id="what-counts">What counts</h4>
+<p>Only errors raised <em>on purpose</em> must be listed: a
+<code>raise</code>, a call to a function that raises, and
+<code>int()</code> or <code>float()</code> on text, which fail on bad
+input. The errors that operators raise, such as dividing by zero, a
+position out of range or an overflow, can be caught, but need not be
+listed.</p>
+<div class="why">
+<p>A division or an index can fail on almost any line. If those had to
+be listed, nearly every function would say
+<code>raises ZeroDivisionError, IndexError</code> , and a label that is
+on everything tells nobody anything. Java’s checked exceptions are
+widely disliked for exactly that. (Decision 1.17.)</p>
+</div>
+<h3 class="unnumbered" id="an-error-that-carries-more"><span
+class="number">14.7</span> An error that carries more</h3>
+<p>An error often needs to carry more than a message: how long was
+waited, which pin, what code a device sent back. An object of any class
+can be raised, with whatever fields it needs:</p>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Timeout {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    after_ms: <span class="dt">int</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    device: <span class="dt">str</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> wait_for(device: <span class="dt">str</span>) <span class="kw">raises</span> Timeout {</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">raise</span> Timeout(<span class="dv">30</span>, device)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    wait_for(<span class="st">&quot;sensor&quot;</span>)</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> Timeout <span class="kw">as</span> t {</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;gave up on&quot;</span>, t.device, <span class="st">&quot;after&quot;</span>, t.after_ms, <span class="st">&quot;ms&quot;</span>)</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>gave up on sensor after 30 ms</code></pre>
+<p><code>except Error as e</code> catches such an object too. Then
+<code>e.kind</code> is the class’s name, and <code>e.message</code> is
+the object as text:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Timeout {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    after_ms: <span class="dt">int</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">raise</span> Timeout(<span class="dv">30</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> Error <span class="kw">as</span> e {</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    print(e.kind, <span class="st">&quot;/&quot;</span>, e.message)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Timeout / Timeout(after_ms=30)</code></pre>
+<div class="why">
+<p>A class already means "these named values, together", so there is no
+second way to declare an error. (Decision 1.17.)</p>
+</div>
+<h3 class="unnumbered" id="what-is-not-here"><span
+class="number">14.8</span> What is not here</h3>
+<p>Zeno has no <code>finally</code>. Code that must run whether or not
+an error was raised is written after the <code>try</code>, with an
+<code>except</code> that catches what must be caught.</p>
+<p>On a microcontroller, a compiled program can carry its errors as
+plain values instead, with no jumps at all, as firmware coding standards
+require. Nothing in the program changes for that; it is a choice made
+when building, and <a href="firmware.html#ch-firmware">Firmware</a>
+explains it.</p>
+<div class="why">
+<p>They are not C++ exceptions: there are no unwinding tables, and code
+that does not use <code>try</code> pays nothing for it. (Decisions 1.17
+and 5.5i.)</p>
+</div>
+<div class="summary">
+<p>A bug is found before the program runs; an error happens while it
+runs. <code>raise Kind("message")</code> raises an error, and
+<code>try { } except Kind as e { }</code> catches it, with
+<code>e.kind</code> and <code>e.message</code>.
+<code>except Error</code> catches every kind. An object of any class can
+be raised. <code>raises</code> lists what a function raises on purpose:
+worked out when left out, complete when written, and always written in
+strict mode.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Write a loop that asks for numbers with <code>input()</code>
+until it is given one that <code>int</code> accepts.</p></li>
+<li><p>Write
+<code>function percent(part: int, whole: int) -&gt; float</code> that
+raises a <code>ValueError</code> with a clear message when
+<code>whole</code> is 0, and catch it.</p></li>
+<li><p>Make a class <code>SensorFault</code> with a pin and a code,
+raise it from a function, and catch it once by its own name and once as
+<code>Error</code>.</p></li>
+<li><p>Remove <code>raises ValueError</code> from
+<code>check_speed</code> and run <code>zeno check --strict</code>. Then
+write <code>raises KeyError</code> instead. What does each message ask
+for?</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="none.html" rel="previous">← <span class="number">13</span> Values That May Be Missing</a>
+<a class="next" href="function-values.html" rel="next"><span class="number">15</span> Functions as Values →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

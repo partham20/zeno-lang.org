@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>16 Types, Written and Worked Out · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a class="here" href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="growing-programs.html" rel="previous">← Growing Programs</a>
+<a class="next" href="units.html" rel="next"><span class="number">17</span> Numbers with Units →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-types"><span
+class="number">16</span> Types, Written and Worked Out</h2>
+<p>Every value in Zeno has a <em>type</em>: <code>3</code> is an
+<code>int</code>, <code>"hi"</code> is a <code>str</code>,
+<code>[1, 2]</code> is a <code>list[int]</code>. Types can be written in
+a program or left out. This chapter says what happens in each case, what
+Zeno works out by itself, what it does when it cannot, and the strict
+mode that a compiled program needs.</p>
+<h3 class="unnumbered" id="the-types-there-are"><span
+class="number">16.1</span> The types there are</h3>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Holds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">a whole number (<a
+href="numbers.html#ch-numbers">Numbers and Operators</a>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>float</code></td>
+<td style="text-align: left;">a number with a point</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;"><code>true</code> or
+<code>false</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>str</code></td>
+<td style="text-align: left;">text (<a
+href="text.html#ch-text">Text</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>list[T]</code></td>
+<td style="text-align: left;">items of type <code>T</code>, in order (<a
+href="lists.html#ch-lists">Lists</a>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dict[K, V]</code></td>
+<td style="text-align: left;">values of type <code>V</code> under keys
+of type <code>K</code> (<a
+href="dicts.html#ch-dicts">Dicts</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>function(A, B) -&gt; R</code></td>
+<td style="text-align: left;">a function (<a
+href="function-values.html#ch-function-values">Functions as
+Values</a>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>T or none</code></td>
+<td style="text-align: left;">a <code>T</code>, or nothing (<a
+href="none.html#ch-none">Values That May Be Missing</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a class or enum name</td>
+<td style="text-align: left;">an object or a case (<a
+href="classes.html#ch-classes">Classes</a>, <a
+href="enums.html#ch-enums">Enums</a>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">an interface name</td>
+<td style="text-align: left;">any class that is that interface (<a
+href="interfaces.html#ch-interfaces">Interfaces</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>any</code></td>
+<td style="text-align: left;">a value of any type, checked as the
+program runs</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Later chapters add numbers with units such as <code>ms</code> and
+<code>V</code> (<a href="units.html#ch-units">Numbers with
+Units</a>), sized whole numbers such as <code>u8</code> (<a
+href="sized-numbers.html#ch-sized-numbers">Sized Numbers and
+Bits</a>), and the pins and registers of a board (<a
+href="board.html#ch-board">The Board</a>).</p>
+<h3 class="unnumbered" id="writing-a-type"><span
+class="number">16.2</span> Writing a type</h3>
+<p>A type goes after a name, with a colon, on a variable, a parameter or
+a field, and after <code>-&gt;</code> for what a function gives
+back:</p>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> limit: <span class="dt">int</span> = <span class="dv">100</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> names: <span class="dt">list</span>[<span class="dt">str</span>] = []</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> scale(value: <span class="dt">float</span>, by: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> value * by</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Reading {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    pin: <span class="dt">int</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    volts: <span class="dt">float</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>print(limit, names, scale(<span class="dv">2.0</span>, <span class="dv">1.5</span>), Reading(<span class="dv">4</span>, <span class="dv">3.3</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>100 [] 3.0 Reading(pin=4, volts=3.3)</code></pre>
+<p>A written type is a promise. Zeno checks every use against it before
+the program runs, and never changes it to fit:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> scale(value: <span class="dt">float</span>, by: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> value * by</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>print(scale(<span class="dv">2</span>, <span class="dv">3</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `value` of `scale` should be float, but this is int. Write a number with a decimal point, as in `1.0`, and convert a value with `float( )`
+ --&gt; main.zeno:4:13
+  |
+4 | print(scale(2, 3))
+  |             ^
+
+error: `by` of `scale` should be float, but this is int. Write a number with a decimal point, as in `1.0`, and convert a value with `float( )`
+ --&gt; main.zeno:4:16
+  |
+4 | print(scale(2, 3))
+  |                ^
+
+2 errors found. Nothing was run.</code></pre>
+<div class="why">
+<p>The name is what a reader scans for, so it comes first, and since the
+type can usually be left out, the part that may be missing goes last.
+(Decision 1.11.)</p>
+</div>
+<h3 class="unnumbered" id="what-zeno-works-out"><span
+class="number">16.3</span> What Zeno works out</h3>
+<p>Where a type is left out, Zeno works it out from the program,
+wherever it can be known for certain.</p>
+<h4 class="unnumbered" id="a-variable">A variable</h4>
+<p>has the type of the value it starts with. <code>let n = 3</code> is
+an <code>int</code>, and stays one:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = <span class="dv">3</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>count = <span class="st">&quot;three&quot;</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: the new value should be int, but this is str
+ --&gt; main.zeno:2:9
+  |
+2 | count = &quot;three&quot;
+  |         ^
+
+1 error found. Nothing was run.</code></pre>
+<h4 class="unnumbered" id="what-a-function-gives-back">What a function
+gives back</h4>
+<p>is worked out from its <code>return</code>s, in recursive functions
+too.</p>
+<h4 class="unnumbered" id="a-parameter">A parameter</h4>
+<p>is worked out from the calls. If every call passes ints, the
+parameter is an <code>int</code>, and the body is checked with that
+knowledge:</p>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add(a, b) {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> a + b</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> total: <span class="dt">str</span> = add(<span class="dv">1</span>, <span class="dv">2</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `total` should be str, but this is int
+ --&gt; main.zeno:4:18
+  |
+4 | let total: str = add(1, 2)
+  |                  ^
+
+1 error found. Nothing was run.</code></pre>
+<h4 class="unnumbered" id="a-field">A field</h4>
+<p>is worked out from every value stored in it:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Reading {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    pin</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    volts</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> r = Reading(<span class="dv">3</span>, <span class="dv">2.5</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> label: <span class="dt">str</span> = r.volts</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `label` should be str, but this is float
+ --&gt; main.zeno:6:18
+  |
+6 | let label: str = r.volts
+  |                  ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>Types pay for themselves in large programs and in firmware, where a
+mistake found on the bench costs hours. They get in the way of a
+ten-line script. With types that can be left out, one language serves
+both, and a program can start loose and be tightened a line at a time as
+it grows, instead of being written again in another language. This is
+called <em>gradual typing</em>; TypeScript and Python’s type hints took
+the same road. (Decision 0.2.)</p>
+</div>
+<h4 class="unnumbered" id="where-the-mistake-is-reported">Where the
+mistake is reported</h4>
+<p>When a parameter’s type was worked out, a call that disagrees is
+reported inside the function, where the value is misused, with a note
+that names the call the type came from:</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> shout(text) {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> text.upper()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>print(shout(<span class="dv">5</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: int has no field or method `upper`
+ --&gt; main.zeno:2:12
+  |
+2 |     return text.upper()
+  |            ^
+  = note: `text` was worked out to be int from line 4. Give `text` a type to have each call checked against it instead
+
+1 error found. Nothing was run.</code></pre>
+<p>Zeno cannot know which line is wrong, the function or the call, so it
+shows both. Writing the type settles it, and then the call is the
+mistake. That is the reason to write types on anything other people
+call.</p>
+<h3 class="unnumbered" id="when-it-cannot-be-worked-out"><span
+class="number">16.4</span> When it cannot be worked out</h3>
+<p>Some things have no one type. A function called once with an int and
+once with text, or a list that holds a number and a word:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> same(x) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> x</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mixed = [<span class="st">&quot;volts&quot;</span>, <span class="dv">3.3</span>, <span class="cn">true</span>]</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>print(same(<span class="dv">1</span>), same(<span class="st">&quot;one&quot;</span>), mixed)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>1 one [&quot;volts&quot;, 3.3, true]</code></pre>
+<p>Such a value is <em>dynamic</em>: it carries its type with it, and is
+checked while the program runs instead of before. Zeno never guesses a
+type; when two uses disagree, it leaves the value dynamic. The type
+<code>any</code> says so on purpose:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> a: <span class="dt">any</span> = <span class="dv">3</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>print(a + <span class="dv">1</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> b: <span class="dt">any</span> = <span class="st">&quot;three&quot;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>print(b + <span class="dv">1</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>4
+error: `+` does not work between a str and an int
+ --&gt; main.zeno:4:7
+  |
+4 | print(b + 1)
+  |       ^</code></pre>
+<p>Here the first <code>print</code> runs, and the mistake in the second
+is found only when the program reaches it. That is the price of a
+dynamic value: a mistake that a type would have caught before the
+program started is caught later, or on a path that no test happened to
+take, never.</p>
+<h3 class="unnumbered" id="strict-mode"><span class="number">16.5</span>
+Strict mode</h3>
+<p>A dynamic value needs a tag that says what it is, and usually memory
+from the heap. A small microcontroller cannot afford either, so a
+compiled program must know every type before it runs. <em>Strict
+mode</em> is that rule: a value that would be dynamic is an error.</p>
+<p>Strict mode is asked for with <code>--strict</code> on the command
+line, or by the word <code>strict</code> alone on the first line of the
+file. <code>zeno build</code> always works in strict mode.</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> same(x) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> x</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>print(same(<span class="dv">1</span>), same(<span class="st">&quot;one&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno check --strict main.zeno
+error: strict mode: the parameter `x` of `same` needs a type. It could not be worked out from how it is used
+ --&gt; main.zeno:1:1
+  |
+1 | function same(x) {
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">strict</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mixed: <span class="dt">list</span>[<span class="dt">any</span>] = [<span class="st">&quot;volts&quot;</span>, <span class="dv">3.3</span>]</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `any` is not allowed in strict mode
+ --&gt; main.zeno:2:1
+  |
+2 | let mixed: list[any] = [&quot;volts&quot;, 3.3]
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<p>Most programs pass strict mode with few types written, because Zeno
+works out so much. A program written with no types at all, whose
+functions are each called with one kind of value, is strict already.</p>
+<div class="why">
+<p>Whether a file may hold dynamic values is a fact about that file:
+firmware must not, a script may. A flag on the command line lives in a
+build script, where it can be forgotten; a first line travels with the
+code and is seen by everyone who reads it. It is a bare word, with no
+<code>#</code> or <code>@</code>, because it is part of the language and
+not a comment. There is no way to turn strict mode off from inside a
+file: the stricter of the two always wins. (Decision 0.2.)</p>
+</div>
+<h3 class="unnumbered" id="no-quiet-conversions"><span
+class="number">16.6</span> No quiet conversions</h3>
+<p>Zeno does not change a value from one type to another behind the
+program’s back. An <code>int</code> is not a <code>float</code>, though
+the two mix in arithmetic (<a href="numbers.html#ch-numbers">Numbers
+and Operators</a>), and nothing becomes a <code>bool</code> or a
+<code>str</code> by itself:</p>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> whole = <span class="dv">3</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> real: <span class="dt">float</span> = whole</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `real` should be float, but this is int. Write a number with a decimal point, as in `1.0`, and convert a value with `float( )`
+ --&gt; main.zeno:2:19
+  |
+2 | let real: float = whole
+  |                   ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> whole = <span class="dv">3</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> real: <span class="dt">float</span> = <span class="dt">float</span>(whole)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>print(real, <span class="dt">str</span>(whole) + <span class="st">&quot; items&quot;</span>, <span class="dt">int</span>(<span class="st">&quot;42&quot;</span>) + <span class="dv">1</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>3.0 3 items 43</code></pre>
+<p>The functions <code>int</code>, <code>float</code> and
+<code>str</code> make the change, where it can be seen.</p>
+<h3 class="unnumbered" id="only-none-can-be-added-to-a-type"><span
+class="number">16.7</span> Only none can be added to a type</h3>
+<p>A type can be widened with <code>or none</code>, and with nothing
+else. A value that is <em>either an int or a str</em> is written as an
+enum whose cases carry each:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> v: <span class="dt">int</span> <span class="kw">or</span> <span class="dt">str</span> = <span class="dv">3</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: only `or none` can follow a type for now
+ --&gt; main.zeno:1:15
+  |
+1 | let v: int or str = 3
+  |               ^</code></pre>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Setting {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    Number(n: <span class="dt">int</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    Word(text: <span class="dt">str</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> settings = [Number(<span class="dv">3</span>), Word(<span class="st">&quot;auto&quot;</span>)]</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>print(settings)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[Number(3), Word(&quot;auto&quot;)]</code></pre>
+<p>An enum names the choices, and a <code>match</code> must then handle
+each one, which a bare <code>int or str</code> would not ask for.</p>
+<div class="summary">
+<p>Types go after names, <code>name: type</code>, and after
+<code>-&gt;</code>. A written type is checked and never changed. Zeno
+works out the types of variables, returns, parameters and fields
+wherever they are certain, and leaves a value dynamic where they are
+not; <code>any</code> asks for that on purpose. Strict mode, from
+<code>--strict</code> or a first line <code>strict</code>, refuses
+dynamic values, and every compiled program is strict. Nothing changes
+type by itself.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Take a program from an earlier chapter, delete every type in it,
+and run <code>zeno check --strict</code>. Which types does it ask for
+back?</p></li>
+<li><p>Write a function with no types and call it with an int. Then call
+it with a float too. What does strict mode say, and why?</p></li>
+<li><p>Give a field a written type, store a value of another type in it,
+and read the message.</p></li>
+<li><p>Rewrite a <code>list[any]</code> of numbers and words as a list
+of an enum, and print each item with a <code>match</code>.</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="growing-programs.html" rel="previous">← Growing Programs</a>
+<a class="next" href="units.html" rel="next"><span class="number">17</span> Numbers with Units →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

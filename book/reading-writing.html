@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>23 Reading and Writing · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a class="here" href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
+<a class="next" href="math.html" rel="next"><span class="number">24</span> Mathematics →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-reading-writing"><span
+class="number">23</span> Reading and Writing</h2>
+<p>A program is more useful when it can take something in and leave
+something behind: lines typed at a keyboard or sent down a serial line,
+words on the command line, files on a disk. This chapter covers all
+three. <code>print</code> has been with us since the first page.</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">To</th>
+<th style="text-align: left;">Write</th>
+<th style="text-align: left;">Gives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">read a line typed</td>
+<td style="text-align: left;"><code>input()</code>,
+<code>input("Name: ")</code></td>
+<td style="text-align: left;"><code>str or none</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">read the command line</td>
+<td style="text-align: left;"><code>program.arguments()</code></td>
+<td style="text-align: left;"><code>list[str]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">read a file</td>
+<td style="text-align: left;"><code>files.read(path)</code></td>
+<td style="text-align: left;"><code>str</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">write a file</td>
+<td style="text-align: left;"><code>files.write(path, text)</code></td>
+<td style="text-align: left;">nothing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">add to a file</td>
+<td style="text-align: left;"><code>files.append(path, text)</code></td>
+<td style="text-align: left;">nothing</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ask if a file is there</td>
+<td style="text-align: left;"><code>files.exists(path)</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">remove a file</td>
+<td style="text-align: left;"><code>files.remove(path)</code></td>
+<td style="text-align: left;">nothing</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 class="unnumbered" id="print"><span class="number">23.1</span>
+print</h3>
+<p><code>print</code> shows its values on one line, with a space between
+them, and ends the line. Text is shown as it is; inside a list, it is
+shown in quotes. To lay a line out exactly, build it with an
+<code>f</code> string (<a href="text.html#ch-text">Text</a>):</p>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> volts = <span class="dv">3.3</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;supply&quot;</span>, volts, [<span class="st">&quot;a&quot;</span>, <span class="dv">1</span>])</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;supply={volts:.2f}V&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>print()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;after an empty line&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>supply 3.3 [&quot;a&quot;, 1]
+supply=3.30V
+
+after an empty line</code></pre>
+<h3 class="unnumbered" id="reading-lines-input"><span
+class="number">23.2</span> Reading lines: input</h3>
+<p><code>input()</code> reads the next line, without its line end. Given
+a question, it prints the question first and stays on that line. When
+there are no more lines, it gives <code>none</code>: at a keyboard that
+is Ctrl-D (Ctrl-Z then Enter on Windows), and for a file sent in with
+<code>&lt;</code> it is the end of the file.</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name = input(<span class="st">&quot;Name: &quot;</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> name <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;nobody there&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>} <span class="kw">else</span> {</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;Hello, {name}!&quot;</span>)</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Name: Hello, Ada!</code></pre>
+<p>Here the line <code>Ada</code> was sent in rather than typed, so it
+does not appear after the question as it would at a keyboard.</p>
+<p>Because the answer may be <code>none</code>, it must be asked about
+before it is used as text (<a href="none.html#ch-none">Values That
+May Be Missing</a>). A loop that reads every line breaks on
+<code>none</code>, and after that the checker knows the line is a
+<code>str</code>:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> total = <span class="dv">0</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> <span class="cn">true</span> {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> line = input()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> line <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">break</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        total += <span class="dt">int</span>(line.strip())</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;not a number:&quot;</span>, line)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;total&quot;</span>, total)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>not a number: fast
+total 49</code></pre>
+<p>Here the program was given four lines. Run it yourself and type them,
+or put them in a file and send it in:
+<code>zeno run total.zeno &lt; numbers.txt</code>.</p>
+<div class="why">
+<p>Python’s <code>input()</code> raises an error at the end of the
+input, so a loop that reads everything needs a <code>try</code>.
+<code>none</code> is the answer "there is no line", and the type makes
+sure the program handles it. (Decision 6.18.)</p>
+</div>
+<p>On a board, a firmware C library usually ties the input to a serial
+line, and then <code>input()</code> reads a line from the serial
+port.</p>
+<h3 class="unnumbered" id="the-command-line"><span
+class="number">23.3</span> The command line</h3>
+<p><code>program.arguments()</code> gives the words written after the
+file, as a list of text. The program’s own name is not in it, so the
+first word is <code>[0]</code>:</p>
+<div class="zenofile">
+<p>greet.zeno</p>
+</div>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = program.arguments()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> len(names) == <span class="dv">0</span> {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;usage: zeno run greet.zeno &lt;names&gt;&quot;</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> name <span class="kw">in</span> names {</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;hello,&quot;</span>, name)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>hello, Ada
+hello, Grace</code></pre>
+<p>With <code>zeno run</code>, every word after the file belongs to the
+program, even one that looks like an option of Zeno’s; Zeno’s own
+options go before the file: <code>zeno run --vm greet.zeno Ada</code>. A
+compiled program gets the same list from the words after its name:
+<code>./greet Ada Grace</code>.</p>
+<h3 class="unnumbered" id="files"><span class="number">23.4</span>
+Files</h3>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>files.write(<span class="st">&quot;shopping.txt&quot;</span>, <span class="st">&quot;milk\neggs\n&quot;</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>files.append(<span class="st">&quot;shopping.txt&quot;</span>, <span class="st">&quot;bread\n&quot;</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>print(files.read(<span class="st">&quot;shopping.txt&quot;</span>).lines())</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>print(files.exists(<span class="st">&quot;shopping.txt&quot;</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>files.remove(<span class="st">&quot;shopping.txt&quot;</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>print(files.exists(<span class="st">&quot;shopping.txt&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;milk&quot;, &quot;eggs&quot;, &quot;bread&quot;]
+true
+false</code></pre>
+<p>A file is read whole, as one <code>str</code>, and written whole.
+There is no <code>open</code> and no <code>close</code>, so there is
+nothing to forget to close. <code>write</code> makes the file, or
+empties it first; <code>append</code> makes it, or adds to its end.</p>
+<p><code>write</code> and <code>append</code> put down exactly the text
+they are given. A program that wants lines ends each with
+<code>"\n"</code>, and reads them back with <code>lines()</code>, which
+knows both kinds of line end, so a file from Windows reads the same.</p>
+<div class="why">
+<p>Opening and closing is a pair that every program must get right on
+every path, errors included, and a file left open is a classic leak.
+Reading and writing whole files covers what most programs do, with no
+pair to get wrong. Reading a large file in pieces needs an open file
+with an owner, and waits for a program that needs it. (Decisions 6.12
+and 6.13.)</p>
+</div>
+<h4 class="unnumbered" id="when-a-file-cannot-be-used">When a file
+cannot be used</h4>
+<p>A file that cannot be used raises a <code>FileError</code>, with a
+message that says why:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">What happened</th>
+<th style="text-align: left;">The message</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">nothing is at the path</td>
+<td
+style="text-align: left;"><code>there is no file `notes.txt`</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">it is a folder, or may not be read</td>
+<td style="text-align: left;"><code>cannot read `notes.txt`</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">it is not text</td>
+<td
+style="text-align: left;"><code>`notes.txt` does not hold text</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">it cannot be made or written</td>
+<td style="text-align: left;"><code>cannot write `notes.txt`</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">it cannot be removed</td>
+<td
+style="text-align: left;"><code>cannot remove `notes.txt`</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> first_line(path: <span class="dt">str</span>) -&gt; <span class="dt">str</span> <span class="kw">raises</span> FileError {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> lines = files.read(path).lines()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> len(lines) == <span class="dv">0</span> {</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> lines[<span class="dv">0</span>]</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    print(first_line(<span class="st">&quot;settings.txt&quot;</span>))</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> FileError <span class="kw">as</span> e {</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;no settings:&quot;</span>, e.message)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>no settings: there is no file `settings.txt`</code></pre>
+<p>A missing file is not a mistake in the program: no check the program
+could make beforehand rules it out, since another program may remove the
+file in between. So <code>FileError</code> can always be caught, even in
+a firmware build where other errors stop the program. A function that
+uses a file says <code>raises FileError</code>, or catches it. (Decision
+6.14.)</p>
+<h4 class="unnumbered" id="a-file-holds-text">A file holds text</h4>
+<p><code>files.read</code> gives a <code>str</code>, and a
+<code>str</code> is characters, so the file must be UTF-8 text. A
+picture or any other bytes are refused with a <code>FileError</code>.
+Reading bytes is not in version 0.1.</p>
+<h3 class="unnumbered" id="a-worked-example-a-log-book"><span
+class="number">23.5</span> A worked example: a log book</h3>
+<p>This program keeps a log of readings in a file. Each run adds the
+readings given on the command line, then prints every reading so far and
+their average:</p>
+<div class="zenofile">
+<p>logbook.zeno</p>
+</div>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> path = <span class="st">&quot;readings.txt&quot;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> word <span class="kw">in</span> program.arguments() {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> value = <span class="dt">float</span>(word)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        files.append(path, <span class="st">f&quot;{value}\n&quot;</span>)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError {</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;skipped:&quot;</span>, word)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> values: <span class="dt">list</span>[<span class="dt">float</span>] = []</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> files.exists(path) {</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> line <span class="kw">in</span> files.read(path).lines() {</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        values.append(<span class="dt">float</span>(line))</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>print(len(values), <span class="st">&quot;readings:&quot;</span>, values)</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> len(values) &gt; <span class="dv">0</span> {</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;average {sum(values) / float(len(values)):.2f}&quot;</span>)</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno run logbook.zeno 21.5 22.0
+2 readings: [21.5, 22.0]
+average 21.75
+$ zeno run logbook.zeno 23.5
+3 readings: [21.5, 22.0, 23.5]
+average 22.33</code></pre>
+<div class="summary">
+<p><code>print</code> writes a line. <code>input()</code> reads one, and
+gives <code>none</code> when there are no more.
+<code>program.arguments()</code> gives the words after the file.
+<code>files.read</code>, <code>write</code>, <code>append</code>,
+<code>exists</code> and <code>remove</code> work on whole files of text,
+and every one but <code>exists</code> may raise a
+<code>FileError</code>, which can always be caught.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Write a program that counts the lines, words and characters of
+the text sent to it with <code>&lt;</code>.</p></li>
+<li><p>Write <code>copy.zeno</code>, which copies the file named by its
+first argument to the file named by its second, and says clearly what is
+wrong when it is given the wrong number of words.</p></li>
+<li><p>Keep a counter in a file: each run reads it, adds one, writes it
+back, and prints it. What should the first run do?</p></li>
+<li><p>Try to read a picture with <code>files.read</code> and read the
+message.</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
+<a class="next" href="math.html" rel="next"><span class="number">24</span> Mathematics →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

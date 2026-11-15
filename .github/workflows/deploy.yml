@@ -1,0 +1,30 @@
+# Deploys the site to Cloudflare Pages (project "zeno-lang").
+# It runs when a push to main has "[deploy]" in its commit message,
+# or by hand from the Actions tab. A plain push does not deploy.
+# Needs two repository secrets: CLOUDFLARE_API_TOKEN (Account,
+# Cloudflare Pages, Edit) and CLOUDFLARE_ACCOUNT_ID.
+name: Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[deploy]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gather the site, without the build tools
+        run: |
+          mkdir _site
+          rsync -a --exclude .git --exclude .github --exclude .gitignore \
+            --exclude README.md --exclude tools --exclude _site ./ _site/
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy _site --project-name zeno-lang --branch main

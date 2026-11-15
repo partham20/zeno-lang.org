@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>13 Values That May Be Missing · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a class="here" href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="enums.html" rel="previous">← <span class="number">12</span> Enums and match</a>
+<a class="next" href="errors.html" rel="next"><span class="number">14</span> When Things Go Wrong →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-none"><span
+class="number">13</span> Values That May Be Missing</h2>
+<p>Sometimes there is no answer. A search finds nothing, a sensor has
+not reported yet, a line that should hold a number holds a word. Zeno
+has one value for "nothing here": <code>none</code>. This chapter is
+about where it may appear, and how Zeno makes sure a program never uses
+it by mistake.</p>
+<h3 class="unnumbered" id="none-only-where-the-type-says-so"><span
+class="number">13.1</span> none only where the type says so</h3>
+<p>A value can be <code>none</code> only if its type says it may be. The
+type is written <code>T or none</code>, and reads as it means:</p>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> find_user(id: <span class="dt">int</span>) -&gt; <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> id == <span class="dv">1</span> {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ada&quot;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>print(find_user(<span class="dv">1</span>), find_user(<span class="dv">2</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>ada none</code></pre>
+<p>A plain <code>str</code> is always a piece of text. A
+<code>str or none</code> is a piece of text or nothing, and the program
+has to find out which before it treats it as text:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> find_user(id: <span class="dt">int</span>) -&gt; <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> id == <span class="dv">1</span> {</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ada&quot;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>print(find_user(<span class="dv">1</span>).upper())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: this is str or none. Check it with `is not none` before using `.upper`
+ --&gt; main.zeno:8:7
+  |
+8 | print(find_user(1).upper())
+  |       ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>Using a null value is the commonest crash in C, Java and JavaScript.
+Tony Hoare, who brought null into programming in 1965, called it his
+"billion-dollar mistake". In those languages any reference can be null,
+so every use is a risk. In Zeno only a value whose type says
+<code>or none</code> can be, and the check cannot be forgotten.
+(Decisions 1.13 and 3.12.)</p>
+</div>
+<h3 class="unnumbered" id="asking-is-none-is-not-none"><span
+class="number">13.2</span> Asking: is none, is not none</h3>
+<p><code>x is none</code> and <code>x is not none</code> ask the
+question. Inside an <code>if</code> that has found the value is there,
+Zeno knows it, and the value can be used as a plain value:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> find_user(id: <span class="dt">int</span>) -&gt; <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> id == <span class="dv">1</span> {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ada&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> id <span class="kw">in</span> [<span class="dv">1</span>, <span class="dv">2</span>] {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> user = find_user(id)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> user <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        print(user.upper())</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">else</span> {</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;no user&quot;</span>, id)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>ADA
+no user 2</code></pre>
+<p>The question is always asked with <code>is</code>.
+<code>== none</code> is refused, with the spelling to use, and so is
+asking about a value that can never be <code>none</code>, because the
+answer would always be <code>false</code>:</p>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> count = <span class="dv">3</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> count <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;no count&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `is none` is always false: this is int, which is never `none`. Only a value whose type says `or none` can be
+ --&gt; main.zeno:2:4
+  |
+2 | if count is none {
+  |    ^
+
+1 error found. Nothing was run.</code></pre>
+<p>There is no new syntax to learn for this. The program writes the
+<code>if</code> it would have written anyway, and the checker follows
+it. This is called <em>narrowing</em>: inside the <code>if</code>, the
+type of <code>user</code> is narrowed from <code>str or none</code> to
+<code>str</code>.</p>
+<p><code>is</code> is only for <code>none</code>. Values are compared
+with <code>==</code>:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x = <span class="dv">3</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>print(x <span class="kw">is</span> <span class="dv">3</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `is` only tests for `none`. Use `==` to compare values
+ --&gt; main.zeno:2:12
+  |
+2 | print(x is 3)
+  |            ^</code></pre>
+<div class="why">
+<p>In Python, <code>is</code> asks whether two names are one object,
+which gives surprising answers on numbers and text and is a well-known
+trap. Keeping <code>is</code> for <code>none</code> leaves one way to
+compare values and one way to ask whether something is there. (Decision
+1.13.)</p>
+</div>
+<h3 class="unnumbered" id="what-the-checker-follows"><span
+class="number">13.3</span> What the checker follows</h3>
+<p>The checker follows the ordinary shapes a program takes.</p>
+<h4 class="unnumbered" id="leaving-early.">Leaving early.</h4>
+<p>After <code>if x is none { return ... }</code>, the rest of the block
+can only be reached when <code>x</code> is there:</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> shout(text: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> text <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> text.upper()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>print(shout(<span class="st">&quot;hi&quot;</span>), shout(<span class="cn">none</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>HI </code></pre>
+<p>The same goes for <code>raise</code>, <code>break</code> and
+<code>continue</code>.</p>
+<h4 class="unnumbered" id="and-or-and-not.">and, or and not.</h4>
+<p>A test joined with <code>and</code> knows the first half when it asks
+the second:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span> = <span class="st">&quot;Ada&quot;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> name <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> <span class="kw">and</span> len(name) &gt; <span class="dv">2</span> {</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    print(name, <span class="st">&quot;is long enough&quot;</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Ada is long enough</code></pre>
+<h4 class="unnumbered" id="filling-in-a-default.">Filling in a
+default.</h4>
+<p>After an <code>if</code> that gives the variable a value when it had
+none, the variable has a value on both paths, and the checker knows
+it:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> greeting(given: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> name = given</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> name <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>        name = <span class="st">&quot;friend&quot;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="st">f&quot;Hello, {name.upper()}&quot;</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>print(greeting(<span class="st">&quot;Ada&quot;</span>), greeting(<span class="cn">none</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Hello, ADA Hello, FRIEND</code></pre>
+<h4 class="unnumbered" id="walking-a-chain.">Walking a chain.</h4>
+<p>A <code>while</code> that asks <code>is not none</code> knows it
+inside, and an assignment in the body makes the variable uncertain again
+until the next question:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Node {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    value: <span class="dt">int</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    next: Node <span class="kw">or</span> <span class="cn">none</span> = <span class="cn">none</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> node: Node <span class="kw">or</span> <span class="cn">none</span> = Node(<span class="dv">1</span>, Node(<span class="dv">2</span>, Node(<span class="dv">3</span>)))</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> total = <span class="dv">0</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> node <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    total += node.value</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    node = node.next</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>print(total)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>6</code></pre>
+<div class="why">
+<p>Without these, the two most ordinary uses of <code>none</code>,
+walking a linked list and filling in a default, would not pass the
+checker, and the program would have to copy the value into a second
+variable just to please it. TypeScript and Kotlin follow assignments the
+same way. (Decision 3.12.)</p>
+</div>
+<h4 class="unnumbered" id="a-field-is-asked-about-through-a-name">A
+field is asked about through a name</h4>
+<p>The checker narrows names, not fields. A field that may be
+<code>none</code> is first given a name of its own, and the name is
+asked about:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Sensor {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    last: <span class="dt">float</span> <span class="kw">or</span> <span class="cn">none</span> = <span class="cn">none</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> s = Sensor()</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>s.last = <span class="dv">21.5</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> s.last <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    print(s.last + <span class="dv">1.0</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `+` does not work between float or none and float. `last` is a field, and a field can be given a new value between a test and its use, so a test of it is not remembered. Copy it into a variable with `let`, and test that for `none`
+ --&gt; main.zeno:7:11
+  |
+7 |     print(s.last + 1.0)
+  |           ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Sensor {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    last: <span class="dt">float</span> <span class="kw">or</span> <span class="cn">none</span> = <span class="cn">none</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> s = Sensor()</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>s.last = <span class="dv">21.5</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> last = s.last</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> last <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    print(last + <span class="dv">1.0</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>22.5</code></pre>
+<p>A field can be changed by any code that holds the object, including a
+method called between the question and the use, so an answer about a
+field could be out of date by the next line. A local name cannot be
+changed behind the program’s back.</p>
+<h3 class="unnumbered" id="functions-that-may-give-none"><span
+class="number">13.4</span> Functions that may give none</h3>
+<p>The library gives <code>none</code> where there may be no answer:
+<code>find</code> on text and lists (<a
+href="text.html#ch-text">Text</a>), <code>get</code> on a dict (<a
+href="dicts.html#ch-dicts">Dicts</a>) and <code>input()</code> when
+there are no more lines (<a
+href="reading-writing.html#ch-reading-writing">Reading and
+Writing</a>). Your own functions do the same by saying
+<code>-&gt; T or none</code>.</p>
+<p>A function that says it may give <code>none</code> gives
+<code>none</code> when it reaches its end, since that is one of the
+answers it promised:</p>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> first_even(xs: <span class="dt">list</span>[<span class="dt">int</span>]) -&gt; <span class="dt">int</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> x <span class="kw">in</span> xs {</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> x % <span class="dv">2</span> == <span class="dv">0</span> {</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> x</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>print(first_even([<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]), first_even([<span class="dv">1</span>, <span class="dv">3</span>]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>4 none</code></pre>
+<h3 class="unnumbered" id="none-in-a-match"><span
+class="number">13.5</span> none in a match</h3>
+<p>A <code>match</code> on a value that may be <code>none</code> can
+have <code>case none</code>, and every case after it knows the value is
+there. For an enum, <code>case none</code> and a case for each of the
+enum’s own cases make the match complete:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Reading {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    Value(volts: <span class="dt">float</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    Fault(code: <span class="dt">int</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> describe(r: Reading <span class="kw">or</span> <span class="cn">none</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> r {</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> <span class="cn">none</span> { <span class="kw">return</span> <span class="st">&quot;no reading yet&quot;</span> }</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Value(v) { <span class="kw">return</span> <span class="st">f&quot;{v:.1f} V&quot;</span> }</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Fault(code) { <span class="kw">return</span> <span class="st">f&quot;fault 0x{code:02x}&quot;</span> }</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>print(describe(<span class="cn">none</span>), describe(Value(<span class="dv">3.3</span>)), describe(Fault(<span class="dv">7</span>)))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>no reading yet 3.3 V fault 0x07</code></pre>
+<p>Leave <code>case none</code> out, and the checker says so:</p>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Reading {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    Value(volts: <span class="dt">float</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    Fault(code: <span class="dt">int</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> describe(r: Reading <span class="kw">or</span> <span class="cn">none</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> r {</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Value(v) { <span class="kw">return</span> <span class="st">&quot;value&quot;</span> }</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Fault(code) { <span class="kw">return</span> <span class="st">&quot;fault&quot;</span> }</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: this `match` does not handle `none`. Add a `case` for it, or a final `case _`
+ --&gt; main.zeno:7:5
+  |
+7 |     match r {
+  |     ^
+
+1 error found. Nothing was run.</code></pre>
+<h3 class="unnumbered" id="none-is-not-zero"><span
+class="number">13.6</span> none is not zero</h3>
+<p><code>none</code> is not <code>0</code>, not <code>false</code> and
+not <code>""</code>. It is its own value, and the only things that can
+be done with it are to print it, store it where the type allows, and ask
+whether a value is it. Conditions must be <code>bool</code>, so
+<code>if user</code> is refused, and the question is always written out:
+<code>if user is not none</code>.</p>
+<div class="summary">
+<p><code>none</code> means "nothing here", and only a value whose type
+says <code>or none</code> can hold it. Before such a value is used, the
+program asks <code>is none</code> or <code>is not none</code>, and the
+checker follows the answer through <code>if</code>, early returns,
+<code>and</code>, defaults and <code>while</code>. Fields are asked
+about through a name of their own. A <code>match</code> can have
+<code>case none</code>. <code>is</code> is for <code>none</code> and
+nothing else.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Write
+<code>function parse_volts(text: str) -&gt; float or none</code> that
+gives <code>none</code> for an empty text, and use it on a list of
+texts, printing a dash for each <code>none</code>.</p></li>
+<li><p>Write a function that gives the last <code>Node</code> of a
+chain, or <code>none</code> for an empty one.</p></li>
+<li><p>Take the <code>greeting</code> function and remove the
+<code>if</code>. Read the message, and say in your own words what it
+protects against.</p></li>
+<li><p>Write
+<code>function largest(xs: list[int]) -&gt; int or none</code> with no
+<code>max</code>. What should it give for <code>[]</code>, and why is
+that better than 0?</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="enums.html" rel="previous">← <span class="number">12</span> Enums and match</a>
+<a class="next" href="errors.html" rel="next"><span class="number">14</span> When Things Go Wrong →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

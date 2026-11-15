@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>18 Sized Numbers and Bits · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a class="here" href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="units.html" rel="previous">← <span class="number">17</span> Numbers with Units</a>
+<a class="next" href="generics.html" rel="next"><span class="number">19</span> Generics →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</h2>
+<p>Firmware talks to hardware, and hardware works in bits: a status
+register where each bit is a flag, a byte in a frame from a sensor, a
+16-bit value split over two registers. This chapter is about the
+operators that work on bits, and the six whole-number types that say how
+many bits a number fits in.</p>
+<h3 class="unnumbered" id="writing-bits"><span
+class="number">18.1</span> Writing bits</h3>
+<p>A whole number can be written in hexadecimal after <code>0x</code>,
+in binary after <code>0b</code> and in octal after <code>0o</code>, and
+<code>_</code> can split the digits into groups. A format shows a number
+the same ways (<a href="text.html#ch-text">Text</a>):</p>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> status = <span class="dv">0b1010_0101</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>print(status, <span class="dv">0xA5</span>, <span class="dv">0</span>o245)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;{status:08b} {status:02X} {status:x}&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>165 165 165
+10100101 A5 a5</code></pre>
+<h3 class="unnumbered" id="the-bit-operators"><span
+class="number">18.2</span> The bit operators</h3>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Operator</th>
+<th style="text-align: left;">Means</th>
+<th style="text-align: left;">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>&amp;</code></td>
+<td style="text-align: left;">and: a bit set in both</td>
+<td style="text-align: left;"><code>0b1100 &amp; 0b1010</code> is
+<code>0b1000</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>|</code></td>
+<td style="text-align: left;">or: a bit set in either</td>
+<td style="text-align: left;"><code>0b1100 | 0b1010</code> is
+<code>0b1110</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>^</code></td>
+<td style="text-align: left;">exclusive or: set in one, not both</td>
+<td style="text-align: left;"><code>0b1100 ^ 0b1010</code> is
+<code>0b0110</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>~</code></td>
+<td style="text-align: left;">every bit turned over</td>
+<td style="text-align: left;"><code>~0</code> is <code>-1</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>&lt;&lt;</code></td>
+<td style="text-align: left;">shift left: times two, <code>n</code>
+times</td>
+<td style="text-align: left;"><code>1 &lt;&lt; 4</code> is
+<code>16</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>&gt;&gt;</code></td>
+<td style="text-align: left;">shift right: halve, rounding down</td>
+<td style="text-align: left;"><code>0xF0 &gt;&gt; 4</code> is
+<code>15</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each has an <code>=</code> form: <code>&amp;=</code>,
+<code>|=</code>, <code>^=</code>, <code>&lt;&lt;=</code>,
+<code>&gt;&gt;=</code>. They are the everyday tools of a register:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> READY = <span class="dv">1</span> &lt;&lt; <span class="dv">0</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ERROR = <span class="dv">1</span> &lt;&lt; <span class="dv">3</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> flags = <span class="dv">0</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>flags |= READY                  <span class="co"># set a bit</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>flags |= ERROR</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;{flags:08b}&quot;</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>flags &amp;= ~ERROR                 <span class="co"># clear a bit</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;{flags:08b}&quot;</span>, flags &amp; READY != <span class="dv">0</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>flags ^= READY                  <span class="co"># turn a bit over</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;{flags:08b}&quot;</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> reading = <span class="dv">0x3A7</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>print((reading &gt;&gt; <span class="dv">8</span>) &amp; <span class="dv">0xFF</span>, reading &amp; <span class="dv">0xFF</span>)  <span class="co"># high byte, low byte</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>00001001
+00000001 true
+00000000
+3 167</code></pre>
+<p>An <code>int</code> is 64 bits in two’s complement, so
+<code>~x</code> is <code>-x - 1</code> and <code>-1 &amp; 0xFF</code> is
+<code>255</code>.</p>
+<div class="why">
+<p>Zeno spells <code>and</code>, <code>or</code> and <code>not</code> as
+words, and still uses symbols for bits. <code>status &amp; MASK</code>
+is how every datasheet, every C header and every Python script writes
+it, and a firmware engineer reads it faster than any word. The words
+left <code>&amp;</code> and <code>|</code> free for exactly this.
+(Decision 2.7.)</p>
+</div>
+<p>The C slip, <code>&amp;</code> on two <code>bool</code>s, is caught,
+and so is <code>&amp;&amp;</code>:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ready = <span class="cn">true</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> safe = <span class="cn">false</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>print(ready &amp; safe)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `&amp;` works on the bits of whole numbers, and these are bool and bool. For two bools Zeno spells this `and`
+ --&gt; main.zeno:3:7
+  |
+3 | print(ready &amp; safe)
+  |       ^
+
+1 error found. Nothing was run.</code></pre>
+<h4 class="unnumbered" id="bits-come-before-comparisons">Bits come
+before comparisons</h4>
+<p><code>flags &amp; MASK == 0</code> means
+<code>(flags &amp; MASK) == 0</code>, as it looks. The bit operators
+bind tighter than the comparisons, as in Python:</p>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> flags = <span class="dv">0x81</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>print(flags &amp; <span class="dv">0x80</span> == <span class="dv">0x80</span>, flags &amp; <span class="dv">0x02</span> == <span class="dv">0</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>true true</code></pre>
+<div class="why">
+<p>In C, <code>flags &amp; MASK == 0</code> means
+<code>flags &amp; (MASK == 0)</code>, which is almost never what was
+meant and compiles without a word. C’s own authors called it a mistake
+that was too late to fix. (Decision 2.7a.)</p>
+</div>
+<h4 class="unnumbered" id="shifts-are-checked">Shifts are checked</h4>
+<p>A shift left that would push set bits off the top is an
+<code>OverflowError</code>, as <code>*</code> would be, and a shift by a
+count outside 0 to 63 is a <code>ValueError</code>:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>print(<span class="dv">1</span> &lt;&lt; <span class="dv">64</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught ValueError: cannot shift by 64. An int has 64 bits, so a shift is 0 to 63
+ --&gt; main.zeno:1:7
+  |
+1 | print(1 &lt;&lt; 64)
+  |       ^</code></pre>
+<p>In C, a shift by 64 or by a negative count is undefined, and
+<code>1 &lt;&lt; 40</code> on a 32-bit int is a wrong number. Each is a
+quiet wrong answer. To throw away the top bits on purpose, say so with
+<code>wrap</code>, below. (Decision 2.7b.)</p>
+<h3 class="unnumbered" id="sized-whole-numbers"><span
+class="number">18.3</span> Sized whole numbers</h3>
+<p>An <code>int</code> is 64 bits. Six more types say that a whole
+number fits in fewer:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Bits</th>
+<th style="text-align: left;">Holds</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>u8</code></td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">0 to 255</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>u16</code></td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;">0 to 65 535</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>u32</code></td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">0 to 4 294 967 295</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>i8</code></td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;"><span class="math inline"> − 128</span> to
+127</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>i16</code></td>
+<td style="text-align: left;">16</td>
+<td style="text-align: left;"><span class="math inline"> − 32 768</span>
+to 32 767</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>i32</code></td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;"><span
+class="math inline"> − 2 147 483 648</span> to 2 147 483 647</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>They are for where the size is real: a byte in a frame, a field of an
+object on a board with 2 KB of memory, a register. With the size in the
+type, the checker knows that a <code>u8</code> is never handed 300, and
+a compiled program stores it in one byte.</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> level: <span class="dt">u8</span> = <span class="dv">200</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> offset: <span class="dt">i16</span> = -<span class="dv">300</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame: <span class="dt">list</span>[<span class="dt">u8</span>] = [<span class="dv">0x02</span>, <span class="dv">0x41</span>, <span class="dv">0xFF</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>print(level, offset, frame)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>200 -300 [2, 65, 255]</code></pre>
+<p>A number written out takes the size of where it goes, and one that
+does not fit is refused before the program runs:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> level: <span class="dt">u8</span> = <span class="dv">300</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: 300 does not fit in a u8 (0 to 255)
+ --&gt; main.zeno:1:17
+  |
+1 | let level: u8 = 300
+  |                 ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>The names are Rust’s, and close to C’s <code>uint8_t</code> with the
+noise taken off. <code>byte</code> and <code>short</code> say less: how
+long is a <code>short</code>? (Decision 2.8.)</p>
+</div>
+<h4 class="unnumbered" id="arithmetic-gives-an-int">Arithmetic gives an
+int</h4>
+<p>Sums, products, shifts and the rest on sized numbers give an
+<code>int</code>, so the middle of a calculation never overflows at
+255:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> a: <span class="dt">u8</span> = <span class="dv">200</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> b: <span class="dt">u8</span> = <span class="dv">100</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>print(a + b, (a + b) // <span class="dv">2</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>300 150</code></pre>
+<p>The one place a number may not fit is where it is stored, and there
+the program says what it wants.</p>
+<div class="why">
+<p>Wrapping at the size, as C does, makes <code>200 + 100</code> into
+<code>44</code>, quietly. Checking at the size, as Rust does when
+debugging, makes <code>(a + b) // 2</code> fail for two numbers whose
+average fits. Refusing to mix sizes needs a conversion on every line,
+and people stop reading them. Working in ints and checking where the
+answer is stored is C’s integer promotion without the silent cut at the
+end. (Decision 2.8a.)</p>
+</div>
+<h3 class="unnumbered" id="putting-a-number-back-check-or-wrap"><span
+class="number">18.4</span> Putting a number back: check or wrap</h3>
+<p>There are two ways to turn an <code>int</code> into a sized number,
+and they must not look alike:</p>
+<ul>
+<li><p><code>u8(n)</code> is <code>n</code> if it fits, and an
+<code>OverflowError</code> if it does not.</p></li>
+<li><p><code>u8.wrap(n)</code> keeps the low 8 bits and never fails:
+<code>u8.wrap(300)</code> is 44, and <code>i8.wrap(200)</code> is <span
+class="math inline"> − 56</span>.</p></li>
+</ul>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> a: <span class="dt">u8</span> = <span class="dv">200</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> b: <span class="dt">u8</span> = <span class="dv">100</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>print(<span class="dt">u8</span>.wrap(a + b), <span class="dt">i8</span>.wrap(<span class="dv">200</span>), <span class="dt">u16</span>(a + b))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>44 -56 300</code></pre>
+<p>A checksum is <em>meant</em> to lose its top bits, so it wraps:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> checksum(data: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">u8</span> {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> total = <span class="dv">0</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> byte <span class="kw">in</span> data {</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>        total += byte</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">u8</span>.wrap(total)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>print(checksum([<span class="dv">0xFF</span>, <span class="dv">0x02</span>, <span class="dv">0x10</span>]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>17</code></pre>
+<p>A length that does not fit in its field is a bug, so it is
+checked:</p>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> length = <span class="dv">300</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> field = <span class="dt">u8</span>(length)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught OverflowError: 300 does not fit in a u8 (0 to 255)
+ --&gt; main.zeno:2:13
+  |
+2 | let field = u8(length)
+  |             ^</code></pre>
+<div class="why">
+<p>In C both are written <code>(uint8_t)x</code>, and the reader has to
+guess which was meant. Here the short spelling is the safe one, and
+wrapping is a word that a reviewer can search for. (Decision 2.8b.)</p>
+</div>
+<h4 class="unnumbered" id="count-1">count += 1</h4>
+<p><code>count += 1</code> on a sized number means
+<code>count = u8(count + 1)</code>: the sum is an int, and it is checked
+where it is stored. A counter that passes 255 without anybody deciding
+it should is a bug:</p>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count: <span class="dt">u8</span> = <span class="dv">254</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>count += <span class="dv">1</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>print(count)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>count += <span class="dv">1</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>255
+error: uncaught OverflowError: 256 does not fit in a u8 (0 to 255)
+ --&gt; main.zeno:4:1
+  |
+4 | count += 1
+  | ^</code></pre>
+<p>A counter that is meant to go round says so:
+<code>count = u8.wrap(count + 1)</code>. (Decision 10.27.)</p>
+<h3 class="unnumbered" id="what-goes-where-by-itself"><span
+class="number">18.5</span> What goes where by itself</h3>
+<ul>
+<li><p>A sized number goes wherever an <code>int</code> is wanted, with
+nothing written: every <code>u8</code> is an <code>int</code>.</p></li>
+<li><p>An <code>int</code> does not go where a <code>u8</code> is
+wanted, and a <code>u8</code> does not go where a <code>u16</code> is
+wanted. Each needs <code>u8(...)</code> or
+<code>u16(...)</code>.</p></li>
+</ul>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> reading = <span class="dv">5</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> level: <span class="dt">u8</span> = reading</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `level` should be u8, but this is int. Convert it with `u8(...)`, which checks that it fits
+ --&gt; main.zeno:2:17
+  |
+2 | let level: u8 = reading
+  |                 ^
+
+1 error found. Nothing was run.</code></pre>
+<p>The first cannot lose anything, so asking for it would be noise. The
+second can, so it is written. A <code>list[u8]</code> is not a
+<code>list[int]</code>, because lists are shared: whoever held it as a
+<code>list[int]</code> could append 300. Copy it,
+<code>[int(b) for b in frame]</code>.</p>
+<p>There is no <code>u64</code>. An <code>int</code> is 64 bits with a
+sign, so half the values of a <code>u64</code> would not fit in one, and
+"arithmetic gives an <code>int</code>" would stop being true. (Decision
+2.8d.)</p>
+<h3 class="unnumbered" id="a-worked-example-a-frame-from-a-sensor"><span
+class="number">18.6</span> A worked example: a frame from a sensor</h3>
+<p>A sensor sends a frame of four bytes: a start byte <code>0x02</code>,
+a 16-bit reading high byte first, and a checksum of the first three.
+This program builds one and reads it back:</p>
+<div class="zenofile">
+<p>frame.zeno</p>
+</div>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> checksum(data: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">u8</span> {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> total = <span class="dv">0</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> byte <span class="kw">in</span> data {</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        total += byte</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">u8</span>.wrap(total)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> make_frame(reading: <span class="dt">u16</span>) -&gt; <span class="dt">list</span>[<span class="dt">u8</span>] {</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> frame: <span class="dt">list</span>[<span class="dt">u8</span>] = [<span class="dv">0x02</span>, <span class="dt">u8</span>(reading &gt;&gt; <span class="dv">8</span>), <span class="dt">u8</span>(reading &amp; <span class="dv">0xFF</span>)]</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    frame.append(checksum(frame))</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> frame</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> read_frame(frame: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">u16</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> frame[<span class="dv">0</span>] != <span class="dv">0x02</span> {</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;a frame starts with 0x02&quot;</span>)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> checksum(frame.slice(<span class="dv">0</span>, <span class="dv">3</span>)) != frame[<span class="dv">3</span>] {</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;the checksum does not match&quot;</span>)</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">u16</span>(frame[<span class="dv">1</span>] &lt;&lt; <span class="dv">8</span> | frame[<span class="dv">2</span>])</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame = make_frame(<span class="dv">931</span>)</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>print([<span class="st">f&quot;{b:02X}&quot;</span> <span class="kw">for</span> b <span class="kw">in</span> frame])</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>print(read_frame(frame))</span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>frame[<span class="dv">2</span>] = <span class="dv">0x00</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    read_frame(frame)</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;refused:&quot;</span>, e.message)</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;02&quot;, &quot;03&quot;, &quot;A3&quot;, &quot;A8&quot;]
+931
+refused: the checksum does not match</code></pre>
+<div class="summary">
+<p>Whole numbers can be written in <code>0x</code>, <code>0b</code> and
+<code>0o</code>. <code>&amp;</code>, <code>|</code>, <code>^</code>,
+<code>~</code>, <code>&lt;&lt;</code> and <code>&gt;&gt;</code> work on
+bits, bind tighter than comparisons, and shifts are checked.
+<code>u8</code>, <code>u16</code>, <code>u32</code>, <code>i8</code>,
+<code>i16</code> and <code>i32</code> say how many bits a number fits
+in. Arithmetic on them gives an <code>int</code>; <code>u8(n)</code>
+puts it back with a check, and <code>u8.wrap(n)</code> by cutting. A
+sized number is an <code>int</code> for free; the other way is
+written.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Write
+<code>function bit_is_set(value: int, bit: int) -&gt; bool</code> and
+<code>function set_bit(value: int, bit: int) -&gt; int</code>.</p></li>
+<li><p>Split a <code>u32</code> into four <code>u8</code>s, high byte
+first, and join them again.</p></li>
+<li><p>Count the set bits of a number with a loop, <code>&amp;</code>
+and <code>&gt;&gt;</code>.</p></li>
+<li><p>Change the checksum in the frame example to an exclusive or of
+the bytes. Does it still need <code>wrap</code>? Why not?</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="units.html" rel="previous">← <span class="number">17</span> Numbers with Units</a>
+<a class="next" href="generics.html" rel="next"><span class="number">19</span> Generics →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

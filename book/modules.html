@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>21 Programs in Several Files · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a class="here" href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="interfaces.html" rel="previous">← <span class="number">20</span> Interfaces</a>
+<a class="next" href="packages.html" rel="next"><span class="number">22</span> Packages →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-modules"><span
+class="number">21</span> Programs in Several Files</h2>
+<p>A program of a few hundred lines is easier to read when it is cut
+into files: one for the sensors, one for the report, one for the serial
+port. In Zeno a file is a <em>module</em>, and <code>import</code>
+brings one file’s names into another.</p>
+<h3 class="unnumbered" id="a-module-is-a-file"><span
+class="number">21.1</span> A module is a file</h3>
+<p>There is nothing to declare and nothing to register. The file
+<code>sensors.zeno</code> is the module <code>sensors</code>:</p>
+<div class="zenofile">
+<p>sensors.zeno</p>
+</div>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Reading {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    name: <span class="dt">str</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    value: <span class="dt">float</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> highest = [<span class="st">&quot;temperature&quot;</span>: <span class="dv">60.0</span>, <span class="st">&quot;humidity&quot;</span>: <span class="dv">100.0</span>]</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> check(reading: Reading) -&gt; <span class="dt">str</span> {</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> limit = highest.get(reading.name)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> limit <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;no limit is known&quot;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> reading.value &gt; limit {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">f&quot;over {limit}&quot;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="st">&quot;good&quot;</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="zenofile">
+<p>main.zeno</p>
+</div>
+<div class="sourceCode" id="cb2" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> sensors</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    sensors.Reading(<span class="st">&quot;temperature&quot;</span>, <span class="dv">21.5</span>),</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    sensors.Reading(<span class="st">&quot;humidity&quot;</span>, <span class="dv">104.0</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    sensors.Reading(<span class="st">&quot;wind&quot;</span>, <span class="dv">12.0</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> reading <span class="kw">in</span> readings {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    print(reading.name, sensors.check(reading))</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>print(readings[<span class="dv">0</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>temperature good
+humidity over 100.0
+wind no limit is known
+Reading(name=&quot;temperature&quot;, value=21.5)</code></pre>
+<p><code>import sensors</code> reads <code>sensors.zeno</code> from the
+folder of the file that <code>zeno run</code> was given. Its names are
+then written with the module’s name in front:
+<code>sensors.check</code>, <code>sensors.Reading</code>. A value prints
+by the name its own file gave it, <code>Reading</code>.</p>
+<h3 class="unnumbered" id="two-ways-to-import"><span
+class="number">21.2</span> Two ways to import</h3>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Written</th>
+<th style="text-align: left;">Means</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>import sensors</code></td>
+<td style="text-align: left;">read <code>sensors.zeno</code>; its names
+are written <code>sensors.check</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>import drivers.uart</code></td>
+<td style="text-align: left;">read <code>drivers/uart.zeno</code>; a dot
+is a folder, and the names are written
+<code>drivers.uart.send</code></td>
+</tr>
+<tr class="odd">
+<td
+style="text-align: left;"><code>from sensors import check, Reading</code></td>
+<td style="text-align: left;">read <code>sensors.zeno</code>, and let
+these names be written with nothing in front</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>These are the same two forms that the modules which come with Zeno
+have: <code>import math</code> and <code>from time import sleep</code>.
+A file of your own is used exactly as one of those is.</p>
+<div class="zenofile">
+<p>drivers/uart.zeno</p>
+</div>
+<div class="sourceCode" id="cb4" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> speed = <span class="dv">9600</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> sent = <span class="dv">0</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> send(text: <span class="dt">str</span>) {</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;uart&gt; {text}&quot;</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    sent += len(text) + <span class="dv">1</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="zenofile">
+<p>station.zeno</p>
+</div>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> drivers.uart</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> sensors <span class="kw">import</span> Reading, check</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> r = Reading(<span class="st">&quot;temperature&quot;</span>, <span class="dv">21.5</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>drivers.uart.send(<span class="st">f&quot;{r.name}: {check(r)}&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>drivers.uart.send(<span class="st">&quot;done&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>print(drivers.uart.sent, <span class="st">&quot;bytes sent at&quot;</span>, drivers.uart.speed)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>uart&gt; temperature: good
+uart&gt; done
+23 bytes sent at 9600</code></pre>
+<p>A type from a module is written the same way,
+<code>sensors.Reading</code>, and so is an enum case in a
+<code>match</code>, <code>case shapes.Circle(r)</code>, and an error
+class in an <code>except</code>.</p>
+<div class="why">
+<p>A file is already a unit that people name, open and send to each
+other, so it is the module. A separate declaration of what a module is,
+as in Java’s <code>package</code> lines or Rust’s <code>mod</code>,
+would be a second name for the same thing that could disagree with the
+first. (Decision 7.1.)</p>
+</div>
+<h3 class="unnumbered" id="the-rules-1"><span class="number">21.3</span>
+The rules</h3>
+<h4 class="unnumbered" id="what-can-be-imported.">What can be
+imported.</h4>
+<p>Everything a file declares at its top: functions, classes, enums and
+their cases, <code>let</code>, <code>var</code> and <code>const</code>.
+What the file itself imports is not passed on. A declaration marked
+<code>private</code> is for its own file only, below.</p>
+<h4 class="unnumbered" id="when-an-imported-file-runs.">When an imported
+file runs.</h4>
+<p>Once, before the file that imports it, however many files import it.
+So imports go at the top of a file.</p>
+<h4 class="unnumbered" id="files-cannot-import-each-other">Files cannot
+import each other,</h4>
+<p>directly or round a longer circle. One of them would have to run
+first, and none can:</p>
+<div class="zenofile">
+<p>a.zeno</p>
+</div>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> b</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x = <span class="dv">1</span></span></code></pre></div>
+<div class="zenofile">
+<p>b.zeno</p>
+</div>
+<div class="sourceCode" id="cb8" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> a</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> y = <span class="dv">2</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `b.zeno` is the file the program starts in, and no file imports that one. Move what the files share into a file of its own, and import that
+ --&gt; a.zeno:1:1
+  |
+1 | import b
+  | ^</code></pre>
+<p>What two files share goes into a third, which both import.</p>
+<h4 class="unnumbered"
+id="only-a-module-changes-its-own-variables.">Only a module changes its
+own variables.</h4>
+<p>Other files read them, and ask the module to change them through a
+function:</p>
+<div class="zenofile">
+<p>meddle.zeno</p>
+</div>
+<div class="sourceCode" id="cb10" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> drivers.uart</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>drivers.uart.sent = <span class="dv">0</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `drivers.uart.sent` is a variable of the module `drivers.uart`, and only the file of `drivers.uart` gives it a new value. Give `drivers.uart` a function that changes it, and call that
+ --&gt; meddle.zeno:2:1
+  |
+2 | drivers.uart.sent = 0
+  | ^</code></pre>
+<h4 class="unnumbered" id="no-name-has-two-meanings.">No name has two
+meanings.</h4>
+<p>Importing <code>check</code> from two modules, or declaring your own
+<code>check</code> beside an imported one, is refused. A name declared
+inside a function hides an imported one, as it hides any name from the
+top of the file.</p>
+<h4 class="unnumbered" id="a-misspelt-name-is-named">A misspelt name is
+named,</h4>
+<p>with the names the module does have:</p>
+<div class="zenofile">
+<p>typo.zeno</p>
+</div>
+<div class="sourceCode" id="cb12" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> sensors</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>print(sensors.chek)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: module `sensors` has no `chek`. It has `Reading`, `highest` and `check`
+ --&gt; typo.zeno:2:7
+  |
+2 | print(sensors.chek)
+  |       ^</code></pre>
+<p>A mistake inside an imported file is shown in that file, with its
+name and line.</p>
+<h3 class="unnumbered" id="private"><span class="number">21.4</span>
+private</h3>
+<p>Every module has parts it is for and parts it only uses to get its
+work done. <code>private</code> in front of a declaration keeps it to
+the file it is written in. It goes in front of a function, class, enum,
+<code>let</code>, <code>var</code> or <code>const</code> at the top of a
+file, and in front of a field or a method of a class.</p>
+<p>Here is a queue of a fixed size whose count must always agree with
+its slots:</p>
+<div class="zenofile">
+<p>ring.zeno</p>
+</div>
+<div class="sourceCode" id="cb14" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Ring {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> slots: <span class="dt">list</span>[<span class="dt">int</span>]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> first: <span class="dt">int</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> count: <span class="dt">int</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> put(<span class="kw">self</span>, byte: <span class="dt">int</span>) -&gt; <span class="dt">bool</span> {</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="kw">self</span>.count == len(<span class="kw">self</span>.slots) {</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="cn">false</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.slots[<span class="kw">self</span>.slot(<span class="kw">self</span>.count)] = byte</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.count += <span class="dv">1</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="cn">true</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> get(<span class="kw">self</span>) -&gt; <span class="dt">int</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="kw">self</span>.count == <span class="dv">0</span> {</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> byte = <span class="kw">self</span>.slots[<span class="kw">self</span>.first]</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.first = wrapped(<span class="kw">self</span>.first + <span class="dv">1</span>, len(<span class="kw">self</span>.slots))</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.count -= <span class="dv">1</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> byte</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> size(<span class="kw">self</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">self</span>.count</span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">function</span> slot(<span class="kw">self</span>, steps: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> wrapped(<span class="kw">self</span>.first + steps, len(<span class="kw">self</span>.slots))</span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> ring(size: <span class="dt">int</span>) -&gt; Ring <span class="kw">raises</span> ValueError {</span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> size &lt; <span class="dv">1</span> {</span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;a ring has room for one byte at least&quot;</span>)</span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> Ring([<span class="dv">0</span> <span class="kw">for</span> slot <span class="kw">in</span> range(size)], <span class="dv">0</span>, <span class="dv">0</span>)</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span> <span class="kw">function</span> wrapped(place: <span class="dt">int</span>, size: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> place % size</span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="zenofile">
+<p>main.zeno</p>
+</div>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ring</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> queue = ring.ring(<span class="dv">3</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> byte <span class="kw">in</span> [<span class="dv">10</span>, <span class="dv">20</span>, <span class="dv">30</span>, <span class="dv">40</span>] {</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    print(byte, queue.put(byte))</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>print(queue.get(), queue.get(), queue.size())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>10 true
+20 true
+30 true
+40 false
+10 20 1</code></pre>
+<p>Each of these, in another file, is refused:</p>
+<div class="zenofile">
+<p>bad1.zeno</p>
+</div>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ring</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> queue = ring.ring(<span class="dv">3</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>queue.count = <span class="dv">0</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `count` is private in the class `ring.Ring`: only the file that declares the class can use it. To use it from another file, take the word `private` off where it is declared
+ --&gt; bad1.zeno:3:1
+  |
+3 | queue.count = 0
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="zenofile">
+<p>bad2.zeno</p>
+</div>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ring</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>print(ring.wrapped(<span class="dv">5</span>, <span class="dv">4</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `wrapped` is private in the module `ring`: only its own file can use it. To use it from another file, take the word `private` off where it is declared
+ --&gt; bad2.zeno:2:7
+  |
+2 | print(ring.wrapped(5, 4))
+  |       ^</code></pre>
+<div class="zenofile">
+<p>bad3.zeno</p>
+</div>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ring</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mine = ring.Ring([<span class="dv">1</span>, <span class="dv">2</span>], <span class="dv">0</span>, <span class="dv">2</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `ring.Ring` has the private field `slots`, so only the file that declares the class can build one. Write a function in that file that builds one and returns it, and call that function here
+ --&gt; bad3.zeno:2:12
+  |
+2 | let mine = ring.Ring([1, 2], 0, 2)
+  |            ^
+
+1 error found. Nothing was run.</code></pre>
+<p>The last is the important one. A class with a private field can be
+built only by its own file, because only that file can fill the field
+in. So the only way to get a <code>Ring</code> is through the function
+<code>ring</code>, which checks the size. Every line that changes the
+count is in <code>ring.zeno</code>, in front of whoever reads it.</p>
+<div class="why">
+<p>One word, in front of the thing it is about, at the place a reader is
+already looking. Python’s leading underscore is only a habit that
+nothing checks; Java’s four levels of access are three more than a file
+needs. Private is for the file and not for the class because the file is
+what one person writes and reads at a time, and functions beside a class
+often need to see inside it. (Decisions 10.1 to 10.3.)</p>
+</div>
+<h3 class="unnumbered" id="how-it-works"><span
+class="number">21.5</span> How it works</h3>
+<p>Before the checker sees anything, a stage of the compiler loads every
+file the program imports, renames each top-level name with its module in
+front, and joins the files into one program, in the order they must run.
+Everything after that, the checker, the interpreter and the compilers,
+sees a single program. <code>zeno join</code> shows it:</p>
+<div class="zenofile">
+<p>joined.zeno</p>
+</div>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> drivers.uart</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>drivers.uart.send(<span class="st">&quot;hi&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno join joined.zeno
+let drivers.uart.speed = 9600
+var drivers.uart.sent = 0
+function drivers.uart.send(text: str)
+    print(f&quot;uart&gt; {text}&quot;)
+    drivers.uart.sent += (len(text) + 1)
+drivers.uart.send(&quot;hi&quot;)</code></pre>
+<p><a href="inside.html#ch-inside">Inside Zeno</a> has more on the
+stages of the compiler.</p>
+<div class="summary">
+<p>A file is a module. <code>import name</code> reads
+<code>name.zeno</code> from the program’s folder, a dot is a folder, and
+<code>from name import a, b</code> brings single names. Imported files
+run once, first, and cannot import each other. Only a module changes its
+own variables. <code>private</code> keeps a declaration, a field or a
+method to its own file, and a class with a private field can only be
+built there.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Move the <code>Log</code> class from <a
+href="classes.html#ch-classes">Classes</a> into a file of its own
+and use it from <code>main.zeno</code>.</p></li>
+<li><p>Make the <code>readings</code> field of <code>Log</code> private,
+and give it a function <code>log(limit: int) -&gt; Log</code> that
+refuses a limit below 1.</p></li>
+<li><p>Make two files import each other, and read the message. Then move
+what they share into a third.</p></li>
+<li><p>Run <code>zeno join</code> on a program of three files, and find
+where each file’s statements went.</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="interfaces.html" rel="previous">← <span class="number">20</span> Interfaces</a>
+<a class="next" href="packages.html" rel="next"><span class="number">22</span> Packages →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2 A First Program · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a class="here" href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="getting-zeno.html" rel="previous">← <span class="number">1</span> Getting Zeno</a>
+<a class="next" href="tour.html" rel="next"><span class="number">3</span> A Tour of Zeno →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-first-program"><span
+class="number">2</span> A First Program</h2>
+<h3 class="unnumbered" id="hello"><span class="number">2.1</span>
+Hello</h3>
+<p>Make a file called <code>hello.zeno</code> with one line in it:</p>
+<div class="zenofile">
+<p>hello.zeno</p>
+</div>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;Hello, Zeno!&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno run hello.zeno
+Hello, Zeno!</code></pre>
+<p>That is the whole program. There is no <code>main</code> function to
+write, nothing to import and no semicolon at the end. Zeno starts at the
+top of the file and does each line in turn, and when it runs out of
+lines the program is over.</p>
+<p><code>print</code> shows what it is given and then ends the line.
+Give it several things and it puts a space between each; give it nothing
+and it prints an empty line:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;one&quot;</span>, <span class="st">&quot;two&quot;</span>, <span class="dv">3</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>print()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;after an empty line&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>one two 3
+
+after an empty line</code></pre>
+<p>Text is written between double quotes, <code>"like this"</code>.
+Numbers are written as they are. Each has a chapter of its own
+later.</p>
+<h3 class="unnumbered" id="comments"><span class="number">2.2</span>
+Comments</h3>
+<p>A <code>#</code> starts a comment. Everything from it to the end of
+the line is for the reader, and Zeno skips it:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Greet the world. This whole line is a comment.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;Hello&quot;</span>)   <span class="co"># and so is the end of this one</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Hello</code></pre>
+<h3 class="unnumbered" id="one-line-one-statement"><span
+class="number">2.3</span> One line, one statement</h3>
+<p>Each line is one <em>statement</em>: one thing for the program to do.
+The end of the line ends the statement, so Zeno needs no
+<code>;</code>.</p>
+<p>A long statement can go on to the next line when its first line is
+clearly not finished. That is so inside brackets, and after anything
+that cannot end a statement, such as <code>+</code>, <code>,</code> or
+<code>=</code>:</p>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> total = <span class="dv">1</span> +</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> +</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="dv">3</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>print(total,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;is the total&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>6 is the total</code></pre>
+<p>The other way round does not work. A line that could stand on its own
+<em>does</em> stand on its own, so a line that starts with
+<code>+</code> is a mistake:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> total = <span class="dv">1</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    + <span class="dv">2</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: expected an expression, found `+`
+ --&gt; main.zeno:2:5
+  |
+2 |     + 2
+  |     ^</code></pre>
+<div class="why">
+<p>The line break already means "next statement" to the person reading,
+so a <code>;</code> on every line only says it again. The rule for going
+on to the next line, "an unfinished line continues", can never be
+misread, because a line that looks finished is finished.</p>
+</div>
+<h3 class="unnumbered" id="names-for-things"><span
+class="number">2.4</span> Names for things</h3>
+<p><code>let</code> gives a value a name, and from then on the name
+stands for the value:</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name = <span class="st">&quot;Ada&quot;</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> year = <span class="dv">1843</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>print(name, <span class="st">&quot;wrote the first program in&quot;</span>, year)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;Hello, {name}!&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Ada wrote the first program in 1843
+Hello, Ada!</code></pre>
+<p>The last line is a <em>formatted string</em>. The <code>f</code> in
+front of the quotes says that what stands inside <code>{ }</code> is to
+be worked out and put into the text. <a
+href="values.html#ch-values">Values and Variables</a> and <a
+href="text.html#ch-text">Text</a> say much more about both.</p>
+<h3 class="unnumbered" id="when-something-is-wrong"><span
+class="number">2.5</span> When something is wrong</h3>
+<p>Zeno reads the whole program before it runs any of it, and if it
+finds a mistake it says so and runs nothing. Here is a program with
+two:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name = <span class="st">&quot;Ada&quot;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>name = <span class="st">&quot;Grace&quot;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>print(nmae)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `name` cannot be changed. Declare it with `var` to allow that
+ --&gt; main.zeno:2:1
+  |
+2 | name = &quot;Grace&quot;
+  | ^
+
+error: `nmae` is not defined
+ --&gt; main.zeno:3:7
+  |
+3 | print(nmae)
+  |       ^
+
+2 errors found. Nothing was run.</code></pre>
+<p>Each message says what is wrong, and where: the file, the line and
+the column, the line itself, and a <code>^</code> under the place. Where
+Zeno can tell what you meant, it says what to write instead. The first
+mistake here is that a name given with <code>let</code> cannot be given
+another value, and the message names the word that would allow it. The
+second is a misspelt name.</p>
+<p>Habits from other languages get messages of their own:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>def greet():</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;hi&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: Zeno spells `def` as `function`
+ --&gt; main.zeno:1:1
+  |
+1 | def greet():
+  | ^</code></pre>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ready = <span class="cn">true</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> ready &amp;&amp; <span class="cn">true</span> {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;go&quot;</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: Zeno spells this `and`
+ --&gt; main.zeno:2:10
+  |
+2 | if ready &amp;&amp; true {
+  |          ^</code></pre>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;hello&quot;</span>);</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: Zeno has no semicolons. A line break ends a statement
+ --&gt; main.zeno:1:15
+  |
+1 | print(&quot;hello&quot;);
+  |               ^</code></pre>
+<div class="why">
+<p>An error message is the language teaching the person who reads it, at
+the moment the lesson is most useful. So every message in Zeno aims to
+say what to write instead, not only what is wrong.</p>
+</div>
+<p>Notice that the last three programs each showed one message, while
+the one before showed two. A mistake in the <em>shape</em> of a program,
+such as a missing brace, leaves Zeno unsure where it is, and what it
+would report after that could be nonsense caused by the first. So it
+stops at the first. A mistake in the <em>meaning</em>, such as a
+misspelt name, leaves it sure where it is, so it reports every one it
+finds.</p>
+<h3 class="unnumbered" id="checking-without-running"><span
+class="number">2.6</span> Checking without running</h3>
+<p><code>zeno run</code> checks a program and then runs it.
+<code>zeno check</code> only checks it:</p>
+<div class="zenofile">
+<p>greet.zeno</p>
+</div>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name = <span class="st">&quot;Ada&quot;</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;Hello, {name}!&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno check greet.zeno
+No errors found.</code></pre>
+<p>It prints nothing when there is nothing wrong. That makes it useful
+for a program that would take a long time to run, or one that drives
+hardware you do not want to move yet.</p>
+<div class="summary">
+<p>A program is a file of statements, done from the top, one to a line.
+<code>print</code> shows values, <code>#</code> starts a comment, and
+<code>let</code> names a value. Zeno checks the whole program before it
+runs a line of it, and a message says what is wrong, where, and usually
+what to write instead.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Print your own name and the year you were born on one line, with
+one <code>print</code>.</p></li>
+<li><p>Leave the closing quote off a string and read the message. Then
+leave off a closing bracket.</p></li>
+<li><p>Write <code>elif</code> where Zeno expects <code>else if</code>,
+and <code>x := 1</code> for a variable. What does Zeno say to
+each?</p></li>
+<li><p>Put two mistakes of meaning in one program and run
+<code>zeno check</code>. How many messages are there? Now add a mistake
+of shape, such as <code>print("a"</code>. How many now, and
+why?</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="getting-zeno.html" rel="previous">← <span class="number">1</span> Getting Zeno</a>
+<a class="next" href="tour.html" rel="next"><span class="number">3</span> A Tour of Zeno →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

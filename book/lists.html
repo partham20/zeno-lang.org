@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>9 Lists · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a class="here" href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="functions.html" rel="previous">← <span class="number">8</span> Functions</a>
+<a class="next" href="dicts.html" rel="next"><span class="number">10</span> Dicts →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-lists"><span
+class="number">9</span> Lists</h2>
+<p>A <em>list</em> holds several values in order. It can grow and
+shrink, and each of its items has a position, counted from 0.</p>
+<h3 class="unnumbered" id="making-a-list-and-reading-it"><span
+class="number">9.1</span> Making a list and reading it</h3>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> primes = [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>print(primes, len(primes), primes[<span class="dv">0</span>], primes[<span class="dv">3</span>])</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>print([], [[<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">3</span>]])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[2, 3, 5, 7] 4 2 7
+[] [[1, 2], [3]]</code></pre>
+<p>The type of a list says what its items are: <code>primes</code> is a
+<code>list[int]</code>. Zeno works it out from the items, or you write
+it, which you must do for an empty list that has nothing yet to work it
+out from:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names: <span class="dt">list</span>[<span class="dt">str</span>] = []</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> grid: <span class="dt">list</span>[<span class="dt">list</span>[<span class="dt">int</span>]] = [[<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">3</span>, <span class="dv">4</span>]]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>print(names, grid[<span class="dv">1</span>][<span class="dv">0</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[] 3</code></pre>
+<p>A position outside the list is an <code>IndexError</code>, and so is
+a negative one (<a href="text.html#ch-text">Text</a> gives the
+reason):</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> primes = [<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">7</span>]</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>print(primes[<span class="dv">4</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught IndexError: index 4 is out of range for a list of length 4
+ --&gt; main.zeno:2:7
+  |
+2 | print(primes[4])
+  |       ^</code></pre>
+<h3 class="unnumbered" id="changing-a-list"><span
+class="number">9.2</span> Changing a list</h3>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xs = [<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>xs.append(<span class="dv">4</span>)           <span class="co"># at the end</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>xs.insert(<span class="dv">0</span>, <span class="dv">9</span>)        <span class="co"># at position 0, moving the rest up</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>print(xs)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>xs[<span class="dv">1</span>] = <span class="dv">30</span>             <span class="co"># replace the item at position 1</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>print(xs)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> last = xs.pop()    <span class="co"># take out the last item, and give it</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> first = xs.pop(<span class="dv">0</span>)  <span class="co"># take out the item at position 0</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>print(last, first, xs)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>xs.clear()             <span class="co"># take out everything</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>print(xs)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[9, 3, 1, 2, 4]
+[9, 30, 1, 2, 4]
+4 9 [30, 1, 2]
+[]</code></pre>
+<p>All of these change the list itself, which is why <code>xs</code> can
+be a <code>let</code>: the name always means the same list, while what
+the list holds changes. <a href="values.html#ch-values">Values and
+Variables</a> has the rule.</p>
+<p>Every item must be of the list’s type:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xs = [<span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>xs.append(<span class="st">&quot;three&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: an item added to this list should be int, but this is str
+ --&gt; main.zeno:2:11
+  |
+2 | xs.append(&quot;three&quot;)
+  |           ^
+
+1 error found. Nothing was run.</code></pre>
+<h3 class="unnumbered" id="every-method-of-a-list"><span
+class="number">9.3</span> Every method of a list</h3>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>append(x)</code></td>
+<td style="text-align: left;">puts <code>x</code> at the end</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>insert(at, x)</code></td>
+<td style="text-align: left;">puts <code>x</code> at position
+<code>at</code>, moving the rest up</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>pop()</code></td>
+<td style="text-align: left;">takes out the last item, and gives it</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>pop(at)</code></td>
+<td style="text-align: left;">takes out the item at <code>at</code>, and
+gives it</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>clear()</code></td>
+<td style="text-align: left;">takes out every item</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>reverse()</code></td>
+<td style="text-align: left;">turns the list round, where it is</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>sort()</code></td>
+<td style="text-align: left;">puts numbers or text in order, smallest
+first, where it is</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>find(x)</code></td>
+<td style="text-align: left;">the position of the first item equal to
+<code>x</code>, or <code>none</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>slice(from, to)</code></td>
+<td style="text-align: left;">a new list of the items from
+<code>from</code> up to, not including, <code>to</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>slice(from)</code></td>
+<td style="text-align: left;">a new list of the items from
+<code>from</code> to the end</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>join(sep)</code></td>
+<td style="text-align: left;">for a list of text: one text, with
+<code>sep</code> between the items</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>map(f)</code></td>
+<td style="text-align: left;">a new list of <code>f</code> of each
+item</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>filter(f)</code></td>
+<td style="text-align: left;">a new list of the items for which
+<code>f</code> is <code>true</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>reduce(f, start)</code></td>
+<td style="text-align: left;">the items folded into one value with
+<code>f</code>, starting from <code>start</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Beside them stand the functions <code>len(xs)</code>,
+<code>sum(xs)</code>, <code>min(xs)</code> and <code>max(xs)</code>, the
+operator <code>x in xs</code>, and <code>+</code> to join two lists into
+a new one.</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = [<span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">1</span>]</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>numbers.sort()</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>print(numbers, numbers.find(<span class="dv">9</span>), numbers.find(<span class="dv">4</span>), <span class="dv">3</span> <span class="kw">in</span> numbers)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>numbers.reverse()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>print(numbers, numbers.slice(<span class="dv">1</span>, <span class="dv">3</span>), numbers + [<span class="dv">0</span>])</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>print([<span class="st">&quot;pear&quot;</span>, <span class="st">&quot;fig&quot;</span>, <span class="st">&quot;apple&quot;</span>].join(<span class="st">&quot;, &quot;</span>))</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>print(sum(numbers), min(numbers), max(numbers))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[1, 3, 5, 9] 3 none true
+[9, 5, 3, 1] [5, 3] [9, 5, 3, 1, 0]
+pear, fig, apple
+18 1 9</code></pre>
+<h4 class="unnumbered" id="what-there-is-no-method-for">What there is no
+method for</h4>
+<p>Some methods that other languages have are left out, because Zeno
+already says the thing in one short expression:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">In other languages</th>
+<th style="text-align: left;">In Zeno</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>xs.contains(x)</code></td>
+<td style="text-align: left;"><code>x in xs</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>sorted(xs)</code></td>
+<td style="text-align: left;"><code>let ys = xs.slice(0)</code>, then
+<code>ys.sort()</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>xs.remove(x)</code></td>
+<td style="text-align: left;"><code>xs.find(x)</code>, then
+<code>xs.pop(at)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>xs.extend(ys)</code></td>
+<td style="text-align: left;"><code>xs += ys</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>xs[1:3]</code></td>
+<td style="text-align: left;"><code>xs.slice(1, 3)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="why">
+<p>A method gets into the library only if most programs in the big
+languages use it and Zeno cannot already say it in one short expression.
+That keeps one way to write each thing. (Decision 6.1.)</p>
+</div>
+<h4 class="unnumbered" id="sort-and-reverse-change-the-list">sort and
+reverse change the list</h4>
+<p><code>sort</code> and <code>reverse</code> work where the list is and
+give back nothing. To keep the old order, sort a copy, which
+<code>slice(0)</code> makes:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">5</span>, <span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">1</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> in_order = readings.slice(<span class="dv">0</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>in_order.sort()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>print(readings, in_order)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[5, 3, 9, 1] [1, 3, 5, 9]</code></pre>
+<p><code>sort</code> knows how to order numbers and text, which have one
+order that nobody has to be told. Anything else it refuses, with the
+reason:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> flags = [<span class="cn">true</span>, <span class="cn">false</span>]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>flags.sort()</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `sort` puts numbers or text in order, smallest first, and this is list[bool]. There is no one order for those items, so write the loop that puts them in yours
+ --&gt; main.zeno:2:1
+  |
+2 | flags.sort()
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>A new list is new memory, which a program on a small board may not
+want to spend, and a method that gives the list back invites
+<code>let ys = xs.sort()</code>, where it is not clear whether
+<code>xs</code> changed. <code>sort</code> is <em>heapsort</em> in every
+engine: it needs no second list, never calls itself, and is never slow,
+which is what firmware wants. (Decisions 6.5 and 6.6.)</p>
+</div>
+<h4 class="unnumbered" id="find-and-taking-out-by-value">find, and
+taking out by value</h4>
+<p><code>find</code> gives a position or <code>none</code>. To take out
+an item by its value, find it first, and say what happens when it is not
+there:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = [<span class="st">&quot;Ada&quot;</span>, <span class="st">&quot;Grace&quot;</span>, <span class="st">&quot;Alan&quot;</span>]</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> at = names.find(<span class="st">&quot;Grace&quot;</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> at <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    names.pop(at)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>print(names)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;Ada&quot;, &quot;Alan&quot;]</code></pre>
+<h3 class="unnumbered" id="joining-lists"><span
+class="number">9.4</span> Joining lists</h3>
+<p><code>+</code> makes a new list from two, and <code>+=</code> adds a
+list to the end of a list variable. Both lists must hold the same kind
+of thing:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> log: <span class="dt">list</span>[<span class="dt">str</span>] = [<span class="st">&quot;start&quot;</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>log += [<span class="st">&quot;read&quot;</span>, <span class="st">&quot;write&quot;</span>]</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>print(log + [<span class="st">&quot;stop&quot;</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;start&quot;, &quot;read&quot;, &quot;write&quot;, &quot;stop&quot;]</code></pre>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xs = [<span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>print(xs + [<span class="st">&quot;a&quot;</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `+` joins two lists that hold the same kind of thing, and these are list[int] and list[str]
+ --&gt; main.zeno:2:7
+  |
+2 | print(xs + [&quot;a&quot;])
+  |       ^
+
+1 error found. Nothing was run.</code></pre>
+<h3 class="unnumbered" id="comprehensions"><span
+class="number">9.5</span> Comprehensions</h3>
+<p>A <em>comprehension</em> builds a new list from another in one line:
+an expression for each item, a <code>for</code>, and if you like an
+<code>if</code> that keeps only some items:</p>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = range(<span class="dv">1</span>, <span class="dv">11</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>print([n * n <span class="kw">for</span> n <span class="kw">in</span> numbers])</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>print([n <span class="kw">for</span> n <span class="kw">in</span> numbers <span class="kw">if</span> n % <span class="dv">3</span> == <span class="dv">0</span>])</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>print([word.upper() <span class="kw">for</span> word <span class="kw">in</span> [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+[3, 6, 9]
+[&quot;A&quot;, &quot;B&quot;]</code></pre>
+<p>It reads the way it would be said: "n times n, for each n in
+numbers".</p>
+<h3 class="unnumbered" id="map-filter-and-reduce"><span
+class="number">9.6</span> map, filter and reduce</h3>
+<p>The same work can be done by handing a function to a method.
+<code>map</code> applies it to each item, <code>filter</code> keeps the
+items it says <code>true</code> for, and <code>reduce</code> folds the
+list into one value:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> square(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * n</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> is_even(n: <span class="dt">int</span>) -&gt; <span class="dt">bool</span> {</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n % <span class="dv">2</span> == <span class="dv">0</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add(total: <span class="dt">int</span>, n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> total + n</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>print(numbers.map(square))</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even))</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>print(numbers.reduce(add, <span class="dv">0</span>))</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even).map(square).reduce(add, <span class="dv">0</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[1, 4, 9, 16, 25, 36]
+[2, 4, 6]
+21
+56</code></pre>
+<p>The last line reads left to right, in the order things happen: take
+the numbers, keep the even ones, square them, add them up.</p>
+<div class="why">
+<p>As methods, <code>map</code>, <code>filter</code> and
+<code>reduce</code> read left to right. As plain functions, the same
+chain is
+<code>reduce(add, map(square, filter(is_even, numbers)))</code>, which
+has to be read from the inside out. (Decision 3.6b.)</p>
+</div>
+<p>A function can also be written in place, with no name. <a
+href="function-values.html#ch-function-values">Functions as
+Values</a> covers that.</p>
+<h3 class="unnumbered" id="two-names-one-list"><span
+class="number">9.7</span> Two names, one list</h3>
+<p>A list is not copied when it is given another name, passed to a
+function or put in another list. Every name sees the one list:</p>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add_reading(readings: <span class="dt">list</span>[<span class="dt">float</span>], r: <span class="dt">float</span>) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    readings.append(r)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mine = [<span class="dv">20.5</span>]</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> also_mine = mine</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>add_reading(also_mine, <span class="dv">21.0</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>print(mine)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[20.5, 21.0]</code></pre>
+<p>When you want a separate list, make one: <code>xs.slice(0)</code>
+copies the whole list.</p>
+<div class="why">
+<p>Sharing is what Python, Java and JavaScript programmers expect, and
+it is the cheapest thing to do. In an ordinary build a garbage collector
+makes it safe; a build with no collector gives each list one owner
+instead, and <a href="no-collector.html#ch-no-collector">Building
+with No Collector</a> explains how. (Decision 3.10.)</p>
+</div>
+<h3 class="unnumbered" id="equal-lists"><span class="number">9.8</span>
+Equal lists</h3>
+<p>Two lists are equal when they have equal items in the same order:</p>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>print([<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">2</span>, <span class="dv">1</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>true false</code></pre>
+<div class="summary">
+<p>A list holds values of one type, in order, from position 0. It grows
+with <code>append</code>, <code>insert</code> and <code>+=</code>,
+shrinks with <code>pop</code> and <code>clear</code>, and is ordered
+with <code>sort</code> and <code>reverse</code>, all in place.
+<code>find</code>, <code>slice</code>, <code>join</code>,
+<code>map</code>, <code>filter</code> and <code>reduce</code> give new
+values. Comprehensions build lists in one line. A list is shared, never
+copied without being asked.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Write
+<code>function median(values: list[float]) -&gt; float</code> that does
+not change the list it is given.</p></li>
+<li><p>Take every second item of a list with a comprehension and
+<code>range</code>.</p></li>
+<li><p>Remove every <code>0</code> from a list of numbers, first with a
+loop and <code>pop</code>, then with <code>filter</code>. Which is
+easier to get right, and why?</p></li>
+<li><p>Write a list of lists that is a 3 by 3 grid of zeros, set the
+middle to 1, and print it row by row.</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="functions.html" rel="previous">← <span class="number">8</span> Functions</a>
+<a class="next" href="dicts.html" rel="next"><span class="number">10</span> Dicts →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

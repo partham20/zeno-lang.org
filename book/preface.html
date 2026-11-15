@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Preface · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a class="here" href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="index.html" rel="previous">← The Zeno Book</a>
+<a class="next" href="starting.html" rel="next">Starting →</a>
+</nav>
+<article>
+<section id="ch-preface" class="unnumbered part">
+<h1 class="unnumbered part">Preface</h1>
+<p>Zeno is a programming language that reads like plain English and is
+checked like Rust. It was built from nothing, one stage at a time, by a
+firmware engineer who wanted to know how a language works from the
+inside: the lexer, the parser, the type checker, two engines that run
+programs, two compilers that turn them into machine code, and the
+library and tools around them. This book is the whole of that language,
+written down once it stopped moving.</p>
+<div class="prefacehead">
+<p>Who this book is for</p>
+</div>
+<p>The book starts from nothing. If you have never written a program,
+start at the first page and read in order: every chapter uses only what
+the chapters before it showed you.</p>
+<p>If you already know another language, you will find Zeno familiar
+quickly. It takes its spelling from Python wherever Python’s spelling is
+clear, its braces from C, its checking from Rust, its sized numbers from
+firmware, and its error messages from the idea that a message should say
+what to write instead. Read Part I quickly, skim Part II for the places
+where Zeno differs from what you know, and slow down from Part III
+on.</p>
+<p>If you write firmware, Part IV is for you: it shows how one Zeno
+program builds for a computer, for a firmware coding standard with no
+<code>setjmp</code>, with no garbage collector at all, and with memory
+handled by hand, and how each of those builds is told apart.</p>
+<p>If you want to know how the compiler itself works, Part V walks
+through it, file by file.</p>
+<div class="prefacehead">
+<p>How the book is laid out</p>
+</div>
+<dl>
+<dt>Part I, Starting</dt>
+<dd>
+<p>gets Zeno onto your machine, runs a first program, and takes a quick
+tour of the whole language so you know what is coming.</p>
+</dd>
+<dt>Part II, The Language</dt>
+<dd>
+<p>is everything a program is made of: values, numbers, text, decisions
+and loops, functions, lists, dicts, classes, enums, values that may be
+missing, errors, and functions used as values.</p>
+</dd>
+<dt>Part III, Growing Programs</dt>
+<dd>
+<p>is what a program needs once it is more than a page: types written
+and worked out, units, sized numbers and bits, generics, interfaces,
+modules, packages, files, mathematics, tests, and the tools.</p>
+</dd>
+<dt>Part IV, Zeno on a Machine</dt>
+<dd>
+<p>is about where a program runs: the board and its pins, compiling to C
+and to LLVM, memory and the collector, owned values, firmware builds,
+builds with no collector, and memory by hand.</p>
+</dd>
+<dt>Part V, Inside Zeno</dt>
+<dd>
+<p>is how the compiler is built and how the language is designed.</p>
+</dd>
+<dt>The appendices</dt>
+<dd>
+<p>are for looking things up: every keyword, every operator, the whole
+library, every unit, every command, every kind of error, and the list of
+what version 0.1 leaves out.</p>
+</dd>
+</dl>
+<p>Each chapter ends with <em>Things to try</em>: small changes to make
+and questions to answer by running Zeno. They are the fastest way to
+make a chapter your own.</p>
+<div class="prefacehead">
+<p>The programs in this book are real</p>
+</div>
+<p>Every program in this book was run by the Zeno compiler when the book
+was built, and every output under a program is what Zeno printed. That
+includes the error messages: when the book shows a mistake, the message
+under it is the one Zeno gives. If a later version of Zeno prints
+something else, the book is rebuilt and the page changes with it.</p>
+<p>A program looks like this:</p>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;Hello, Zeno!&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Hello, Zeno!</code></pre>
+<p>and what it printed is in the paler box under it. When a program is
+written to a file of its own name, the name is shown above it. A command
+typed into a terminal starts with <code>$</code>, and its output follows
+on the next lines.</p>
+<div class="prefacehead">
+<p>The boxes</p>
+</div>
+<div class="note">
+<p>A note says something worth knowing that the text around it does not
+stop to explain.</p>
+</div>
+<div class="why">
+<p>Zeno has a recorded reason for every choice in it. A box like this
+gives the reason for the rule beside it, and often what was turned down.
+All of the reasons are kept in <code>docs/decisions.md</code> in the
+Zeno repository, with a number for each, and the book names the number
+when it is useful.</p>
+</div>
+<div class="prefacehead">
+<p>The rule above the rules</p>
+</div>
+<p>One sentence decides more about Zeno than any other: <em>the entire
+language must be unambiguous and intuitive</em>. In practice that means
+five things, and you will see each of them again and again in this
+book:</p>
+<ol>
+<li><p>There is one obvious way to write each thing.</p></li>
+<li><p>No line can be read two ways, by the compiler or by a
+person.</p></li>
+<li><p>Nothing happens that the line does not say.</p></li>
+<li><p>Every word is a plain word, with one meaning.</p></li>
+<li><p>When Zeno refuses something, the message says what to write
+instead.</p></li>
+</ol>
+<div class="prefacehead">
+<p>The name</p>
+</div>
+<p>Zeno of Elea argued that Achilles can never catch the tortoise:
+before he reaches it he must cover half the distance, then half of what
+is left, and so on forever. The quantum Zeno effect says that a system
+watched closely enough never changes. Both suit a compiler that will
+always be almost finished. Its motto is the first thing
+<code>zeno --help</code> prints:</p>
+<blockquote>
+<p><em>Every journey is halfway done. Forever.</em></p>
+</blockquote>
+</section>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="index.html" rel="previous">← The Zeno Book</a>
+<a class="next" href="starting.html" rel="next">Starting →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

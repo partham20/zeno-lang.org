@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>4 Values and Variables · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.1</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a class="here" href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">23</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">24</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">25</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">26</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">27</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">28</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">29</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">30</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">31</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">32</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">33</span> Unsafe Code</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">34</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">35</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Version 0.1 Leaves Out</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="the-language.html" rel="previous">← The Language</a>
+<a class="next" href="numbers.html" rel="next"><span class="number">5</span> Numbers and Operators →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-values"><span
+class="number">4</span> Values and Variables</h2>
+<p>A program works on <em>values</em>: numbers, pieces of text, true and
+false, lists of things. This chapter is about the values Zeno has, and
+about the names you give them.</p>
+<h3 class="unnumbered" id="the-kinds-of-value"><span
+class="number">4.1</span> The kinds of value</h3>
+<p>Every value has a <em>type</em>, which says what kind of value it is
+and what can be done with it. These are the types every program meets
+first:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">What it holds</th>
+<th style="text-align: left;">Written like</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>int</code></td>
+<td style="text-align: left;">a whole number</td>
+<td style="text-align: left;"><code>42</code>, <code>-7</code>,
+<code>0xFF</code>, <code>1_000_000</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>float</code></td>
+<td style="text-align: left;">a number with a fraction</td>
+<td style="text-align: left;"><code>3.14</code>, <code>-0.5</code>,
+<code>2.5e-7</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>bool</code></td>
+<td style="text-align: left;">true or false</td>
+<td style="text-align: left;"><code>true</code>, <code>false</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>str</code></td>
+<td style="text-align: left;">text</td>
+<td style="text-align: left;"><code>"Ada"</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>list[int]</code></td>
+<td style="text-align: left;">several values, in order</td>
+<td style="text-align: left;"><code>[1, 2, 3]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>dict[str, int]</code></td>
+<td style="text-align: left;">values filed under keys</td>
+<td style="text-align: left;"><code>["Ada": 36]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>none</code></td>
+<td style="text-align: left;">no value</td>
+<td style="text-align: left;"><code>none</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>print(<span class="dv">42</span>, <span class="dv">3.14</span>, <span class="cn">true</span>, <span class="st">&quot;Ada&quot;</span>, [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="st">&quot;Ada&quot;</span>: <span class="dv">36</span>], <span class="cn">none</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>42 3.14 true Ada [1, 2, 3] [&quot;Ada&quot;: 36] none</code></pre>
+<p>Later chapters add more: numbers with a unit (<code>500 ms</code>),
+numbers with a size (<code>u8</code>), objects of your own classes, enum
+values, and functions.</p>
+<h3 class="unnumbered" id="let-a-name-for-a-value"><span
+class="number">4.2</span> let: a name for a value</h3>
+<p><code>let</code> gives a value a name:</p>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name = <span class="st">&quot;Ada&quot;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> born = <span class="dv">1815</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>print(name, <span class="st">&quot;was born in&quot;</span>, born)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Ada was born in 1815</code></pre>
+<p>A name given with <code>let</code> keeps its value for as long as it
+exists. Trying to give it another is a mistake, and the message names
+the word that would allow it:</p>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> count = <span class="dv">0</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>count = <span class="dv">1</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `count` cannot be changed. Declare it with `var` to allow that
+ --&gt; main.zeno:2:1
+  |
+2 | count = 1
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<h3 class="unnumbered" id="var-a-name-whose-value-changes"><span
+class="number">4.3</span> var: a name whose value changes</h3>
+<p>When the value is meant to change, declare the name with
+<code>var</code>. After that, plain <code>=</code> gives it a new
+value:</p>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = <span class="dv">0</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>count = count + <span class="dv">1</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>count = count + <span class="dv">1</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>print(count)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2</code></pre>
+<p>There is a shorter way to write <code>count = count + 1</code>:
+<code>count += 1</code>. Every operator has a form like it, and <a
+href="numbers.html#ch-numbers">Numbers and Operators</a> lists
+them.</p>
+<p>A name is declared once, and only declared names can be given a
+value. So a misspelt name is a mistake, and never a new variable by
+accident:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> count = <span class="dv">0</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>cuont = <span class="dv">1</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `cuont` is not declared. Create it with `let` or `var` first
+ --&gt; main.zeno:2:1
+  |
+2 | cuont = 1
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>In Python, <code>x = 1</code> both makes a new variable and changes
+an old one, so a typing slip quietly makes a second variable and the
+first one never changes. Separating the two turns the slip into an
+error. <code>let</code> is the short, ordinary word because most values
+never change once they are made, and a program whose values do not
+change is easier to follow. (Decision 1.6.)</p>
+</div>
+<h3 class="unnumbered"
+id="const-a-value-fixed-for-the-whole-program"><span
+class="number">4.4</span> const: a value fixed for the whole
+program</h3>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> LIMIT = <span class="dv">100</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> GREETING = <span class="st">&quot;hello&quot;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>print(LIMIT, GREETING)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>100 hello</code></pre>
+<p>A <code>const</code> says that the value belongs to the program, not
+to a moment while it runs: a size, a limit, an address, a name. By
+custom its name is written in capitals. Like a <code>let</code>, it can
+never be given another value.</p>
+<p>Unlike a <code>let</code>, its value must be known before the program
+runs: numbers, text, other constants, the operators between them, and
+lists and dicts of those. Something only the running program can work
+out belongs in a <code>let</code>:</p>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> NAME = input()</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: this is only known when the program runs, and a `const` is fixed when the program is built. A `const` is written from numbers, text, other `const`s and operators. For a value that is worked out once while the program runs, use `let`
+ --&gt; main.zeno:1:14
+  |
+1 | const NAME = input()
+  |              ^
+
+1 error found. Nothing was run.</code></pre>
+<h3 class="unnumbered" id="types-are-optional"><span
+class="number">4.5</span> Types are optional</h3>
+<p>You can write the type of a name after a <code>:</code>, or leave it
+out:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> port: <span class="dt">int</span> = <span class="dv">8080</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> host = <span class="st">&quot;localhost&quot;</span>          <span class="co"># a str: Zeno sees that</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ratio: <span class="dt">float</span> = <span class="dv">0.5</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>print(host, port, ratio)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>localhost 8080 0.5</code></pre>
+<p>Where the type is left out, Zeno works it out from the value. Where
+it is written, the value must fit it, and from then on every value given
+to the name must fit it too:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> level: <span class="dt">int</span> = <span class="dv">3</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>level = <span class="st">&quot;high&quot;</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: the new value should be int, but this is str
+ --&gt; main.zeno:2:9
+  |
+2 | level = &quot;high&quot;
+  |         ^
+
+1 error found. Nothing was run.</code></pre>
+<p>A whole number is not quietly made a float, even where a float is
+wanted. Write the decimal point:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ratio: <span class="dt">float</span> = <span class="dv">1</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `ratio` should be float, but this is int. Write a number with a decimal point, as in `1.0`, and convert a value with `float( )`
+ --&gt; main.zeno:1:20
+  |
+1 | let ratio: float = 1
+  |                    ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>Turning an <code>int</code> into a <code>float</code> where one is
+stored would leave a value whose written type and real type disagree,
+and in a compiled program it hides an instruction. Arithmetic is
+different: <code>1 + 0.5</code> makes a new value, and nothing is
+disguised. (Decisions 2.3 and 2.3b.)</p>
+</div>
+<p>A name must have a value from the moment it is declared. There is no
+<code>var x</code> with nothing after it:</p>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> total: <span class="dt">int</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: expected `=`, found the end of the line
+ --&gt; main.zeno:1:15
+  |
+1 | var total: int
+  |               ^</code></pre>
+<p><a href="types.html#ch-types">Types, Written and Worked Out</a>
+goes into all of this in depth: what Zeno works out, what it cannot, and
+the strict mode in which every type must be known.</p>
+<h3 class="unnumbered" id="names"><span class="number">4.6</span>
+Names</h3>
+<p>A name is made of letters, digits and <code>_</code>, and does not
+start with a digit. Letters of any alphabet are allowed. Case counts:
+<code>total</code> and <code>Total</code> are two names. By custom,
+variables and functions are written <code>like_this</code>, classes and
+enums <code>LikeThis</code>, and constants <code>LIKE_THIS</code>.</p>
+<p>The words of the language, such as <code>let</code>, <code>if</code>
+and <code>take</code>, can never be names, and the message says where
+the word goes instead:</p>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> <span class="kw">take</span> = <span class="dv">3</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: expected a name for the variable, found `take`. `take` is a word of the language, so it cannot be a name. It goes in front of the type of a parameter: `frame: take Frame`
+ --&gt; main.zeno:1:5
+  |
+1 | let take = 3
+  |     ^</code></pre>
+<p>The names of types (<code>int</code>, <code>str</code>,
+<code>list</code>) and of the built-in functions (<code>print</code>,
+<code>len</code>) are not reserved. They are names like any other, and a
+program may declare its own. That is rarely a good idea, since the
+built-in one is then out of reach in that block.</p>
+<h3 class="unnumbered" id="blocks-and-scope"><span
+class="number">4.7</span> Blocks and scope</h3>
+<p>A pair of braces <code>{ }</code> makes a <em>block</em>, and a name
+declared in a block exists from its declaration to the end of that
+block. This stretch of the program is the name’s <em>scope</em>:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> x = <span class="dv">1</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="cn">true</span> {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> x = <span class="dv">2</span>          <span class="co"># a new x, for this block only</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> y = <span class="dv">3</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    print(x, y)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>print(x)               <span class="co"># the first x again</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2 3
+1</code></pre>
+<p>After the block, <code>y</code> is gone:</p>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> <span class="cn">true</span> {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> y = <span class="dv">3</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>print(y)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `y` is not defined
+ --&gt; main.zeno:4:7
+  |
+4 | print(y)
+  |       ^
+
+1 error found. Nothing was run.</code></pre>
+<p>An inner block may declare a name that an outer block already has,
+and inside the inner block the name means the inner one. Two
+declarations of one name in the same block are a mistake:</p>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> speed = <span class="dv">10</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> speed = <span class="dv">20</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `speed` is already declared in this block
+ --&gt; main.zeno:2:1
+  |
+2 | let speed = 20
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>A variable that lives exactly as long as its block has a lifetime you
+can see in the layout of the code. In Python a variable made inside an
+<code>if</code> goes on existing after it. (Decisions 3.1 and 3.2.)</p>
+</div>
+<h3 class="unnumbered" id="two-names-for-one-list"><span
+class="number">4.8</span> Two names for one list</h3>
+<p>A name gives a value a name; it does not make a copy. When the value
+is a list or an object, two names can stand for the same one, and a
+change made through either is seen through both:</p>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> a = [<span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> b = a</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>b.append(<span class="dv">3</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>print(a)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[1, 2, 3]</code></pre>
+<p>This also means that <code>let</code> fixes the <em>name</em>, not
+what is inside the value. <code>a</code> above can never be given
+another list, but the list it names can still grow. Numbers, text and
+true or false cannot be changed inside, so for them the difference never
+shows. <a href="lists.html#ch-lists">Lists</a> has more on this.</p>
+<div class="summary">
+<p>Every value has a type. <code>let</code> names a value that stays,
+<code>var</code> one that changes, and <code>const</code> one fixed for
+the whole program. Plain <code>=</code> only changes a name that already
+exists. Types can be written after <code>:</code> or left for Zeno to
+work out. A name lives until the end of the block it was declared
+in.</p>
+</div>
+<div class="tryit">
+<ol>
+<li><p>Declare <code>var price = 10</code> and then give it
+<code>10.5</code>. What does Zeno say, and how would you declare it so
+that both are allowed?</p></li>
+<li><p>Write <code>let x: str = 5</code> and
+<code>let y: int = "5"</code>. Read both messages.</p></li>
+<li><p>Use <code>print</code> as a variable name with
+<code>let print = 3</code>, and then try to print something below it.
+What happened?</p></li>
+<li><p>Make two names for one list, change it through one, and print it
+through the other. Then do the same with two numbers and
+<code>var</code>. Why is the result different?</p></li>
+</ol>
+</div>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="the-language.html" rel="previous">← The Language</a>
+<a class="next" href="numbers.html" rel="next"><span class="number">5</span> Numbers and Operators →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>
