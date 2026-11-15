@@ -30,18 +30,18 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0b1020; --sheet: #121a2e; --sunk: #0e1527; --ink: #e8ecf5; --slate: #9aa5bb; --faint: #6c7790;
-    --rule: #222c44; --cobalt: #7d9cff; --cobalt-soft: #1a2547; --on-cobalt: #0b1020; --signal: #ff8a52;
+    --paper: #0a0a0a; --sheet: #141414; --sunk: #111111; --ink: #ededed; --slate: #a1a1a1; --faint: #6b6b6b;
+    --rule: #262626; --cobalt: #7d9cff; --cobalt-soft: #172036; --on-cobalt: #0a0a0a; --signal: #ff8a52;
     --good: #4fcf8a; --bad: #ff7a6b;
-    --tok-key: #8fadff; --tok-type: #c5a3ff; --tok-str: #7fd6a2; --tok-num: #ffb86b; --tok-fn: #e8ecf5; --tok-com: #6c7790;
+    --tok-key: #8fadff; --tok-type: #c5a3ff; --tok-str: #7fd6a2; --tok-num: #ffb86b; --tok-fn: #ededed; --tok-com: #6b6b6b;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"], .dark {
-  --paper: #0b1020; --sheet: #121a2e; --sunk: #0e1527; --ink: #e8ecf5; --slate: #9aa5bb; --faint: #6c7790;
-  --rule: #222c44; --cobalt: #7d9cff; --cobalt-soft: #1a2547; --on-cobalt: #0b1020; --signal: #ff8a52;
+  --paper: #0a0a0a; --sheet: #141414; --sunk: #111111; --ink: #ededed; --slate: #a1a1a1; --faint: #6b6b6b;
+  --rule: #262626; --cobalt: #7d9cff; --cobalt-soft: #172036; --on-cobalt: #0a0a0a; --signal: #ff8a52;
   --good: #4fcf8a; --bad: #ff7a6b;
-  --tok-key: #8fadff; --tok-type: #c5a3ff; --tok-str: #7fd6a2; --tok-num: #ffb86b; --tok-fn: #e8ecf5; --tok-com: #6c7790;
+  --tok-key: #8fadff; --tok-type: #c5a3ff; --tok-str: #7fd6a2; --tok-num: #ffb86b; --tok-fn: #ededed; --tok-com: #6b6b6b;
   color-scheme: dark;
 }
 

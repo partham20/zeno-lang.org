@@ -25,16 +25,17 @@ footer who never reaches the tortoise.
 
 | Name | Light | Dark | Use |
 |---|---|---|---|
-| Paper | `#f7f8fa` | `#0b1020` | page |
-| Sheet | `#ffffff` | `#121a2e` | code, panels |
-| Ink | `#0f1729` | `#e8ecf5` | text |
-| Slate | `#566176` | `#9aa5bb` | secondary text |
-| Rule | `#e3e7ef` | `#222c44` | lines |
+| Paper | `#f7f8fa` | `#0a0a0a` | page |
+| Sheet | `#ffffff` | `#141414` | code, panels |
+| Ink | `#0f1729` | `#ededed` | text |
+| Slate | `#566176` | `#a1a1a1` | secondary text |
+| Rule | `#e3e7ef` | `#262626` | lines |
 | Cobalt | `#2f5bea` | `#7d9cff` | links, buttons, focus |
 | Signal | `#f26b2b` | `#ff8a52` | the LED, warnings, nothing else |
 
-Neutrals are tinted toward navy rather than grey, so the page reads as
-one colour family. Cobalt comes from the blue of a schematic; Signal from
+In light mode the neutrals lean slightly toward navy, so the page reads as
+one colour family. Dark mode is a plain neutral black and grey, as most
+dark sites are (Partha's choice, 2026-11-15), with cobalt as the only colour. Cobalt comes from the blue of a schematic; Signal from
 the amber LED on a development board.
 
 ## Type

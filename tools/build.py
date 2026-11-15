@@ -105,7 +105,7 @@ def layout(path, title, description, body, active=None, home=False):
 <meta property="og:image" content="{ORIGIN}/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0b1020" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="{ORIGIN}{path}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
