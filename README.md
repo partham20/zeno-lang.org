@@ -40,3 +40,11 @@ To look at the site, serve the folder, since links start at the site root:
 ```sh
 python3 -m http.server 8000
 ```
+
+## Deploying
+
+`.github/workflows/deploy.yml` deploys the site to Cloudflare Pages
+(project `zeno-lang`). It runs when a push to `main` has `[deploy]` in its
+commit message, or by hand with "Run workflow" in the Actions tab. A plain
+push does not deploy. It needs the repository secrets
+`CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`.
