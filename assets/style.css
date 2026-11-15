@@ -80,7 +80,8 @@ h3 { font-weight: 600; letter-spacing: -0.015em; }
 }
 .brand { display: flex; align-items: center; gap: 0.55rem; color: var(--ink); font-weight: 700; font-size: 1.2rem; letter-spacing: -0.04em; }
 .brand:hover { text-decoration: none; }
-.mark { width: 1.15rem; height: 1.15rem; fill: var(--cobalt); }
+.mark { width: 4.14rem; height: 1.04rem; fill: currentColor; }
+.mark .dot { fill: var(--cobalt); }
 .nav nav { display: flex; gap: 1.75rem; font-size: 0.9375rem; }
 .nav nav a { color: var(--slate); }
 .nav nav a:hover { color: var(--ink); text-decoration: none; }

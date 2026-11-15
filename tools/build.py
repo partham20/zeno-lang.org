@@ -81,9 +81,15 @@ def sample(name, title=None):
 NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Docs", "/docs/"),
        ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
 
-MARK = ('<svg class="mark" viewBox="0 0 32 32" aria-hidden="true"><rect x="2" y="2" width="14" height="28"/>'
-        '<rect x="18" y="2" width="6" height="28"/><rect x="26" y="2" width="2.5" height="28"/>'
-        '<rect x="29.5" y="2" width="1" height="28"/></svg>')
+# The wordmark: the name in block capitals, with the Z drawn as an arrow and
+# one dot the arrow never reaches. Letters take the text colour, the dot is cobalt.
+MARK = ('<svg class="mark" viewBox="0 0 350 88" aria-hidden="true"><path fill-rule="evenodd" d="'
+        'M0 0H80V18L28 70H67L84 79L67 88H0V70L52 18H0L9 9Z'
+        'M92 0H150V18H110V35H140V53H110V70H150V88H92Z'
+        'M163 88V0H184L217 55V0H235V88H214L181 33V88Z'
+        'M288 0C310 0 328 18 328 44C328 70 310 88 288 88C266 88 248 70 248 44C248 18 266 0 288 0Z'
+        'M288 18C276 18 266 29 266 44C266 59 276 70 288 70C300 70 310 59 310 44C310 29 300 18 288 18Z"/>'
+        '<circle class="dot" cx="343.5" cy="79" r="6.5"/></svg>')
 
 
 def layout(path, title, description, body, active=None, home=False):
@@ -118,7 +124,7 @@ def layout(path, title, description, body, active=None, home=False):
 <a class="skip" href="#content">Skip to the content</a>
 <div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
 <header class="nav">
-  <a class="brand" href="/" aria-label="Zeno, home">{MARK}<span>zeno</span></a>
+  <a class="brand" href="/" aria-label="Zeno, home">{MARK}</a>
   <nav aria-label="Main">{nav}</nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">

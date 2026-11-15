@@ -17,9 +17,19 @@ The first screen shows a line of C-style code losing its punctuation:
 take their place, until the line is Zeno. It is the language's whole
 argument in four seconds. Everything else on the page stays quiet.
 
-The paradox appears twice and nowhere else: the thin bar at the top that
-closes half the remaining distance as you scroll, and the runner in the
-footer who never reaches the tortoise.
+The paradox appears three times and nowhere else: the logo, the thin bar
+at the top that closes half the remaining distance as you scroll, and the
+runner in the footer who never reaches the tortoise.
+
+## Logo
+
+The name in block capitals. The Z is drawn as an arrow, with a notched tail
+at the top left and a point at the bottom right, and one dot sits a single
+gap beyond the end of the word: Zeno's arrow, which never arrives. The
+letters take the text colour and the dot is Cobalt, so the logo needs no
+colours of its own. The favicon is the Z and its dot alone on the dark
+page colour, because four letters do not survive 16 pixels. Both are drawn
+from straight lines and one circle, so they stay sharp at any size.
 
 ## Colour
 
