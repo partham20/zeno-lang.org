@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The language server · Zeno</title>
+<meta name="description" content="zeno lsp lets an editor show the mistakes in a Zeno file as you type, lay the file out when you save, jump to where a name was declared, and show what a name is. This page says what it does, how to watch it work with no editor at all, and walks…">
+<meta property="og:title" content="The language server · Zeno">
+<meta property="og:description" content="zeno lsp lets an editor show the mistakes in a Zeno file as you type, lay the file out when you save, jump to where a name was declared, and show what a name is. This page says what it does, how to watch it work with no editor at all, and walks…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/lsp/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/lsp/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/" aria-current="page">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>The language server</h1>
+  <p><code>zeno lsp</code> lets an editor show the mistakes in a Zeno file as you
+type, lay the file out when you save, jump to where a name was
+declared, and show what a name is. This page says what it does,
+how to watch it work with no editor at all, and walks through
+<code>src/lsp.rs</code> and <code>src/json.rs</code>.</p>
+<p>Setting up your editor is in <a href="https://github.com/partham20/zeno-lang#readme"><code>editors/README.md</code></a>.
+The decisions are 9.10 to 9.13 in <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-it-is">What it is</h2>
+<p>An editor does not know Zeno. What it can do is start a program, the
+<strong>language server</strong>, and talk to it in a fixed way, the Language
+Server Protocol. The editor says "this file was opened" and "this
+file now reads so". The server says "these are the mistakes in it".
+VS Code, Neovim, Helix, Zed and Emacs all speak the protocol, so one
+server serves them all.</p>
+<p>Zeno's server is the <code>zeno</code> program itself, started as <code>zeno lsp</code>. It
+runs the loader and the checker that <code>zeno check</code> runs, so what the
+editor underlines is exactly what <code>zeno check</code> would print.</p>
+<table>
+<thead>
+<tr>
+<th>The editor says</th>
+<th>The server does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a file was opened, or its text changed</td>
+<td>checks every open file, and sends the mistakes of each file whose mistakes changed</td>
+</tr>
+<tr>
+<td>lay this file out</td>
+<td>answers with the file as <code>zeno format</code> writes it</td>
+</tr>
+<tr>
+<td>where is this name declared?</td>
+<td>answers with the file and the line of its declaration</td>
+</tr>
+<tr>
+<td>what is this name?</td>
+<td>answers with the name and its type, such as <code>count: int</code></td>
+</tr>
+<tr>
+<td>anything else that wants an answer</td>
+<td>says it has no answer to that</td>
+</tr>
+</tbody>
+</table>
+<p>The two questions about a name are answered for variables,
+parameters, functions, classes, enums and the names of a module. A
+field or a method (<code>p.x</code>) gets an empty answer for now. Decision 9.11
+says why.</p>
+<h2 id="watching-it-work">Watching it work</h2>
+<p>You do not need an editor to see the server. <code>editors/talk.py</code> plays
+the editor's part and prints both sides:</p>
+<pre><code>cargo build
+python3 editors/talk.py target/debug/zeno examples/thermostat/main.zeno</code></pre>
+<pre><code>--&gt; {"jsonrpc": "2.0", "method": "initialize", "id": 1, "params": {"rootUri": "file:///.../examples/thermostat", ...}}
+&lt;-- {"jsonrpc": "2.0", "id": 1, "result": {"capabilities": {"textDocumentSync": {"openClose": true, "change": 1},
+     "documentFormattingProvider": true, "definitionProvider": true, "hoverProvider": true},
+     "serverInfo": {"name": "zeno", "version": "0.1.0"}}}
+--&gt; {"jsonrpc": "2.0", "method": "textDocument/didOpen", "params": {"textDocument": {"uri": "file:///.../main.zeno", "text": "# A program..."}}}
+&lt;-- {"jsonrpc": "2.0", "method": "textDocument/publishDiagnostics", "params": {"uri": "file:///.../main.zeno", "diagnostics": []}}
+--&gt; {"jsonrpc": "2.0", "method": "textDocument/didChange", ...}
+&lt;-- {"jsonrpc": "2.0", "method": "textDocument/publishDiagnostics", "params": {"uri": "file:///.../main.zeno", "diagnostics": [
+     {"range": {"start": {"line": 31, "character": 6}, "end": {"line": 31, "character": 18}},
+      "severity": 1, "source": "zeno", "message": "`no_such_name` is not defined"}]}}
+--&gt; {"jsonrpc": "2.0", "method": "textDocument/didChange", ...}
+&lt;-- {"jsonrpc": "2.0", "method": "textDocument/publishDiagnostics", "params": {"uri": "file:///.../main.zeno", "diagnostics": []}}
+--&gt; {"jsonrpc": "2.0", "method": "textDocument/hover", "id": 4, "params": {"textDocument": {"uri": "file:///.../main.zeno"},
+     "position": {"line": 32, "character": 6}}}
+&lt;-- {"jsonrpc": "2.0", "id": 4, "result": {"contents": {"kind": "plaintext", "value": "answer: int"}}}
+--&gt; {"jsonrpc": "2.0", "method": "textDocument/definition", "id": 5, "params": {... "position": {"line": 32, "character": 6}}}
+&lt;-- {"jsonrpc": "2.0", "id": 5, "result": {"uri": "file:///.../main.zeno",
+     "range": {"start": {"line": 31, "character": 0}, "end": {"line": 31, "character": 0}}}}</code></pre>
+<p>Reading it from the top:</p>
+<ol>
+<li><strong><code>initialize</code>.</strong> The editor says hello, and the server answers
+   with what it can do: it wants to be told when files open and close,
+   it wants the whole text at every change (<code>"change": 1</code>), it can
+   lay a file out, and it can say where a name was declared and what
+   it is.</li>
+<li><strong><code>didOpen</code>.</strong> The editor sends the file's text. The server checks
+   it and sends back its mistakes: an empty list.</li>
+<li><strong><code>didChange</code>.</strong> The script "types" a line, <code>print(no_such_name)</code>.
+   The server checks again and sends one mistake, with where it is:
+   line 31, characters 6 to 18. Both count from 0, so that is line 32
+   in your editor. An editor draws the red line from this.</li>
+<li><strong><code>didChange</code> again.</strong> The script takes the mistake out and types
+   two good lines, <code>let answer = 6 * 7</code> and <code>print(answer)</code>. The
+   server sends an empty list, and the editor takes the red line
+   away.</li>
+<li><strong><code>hover</code>.</strong> The script asks what stands at line 32, character 6:
+   the <code>answer</code> inside <code>print(answer)</code>. The server says
+   <code>answer: int</code>.</li>
+<li><strong><code>definition</code>.</strong> The same place, and the other question: where
+   was it declared? On line 31, the line with the <code>let</code>.</li>
+</ol>
+<p>After that the script spoils the layout and asks for the file to be
+laid out, which the last lines of its output show.</p>
+<p>A message with an <code>id</code> is a request and gets an answer with the same
+<code>id</code>. A message with none is a notification, and gets none.</p>
+<h2 id="how-it-works">How it works</h2>
+<h3 id="json">JSON</h3>
+<p>Every message is JSON. Zeno uses no library, so <code>src/json.rs</code> reads
+and writes it. JSON has six kinds of value and the type says so:</p>
+<pre><code>pub enum Json {
+    Null,
+    Bool(bool),
+    Number(f64),
+    Text(String),
+    List(Vec&lt;Json&gt;),
+    Object(Vec&lt;(String, Json)&gt;),
+}</code></pre>
+<p>Reading is a function for each kind, picked by the first character:
+<code>"</code> begins a text, <code>[</code> a list, <code>{</code> an object. Writing is the same
+<code>match</code> the other way round. The fiddly part is text: <code>\n</code> and <code>\"</code>
+going out, and <code>é</code> coming in.</p>
+<p><code>at</code> saves a lot of code in the server. A message is objects inside
+objects, and</p>
+<pre><code>params.at(&amp;["textDocument", "uri"])</code></pre>
+<p>walks down them and gives <code>None</code> if any step is missing.</p>
+<h3 id="the-wire">The wire</h3>
+<p>Ahead of each message stands a header that says how long it is:</p>
+<pre><code>Content-Length: 44\r\n
+\r\n
+{"jsonrpc":"2.0","id":3,"method":"shutdown"}</code></pre>
+<p><code>read_message</code> reads header lines up to the empty one, then exactly
+that many bytes. <code>write_message</code> does the reverse. The length is in
+bytes and not in characters, which matters as soon as a message holds
+an <code>é</code>.</p>
+<h3 id="the-server">The server</h3>
+<pre><code>pub struct Server {
+    open: BTreeMap&lt;String, String&gt;,              // the text of each open file, by path
+    uris: HashMap&lt;String, String&gt;,               // what the editor calls each file
+    shown: BTreeMap&lt;String, Vec&lt;Diagnostic&gt;&gt;,    // the mistakes the editor was last told
+    workspace: Option&lt;PathBuf&gt;,
+    stopping: bool,
+}</code></pre>
+<p><code>Server::handle</code> takes one message and gives back the messages to
+send. It reads no input and writes no output. That is why the tests
+can hand it a message and look at what comes back, with no process
+and no pipe:</p>
+<pre><code>let said = told(&amp;open(&amp;mut server, "main.zeno", "let count = 3\nprint(cuont + 1)\n"));
+assert!(said[0].1[0].starts_with("1:6-11 "));</code></pre>
+<p><code>handle</code> is one <code>match</code> on the method's name. The two that do the
+work are <code>didOpen</code> and <code>didChange</code>: they put the new text into <code>open</code>
+and call <code>publish</code>.</p>
+<h3 id="checking-the-editors-text">Checking the editor's text</h3>
+<p><code>publish</code> checks every open file and compares with <code>shown</code>. Only a
+file whose list of mistakes changed is sent, and a file that had
+mistakes and has none now is sent an empty list, which is how an
+editor learns to take the red lines away.</p>
+<p>The check is the one <code>zeno check</code> does, with one difference in where
+the text comes from:</p>
+<pre><code>fn read(&amp;self, path: &amp;str) -&gt; Option&lt;String&gt; {
+    self.open.get(path).cloned().or_else(|| std::fs::read_to_string(path).ok())
+}</code></pre>
+<p>The loader of <a href="/docs/modules/"><code>modules.md</code></a> never read files itself. It
+was always handed a function that does, so that the tests could give
+it files that exist only in memory. The server hands it this one: the
+editor's text first, the disk second. Nothing in the loader changed
+to make unsaved files work.</p>
+<h3 id="which-program-a-file-belongs-to">Which program a file belongs to</h3>
+<p><code>zeno check main.zeno</code> knows the program's folder: it is the folder
+of the file it was given. The editor may have <code>drivers/uart.zeno</code>
+open, whose imports are found from the folder above. <code>folder_of</code>
+walks up from the file to the nearest folder that has a
+<code>zeno.package</code> or a <code>main.zeno</code>, and stops at the folder the editor
+has open. The loader got a second door for this, <code>modules::load_in</code>,
+which is told the folder and does not take it from the file.</p>
+<h3 id="what-a-name-means">What a name means</h3>
+<p>Put the cursor on a name and press "go to definition", and the editor
+asks <code>textDocument/definition</code> with a line and a character. Rest the
+mouse on it, and the editor asks <code>textDocument/hover</code>. Both come to
+one question: what does the name at this place mean?</p>
+<p>The checker has always known. To check <code>count * 2</code> it has to find the
+<code>count</code> that is meant, by the rules of scope. It used to forget the
+answer as soon as it had the type. Now it writes each one down:</p>
+<pre><code>pub struct Use {
+    pub at: Span,                 // where the name is written
+    pub name: String,
+    pub ty: String,               // its type at this place
+    pub declared: Option&lt;Span&gt;,   // where it was declared
+}</code></pre>
+<p>Two small pieces in <code>src/checker.rs</code> fill the record. <code>declare</code>, which
+every <code>let</code>, parameter, function and class goes through, notes where
+the declaration is. And the arm of the checker that reads a name
+notes the use (the one for a name that is assigned to does the same):</p>
+<pre><code>ExprKind::Name(name) =&gt; match env.get(name) {
+    Some(variable) =&gt; {
+        self.used(name, &amp;variable, span);
+        ...</code></pre>
+<p>So <code>Server::meaning</code> has little to do:</p>
+<ol>
+<li>Find the token under the cursor, with the lexer. If it is not a
+   name, there is no answer.</li>
+<li>Load and check the program, as <code>publish</code> does.</li>
+<li>Find the <code>Use</code> that stands at that token, and give back its type
+   and where it was declared.</li>
+</ol>
+<pre><code>let found = [here, first].into_iter().find_map(|place| {
+    let at = written.tokens[place].span;
+    uses.iter().find(|used| used.at == at &amp;&amp; shown_name(&amp;used.name) == word)
+})?;</code></pre>
+<p>Why two places, <code>here</code> and <code>first</code>? In <code>shapes.area(3)</code> the loader of
+<a href="/docs/modules/"><code>modules.md</code></a> has made <code>shapes.area</code> into one name, and
+the checker sees it at the place of <code>shapes</code>, where the line of dots
+begins. So if nothing is used at the cursor's own token, the server
+looks at the start of the dots, and takes what it finds only if it is
+the word under the cursor. That is why <code>area</code> has an answer and
+<code>shapes</code> has none: <code>shapes</code> alone is not a name of anything.</p>
+<p>Nothing here reads the spelling of a declaration. In</p>
+<pre><code class="zeno">let count = 3
+function twice(count: int) -&gt; int {
+    return count * 2
+}</code></pre>
+<p>the <code>count</code> in the third line goes to the parameter, because that is
+what the checker looked up.</p>
+<h3 id="where-a-mistake-is">Where a mistake is</h3>
+<p>The checker gives a line and a column, both from 1, counted in
+characters. The protocol wants them from 0, and counts a character as
+UTF-16 does: most are one unit and an emoji is two. <code>diagnostic</code> does
+that sum, and stretches the mark to the end of the word, because the
+checker gives only where a mistake starts.</p>
+<h2 id="what-is-left-out">What is left out</h2>
+<ul>
+<li><strong>Fields and methods.</strong> <code>p.x</code> and <code>queue.put</code> get no answer to
+  "where is this declared?". The checker records names, and not yet
+  what stands after a dot (9.11).</li>
+<li><strong>Names in other places than code.</strong> A type after a colon
+  (<code>p: Point</code>), a case in a <code>match</code>, and a name inside an <code>f"..."</code>
+  text get no answer either.</li>
+<li><strong>Completion and rename</strong> (9.11).</li>
+<li><strong>Colours from the server.</strong> A grammar in the editor does that
+  (9.13).</li>
+<li><strong>Changes sent piece by piece.</strong> The editor sends the whole text
+  each time. For files of the size Zeno has that is fast enough.</li>
+<li><strong><code>zeno.package</code></strong> is not checked as you type. <code>zeno check</code> shows
+  its mistakes.</li>
+<li><strong>The settings for VS Code, Neovim and Helix have not been run in
+  those editors.</strong> The server is tested by its own tests and by
+  <code>editors/talk.py</code>, and the Vim colours were tried in Vim.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Run <code>python3 editors/talk.py target/debug/zeno examples/shapes.zeno</code>
+   and find the three kinds of message: a request, its answer, and a
+   notification. How do you tell them apart?</li>
+<li>In <code>editors/talk.py</code>, change the typed line to
+   <code>print(1 + "one")</code>. Which characters does the server mark, and
+   what is the message?</li>
+<li>Change it to two mistakes on two lines. How many items does
+   <code>diagnostics</code> have? Now make the second mistake a mistake of
+   syntax, such as <code>let = 3</code>. How many now, and why? (Which stage
+   stops first?)</li>
+<li>Start <code>target/debug/zeno lsp</code> in a terminal and type a message by
+   hand: <code>Content-Length: 44</code>, Enter twice, then
+   <code>{"jsonrpc":"2.0","id":3,"method":"shutdown"}</code>. You need the
+   length right. What comes back?</li>
+<li>In <code>src/lsp.rs</code>, find the test
+   <code>a_program_in_several_files_is_checked_from_the_editor_s_text</code>.
+   <code>shapes.zeno</code> in it is on no disk. Which three lines of the server
+   make that work?</li>
+<li>Add a method to <code>handle</code>: answer <code>textDocument/references</code> with
+   every place the name under the cursor is used. <code>Types::uses()</code> has
+   all of them: the ones you want have the same <code>declared</code> as the one
+   <code>meaning</code> found. Add <code>("referencesProvider", Json::Bool(true))</code> to
+   the capabilities, and try it in your editor or with a line more in
+   <code>talk.py</code>.</li>
+<li><code>Json::Object</code> keeps its members in a <code>Vec</code> and not in a
+   <code>HashMap</code>. Find the test in <code>src/json.rs</code> that would fail with a
+   <code>HashMap</code>, and say why.</li>
+<li>In the test <code>a_name_says_what_it_is_and_where_it_was_declared</code>,
+   <code>count</code> is asked about on two lines and goes to two places. Which
+   line of the checker made the difference? Then say why asking about
+   <code>shapes</code> gives nothing while <code>area</code> right after it gives a line of
+   another file.</li>
+<li>Set your editor up from <code>editors/README.md</code>, open
+   <code>examples/thermostat/main.zeno</code>, and misspell <code>filters.lowpass</code>.
+   Then open <code>examples/filters/lowpass.zeno</code> and break it. In which
+   file does the mistake show?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/lsp.md">docs/lsp.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/format/"><span>Previous</span>The formatter</a><a class="next" href="/docs/audit/"><span>Next</span>The audit: unambiguous and intuitive</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-it-is">What it is</a></li><li><a href="#watching-it-work">Watching it work</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

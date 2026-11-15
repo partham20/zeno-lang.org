@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Starting a program: zeno new · Zeno</title>
+<meta name="description" content="Every page so far began with a file that was already there. This one is about the first minute of a program that is not: one command makes a folder with a small program in it that runs, and has a test that passes.">
+<meta property="og:title" content="Starting a program: zeno new · Zeno">
+<meta property="og:description" content="Every page so far began with a file that was already there. This one is about the first minute of a program that is not: one command makes a folder with a small program in it that runs, and has a test that passes.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/new/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/new/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/" aria-current="page">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Starting a program: zeno new</h1>
+  <p>Every page so far began with a file that was already there. This one
+is about the first minute of a program that is not: one command makes
+a folder with a small program in it that runs, and has a test that
+passes.</p>
+<pre><code>zeno new blinker</code></pre>
+<pre><code>Made the program `blinker` in blinker/
+  zeno.package   the name of the program, and the packages it needs
+  main.zeno      the program
+  greeting.zeno  a module, with a test
+Run it with `zeno run blinker/main.zeno`, and its tests with `zeno test blinker`.</code></pre>
+<pre><code>zeno run blinker/main.zeno      # Hello, world, from blinker.
+zeno test blinker               # 1 test: 1 passed, 0 failed.</code></pre>
+<p>(In this repository <code>zeno</code> is <code>cargo run --</code>, as on every other
+page.) The decisions are 10.22 to 10.24 in
+<a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-it-writes">What it writes</h2>
+<p>Three files, and each one is one of the three things a program of
+more than one file is made of.</p>
+<p><code>main.zeno</code> is where the program starts (<a href="/docs/modules/"><code>modules.md</code></a>):</p>
+<pre><code class="zeno"># The program starts here. In this folder:
+#
+#     zeno run main.zeno
+#     zeno test
+import greeting
+
+print(greeting.hello("world"))</code></pre>
+<p><code>greeting.zeno</code> is a module, a file of the program that another file
+imports, and it has a test at its end (<a href="/docs/testing/"><code>testing.md</code></a>):</p>
+<pre><code class="zeno"># A module: one file of the program. `main.zeno` imports it, and calls
+# `greeting.hello`.
+
+function hello(who: str) -&gt; str {
+    return f"Hello, {who}, from blinker."
+}
+
+# A test stands in the file it tests. `zeno test` runs it, `zeno run`
+# goes past it, and a build leaves it out.
+test "hello says who it greets" {
+    assert hello("Ada") == "Hello, Ada, from blinker."
+}</code></pre>
+<p><code>zeno.package</code> is the project file (<a href="/docs/packages/"><code>packages.md</code></a>). It
+has one line that counts, and comments that show the two lines you
+may add to it one day:</p>
+<pre><code># What this program is called, and the packages it needs.
+#
+# A package in another folder is one line:
+#
+#     needs filters in "../filters"
+#
+# One that somebody else keeps is named by its git repository and a
+# version of it, and `zeno fetch` gets it:
+#
+#     needs units from "https://github.com/someone/zeno-units" at "v1.2.0"
+package blinker</code></pre>
+<p>Nothing else is written. There is no hidden folder, no settings file
+and nothing to delete before you start. The program is what you would
+have typed, and you go on by changing it: rename <code>greeting.zeno</code>, or
+throw it away and write in <code>main.zeno</code> alone.</p>
+<h2 id="a-package-package">A package: <code>--package</code></h2>
+<p>A package is a folder of modules for other programs to use. It has no
+<code>main.zeno</code>, and the module that matters is the one with the
+package's own name, because that is the file <code>import filters</code> reads.</p>
+<pre><code>zeno new --package filters</code></pre>
+<pre><code>Made the package `filters` in filters/
+  zeno.package   the name of the package, and the packages it needs
+  filters.zeno   the module `import` gets, with a test
+Run its tests with `zeno test filters`.</code></pre>
+<p><code>filters.zeno</code> has the same <code>hello</code> and the same test. The comment at
+the top of its <code>zeno.package</code> says what a program has to write to use
+it:</p>
+<pre><code># This file makes the folder a package: a folder of modules that a
+# program in another folder can use. A program that needs it says so
+# in its own `zeno.package`:
+#
+#     needs filters in "../filters"
+#
+# and then writes `import filters`.
+package filters</code></pre>
+<p>So with both folders side by side, <code>blinker</code> can use <code>filters</code> after
+two edits: the <code>needs</code> line in <code>blinker/zeno.package</code>, and <code>import
+filters</code> in <code>blinker/main.zeno</code>.</p>
+<h2 id="what-it-refuses-and-what-it-says">What it refuses, and what it says</h2>
+<table>
+<thead>
+<tr>
+<th>You write</th>
+<th>Zeno says</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zeno new my-app</code></td>
+<td><code>my-app</code> cannot be the name of a program. A name is letters, digits and <code>_</code>, and does not start with a digit, as every name in a Zeno program is. Try <code>my_app</code></td>
+</tr>
+<tr>
+<td><code>zeno new while</code></td>
+<td><code>while</code> is a word of the language, so a program cannot have that name</td>
+</tr>
+<tr>
+<td><code>zeno new --package math</code></td>
+<td><code>math</code> is a module that comes with Zeno, so a package cannot have that name</td>
+</tr>
+<tr>
+<td><code>zeno new blinker</code>, a second time</td>
+<td>there is a <code>blinker</code> here already. <code>zeno new</code> makes a new folder, and writes nothing into one that is there</td>
+</tr>
+<tr>
+<td><code>zeno new --lib filters</code></td>
+<td><code>zeno new</code> has no option <code>--lib</code>. It has one, <code>--package</code>, as in <code>zeno new --package filters</code></td>
+</tr>
+<tr>
+<td><code>zeno new</code></td>
+<td><code>new</code> needs a name for the program, e.g. <code>zeno new blinker</code></td>
+</tr>
+</tbody>
+</table>
+<p>The name is the last part of what you write, so <code>zeno new
+work/bench/logger</code> makes the program <code>logger</code> in that folder, and the
+folders above it if they are not there.</p>
+<h2 id="how-it-works">How it works</h2>
+<p><code>new</code> in <a href="https://github.com/partham20/zeno-lang/blob/main/src/package.rs"><code>src/package.rs</code></a> is the whole of it,
+about a hundred lines, in four steps.</p>
+<ol>
+<li><strong>The name.</strong> The last part of the path. It is checked the way the
+   lexer would check it: letters, digits and <code>_</code>, not a digit first.
+   Then two tables that the compiler already has are asked:
+   <code>token::keyword</code> (is it a word of the language?) and
+   <code>builtins::comes_with_zeno</code> (is it <code>math</code>, <code>time</code>, ...?). When the
+   name will not do, a name that will is worked out by putting <code>_</code>
+   for each character that cannot be in one.</li>
+<li><strong>The folder.</strong> If anything is at the path, a file or a folder,
+   <code>new</code> stops. This is checked before anything is written.</li>
+<li><strong>The files.</strong> Each is a <code>format!</code> with the name put in. A package
+   differs from a program in a list of two files in place of three.</li>
+<li><strong>What it says.</strong> The lines it gives back are what <code>main.rs</code>
+   prints. <code>new</code> prints nothing itself, which is what lets a test
+   call it and look at what it said.</li>
+</ol>
+<p>The test (<code>zeno_new_makes_a_program_that_runs_and_a_package_it_can_need</code>
+in <code>src/main.rs</code>) does what you would do by hand. It makes a program
+and a package in a temporary folder, runs the program and reads what
+it prints, runs the tests of both, and checks that each file is
+already laid out the way <code>zeno format</code> would lay it out. Then it
+makes the program need the package and runs it again. What <code>zeno new</code>
+writes is therefore checked by the checker, the interpreter and the
+formatter every time the compiler's tests run: if the language
+changes under it, that test fails.</p>
+<h2 id="what-is-left-out">What is left out</h2>
+<ul>
+<li><strong>No templates.</strong> There is one program and one package. A program
+  for a board is the same program with other lines in <code>main.zeno</code>.</li>
+<li><strong>No questions.</strong> The command asks nothing and reads nothing from
+  the keyboard.</li>
+<li><strong>Nothing into a folder that is there.</strong> There is no <code>zeno init</code>.</li>
+<li><strong>No git.</strong> No repository is made and no <code>.gitignore</code> is written.
+  <code>packages/</code> is the one folder worth ignoring, and it is only there
+  after <code>zeno fetch</code>.</li>
+<li><strong>No <code>zeno add</code>.</strong> A <code>needs</code> line is written by hand.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Run <code>cargo build</code>, then in an empty folder outside the repository
+   run <code>zeno new blinker</code> (with the full path to <code>target/debug/zeno</code>).
+   Run the program and its tests.</li>
+<li>In <code>blinker/greeting.zeno</code>, change the text <code>hello</code> gives back and
+   run <code>zeno test blinker</code>. Read what the failure shows on each side.
+   Which of the two do you change to make it pass, and why does it
+   depend on what you meant?</li>
+<li>Run <code>zeno format --check blinker</code>. It says nothing. Find the test
+   in <code>src/main.rs</code> that promises this, and the three files it names.</li>
+<li>Run <code>zeno new --package filters</code> beside <code>blinker</code>. Make <code>blinker</code>
+   use it: one line in <code>blinker/zeno.package</code>, and <code>import filters</code>
+   in <code>main.zeno</code>. Both modules have a <code>hello</code>. Why is that no clash?
+   (Decision 8.8.)</li>
+<li>Run <code>zeno build --no-collector blinker/main.zeno</code> and run what it
+   built. The module has a test in it. Where did the test go?
+   (Decision 10.20.)</li>
+<li>Try <code>zeno new 9lives</code>, <code>zeno new for</code> and <code>zeno new time</code>. Each is
+   refused for a different reason. Find the three checks in <code>new</code>.</li>
+<li>Run <code>zeno new blinker</code> again, then <code>ls blinker</code>. Nothing changed.
+   In <code>new</code>, move the <code>path.exists()</code> check below
+   <code>fs::create_dir_all</code>, run the tests, and read which line of the
+   test catches it. Put it back.</li>
+<li>Add a file to what a new program gets: a <code>README.md</code> that says how
+   to run it. You need one more entry in the list of files, and the
+   test's list of file names will tell you it noticed.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/new.md">docs/new.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/packages/"><span>Previous</span>Packages</a><a class="next" href="/docs/testing/"><span>Next</span>Tests: test, assert and zeno test</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-it-writes">What it writes</a></li><li><a href="#a-package-package">A package: --package</a></li><li><a href="#what-it-refuses-and-what-it-says">What it refuses, and what it says</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

@@ -38,7 +38,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/" aria-current="page">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/" aria-current="page">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>The standard library, part 4: a dictionary</h1>
@@ -63,6 +63,11 @@ left out 1 reading with an unknown code
 <p><a href="/examples/faults/"><code>examples/faults.zeno</code></a> counts the fault
 codes a device has sent and looks up what each one means. The
 decisions are 6.29 to 6.40 in <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<p>A dict first held only numbers, bools and text. It now holds anything
+a list can, and a loop can be given the key and the value together.
+That is the second half of this page, <a href="#any-value-and-a-loop-with-two-names">Any value, and a loop with two
+names</a>, with decisions 10.11 to
+10.14.</p>
 <h2 id="what-a-dict-does">What a dict does</h2>
 <pre><code class="zeno">let ages = ["Ada": 36, "Alan": 41]      # written out
 let seen: dict[int, int] = [:]          # empty: the type says what it will hold</code></pre>
@@ -95,6 +100,10 @@ let seen: dict[int, int] = [:]          # empty: the type says what it will hold
 <td>each key, in the order they were put in</td>
 </tr>
 <tr>
+<td><code>for name, age in ages { }</code></td>
+<td>each key and what is under it</td>
+</tr>
+<tr>
 <td><code>ages.get("Bob")</code></td>
 <td>the value, or <code>none</code></td>
 </tr>
@@ -124,9 +133,9 @@ let seen: dict[int, int] = [:]          # empty: the type says what it will hold
 </tr>
 </tbody>
 </table>
-<p>A key is a <code>str</code> or an <code>int</code>. A value is an <code>int</code>, a <code>float</code>, a <code>bool</code>
-or a <code>str</code>. All the keys of one dict are one type and so are all the
-values, so <code>dict[str, int]</code> says everything about what is inside.</p>
+<p>A key is a <code>str</code> or an <code>int</code>. A value is anything a list can hold,
+except <code>none</code>. All the keys of one dict are one type and so are all
+the values, so <code>dict[str, int]</code> says everything about what is inside.</p>
 <h3 id="three-ways-to-ask-for-a-key">Three ways to ask for a key</h3>
 <pre><code class="zeno">print(ages["Ada"])            # I know it is there. If not: KeyError
 let age = ages.get("Bob")     # it may not be: int or none
@@ -303,7 +312,7 @@ well. Storing under a key the dict already has does not copy the key a
 second time, and frees the old value.</p>
 <p><code>zeno build --no-collector --memory examples/faults.zeno</code> shows that
 it adds up:</p>
-<pre><code>memory: 30 blocks made (1032 bytes), at most 784 bytes in use at once, no collector, 0 blocks left at the end
+<pre><code>memory: 32 blocks made (1088 bytes), at most 784 bytes in use at once, no collector, 0 blocks left at the end
 pool: 1104 bytes taken, in a pool of 32768
 text: at most 148 bytes in use at once, in a room of 1024</code></pre>
 <h3 id="in-a-firmware-build">In a firmware build</h3>
@@ -315,13 +324,146 @@ print(ages["Bob"])</code></pre>
 <p>It cannot be caught there, and a <code>try</code> around it is refused when the
 program is built, with a message that says so. A program that must not
 stop asks first, with <code>in</code> or <code>get</code>.</p>
+<h2 id="any-value-and-a-loop-with-two-names">Any value, and a loop with two names</h2>
+<pre><code>cargo run -- run examples/channels.zeno</code></pre>
+<pre><code>["voltage": [12.0, 13.0, 11.0], "current": [1.5, 3.5], "temperature": [40.0, 44.0], "humidity": [55.0]]
+voltage: mean 12.0 over 3
+current: mean 2.5 over 2
+temperature: mean 42.0 over 2
+humidity: mean 55.0 over 1
+["low": 11.0, "high": 13.0] 3.5
+voltage: reading 1 is 13.0, outside 11.5 to 12.5
+voltage: reading 2 is 11.0, outside 11.5 to 12.5
+current: reading 1 is 3.5, outside 0.0 to 3.0
+humidity: nobody said what this may read
+3 readings out of range
+true Limit(low=11.5, high=13.5)
+dropped [55.0] and kept ["voltage", "current", "temperature"]</code></pre>
+<p><a href="/examples/channels/"><code>examples/channels.zeno</code></a> keeps the
+readings of each channel in a list under the channel's name, and what
+each channel may read as an object under the same name.</p>
+<h3 id="what-can-be-under-a-key">What can be under a key</h3>
+<pre><code class="zeno">let readings: dict[str, list[float]] = [:]                      # lists
+let limits = ["voltage": Limit(11.5, 12.5)]                     # objects
+let shapes: dict[str, Shape] = ["round": Circle(1.0)]           # an interface
+let ranges: dict[str, dict[str, float]] = [:]                   # dicts
+let waits = ["blink": 500 ms]                                   # quantities
+let steps: dict[str, function(int) -&gt; int] = [:]                # functions</code></pre>
+<p>What is under a key is the thing itself, and not a copy:</p>
+<pre><code class="zeno">readings["voltage"].append(12.0)     # adds to the list in the dict
+limits["voltage"].high = 13.5        # changes the object in the dict</code></pre>
+<p>One thing cannot be a value, and that is <code>none</code> (10.11). <code>get</code> gives
+<code>none</code> for a key that is not there, and in a <code>dict[str, int or none]</code>
+that answer would mean two things. The checker says so, and says what
+to do: leave the key out.</p>
+<h3 id="a-loop-with-two-names">A loop with two names</h3>
+<pre><code class="zeno">for channel, values in readings {      # a dict: the key, and what is under it
+    for at, value in values {          # a list: the position, and what is there
+        ...
+    }
+}</code></pre>
+<p>The rule is the same for both, and for text and a range as well: the
+second name is what is at the first (10.12). In a dict, <code>values</code> is
+<code>readings[channel]</code>. In a list, <code>value</code> is <code>values[at]</code>. Over
+<code>range(5, 8)</code> the first name counts the trips from 0 and the second is
+the number.</p>
+<p>The pairs are as they were when the loop began, so the body may store
+into the dict and take keys out.</p>
+<h3 id="the-parser-and-the-tree">The parser and the tree</h3>
+<p><code>for_loop</code> in <code>src/parser.rs</code> reads a name, and then a comma and a
+second name if there is one. The node <code>StmtKind::For</code> has a new part,
+<code>second</code>, which is <code>None</code> for the loop that was there before. Two
+names that are the same, or three names, get a message that says what
+two names are for.</p>
+<h3 id="the-checker">The checker</h3>
+<p><code>pair_types</code> in <code>src/checker.rs</code> answers what the two names are: the
+key type and the value type for a dict, and <code>int</code> and the item type
+for everything else. The rest is the loop that was there.</p>
+<p>For the values, <code>no_such_value</code> is the one place that says what a dict
+cannot hold. It is asked where a <code>dict[...]</code> type is written and where
+a dict is written out.</p>
+<p>A dict that is written out can be told what its values are by the
+place it goes, as a list is (10.13). That is how
+<code>["round": Circle(1.0), "square": Square(2.0)]</code> is a
+<code>dict[str, Shape]</code> when it goes into one, and how a <code>200</code> becomes a
+<code>u8</code>. <code>expecting</code> leaves a note for <code>dict_written</code>, which checks each
+value against it.</p>
+<p>In a generic, <code>dict[K, V]</code> is laid over the dict that is given, and
+says what <code>K</code> and <code>V</code> are. Three functions learned about <code>Ty::Dict</code>
+for that: <code>mentions</code>, <code>bind</code> and <code>filled</code>.</p>
+<h3 id="zeno-run-and-the-vm"><code>zeno run</code> and the VM</h3>
+<p><code>ops::pairs</code> in <code>src/ops.rs</code> gives the pairs of anything that can be
+looped over: the entries of a dict, or each item with its position.
+<code>zeno run</code> walks that list and sets two variables each trip.</p>
+<p>The VM has three new instructions. <code>zeno bytecode</code> on
+<code>for name, age in ages { print(name, age) }</code>:</p>
+<pre><code>0003    2  GetLocal     0          ; ages
+0004    |  ForStartPairs
+0005    |  Const        2          ; 0
+0006    |  ForNextPair  15
+0007    |  ForSecond    1
+0008    3  Const        3          ; &lt;function print&gt;
+0009    |  GetLocal     4          ; name
+0010    |  GetLocal     5          ; age
+0011    |  Call         2
+0012    |  Pop          1
+0013    2  Pop          2
+0014    |  Jump         6
+0015    |  Pop          3</code></pre>
+<p><code>ForStartPairs</code> takes the dict off the stack and leaves two lists, the
+values and the keys. With the position that makes three things under
+the loop's variables. <code>ForNextPair</code> pushes the next key (or the
+position, for a list) and moves the position on, or jumps to 15 when
+there are no more. <code>ForSecond</code> pushes the value that goes with it.
+The two values it pushes are the two variables, <code>name</code> and <code>age</code>.</p>
+<h3 id="the-c-backend_1">The C backend</h3>
+<pre><code>zeno_dict *t1 = z_ages;
+zeno_list *t2 = zeno_dict_keys(t1);
+zeno_list *t3 = zeno_dict_values(t1);
+zeno_list *t4 = t2;
+for (int64_t t5 = 0; t5 &lt; t4-&gt;len; t5++) {
+    const char *z_name = t4-&gt;items[t5].s;
+    int64_t z_age = t3-&gt;items[t5].i;
+    ...
+}
+zeno_list_drop(t4);
+zeno_list_drop(t3);</code></pre>
+<p>A list of the values beside the list of the keys, and one position
+for both. Over a list there is nothing to make: the first name is the
+position the loop already had.</p>
+<pre><code>for (int64_t t7 = 0; t7 &lt; t6-&gt;len; t7++) {
+    int64_t z_n = t6-&gt;items[t7].i;
+    int64_t z_at = t7;</code></pre>
+<p>A value that is a list or an object is a pointer in the dict's list of
+values, with the kind letter <code>'p'</code>:</p>
+<pre><code>z_lists = zeno_dict_of('s', 'p', 1, (zeno_slot){.s = "a"}, (zeno_slot){.p = zeno_list_of(...)});</code></pre>
+<p>The runtime knows how to show and compare an int or a piece of text
+from its kind letter. It cannot know that for a pointer, so the
+compiler writes a function for each such type, as it already did for
+a list of them, and hands it over:</p>
+<pre><code>zeno_dict_str_with(z_lists, zeno_item_repr_list_float)
+zeno_dict_eq_with(z_lists, z_lists, zeno_item_eq_list_float)</code></pre>
+<p><code>zeno_dict_str</code> and <code>zeno_dict_eq</code> are those two with no function,
+which means "go by the letter". The LLVM backend calls the same two
+and builds the same loop, in <code>open_loop</code> in <code>src/emit_llvm.rs</code>.</p>
+<h3 id="with-no-collector_1">With no collector</h3>
+<p>The loop with two names works there: the value is looked at, and the
+two lists the loop made are freed when it ends, also when a <code>break</code>
+or a <code>return</code> leaves it early.</p>
+<p>Values that are lists or objects do not (10.14, a limit of version 0.1):</p>
+<pre class="out"><code>error: with no collector a value of a dict is an int, a float, a bool or
+a str for now, and this is list[float]. Keep those in a list, and the
+position of each in the dict</code></pre>
+<p>A dict of lists would own its lists, and every way into the dict
+would need a rule about who owns what comes out. Those rules exist
+for a list of owned items, and the decision lists what they would be
+for a dict. No program for a board has needed them yet.</p>
 <h2 id="what-a-dict-cannot-do-yet">What a dict cannot do yet</h2>
 <ul>
-<li>A value cannot be a list, an object or another dict. Keep those in a
-  list and the position of each in the dict (6.32).</li>
+<li>A value cannot be <code>none</code> or <code>T or none</code>. Leave the key out (10.11).</li>
+<li>With no collector a value is an int, a float, a bool, text, a sized
+  number or a quantity (10.14).</li>
 <li>A key cannot be an enum case.</li>
-<li>There is no loop over pairs. <code>for key in d</code> and <code>d[key]</code> do it.</li>
-<li>A generic function cannot take <code>dict[str, T]</code>.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
 <ol>
@@ -374,6 +516,39 @@ stop asks first, with <code>in</code> or <code>get</code>.</p>
    skip, and what would <code>len</code> count?</p>
 </li>
 <li>
+<p>Run <code>examples/channels.zeno</code>. Then change <code>for at, value in
+    values</code> to <code>for value, at in values</code> and read what the checker
+    says about <code>limit.holds(value)</code>. Why does the order of the two
+    names matter, and what is the one rule that says which is which
+    (10.12)?</p>
+</li>
+<li>
+<p>Write <code>let d: dict[str, int or none] = [:]</code> and read the message.
+    Then write a program that needs "this key has no value yet" and do
+    it the way the message says. What does <code>get</code> give for such a key?</p>
+</li>
+<li>
+<p>Give <code>Limit</code> a second class beside it, <code>Band</code>, and an interface
+    <code>Check</code> with <code>holds</code> that both are. Make <code>limits</code> a
+    <code>dict[str, Check]</code> with one of each. What does <code>limits</code> have to
+    say on its <code>let</code> line, and why can a <code>dict[str, Limit]</code> that is
+    made already not be passed where a <code>dict[str, Check]</code> is wanted
+    (10.13)?</p>
+</li>
+<li>
+<p>Run <code>zeno bytecode</code> on a loop with two names over a list, and
+    compare it with the one over a dict above. Which instructions are
+    the same? Find <code>ForNextPair</code> in <code>src/vm.rs</code> and see what it pushes
+    for each.</p>
+</li>
+<li>
+<p>Build <code>examples/channels.zeno</code> with <code>--no-collector</code> and read the
+    two messages. Then change the program so that it builds: keep the
+    lists in a <code>list[list[float]]</code> and the position of each in a
+    <code>dict[str, int]</code>. Which of the two programs is easier to get
+    wrong, and where?</p>
+</li>
+<li>
 <p>Add a method <code>has(key)</code> that means the same as <code>key in d</code>. Follow
     <code>get</code> through <code>builtins.rs</code>, <code>checker.rs</code>, <code>emit_c.rs</code> and
     <code>emit_llvm.rs</code>. Then take it out again: why is one way to ask
@@ -383,7 +558,7 @@ stop asks first, with <code>in</code> or <code>get</code>.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/dict.md">docs/dict.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/math/"><span>Previous</span>The standard library, part 3: more of math</a><a class="next" href="/docs/modules/"><span>Next</span>Programs in several files</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-dict-does">What a dict does</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#what-a-dict-cannot-do-yet">What a dict cannot do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-dict-does">What a dict does</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#any-value-and-a-loop-with-two-names">Any value, and a loop with two names</a></li><li><a href="#what-a-dict-cannot-do-yet">What a dict cannot do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ring/ · Zeno</title>
+<meta name="description" content="What private is for: a module that keeps its insides to itself. A Zeno example, with its output.">
+<meta property="og:title" content="ring/ · Zeno">
+<meta property="og:description" content="What private is for: a module that keeps its insides to itself. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/ring/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/ring/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">What private is for: a module that keeps its insides to itself</h1>
+  <p class="lede small">The 2 files of <code>examples/ring/</code>, and what <code>zeno run examples/ring/main.zeno</code> prints.</p>
+  <div class="example-files"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">ring/main.zeno</span></figcaption><pre><code class="zeno"># What `private` is for: a module that keeps its insides to itself.
+#
+#     zeno run examples/ring/main.zeno
+#
+# `ring.zeno` declares a queue of a fixed size. This file uses it
+# through the four functions the module lets it see.
+import ring
+
+let queue = ring.ring(4)
+
+for byte in [10, 20, 30, 40, 50] {
+    if not queue.put(byte) {
+        print(f"no room for {byte}")
+    }
+}
+print(f"{queue.size()} waiting, room for {queue.room()}")
+
+# Two come out, and two more fit in: the ring goes round.
+print(queue.get())
+print(queue.get())
+queue.put(60)
+queue.put(70)
+
+var next = queue.get()
+while next is not none {
+    print(next)
+    next = queue.get()
+}
+print(f"{queue.size()} waiting, room for {queue.room()}")
+
+# Each of these lines is refused by `zeno check`, with a message that
+# says the name is private:
+#
+#     queue.count = 0
+#     print(queue.slots)
+#     let mine = ring.Ring([1, 2], 0, 2)
+#     print(ring.wrapped(5, 4))</code></pre></figure><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">ring/ring.zeno</span></figcaption><pre><code class="zeno"># The module `ring`: a queue of bytes that never grows.
+#
+# A ring keeps its bytes in a list of a fixed size and goes round it:
+# after the last slot comes the first again. An interrupt that receives
+# bytes and a main loop that reads them share one of these on almost
+# every board.
+#
+# `private` in front of a declaration keeps it to this file. Another
+# file can call `put`, `get`, `size` and `room`. It cannot touch
+# `slots`, `first` or `count`, so it cannot make a ring whose count
+# says one thing and whose slots say another.
+
+class Ring {
+    private slots: list[int]
+    private first: int       # the slot the oldest byte is in
+    private count: int       # how many bytes are waiting
+
+    # Put a byte in. False if the ring is full: the byte is not kept.
+    function put(self, byte: int) -&gt; bool {
+        if self.count == len(self.slots) {
+            return false
+        }
+        self.slots[self.slot(self.count)] = byte
+        self.count += 1
+        return true
+    }
+
+    # Take the oldest byte out, or `none` if nothing is waiting.
+    function get(self) -&gt; int or none {
+        if self.count == 0 {
+            return none
+        }
+        let byte = self.slots[self.first]
+        self.first = self.slot(1)
+        self.count -= 1
+        return byte
+    }
+
+    function size(self) -&gt; int {
+        return self.count
+    }
+
+    function room(self) -&gt; int {
+        return len(self.slots) - self.count
+    }
+
+    # The slot that is `steps` after the oldest byte, going round.
+    private function slot(self, steps: int) -&gt; int {
+        return wrapped(self.first + steps, len(self.slots))
+    }
+}
+
+# Only this file can build a `Ring`, because only this file can fill in
+# its private fields. So it gives the others a function that does.
+function ring(size: int) -&gt; Ring raises ValueError {
+    if size &lt; 1 {
+        raise ValueError("a ring has room for one byte at least")
+    }
+    return Ring([0 for slot in range(size)], 0, 0)
+}
+
+# A function the other files have no use for.
+private function wrapped(place: int, size: int) -&gt; int {
+    return place % size
+}
+
+# The tests of this module. `zeno test examples/ring` runs them, and a
+# build leaves them out. They stand in the file they test, so they can
+# see what is private to it.
+
+test "a new ring is empty" {
+    let queue = ring(4)
+    assert queue.size() == 0
+    assert queue.room() == 4
+    assert queue.get() is none
+}
+
+test "bytes come out in the order they went in" {
+    let queue = ring(3)
+    queue.put(10)
+    queue.put(20)
+    assert queue.get() == 10
+    assert queue.get() == 20
+    assert queue.size() == 0
+}
+
+test "a full ring keeps what it has" {
+    let queue = ring(2)
+    assert queue.put(1)
+    assert queue.put(2)
+    assert not queue.put(3)
+    assert queue.slots == [1, 2]
+}
+
+test "the ring goes round" {
+    let queue = ring(2)
+    queue.put(1)
+    queue.put(2)
+    queue.get()
+    queue.put(3)
+    assert queue.first == 1
+    assert queue.slots == [3, 2]
+    assert wrapped(5, 4) == 1
+}
+
+test "a ring of no size is refused" {
+    assert raises ValueError {
+        ring(0)
+    }
+}</code></pre><div class="out-label">zeno run examples/ring/main.zeno</div><pre class="out"><code>no room for 50
+4 waiting, room for 0
+10
+20
+30
+40
+60
+70
+0 waiting, room for 4</code></pre></figure></div>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/tree/main/examples/ring">examples/ring/</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/station/"><span>Previous</span>station/</a><a class="next" href="/examples/filters/"><span>Next</span>filters/</a></nav>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

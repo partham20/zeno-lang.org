@@ -53,7 +53,6 @@
 #     zeno build examples/generics.zeno          compile it to C
 #     zeno build --llvm examples/generics.zeno   compile it through LLVM
 
-
 # --- A generic class ---
 
 # `Ring[T]` is not one class. It is a pattern for as many as the program
@@ -94,7 +93,6 @@ class Ring[T] {
         return self.slots[(self.next + size - 1) % size]
     }
 }
-
 
 # --- Generic functions ---
 
@@ -140,7 +138,6 @@ function convert[T, U](items: list[T], change: function(T) -&gt; U) -&gt; list[U
     return out
 }
 
-
 # --- Bytes from a serial port ---
 
 # `u8(0)` makes this a Ring[u8]: every place in it is one byte.
@@ -152,7 +149,6 @@ print("bytes:", bytes.items(), "newest", bytes.newest(), "dropped", bytes.droppe
 print("above 0x60:", count_where(bytes.items(), function(b: u8) -&gt; bool { return b &gt; 0x60 }))
 print("as hex:", convert(bytes.items(), function(b: u8) -&gt; str { return f"{b:02x}" }))
 
-
 # --- Voltages from a sensor ---
 
 # The same class, as a Ring[V]. A reading in amps would not go in.
@@ -163,7 +159,6 @@ for reading in [3.1 V, 3.3 V, 2.9 V, 3.2 V] {
 }
 print("volts:", volts.items(), "highest", largest(volts.items()))
 print("low:", count_where(volts.items(), function(v: V) -&gt; bool { return v &lt; 3.0 V }))
-
 
 # --- Text ---
 

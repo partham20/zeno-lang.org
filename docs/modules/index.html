@@ -38,7 +38,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/" aria-current="page">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/" aria-current="page">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>Programs in several files</h1>
@@ -111,10 +111,14 @@ comes with Zeno is.</p>
 <ol>
 <li><strong>Where a module is looked for.</strong> From the folder of the file you
    gave to <code>zeno run</code>, whichever file does the importing. One name is
-   one file, everywhere in the program (7.2).</li>
+   one file, everywhere in the program (7.2). (An import whose first
+   word is a package the program needs reads that package:
+   <a href="/docs/packages/"><code>packages.md</code></a>.)</li>
 <li><strong>What can be imported.</strong> Everything a file declares at its top:
    functions, classes, enums and their cases, <code>let</code>, <code>var</code> and <code>const</code>.
-   What the file itself imports is not passed on (7.4).</li>
+   What the file itself imports is not passed on (7.4). A declaration
+   with <code>private</code> in front is for its own file only
+   (<a href="/docs/private/"><code>private.md</code></a>).</li>
 <li><strong>When an imported file runs.</strong> Once, before the file that imports
    it. So an <code>import</code> of a file goes at the top of the file, above
    everything that is not an import (7.5).</li>
@@ -229,15 +233,24 @@ what the renamer looks for:</p>
 <pre><code>// `shapes.area`: the parser read a field of a variable `shapes`.
 // It is the name `area` of the module `shapes`.
 if let ExprKind::Field { object, name } = &amp;expr.kind {
-    if let Some(module) = self.module_named(object).filter(|module| self.whole.contains(module)) {
-        let names = &amp;self.declared[&amp;module];
-        match names.contains(name) {
-            true =&gt; expr.kind = ExprKind::Name(format!("{module}.{name}")),
-            false =&gt; self.error(no_such_name(&amp;module, name, names), span),
+    if let Some(module) = self.module_named(object) {
+        if self.starts.contains(&amp;format!("{module}.{name}")) {
+            // Still the name of a module: `drivers.uart` of `drivers.uart.send`.
+        } else if let Some(global) = self.whole.get(&amp;module) {
+            let names = &amp;self.declared[global];
+            match names.contains(name) {
+                true =&gt; expr.kind = ExprKind::Name(format!("{global}.{name}")),
+                false =&gt; self.error(no_such_name(&amp;module, name, names), span),
+            }
+            return;
         }
-        return;
+        ...
     }
 }</code></pre>
+<p><code>whole</code> holds the modules the file imported with <code>import</code>, each with
+the name it has in the whole program. In a program of one folder the
+two are the same word. They differ inside a package, which is the
+subject of <a href="/docs/packages/"><code>packages.md</code></a>.</p>
 <p>The one hard part is knowing when a name is <em>not</em> the module's. In</p>
 <pre><code class="zeno">from shapes import area
 
@@ -303,9 +316,9 @@ interpreter's <code>Display</code>, the C <code>zeno_show_</code> functions and 
 use it.</p>
 <h2 id="what-is-left-out">What is left out</h2>
 <ul>
-<li><strong>No way to hide a declaration.</strong> Everything at the top of a file
-  can be imported. A word such as <code>private</code> can be added without
-  breaking any program (7.4).</li>
+<li><strong>Hiding a declaration</strong> was left out of this stage and has come
+  since: <code>private function helper()</code> is for its own file only. See
+  <a href="/docs/private/"><code>private.md</code></a>.</li>
 <li><strong>No second name for a module</strong> (<code>import drivers.uart as uart</code>).
   <code>from drivers.uart import send</code> gives the short form (7.3).</li>
 <li><strong>The whole program is compiled together.</strong> Change one file and
@@ -314,9 +327,10 @@ use it.</p>
   across files (7.11).</li>
 <li><strong>A module that comes with Zeno wins over a file of the same
   name.</strong> <code>math.zeno</code> is never read by <code>import math</code> (7.2).</li>
-<li><strong>Other people's modules.</strong> A module is found from the program's
-  own folder and nowhere else. Saying where libraries live is the
-  package manager's job, which is the next stage.</li>
+<li><strong>Other people's modules</strong> are not on this page. A module of the
+  program is found from the program's own folder and nowhere else. A
+  folder of modules that lives somewhere else is a package, and
+  <a href="/docs/packages/"><code>packages.md</code></a> is about those.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
 <ol>
@@ -356,7 +370,7 @@ use it.</p>
     there that nothing calls, with a parameter that has no type.</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/modules.md">docs/modules.md</a> in the language repository.</p>
-  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/dict/"><span>Previous</span>The standard library, part 4: a dictionary</a><a class="next" href="/docs/audit/"><span>Next</span>The audit: unambiguous and intuitive</a></nav>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/dict/"><span>Previous</span>The standard library, part 4: a dictionary</a><a class="next" href="/docs/packages/"><span>Next</span>Packages</a></nav>
 </article>
 <aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-module-is">What a module is</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>

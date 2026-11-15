@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tests: test, assert and zeno test · Zeno</title>
+<meta name="description" content="A program that can check itself gets changed with less fear. This page adds the tests of a Zeno program, written in Zeno, and the command that runs them.">
+<meta property="og:title" content="Tests: test, assert and zeno test · Zeno">
+<meta property="og:description" content="A program that can check itself gets changed with less fear. This page adds the tests of a Zeno program, written in Zeno, and the command that runs them.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/testing/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/testing/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/" aria-current="page">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Tests: test, assert and zeno test</h1>
+  <p>A program that can check itself gets changed with less fear. This
+page adds the tests of a Zeno program, written in Zeno, and the
+command that runs them.</p>
+<pre><code>cargo run -- test examples/ring</code></pre>
+<pre><code>examples/ring/ring.zeno
+  ok      a new ring is empty
+  ok      bytes come out in the order they went in
+  ok      a full ring keeps what it has
+  ok      the ring goes round
+  ok      a ring of no size is refused
+
+5 tests: 5 passed, 0 failed.</code></pre>
+<p><a href="https://github.com/partham20/zeno-lang/blob/main/examples/ring/ring.zeno"><code>examples/ring/ring.zeno</code></a> is the queue
+of bytes from <a href="/docs/private/"><code>private.md</code></a>, with its tests at the end
+of the file. The decisions are 10.16 to 10.21 in
+<a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-a-test-looks-like">What a test looks like</h2>
+<pre><code class="zeno">test "a full ring keeps what it has" {
+    let queue = ring(2)
+    assert queue.put(1)
+    assert queue.put(2)
+    assert not queue.put(3)
+    assert queue.slots == [1, 2]
+}</code></pre>
+<p>A test is a block with a name. The name is text, so it can say what
+is checked in plain words. Inside, <code>assert</code> says what must be so.</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test "name" { ... }</code></td>
+<td>a test, at the top of a file</td>
+</tr>
+<tr>
+<td><code>assert total == 6</code></td>
+<td>this must be true, or the test fails here</td>
+</tr>
+<tr>
+<td><code>assert raises ValueError { ... }</code></td>
+<td>the block must raise that kind of error</td>
+</tr>
+</tbody>
+</table>
+<p>Three more things are worth knowing.</p>
+<p><strong>A test sees what is private to its file.</strong> <code>slots</code> is a private
+field of <code>Ring</code>. No other file can read it, and the test can, because
+it stands in <code>ring.zeno</code>. That is why tests go in the file they test.</p>
+<p><strong>An error that leaves a test fails it.</strong> A test needs no <code>try</code>
+around what should work.</p>
+<p><strong>A failed <code>assert</code> ends its test.</strong> The lines after it do not run,
+and no <code>except</code> catches it: it is not an error of the program.</p>
+<h2 id="what-a-failure-says">What a failure says</h2>
+<p>Change <code>assert queue.get() == 20</code> in the example to <code>== 30</code>:</p>
+<pre><code>examples/ring/ring.zeno
+  ok      a new ring is empty
+  FAILED  bytes come out in the order they went in
+  ok      a full ring keeps what it has
+  ok      the ring goes round
+  ok      a ring of no size is refused
+
+FAILED: bytes come out in the order they went in
+error: this is false. The left of `==` is 20, and the right is 30
+  --&gt; examples/ring/ring.zeno:83:12
+   |
+83 |     assert queue.get() == 30
+   |            ^
+
+5 tests: 4 passed, 1 failed.</code></pre>
+<p>The line, and what was on each side of the comparison. Other
+languages have <code>assert_eq</code>, <code>assert_ne</code>, <code>assertIn</code> and more, each so
+that a failure can show the values. Zeno has the one <code>assert</code>,
+because the interpreter can see that the condition is a comparison
+and keep the two sides (10.17).</p>
+<p>When an error was expected and did not come:</p>
+<pre class="out"><code>error: this block was expected to raise ValueError, and it raised nothing</code></pre>
+<p>And when another one came:</p>
+<pre class="out"><code>error: this block was expected to raise KeyError, and it raised ValueError: a ring has room for one byte at least
+  = note: that error was raised on line 57</code></pre>
+<h2 id="what-zeno-test-runs">What <code>zeno test</code> runs</h2>
+<pre><code>zeno test ring.zeno        # the tests in this file
+zeno test examples/ring    # the tests in every file of this folder, and below
+zeno test                  # the same, for the folder you are in</code></pre>
+<p>For each file that has a test, <code>zeno test</code> runs the file as <code>zeno
+run</code> would, and then each test in it, in the order written (10.19).
+So a test can use everything the file declares.</p>
+<ul>
+<li><strong>A file with no test is not run.</strong> <code>examples/ring/main.zeno</code> is
+  the program, and it is left alone.</li>
+<li><strong>The tests of an imported file are not run.</strong> Testing <code>main.zeno</code>
+  would not run the tests of <code>ring.zeno</code>. They are that file's own.</li>
+<li><strong>The command fails if a test did</strong>, so a script can ask.</li>
+</ul>
+<p><code>zeno run</code> and <code>zeno build</code> go past the tests. <code>zeno run</code> and <code>zeno
+check</code> still check them, so a test with a mistake in it is found
+when the program is next checked, not when someone remembers to run
+the tests. A build takes them out before it checks, so a test is not
+held to the rules of a board (10.20):</p>
+<pre><code class="zeno">test "double" {
+    let shared = [1, 2]
+    let again = shared          # two names for one list
+    assert double(len(shared) + len(again)) == 8
+}</code></pre>
+<p>With <code>--no-collector</code> the program itself could not share that list.
+The test may, because it never runs on the board.</p>
+<h2 id="how-it-is-built">How it is built</h2>
+<h3 id="the-lexer-and-the-parser">The lexer and the parser</h3>
+<p><code>assert</code> is a new reserved word (<code>src/token.rs</code>). <code>test</code> is not. In
+<code>statement</code> in <code>src/parser.rs</code>:</p>
+<pre><code>TokenKind::Ident(word) if word == "test" &amp;&amp; matches!(self.peek_at(1), TokenKind::Str { .. }) =&gt; self.test()?,</code></pre>
+<p>A name followed by text means nothing else in Zeno, so the parser
+needs to look one token ahead and no more, and <code>test</code> stays free to
+be a name (<code>examples/generics.zeno</code> has a parameter called <code>test</code>).</p>
+<p><code>test()</code> reads the name and the block. It refuses a test inside a
+block, a name with <code>f</code> in front, and a name that the file has used
+already. While it reads the block it sets <code>in_test</code>, which is how
+<code>assert()</code> knows where it is:</p>
+<pre class="out"><code>error: `assert` belongs in a test: `test "name" { assert total == 6 }`. In
+the program itself, check with `if`, and `raise` an error</code></pre>
+<p>The tree has three new statements (<code>src/ast.rs</code>): <code>Test { name,
+body }</code>, <code>Assert(condition)</code> and <code>AssertRaises { error, body }</code>.</p>
+<h3 id="the-checker">The checker</h3>
+<p>A test is checked as a block at the top of the file. <code>assert</code> takes
+a condition, checked by the function that checks the condition of an
+<code>if</code>. <code>assert raises</code> is checked as a <code>try</code> with one <code>except</code> that
+has nothing in it, so "is that a kind of error?" and "what does the
+block raise?" are answered by code that was there:</p>
+<pre><code>StmtKind::AssertRaises { error, body } =&gt; {
+    let handler = Handler { error: Some(error.clone()), binding: None, body: Vec::new() };
+    self.try_statement(body, std::slice::from_ref(&amp;handler), env, span);
+    false
+}</code></pre>
+<h3 id="running-them">Running them</h3>
+<p><code>run_tests</code> in <code>src/interpreter.rs</code> is <code>zeno test</code>'s engine. It runs
+the program, and then walks its statements once more:</p>
+<pre><code>for statement in &amp;program.statements {
+    let StmtKind::Test { name, body } = &amp;statement.kind else { continue };
+    if statement.span.file() != 0 { continue }
+    let failure = interpreter.exec_block(body, &amp;env).map_err(ops::escaped).err();
+    ...
+}</code></pre>
+<p><code>span.file()</code> is which file of the joined program a statement came
+from (docs/modules.md), and 0 is the first one: the file that is
+being tested.</p>
+<p><code>assert</code> is in <code>Interpreter::assert</code>. For a comparison it works out
+the two sides, keeps what each looks like, and compares them with the
+function every comparison uses. A failure is a <code>Control::Fatal</code>, the
+kind of stop that <code>except</code> does not catch.</p>
+<p>Everywhere else a test is nothing. In <code>exec</code>, the line for <code>zeno
+run</code> is:</p>
+<pre><code>StmtKind::Test { .. } =&gt; Ok(()),</code></pre>
+<h3 id="the-compilers">The compilers</h3>
+<p><code>Program::without_tests</code> in <code>src/ast.rs</code> takes the tests out, and
+<code>zeno build</code> calls it before the checker. The VM, the C backend and
+the LLVM backend each have one line that says a test is nothing, for
+the programs that reach them another way.</p>
+<h3 id="the-command">The command</h3>
+<p><code>test</code> in <code>src/main.rs</code> parses the file alone first, to see whether
+it has a test. Then it loads the program the file belongs to.
+<code>program_folder</code> finds where that is: the nearest folder upward with
+a <code>zeno.package</code> or a <code>main.zeno</code> in it. The language server finds
+it the same way, and it is why a file in <code>drivers/</code> can be tested
+with the imports it has in the real program.</p>
+<h2 id="what-is-left-out">What is left out</h2>
+<ul>
+<li>A message on <code>assert</code>.</li>
+<li><code>assert</code> in a function outside a test.</li>
+<li>Lines to run before and after each test.</li>
+<li>Choosing tests by name, and running them side by side.</li>
+<li>Running tests in a compiled program or on a board.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>
+<p>Run <code>zeno test examples/ring</code>. Then break <code>put</code> in <code>ring.zeno</code>:
+   leave out <code>self.count += 1</code>. Which tests fail, and what does each
+   failure tell you about the mistake?</p>
+</li>
+<li>
+<p>Write a test for <code>room()</code>: after two bytes go into a ring of
+   four, there is room for two. Run it. Then make it wrong on
+   purpose and read the message.</p>
+</li>
+<li>
+<p>Make a file <code>ring_test.zeno</code> beside <code>ring.zeno</code> with <code>import
+   ring</code> and a test that reads <code>queue.slots</code>. What does <code>zeno check</code>
+   say, and why can the test inside <code>ring.zeno</code> do it?</p>
+</li>
+<li>
+<p>Put <code>assert queue.size() == 0</code> at the top of <code>main.zeno</code>, outside
+   any test. Read the message. How would the program itself say that
+   something is wrong, in a way a caller could catch?</p>
+</li>
+<li>
+<p>Write <code>try { assert 1 == 2 } except Error { print("caught") }</code>
+   inside a test and run it. Is "caught" printed? Find the line in
+   <code>Interpreter::assert</code> that makes it so, and <code>Control::Fatal</code> in
+   <code>src/value.rs</code>.</p>
+</li>
+<li>
+<p>Add a test to <code>examples/ring/main.zeno</code> and run <code>zeno test
+   examples/ring</code> again. What is printed before the tests of that
+   file, and why (10.19)?</p>
+</li>
+<li>
+<p>Write a test that uses a <code>dict[str, list[int]]</code>. Run it with
+   <code>zeno test</code>. Then build the file with <code>--no-collector</code>. Why does
+   the build not complain (10.20)? Now use such a dict outside the
+   test and build again.</p>
+</li>
+<li>
+<p>Run <code>zeno parse</code> on a file with a test and find the three new
+   lines in the tree. Then find where <code>printer.rs</code> writes each.</p>
+</li>
+<li>
+<p>Two tests of one file change the same <code>var</code>. Does the order they
+   are written in matter? Write them so that it does, and then so
+   that it does not.</p>
+</li>
+<li>
+<p>Add a message to <code>assert</code>: <code>assert total == 6, "the total"</code>.
+    The parser reads a comma and an expression, the tree keeps it,
+    and <code>Interpreter::assert</code> puts it in front of what it says.
+    Then decide whether the language is better with it, and take it
+    out again if it is not.</p>
+</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/testing.md">docs/testing.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/new/"><span>Previous</span>Starting a program: zeno new</a><a class="next" href="/docs/format/"><span>Next</span>The formatter</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-test-looks-like">What a test looks like</a></li><li><a href="#what-a-failure-says">What a failure says</a></li><li><a href="#what-zeno-test-runs">What zeno test runs</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

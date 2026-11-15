@@ -95,7 +95,9 @@ print("compass")
 let fields = [[1.0, 0.0], [1.0, 1.0], [0.0, 1.0], [-1.0, 1.0], [-1.0, 0.0], [0.0, -1.0], [3.0, -4.0]]
 for field in fields {
     let angle = heading(field[0], field[1])
-    print(f"  x {field[0]:5.1f}  y {field[1]:5.1f}  heading {angle / 1 deg:6.1f} deg")
+    # A format on a quantity is the number's, and the unit follows it.
+    # The width counts both: six for the number, four for ` deg`.
+    print(f"  x {field[0]:5.1f}  y {field[1]:5.1f}  heading {angle:10.1f}")
 }
 
 print("thermistor")
@@ -144,7 +146,7 @@ sine table
   [128, 176, 218, 245, 255, 245, 218, 176, 128, 79, 37, 10, 0, 10, 37, 79]</code></pre></figure></div>
   
   <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/instruments.zeno">examples/instruments.zeno</a>.</p>
-  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/faults/"><span>Previous</span>faults.zeno</a><a class="next" href="/examples/logbook/"><span>Next</span>logbook.zeno</a></nav>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/channels/"><span>Previous</span>channels.zeno</a><a class="next" href="/examples/logbook/"><span>Next</span>logbook.zeno</a></nav>
 </div>
 </main>
 <footer class="foot">

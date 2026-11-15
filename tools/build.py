@@ -248,7 +248,7 @@ def toc_html(tokens, depth=2):
 
 DOC_ICONS = {"The front end": "tree", "The engines": "play", "Memory": "memory",
              "Firmware and hardware": "cpu", "The type system": "copies", "Memory by hand": "key",
-             "The standard library": "package", "Programs in many files": "layers", "The audit": "eye",
+             "The standard library": "package", "Programs in many files": "layers", "Tools": "terminal", "The audit and 0.1": "eye",
              "More": "book"}
 
 DOC_GROUPS = [
@@ -260,16 +260,18 @@ DOC_GROUPS = [
      ["memory", "ownership", "no-collector", "pool", "text", "temporaries", "one-owner", "enums-and-none", "functions-and-errors"]),
     ("Firmware and hardware", "Errors as values, pins and clocks, sized numbers.",
      ["firmware", "board", "sized-ints"]),
-    ("The type system", "Code written once for many types.",
-     ["generics"]),
+    ("The type system", "Generics, interfaces and what a module keeps to itself.",
+     ["generics", "interfaces", "private"]),
     ("Memory by hand", "Pointers and registers, inside unsafe blocks.",
      ["unsafe"]),
     ("The standard library", "Text, lists, files and input, maths and dictionaries.",
      ["library", "reading-and-writing", "math", "dict"]),
-    ("Programs in many files", "Modules, imports and folders.",
-     ["modules"]),
-    ("The audit", "Every feature checked against one rule.",
-     ["audit"]),
+    ("Programs in many files", "Modules, imports, folders and packages.",
+     ["modules", "packages"]),
+    ("Tools", "Starting a program, tests, the formatter and the language server.",
+     ["new", "testing", "format", "lsp"]),
+    ("The audit and 0.1", "Every feature checked, the gaps real programs found, and what 0.1 holds.",
+     ["audit", "gaps", "version-0.1"]),
 ]
 
 
@@ -378,7 +380,8 @@ TYPED = {"logbook": "temp 21.5\ntemp 22.0\nhello\n"}   # keyboard input for prog
 def build_examples():
     folder = Path(ARGS.zeno) / "examples"
     order = ["hello", "tour", "styles", "primes", "shapes", "sensor", "generics", "packet",
-             "sentence", "faults", "instruments", "logbook", "station", "commands", "handlers",
+             "sentence", "faults", "channels", "instruments", "logbook", "ports", "station", "ring",
+             "filters", "thermostat", "commands", "handlers",
              "signal", "blink", "buffer", "memory", "labels", "words", "scheduler", "driver"]
     found = {p.stem for p in folder.glob("*.zeno")} | {p.name for p in folder.iterdir() if (p / "main.zeno").exists()}
     names = [n for n in order if n in found] + sorted(found - set(order))
@@ -393,10 +396,14 @@ def build_examples():
         output = run_zeno(path, lines, typed)
         run_cmd = f"zeno run examples/{name}/main.zeno" if many else f"zeno run examples/{name}.zeno"
         if many:
-            files = sorted((folder / name).rglob("*.zeno"), key=lambda f: (f.name != "main.zeno", str(f)))
+            files = sorted([*(folder / name).rglob("*.zeno"), *(folder / name).rglob("zeno.package")],
+                           key=lambda f: (f.name != "main.zeno", f.name == "zeno.package", str(f)))
             parts = [(str(f.relative_to(folder / name)).replace(os.sep, "/"), f.read_text().rstrip("\n")) for f in files]
-            windows = "".join(window(f"{name}/{rel}", code) for rel, code in parts[:-1])
-            windows += window(f"{name}/{parts[-1][0]}", parts[-1][1], output, run_cmd)
+            last_zeno = max(i for i, (rel, _) in enumerate(parts) if rel.endswith(".zeno"))
+            windows = "".join(
+                window(f"{name}/{rel}", code, output if i == last_zeno else None, run_cmd,
+                       "zeno" if rel.endswith(".zeno") else "plain")
+                for i, (rel, code) in enumerate(parts))
             whole = f"The {len(parts)} files of <code>examples/{name}/</code>, and what <code>{run_cmd}</code> prints."
             code_lines = sum(len(c.split("\n")) for _, c in parts)
             gh = f"{GITHUB}/tree/main/examples/{name}"
@@ -428,7 +435,7 @@ def build_examples():
         cards += (f'<li><a href="/examples/{name}/">{icon(kind)}<b>{esc(title)}</b>'
                   f'<span><code>{label(name)}</code></span><small>{code_lines} lines</small></a></li>')
     body = page_head("Examples", "Programs to read and run",
-                     "Every example in the language repository, from one line to a weather station in four files. "
+                     "Every example in the language repository, from one line to a thermostat built on a package. "
                      "Each page shows what <code>zeno run</code> printed. The chip marks a firmware program, "
                      "and the layers a program in several files.", "code") + \
         f'<ul class="index examples">{cards}</ul>'
@@ -528,6 +535,12 @@ def build_learn():
 <dt><code>zeno build --firmware</code></dt><dd>Errors as return values, no <code>setjmp</code>.</dd>
 <dt><code>zeno build --no-collector</code></dt><dd>No garbage collector and no heap: one fixed pool.</dd>
 <dt><code>zeno build --memory</code></dt><dd>The program reports its memory use as it ends.</dd>
+<dt><code>zeno test</code></dt><dd>Run the tests in a file or a folder.</dd>
+<dt><code>zeno format file.zeno</code></dt><dd>Lay the file out the one standard way.</dd>
+<dt><code>zeno new name</code></dt><dd>Make a folder with a new program; <code>--package</code> makes a package.</dd>
+<dt><code>zeno fetch</code></dt><dd>Get the packages the program needs.</dd>
+<dt><code>zeno join file.zeno</code></dt><dd>Show the one program a file and its imports join into.</dd>
+<dt><code>zeno lsp</code></dt><dd>The language server, for editors.</dd>
 <dt><code>zeno bytecode</code>, <code>parse</code>, <code>tokens</code></dt><dd>Look inside: the instructions, the syntax tree, the tokens.</dd>
 </dl></div></section>
 <section class="next-steps" id="next"><h2>Where next</h2><div class="cards">
@@ -573,10 +586,19 @@ DONE = [
     ("More maths", "Angles, logarithms, powers and rounding in <code>math</code>.", "math"),
     ("Dictionaries", "<code>dict[str, int]</code>, written <code>[&quot;a&quot;: 1]</code>.", "dict"),
     ("Programs in several files", "<code>import sensors</code>, and folders as modules.", "modules"),
+    ("private", "What a module keeps to itself.", "private"),
+    ("Interfaces", "A type says what it can do, and the checker holds it to that.", "interfaces"),
+    ("Packages", "<code>zeno.package</code>, and code shared between programs.", "packages"),
+    ("Tests", "<code>test</code>, <code>assert</code> and <code>zeno test</code>.", "testing"),
+    ("Starting a program", "<code>zeno new</code>.", "new"),
+    ("The formatter and the language server", "<code>zeno format</code>, and an editor that knows Zeno.", "lsp"),
+    ("The gaps programs found", "<code>+=</code> and a format on a quantity.", "gaps"),
+    ("Version 0.1", "Every provisional decision read again. The list is done.", "version-0.1"),
 ]
 NEXT = [
-    ("Next", "Package manager", "Share and reuse code."),
-    ("Planned", "Editor support", "A formatter and a language server."),
+    ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
+    ("Planned", "Bytes", "A <code>list[u8]</code> at one byte an item, <code>u64</code>, and files read as bytes."),
+    ("Planned", "More with no collector", "Dicts of lists and objects, and <code>list[int or none]</code>."),
     ("Planned", "C interop", "Call C libraries, and be called from C."),
     ("Planned", "WebAssembly", "Zeno in the browser."),
     ("Planned", "async and await", "Servers and networking."),
@@ -590,6 +612,7 @@ def build_roadmap():
         f'<li class="{s.split()[0].lower()}">{icon("clock" if s in ("In progress", "Next") else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
         for s, t, d in NEXT)
     body = page_head("Roadmap", "Where Zeno stands",
+                     "Zeno 0.1 is out: every open question about the language has an answer. "
                      "The goal is one language for every job you would reach for C, C++, Python, JavaScript, Java or Rust to do. "
                      "Each use case arrives with a piece of the compiler. This is the order they have come in, and the order the rest will.", "map") + f"""
 <div class="roadmap">
@@ -619,7 +642,7 @@ def build_about():
 <h2>The name</h2>
 <p>Zeno of Elea argued that Achilles can never catch a tortoise: before he reaches it he must cover half the distance, then half of what is left, forever. The quantum Zeno effect says a system watched closely enough never changes. Both suit a compiler that will always be almost finished. The bar at the top of every page closes half the distance that is left as you scroll, and never arrives.</p>
 <h2>Status</h2>
-<p>Zeno is young. It runs programs, checks them, and compiles them to C and to LLVM, has a first standard library (text, lists, files, maths and dictionaries) and programs in several files, but the syntax can still change and there is no package manager yet. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
+<p>Zeno is young. It runs programs, checks them, and compiles them to C and to LLVM, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
 <p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 </div>"""

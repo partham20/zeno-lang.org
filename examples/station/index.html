@@ -114,10 +114,11 @@ function summary(good: int, all: int) -&gt; str {
     return f"{good} of {all} readings are good"
 }</code></pre></figure><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">station/sensors.zeno</span></figcaption><pre><code class="zeno"># The module `sensors`: what a reading is, and whether one can be trusted.
 #
-# Everything declared at the top of this file can be used by a file
-# that imports it: the class, the enum and its cases, the dict and the
-# function. Inside this file they are written as they are declared.
-# Another file writes `sensors.check`, or imports the name with `from`.
+# What is declared at the top of this file can be used by a file that
+# imports it: the class, the enum and its cases, and the function.
+# Inside this file they are written as they are declared. Another file
+# writes `sensors.check`, or imports the name with `from`. The dict is
+# marked `private`, so it is for this file only.
 
 class Reading {
     name: str
@@ -131,8 +132,9 @@ enum Health {
     Suspect(why: str)
 }
 
-# The highest value each sensor can really give.
-let highest = ["temperature": 60.0, "humidity": 100.0, "pressure": 1100.0]
+# The highest value each sensor can really give. Other files ask
+# `check`, and have no use for the table itself.
+private let highest = ["temperature": 60.0, "humidity": 100.0, "pressure": 1100.0]
 
 function check(reading: Reading) -&gt; Health {
     if reading.name not in highest {
@@ -150,7 +152,7 @@ uart&gt; 2 of 4 readings are good
 180 bytes sent at 9600 baud</code></pre></figure></div>
   
   <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/tree/main/examples/station">examples/station/</a>.</p>
-  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/logbook/"><span>Previous</span>logbook.zeno</a><a class="next" href="/examples/commands/"><span>Next</span>commands.zeno</a></nav>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/ports/"><span>Previous</span>ports.zeno</a><a class="next" href="/examples/ring/"><span>Next</span>ring/</a></nav>
 </div>
 </main>
 <footer class="foot">

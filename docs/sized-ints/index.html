@@ -38,7 +38,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/" aria-current="page">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/" aria-current="page">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>How the bit operators and the sized whole numbers work</h1>
@@ -285,11 +285,36 @@ every sum on full ints, so the middle of an expression can never
 overflow at 255. The one place a number may not fit is the place it is
 stored, and there the program says which it wants: a check, or the low
 bits.</p>
-<p>The cost is that <code>count += 1</code> does not compile for a <code>u8</code>:</p>
-<pre class="out"><code>error: the new value should be u8, but this is int.
-       Convert it with `u8(...)`, which checks that it fits</code></pre>
-<p>Write <code>count = u8(count + 1)</code>, or <code>u8.wrap(count + 1)</code> for a counter
-that is meant to go round.</p>
+<h3 id="count-1"><code>count += 1</code></h3>
+<p><code>count += 1</code> is <code>count = count + 1</code>, and the sum is an int, so for a
+long time this did not compile for a <code>u8</code>. It does now, and it means
+the checked one of the two (decision 10.27):</p>
+<pre><code class="zeno">var count: u8 = 250
+count += 5                    # count = u8(count + 5): 255
+count += 1                    # OverflowError: 256 does not fit in a u8 (0 to 255)
+count = u8.wrap(count + 1)    # a counter that is meant to go round still says so</code></pre>
+<p>Rule 2 is untouched: the sum is done on ints. Rule 3 is what stores
+it. So the short line is the safe line, and cutting is still a word
+in the program. Every operator with an <code>=</code> form works this way
+(<code>-=</code>, <code>*=</code>, <code>//=</code>, <code>%=</code>, <code>|=</code>, <code>&lt;&lt;=</code> and the rest), on a variable,
+a field and an item of a <code>list[u8]</code>. <code>/=</code> stays refused, on a <code>u8</code> as
+on an <code>int</code>, because <code>/</code> gives a float.</p>
+<p>No engine was taught this. The checker knows that <code>count</code> is a <code>u8</code>,
+and the interpreter does not: at run time a sized number is an
+ordinary int. So the checker notes where each such statement is
+(<code>Types::fits</code>), and <code>checker::checked</code> hands the program to
+<code>Program::with_fits</code> in <code>src/ast.rs</code>, which turns each one into the
+long form, <code>count = u8(count + 1)</code>, as a tree: an assignment whose
+value is a call of <code>u8</code> on a <code>+</code>. Then the program is checked once
+more and run or compiled as if you had written it that way.</p>
+<pre><code>let sum = ExprKind::Binary { op: operator, left: Box::new(target.clone()), right: Box::new(value) };
+let convert = Expr { kind: ExprKind::Name(width.name.to_string()), span };
+*value = Expr { kind: ExprKind::Call { callee: Box::new(convert), args: vec![sum] }, span };
+*op = None;</code></pre>
+<p>(That is the heart of it, with the details taken out.) The place is
+written twice in the long form, so it is read twice. That is safe
+because the place of a <code>+=</code> can have no call in it (decision 10.26):
+reading <code>frame[i]</code> twice finds the same item both times.</p>
 <h2 id="one-file-knows-the-sizes">One file knows the sizes</h2>
 <p><code>src/ints.rs</code> is about 120 lines, tests included, and it is the only place that knows what a
 <code>u8</code> holds:</p>
@@ -511,6 +536,11 @@ the same thing. The new ones:</p>
   small, and the casts are where this page says.</li>
 <li><code>bit_operators_match</code> and <code>a_shift_too_far_is_an_error</code>, from part
   one, checked against Python.</li>
+<li><code>checker::tests::a_sized_number_takes_an_operator_and_an_equals</code>,
+  <code>emit_c::tests::compound_assignment_on_sized_numbers_matches</code> and
+  <code>with_no_collector_a_sized_number_takes_an_operator_and_an_equals</code>:
+  <code>count += 1</code> in every engine and build, where it fits and where it
+  does not.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
 <ol>
@@ -543,6 +573,12 @@ the same thing. The new ones:</p>
    brings the bits that fall off back in at the bottom. You need <code>&lt;&lt;</code>,
    <code>&gt;&gt;</code>, <code>|</code> and one <code>wrap</code>. Check it against <code>0b1000_0001</code> rotated by
    one.</li>
+<li>Write <code>var count: u8 = 250</code> and <code>count += 10</code>, and run it. Then
+    run <code>zeno bytecode</code> on the file and find the call of <code>u8</code> that
+    you did not write. Which function put it there?</li>
+<li><code>count += 1</code> checks. Suppose it cut instead, as in C. Find a
+    program in <code>examples/</code> that would change what it prints, and one
+    line in decision 10.27 that says why Zeno did not choose that.</li>
 <li>A big one: make <code>list[u8]</code> take one byte an item. The list in
     <code>runtime.c</code> holds <code>zeno_slot</code> items, each eight bytes. What would
     a second list type need from the runtime, and how many functions

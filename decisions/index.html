@@ -40,17 +40,19 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 262 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 322 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
-<p>Each entry says what was decided, why, and what was turned down. Entries
-marked <em>(provisional)</em> are expected to be revisited at the stage named.</p>
+<p>Each entry says what was decided, why, and what was turned down. An
+entry marked <em>was provisional</em> was decided on less than it deserved
+at the time. Each of those was read again before version 0.1, and
+chapter 11 says what became of it.</p>
 <h2 id="the-principles">The principles</h2>
 <p>Most decisions below fall out of five principles. When two choices are
 otherwise equal, the principle higher up the list wins.</p>
@@ -123,7 +125,7 @@ each way.</p>
 - Zeno is not a <em>pure</em> functional language like Haskell, where functions are
   forbidden from having effects. Writing to a hardware register is an effect,
   and firmware is made of them.
-- Classes have no inheritance yet <em>(provisional, see 3.7)</em>.</p>
+- Classes have no inheritance yet <em>(was provisional (11.1), see 3.7)</em>.</p>
 <h3 id="02-types-are-optional">0.2 Types are optional</h3>
 <p>Every type annotation can be left out: on variables, parameters, return
 values, class fields and enum cases. The same program runs with or without
@@ -293,7 +295,7 @@ only if its type says so, and then it must be checked before use.
 identity, which gives surprising answers on numbers and strings and is a
 well-known trap. Restricting it leaves one way to compare values (<code>==</code>) and
 one way to test for absence. <em>(Principle 4.)</em></p>
-<p><strong>Provisional.</strong> General unions (<code>int or str</code>) are not accepted. They overlap
+<p><strong>Was provisional (11.1).</strong> General unions (<code>int or str</code>) are not accepted. They overlap
 with enums, and they need a tag stored beside the value in the compiled
 code. To be decided at the type checker.</p>
 <h3 id="114-formatted-strings-need-the-f-prefix">1.14 Formatted strings need the <code>f</code> prefix</h3>
@@ -336,7 +338,7 @@ so adding them means nothing. <code>deg</code> and <code>rad</code> have no exac
 them. Both pairs are kept apart on purpose. <em>(Changed in 6.22: <code>.rad</code> and
 <code>.deg</code> now change an angle when the program asks. The two still never
 meet by themselves.)</em></p>
-<p><strong>Provisional.</strong> No derived units yet (<code>V * A</code> is not <code>W</code>), and no
+<p><strong>Was provisional (11.1).</strong> No derived units yet (<code>V * A</code> is not <code>W</code>), and no
 user-defined units.</p>
 <h3 id="116-comparisons-chain-0-i-len">1.16 Comparisons chain: <code>0 &lt;= i &lt; len</code></h3>
 <p><strong>Why.</strong> It is how the condition is written in mathematics, and it means what
@@ -515,9 +517,11 @@ overflow at 255, and the one place where a number may not fit is the
 place it is stored, where the program has to say what it wants. This
 is C's integer promotion, kept, without the silent cut at the end.
 <em>(Principles 1 and 4.)</em></p>
-<p><strong>Cost.</strong> <code>count += 1</code> on a <code>u8</code> does not compile. The message gives
-the fix: <code>count = u8(count + 1)</code>, or <code>u8.wrap(count + 1)</code> for a counter
-that is meant to go round.</p>
+<p><strong>Cost, at first.</strong> <code>count += 1</code> on a <code>u8</code> did not compile: the sum
+is an int, and an int does not go into a <code>u8</code> by itself. Programs ran
+into it at once, and 10.27 took the cost away without changing this
+rule: <code>count += 1</code> now means <code>count = u8(count + 1)</code>. The sum is still
+an int, and it is checked where it is stored.</p>
 <h3 id="28b-u8n-checks-u8wrapn-cuts">2.8b <code>u8(n)</code> checks, <code>u8.wrap(n)</code> cuts</h3>
 <p><code>u8(n)</code> is <code>n</code> if it fits and an <code>OverflowError</code> if not. <code>u8.wrap(n)</code>
 keeps the low eight bits and never fails: <code>u8.wrap(300)</code> is <code>44</code>, and
@@ -552,12 +556,12 @@ something, so it is written. <em>(Principles 1 and 3.)</em> It is the same
 line 2.3 draws between an int and a float, drawn for the same reason.</p>
 <p><strong>A <code>u8</code> to a <code>u16</code> could be allowed</strong>, since it always fits. It is
 not, yet: the rule "sized to <code>int</code> is free, everything else is
-written" has no table to remember. <em>(Provisional.)</em></p>
+written" has no table to remember. <em>(Was provisional: 11.1.)</em></p>
 <p><strong>A <code>list[u8]</code> is not a <code>list[int]</code>.</strong> Lists are shared (3.10), so
 whoever held it as a <code>list[int]</code> could append 300, and the first
 holder would find a <code>u8</code> that is not one. Copy it: <code>[int(n) for n in
 bytes]</code>.</p>
-<h3 id="28d-no-u64-provisional">2.8d No <code>u64</code> <em>(provisional)</em></h3>
+<h3 id="28d-no-u64-was-provisional-111">2.8d No <code>u64</code> <em>(was provisional: 11.1)</em></h3>
 <p><strong>Why.</strong> An <code>int</code> is 64 bits with a sign, so half of a <code>u64</code>'s values
 do not fit in one, and 2.8a ("the sum is an <code>int</code>") would stop being
 true. Hashes and 64-bit registers will want it. It waits for one of
@@ -595,7 +599,7 @@ there is nothing new to learn and only one way to write a function.
 <p><strong>Turned down.</strong> Python's <code>lambda n: n * 2</code> is a second, more limited syntax
 for the same thing (it cannot hold statements). JavaScript's <code>n =&gt; n * 2</code>
 needs the <code>=&gt;</code> that 1.9 removed.</p>
-<p><strong>Provisional.</strong> This is wordy for one-line functions. A shorter form may be
+<p><strong>Was provisional (11.1).</strong> This is wordy for one-line functions. A shorter form may be
 added once there is enough real Zeno code to see how often it is needed;
 comprehensions already cover the most common cases.</p>
 <h3 id="36b-map-filter-and-reduce-are-methods-on-a-list">3.6b <code>map</code>, <code>filter</code> and <code>reduce</code> are methods on a list</h3>
@@ -683,12 +687,12 @@ written down in one place, not discovered by reading assignments inside an
 initialiser. A fixed list of fields is also what lets a class compile to a
 plain C struct. <em>(Principle 5.)</em> Setting a field that was not declared is an
 error.</p>
-<p><strong>Provisional.</strong> There is no inheritance and no custom constructor yet. Both
+<p><strong>Was provisional (11.1).</strong> There is no inheritance and no custom constructor yet. Both
 are to be decided when classes are type checked.</p>
 <h3 id="38-methods-name-self-explicitly">3.8 Methods name <code>self</code> explicitly</h3>
 <p><strong>Why.</strong> It shows that a method is an ordinary function that receives its
 object as the first argument, with no hidden variable. <em>(Principle 4.)</em></p>
-<h3 id="39-let-fixes-the-name-not-the-contents-provisional">3.9 <code>let</code> fixes the name, not the contents <em>(provisional)</em></h3>
+<h3 id="39-let-fixes-the-name-not-the-contents-was-provisional-111">3.9 <code>let</code> fixes the name, not the contents <em>(was provisional: 11.1)</em></h3>
 <p><code>let xs = [1]</code> followed by <code>xs.append(2)</code> is allowed; <code>xs = [3]</code> is not.</p>
 <p><strong>Why.</strong> It is the simplest rule to state: the name always refers to the same
 thing. Deeply unchangeable data was left open until memory was managed.
@@ -708,7 +712,7 @@ not change what the loop visits.</p>
 source of two classic bugs: a loop that never ends because its body keeps
 appending, and a loop that skips an item because its body removed one.
 <em>(Principle 1.)</em> <strong>The cost:</strong> the loop takes a copy of the list first.
-<em>(Provisional: the copy can be skipped when the compiler can see that the
+<em>(Was provisional (11.1): the copy can be skipped when the compiler can see that the
 body does not touch the list.)</em> Since 5.8 the copy is given back the moment
 the loop ends, because only the loop ever pointed at it (5.8j).</p>
 <h3 id="311-enums-carry-data-and-match-takes-them-apart">3.11 Enums carry data, and <code>match</code> takes them apart</h3>
@@ -758,7 +762,7 @@ that is called between the check and the use could set it back to <code>none</co
 The checker does not follow that, so the running program looks at such a
 variable once more where it is used, and stops with an error if the value
 has gone. Variables that nothing else can reach, which is most of them, are
-not looked at twice. <em>(Provisional: Kotlin refuses to narrow such variables
+not looked at twice. <em>(Was provisional (11.1): Kotlin refuses to narrow such variables
 at all, which is stricter and needs no check at run time. That may turn out
 to be the better rule.)</em></p>
 <h3 id="313-a-function-that-promises-a-value-must-return-on-every-path">3.13 A function that promises a value must return on every path</h3>
@@ -768,7 +772,7 @@ error at the function. <em>(Principle 1.)</em></p>
 <p>A function whose type says it may return <code>none</code> (<code>-&gt; int or none</code>) is the
 exception: reaching its end returns <code>none</code>, since that is one of the
 answers it promised.</p>
-<h3 id="314-upper-lower-strip-and-split-know-plain-letters-and-blanks-only-provisional">3.14 <code>upper</code>, <code>lower</code>, <code>strip</code> and <code>split</code> know plain letters and blanks only <em>(provisional)</em></h3>
+<h3 id="314-upper-lower-strip-and-split-know-plain-letters-and-blanks-only-was-provisional-111">3.14 <code>upper</code>, <code>lower</code>, <code>strip</code> and <code>split</code> know plain letters and blanks only <em>(was provisional: 11.1)</em></h3>
 <p><code>"straße".upper()</code> gives <code>"STRAßE"</code>: the letters a to z change, and nothing
 else does. <code>strip</code>, <code>split()</code> with no separator, <code>int()</code> and <code>float()</code> skip
 the space, the tab, the two line endings and the form feed, and no other
@@ -780,7 +784,7 @@ under <code>zeno run</code> and when built (5.5d), so the interpreter follows th
 same rule even though a PC has room for the tables. <em>(Principle 5.)</em></p>
 <p>Text in any language still passes through untouched: <code>len</code>, indexing and
 loops count whole characters, not bytes.</p>
-<p><strong>Provisional.</strong> A separate module can offer the full rules to programs
+<p><strong>Was provisional (11.1).</strong> A separate module can offer the full rules to programs
 that have the room. Rust makes the same split, with <code>to_ascii_uppercase</code>
 beside <code>to_uppercase</code>.</p>
 <h3 id="315-a-pin-is-a-kind-of-value-of-its-own-and-a-number-underneath">3.15 A pin is a kind of value of its own, and a number underneath</h3>
@@ -825,7 +829,7 @@ That is the point for a test, and a real board prints nothing.</p>
 <p>The LED is pin 13 on every board, as far as a Zeno program can tell. A
 real board wires that number to wherever its LED is. <strong>Why 13:</strong> it is
 the Arduino Uno's, the number most people have already met.
-<em>(Provisional: one LED and numbered pins is the least a board can be.
+<em>(Was provisional (11.1): one LED and numbered pins is the least a board can be.
 Named pins, inputs and the rest wait for a real board to ask.)</em></p>
 <h3 id="316-generics-function-firstt-class-stackt">3.16 Generics: <code>function first[T](...)</code>, <code>class Stack[T]</code></h3>
 <p>A function or a class can leave a type open and name it:</p>
@@ -897,7 +901,7 @@ which is where the eye already is.</p>
 the thing that decides. Without this rule every generic used for bytes
 would need <code>u8(0)</code> where <code>0</code> is meant, and sized numbers would be the
 one corner of the language where generics are awkward.</p>
-<h3 id="316d-no-bounds-the-body-is-checked-for-each-type-it-is-used-with-provisional">3.16d No bounds: the body is checked for each type it is used with <em>(provisional)</em></h3>
+<h3 id="316d-no-bounds-the-body-is-checked-for-each-type-it-is-used-with-was-provisional-111">3.16d No bounds: the body is checked for each type it is used with <em>(was provisional: 11.1)</em></h3>
 <p><code>largest[T]</code> uses <code>&gt;</code>. Nothing in its header says <code>T</code> must have a <code>&gt;</code>.
 The checker checks the body once for each type the program uses it
 with: for ints and for text it passes, and for a class with no <code>&gt;</code> it
@@ -912,7 +916,7 @@ program runs. That is the promise that matters. <em>(Principle 1.)</em></p>
 and a generic that nothing uses is only checked loosely (5.14d). C++
 error messages show how badly this can go. The note under the error
 is the guard against that, and bounds are the real fix.</p>
-<h3 id="316e-what-generics-leave-out-provisional">3.16e What generics leave out <em>(provisional)</em></h3>
+<h3 id="316e-what-generics-leave-out-was-provisional-111">3.16e What generics leave out <em>(was provisional: 11.1)</em></h3>
 <p>Generic enums, methods with type parameters of their own, a generic
 kept as a value (<code>let f = first</code>), an owned or borrowed value as a
 type argument, and raising an object of a generic class. Each is
@@ -999,7 +1003,7 @@ project or IDE with nothing else to carry along.</p>
 <p><strong>Why.</strong> A C variable must have one type. A value whose type is only known
 when the program runs would need a tag and usually heap memory (0.2), which
 the compiler does not have yet. Because parameters and fields are now worked
-out, most programs with no types written still pass. <em>(Provisional: a
+out, most programs with no types written still pass. <em>(Was provisional (11.2): a
 dynamic value type can be added to the runtime later for PC targets.)</em></p>
 <h3 id="55d-compiled-code-must-behave-exactly-like-interpreted-code">5.5d Compiled code must behave exactly like interpreted code</h3>
 <p>Same output, same errors, same line numbers. The tests compare the two
@@ -1021,7 +1025,7 @@ the interpreter that was corrected. 3.6c and 3.14 came about that way.</p>
 <p><strong>Why.</strong> <code>__builtin_add_overflow</code> compiles to the processor's own overflow
 flag: one instruction. Checking by hand in plain C is longer, slower and
 easy to get wrong. GCC and Clang cover nearly every microcontroller
-toolchain in use (ARM, RISC-V, AVR, ESP). <em>(Provisional: a plain-C fallback
+toolchain in use (ARM, RISC-V, AVR, ESP). <em>(Was provisional (11.2): a plain-C fallback
 can be added for other compilers.)</em></p>
 <h3 id="55f-compiled-strings-were-not-freed-at-first">5.5f Compiled strings were not freed at first</h3>
 <p>Until the memory management stage, memory for text built at run time was
@@ -1031,7 +1035,7 @@ taken and never returned. <strong>Replaced by 5.7.</strong></p>
 <code>let b = a</code>, changing <code>b</code> changes <code>a</code>. A C struct is copied on assignment; a
 pointer to one is not. So the pointer is the faithful translation. The cost
 is that each one needs memory from the heap, which the collector (5.7)
-gives back. <em>(Provisional in one respect: an object that never leaves the
+gives back. <em>(Was provisional (11.2) in one respect: an object that never leaves the
 function that made it could live on the stack and cost the collector
 nothing. Finding those is an optimisation for later.)</em></p>
 <h3 id="55h-one-list-type-in-c-not-one-per-kind-of-item">5.5h One list type in C, not one per kind of item</h3>
@@ -1111,7 +1115,7 @@ variables are unaffected. (3.6c is the rule this implements.)</p>
 outside variables and could have been a single fixed value. Two function
 values are equal only when they are the very same one, and with fixed
 values a function written in a loop would be equal to itself from the last
-trip round, which is not what <code>zeno run</code> says. <em>(5.5d. Provisional: once
+trip round, which is not what <code>zeno run</code> says. <em>(5.5d. Was provisional (11.2): once
 memory is managed, the fixed value can come back for functions that are
 never compared.)</em></p>
 <p><strong>Turned down.</strong> Compiling a separate copy of <code>map</code> for every function
@@ -1183,7 +1187,7 @@ body that raises something as a value and can also fault: an ordinary
 build catches both, a firmware build catches the first and stops at the
 second. Refusing every <code>except</code> with no kind would be too strict, so this
 is documented and pinned by a test instead.</p>
-<p><strong>Provisional: a function that can raise cannot be used as a value</strong> in a
+<p><strong>Was provisional (11.2): a function that can raise cannot be used as a value</strong> in a
 firmware build. The two sorts of function are called differently, and the
 type <code>function(str) -&gt; int</code> does not say which sort it is. The fix is to
 let function types say <code>raises</code>, which the checker needs anyway: today it
@@ -1262,7 +1266,7 @@ MicroPython does on the same class of microcontroller.</p>
 <li><em>MISRA</em> bans <code>malloc</code> and <code>free</code> as well (Rule 21.3), collector or not.
   See the first point below.</li>
 </ul>
-<p><strong>Provisional, in three respects.</strong></p>
+<p><strong>Was provisional (11.2), in three respects.</strong></p>
 <ol>
 <li>Certified firmware usually allows no heap at all. The answer for it is
    not a different collector but a build that proves a program makes no
@@ -1313,7 +1317,7 @@ it puts a mark at every call where one in the signature says the same.
 <em>Turned down:</em> a mark at the call (<code>send(move p)</code>). It would make each
 move visible where it happens, which is worth something, but the checker
 already reports any use after a move by line, and the calls stay plain.
-Provisional: if moves prove easy to miss when reading, this is the first
+Was provisional (11.2): if moves prove easy to miss when reading, this is the first
 thing to revisit.</p>
 <h4 id="58b-a-class-is-owned-as-a-whole-where-it-is-declared">5.8b A class is owned as a whole, where it is declared</h4>
 <p>Not <code>let p: owned Packet</code> at one use and a shared <code>Packet</code> at another.</p>
@@ -1335,7 +1339,7 @@ that then vanished would surprise everyone.</p>
 still always looks.</p>
 <p><em>Turned down:</em> borrow by default, with a word for taking (Mojo, Swift). It
 makes the common case shorter. But then <code>p: Packet</code> would mean two
-different things on a <code>let</code> and on a parameter. Provisional.</p>
+different things on a <code>let</code> and on a parameter. Was provisional (11.2).</p>
 <h4 id="58d-the-borrow-checker-is-four-rules-and-stops-there">5.8d The borrow checker is four rules, and stops there</h4>
 <ol>
 <li>A borrow exists only as a parameter. It cannot be stored, returned, or
@@ -1406,7 +1410,7 @@ call frees the block's owners before it passes the failure on.</p>
 <p><strong>Why not make the ordinary build exact too.</strong> It would need what 5.7
 turned down for counting references: every <code>try</code> keeping a list of what to
 release. The collector is already there for it.</p>
-<h4 id="58i-what-is-refused-for-now-provisional">5.8i What is refused for now <em>(provisional)</em></h4>
+<h4 id="58i-what-is-refused-for-now-was-provisional-112">5.8i What is refused for now <em>(was provisional: 11.2)</em></h4>
 <ul>
 <li>An owned value inside ~~a list,~~ an <code>or none</code>, an enum case or a function
   type, and moving a field out of an object. Each needs a rule for what is
@@ -1523,7 +1527,7 @@ no freeing.</p>
 text, which lasts one statement (5.9c). The error keeps its own copy, in
 the same block, so one <code>free</code> gives back both.</p>
 <p><strong>The cost.</strong> <code>raise e</code> to pass a caught error on is refused. Raise a new
-one. <em>(Provisional: passing it on could be a move.)</em></p>
+one. <em>(Was provisional (11.2): passing it on could be a move.)</em></p>
 <p>Since 5.15h the checker says this, and the error may be lent to a
 <code>borrow</code> parameter.</p>
 <h3 id="59e-the-compiler-refuses-not-the-checker">5.9e The compiler refuses, not the checker</h3>
@@ -1547,7 +1551,7 @@ with what the block's owners hold.</p>
 each needed a line. One mechanism covers all three: the compiler lists
 the value among the block's owners until it arrives. The first and third
 apply to every build, so every build is a little tidier for it.</p>
-<h3 id="59g-what-a-build-with-no-collector-refuses-provisional">5.9g What a build with no collector refuses <em>(provisional)</em></h3>
+<h3 id="59g-what-a-build-with-no-collector-refuses-was-provisional-112">5.9g What a build with no collector refuses <em>(was provisional: 11.2)</em></h3>
 <p><em>(The first two entries are gone since 5.15: a plain list and a plain
 class have an owner now. The list as it stands is in 5.15j.)</em></p>
 <p>A list kept by something that is not an owner (a plain variable,
@@ -1602,7 +1606,7 @@ and joins them again when both are spare. It keeps the doubling sizes
 and gets back the memory a growing list leaves behind. It is about
 three times the code, and giving back is then a loop of joins. Worth
 another look if a real program is short of RAM because of growing
-lists. <em>(provisional)</em></p>
+lists. <em>(was provisional: 11.2)</em></p>
 <p><strong>Turned down: TLSF,</strong> the usual answer when a real-time system must
 have a general allocator. It is constant-time and wastes little, and
 is some hundreds of lines. Too much machinery for what is asked of it
@@ -1656,7 +1660,7 @@ text room is chosen the same way (5.9c), and one build of the C can be
 compiled for boards of different sizes. <strong>Why 32768.</strong> It is the
 smallest round number in which every example runs. On a board it is
 meant to be changed, and <code>--memory</code> prints the number to change it to.
-<em>(provisional: <code>zeno build --pool N</code> is an exercise in <code>docs/pool.md</code>.)</em></p>
+<em>(was provisional (11.2): <code>zeno build --pool N</code> is an exercise in <code>docs/pool.md</code>.)</em></p>
 <p><strong>The report says <code>pool: N bytes taken</code>,</strong> which is how much of the
 array was ever cut into blocks. <strong>Why that number,</strong> and not the most
 bytes in use at once (which the line above it already gives). It is
@@ -1682,7 +1686,7 @@ is no longer reported. What stands in for them: the compilers null an
 owner when it gives its value away, the report must end with 0 blocks
 left, the two backends must agree on every number, and a block given
 back twice is caught by the pool itself. Poisoning spare blocks in a
-checking build is an exercise in <code>docs/pool.md</code>. <em>(provisional)</em></p>
+checking build is an exercise in <code>docs/pool.md</code>. <em>(was provisional: 11.2)</em></p>
 <p><strong>What this does not make true.</strong> MISRA Directive 4.12 is against
 dynamic memory of any kind, and a pool is still that. The pool removes
 the directive's stated reasons one by one, and a project would still
@@ -1713,7 +1717,7 @@ there is nothing a second holder could do to the first. <strong>Turned down:
 a count of holders in front of each text</strong> (reference counting). It
 saves the copies and it is the natural next step if copying proves too
 dear, but it adds a count to every keep and drop and a way for text
-to stay alive that no line of the program shows. <em>(provisional)</em>
+to stay alive that no line of the program shows. <em>(was provisional: 11.2)</em>
 <strong>Turned down: <code>borrow str</code></strong>, which 5.9c used to suggest. It would
 bring the borrow rules to the most common value in the language to
 save a copy.</p>
@@ -1768,7 +1772,7 @@ last line, and is taken out again.</p>
 <p><strong>Cost, and what is turned down for now.</strong> <code>print(channel.label)</code>
 copies the label though nothing is called after the read. The compiler
 knows which statements call functions and could skip the copy.
-<em>(provisional: an exercise in <code>docs/text.md</code>.)</em> <strong>Turned down: copy
+<em>(was provisional (11.2): an exercise in <code>docs/text.md</code>.)</em> <strong>Turned down: copy
 only if a later part of the statement calls something.</strong> It is right,
 and it makes whether a copy is made depend on what else is on the
 line. The simple rule came first.</p>
@@ -1781,7 +1785,7 @@ that object (<code>zeno_error_of</code>).</p>
 <p><strong>Why the copy for <code>for</code> is deep.</strong> The body may give the list a new
 item, which frees the old one, while the loop is still holding it. A
 shallow copy would be a list of pointers to freed text. <strong>Cost:</strong> a
-block for each item before the first trip. <em>(provisional: the checker
+block for each item before the first trip. <em>(was provisional (11.2): the checker
 could say when the body cannot change the list.)</em></p>
 <p><strong>Why the error needs a function.</strong> To the runtime an object is a
 <code>void *</code>. Before this stage freeing one was <code>zeno_free</code>, because an
@@ -1859,7 +1863,7 @@ program, by the person who knows whether the list is meant to last.
 The alternative is to work out from how a name is used whether it
 needs to own, which is 5.8j's escape analysis, turned down there.</p>
 <p><strong>A plain <code>list[T]</code> parameter may not be given a made list</strong>
-<em>(provisional)</em>. A <code>borrow</code> parameter may: the checker already makes
+<em>(was provisional: 11.2)</em>. A <code>borrow</code> parameter may: the checker already makes
 sure such a function cannot keep what it was lent. A plain parameter
 makes no such promise, so the list could be kept past the statement.
 The next step makes a plain list in this build an owned one, and then
@@ -1923,10 +1927,10 @@ body can change it.</p>
 list of text is a block for the list, a block for its items and a
 block for every text. <code>for word in line.split()</code> would have made all
 of them twice.</p>
-<h3 id="59w-for-ch-in-text-makes-a-list-of-the-characters-which-the-loop-owns-provisional">5.9w <code>for ch in text</code> makes a list of the characters, which the loop owns <em>(provisional)</em></h3>
+<h3 id="59w-for-ch-in-text-makes-a-list-of-the-characters-which-the-loop-owns-was-provisional-112">5.9w <code>for ch in text</code> makes a list of the characters, which the loop owns <em>(was provisional: 11.2)</em></h3>
 <p>It was refused, with advice to count with <code>range(len(text))</code> instead.
 It is accepted: the list is a made list like any other.</p>
-<p><strong>Why provisional.</strong> It costs a block of the pool for every character
+<p><strong>Why it was provisional (11.2).</strong> It costs a block of the pool for every character
 while the loop runs. Walking the text itself, one character at a time,
 would cost none, and is an exercise in <code>docs/temporaries.md</code>. It was
 not done here because the text may be in the text room, which a <code>for</code>
@@ -1989,7 +1993,7 @@ that is what its tests aim at.</p>
 numbers and pointers packed into one word, as fast VMs do). It is where
 most of the missing speed is. It would also mean two of everything, and
 two places for each to go wrong.</p>
-<h3 id="510c-an-instruction-is-a-rust-enum-not-bytes-provisional">5.10c An instruction is a Rust enum, not bytes <em>(provisional)</em></h3>
+<h3 id="510c-an-instruction-is-a-rust-enum-not-bytes-was-provisional-112">5.10c An instruction is a Rust enum, not bytes <em>(was provisional: 11.2)</em></h3>
 <p><code>Op::GetLocal(3)</code> is a value of an enum, 12 bytes wide, in a <code>Vec&lt;Op&gt;</code>.</p>
 <p><strong>Why.</strong> The Rust compiler checks every <code>match</code> on it for a missing
 case, an operand cannot be read with the wrong width, and the printer is
@@ -2038,7 +2042,7 @@ tests go through it.</p>
 programs that were already written, each now checking the VM with no
 expected output to write. And it works in both directions, as 3.6d
 showed.</p>
-<h3 id="510g-the-interpreter-stays-the-default-provisional">5.10g The interpreter stays the default <em>(provisional)</em></h3>
+<h3 id="510g-the-interpreter-stays-the-default-was-provisional-112">5.10g The interpreter stays the default <em>(was provisional: 11.2)</em></h3>
 <p><code>zeno run</code> uses the interpreter unless given <code>--vm</code>.</p>
 <p><strong>Why.</strong> The interpreter is the plainest statement of what Zeno means:
 a <code>while</code> loop is run by a <code>while</code> loop. It is what the VM and the C
@@ -2108,7 +2112,7 @@ C line for line, and the tests compare both with the interpreter.</p>
 <p><strong>Turned down:</strong> <code>-flto</code>, which optimises the two files together. It
 got the loop to 0.45 s, not 0.29, and needs the LLVM linker installed.
 <strong>Cost:</strong> two copies of three small functions to keep in step.</p>
-<h3 id="511d-the-runtime-is-the-c-backends-with-static-taken-off-provisional">5.11d The runtime is the C backend's, with <code>static</code> taken off <em>(provisional)</em></h3>
+<h3 id="511d-the-runtime-is-the-c-backends-with-static-taken-off-was-provisional-112">5.11d The runtime is the C backend's, with <code>static</code> taken off <em>(was provisional: 11.2)</em></h3>
 <p>An LLVM build links to the same <code>runtime.c</code>. <code>emit_llvm::runtime()</code>
 removes <code>static</code> from the start of each line, so that the functions can
 be called from the IR file, and <code>zeno build --llvm</code> writes the result
@@ -2181,7 +2185,7 @@ work out where each field is, on any processor. <strong>Turned down:</strong> a 
 does not need one: after the tag has been read, the block is simply
 looked at through the struct type of that case. A block is as big as
 its own case, not as big as the biggest.</p>
-<h3 id="511i-a-list-item-crosses-into-the-runtime-as-an-i64-provisional">5.11i A list item crosses into the runtime as an <code>i64</code> <em>(provisional)</em></h3>
+<h3 id="511i-a-list-item-crosses-into-the-runtime-as-an-i64-was-provisional-112">5.11i A list item crosses into the runtime as an <code>i64</code> <em>(was provisional: 11.2)</em></h3>
 <p>Lists are the runtime's (5.5h): one list type, each item in a
 <code>zeno_slot</code>, a C union one register wide. The IR calls
 <code>zeno_list_append(ptr, i64)</code> and puts an item into the <code>i64</code> with
@@ -2247,7 +2251,7 @@ are what <code>--llvm --firmware</code> does (5.11o).</p>
    word out of the IR by hand: the <code>except</code> block then sees the wrong
    numbers.</li>
 </ol>
-<p><em>(provisional)</em> <code>_setjmp</code> is the name on Linux and macOS. It is the one
+<p><em>(was provisional: 11.2)</em> <code>_setjmp</code> is the name on Linux and macOS. It is the one
 that does not save the signal mask, which is what C's <code>setjmp</code> means
 there.</p>
 <h3 id="511m-a-function-value-is-a-block-its-code-its-name-its-variables">5.11m A function value is a block: its code, its name, its variables</h3>
@@ -2315,7 +2319,7 @@ runtime's own functions that can fail (<code>zeno_parse_int</code>) use the
 pointer form, so a build would have both forms in it. A pair type is
 needed for every return type. And how a pair is returned depends on the
 processor, where a pointer is the same everywhere. After inlining, LLVM
-removes the pointer for small functions anyway. <em>(provisional: worth
+removes the pointer for small functions anyway. <em>(was provisional (11.2): worth
 measuring when there is a real board to measure on.)</em></p>
 <p><strong>Turned down: <code>invoke</code> and <code>landingpad</code>,</strong> as in 5.11l. They need the
 system's unwinder, which is the very thing a firmware build is there to
@@ -2343,7 +2347,7 @@ needs memory. <code>mem2reg</code> turns the slot back into values, and the null
 is then a constant the optimiser can see. It removes the drop of an
 object that is certainly null. The drop of a list stays as a call that
 does nothing, because <code>zeno_list_drop</code> is in the runtime file
-<em>(provisional: a null test written in IR would let it go, and is an
+<em>(was provisional (11.2): a null test written in IR would let it go, and is an
 exercise in <code>docs/llvm.md</code>)</em>.</p>
 <p><strong>Why null, and not working out which owners are full.</strong> The emitter
 could follow each owner through the function and write a drop only
@@ -2515,7 +2519,7 @@ would have needed every operator taught about it four times.
 known until run time can be put in a <code>u8</code> variable unchecked, as it
 can be put in an <code>int</code> variable today (0.2). A compiled program is
 always strict (5.5c), so this is the interpreter only.</p>
-<h3 id="513a-only-a-field-of-an-object-is-stored-small-provisional">5.13a Only a field of an object is stored small <em>(provisional)</em></h3>
+<h3 id="513a-only-a-field-of-an-object-is-stored-small-was-provisional-112">5.13a Only a field of an object is stored small <em>(was provisional: 11.2)</em></h3>
 <p>A class with the fields <code>kind: u8</code> and <code>length: u16</code> is a struct of a
 <code>uint8_t</code> and a <code>uint16_t</code> in C, and <code>{ i8, i16 }</code> in LLVM. A value is made
 small as it goes into the field and an <code>int64_t</code> again as it comes
@@ -2590,7 +2594,7 @@ messages use.</p>
 <code>Stack_int</code> would get the same name. The build refuses the program
 and says why. A scheme that could never clash (C++ mangles <code>Stack&lt;int&gt;</code>
 to <code>5StackIiE</code>) would make the C unreadable, and reading the C is half
-the point of the C backend (5.5). <em>(Provisional.)</em></p>
+the point of the C backend (5.5). <em>(Was provisional: 11.2.)</em></p>
 <h3 id="514d-a-generic-that-nothing-uses-is-checked-with-t-as-anything">5.14d A generic that nothing uses is checked with <code>T</code> as "anything"</h3>
 <p><strong>Why.</strong> With no call there is no type to check the body with, and a
 misspelt name inside it would wait for the first user to find. So the
@@ -2647,7 +2651,7 @@ provisional). It was weighed again, since in this build most
 parameters only look and each now needs the word. It stays as it is:
 <code>task: Task</code> then means the same on a <code>let</code>, a field and a parameter
 ("this holds the task"), and the error for a forgotten <code>borrow</code> names
-the fix in its first line. <em>(Provisional, and a question for the
+the fix in its first line. <em>(Was provisional (11.2), and a question for the
 audit: count how often each is written in real programs.)</em></p>
 <p><em>Superseded by 5.19a.</em> The count was made: see there.</p>
 <h3 id="515c-a-list-owns-its-items-in-every-build">5.15c A list owns its items, in every build</h3>
@@ -2707,7 +2711,7 @@ second is the one that will be felt.</p>
 <code>&amp;mut</code>, with the rule that only one exists at a time). It is the
 complete answer and the largest single piece of Rust's checker: every
 borrow then has a region and two may not overlap. 5.8d chose four
-rules a reader can hold in their head. <em>(Provisional. If methods that
+rules a reader can hold in their head. <em>(Was provisional (11.2). If methods that
 remove turn out to matter, the smallest growth is "a method may take
 out when the object was not lent to anything else on that line", which
 needs no new word.)</em></p>
@@ -2756,7 +2760,7 @@ value is worked out first, then the list or object, then the index.</p>
 order.</strong> It is the interpreter's, and four engines must agree. The
 test uses functions that print when they are called, so a change of
 order fails it.</p>
-<h3 id="515j-what-a-no-collector-build-still-refuses-provisional">5.15j What a no-collector build still refuses <em>(provisional)</em></h3>
+<h3 id="515j-what-a-no-collector-build-still-refuses-was-provisional-112">5.15j What a no-collector build still refuses <em>(was provisional: 11.2)</em></h3>
 <p>This replaces the list in 5.9g. <em>(Step 4 took the first row off it. The
 list as it stands is in 5.16i.)</em></p>
 <ul>
@@ -2890,7 +2894,7 @@ the tag.</p>
 slipped through because no test matched an enum case against an
 optional subject. <code>a_case_of_an_enum_matches_a_value_that_may_be_none</code>
 does now.</p>
-<h3 id="516h-listint-or-none-stays-refused-with-no-collector-provisional">5.16h <code>list[int or none]</code> stays refused with no collector <em>(provisional)</em></h3>
+<h3 id="516h-listint-or-none-stays-refused-with-no-collector-was-provisional-112">5.16h <code>list[int or none]</code> stays refused with no collector <em>(was provisional: 11.2)</em></h3>
 <p>A number that may be <code>none</code> is kept in a small block of its own when
 it sits in a list (5.11i). Giving those blocks an owner would mean a
 deep copy in every place a list is copied, as text needed (5.9x).</p>
@@ -2900,7 +2904,7 @@ says more: an enum <code>Reading</code> with a <code>Missing</code> case and a
 <code>Value</code>. The compiler's message says so. The right fix is to keep the
 pair in the slot without a block, which touches the slot's size, and
 is for later. <em>(Keep whatever works.)</em></p>
-<h3 id="516i-what-a-no-collector-build-still-refuses-provisional">5.16i What a no-collector build still refuses <em>(provisional)</em></h3>
+<h3 id="516i-what-a-no-collector-build-still-refuses-was-provisional-112">5.16i What a no-collector build still refuses <em>(was provisional: 11.2)</em></h3>
 <p>This replaces the list in 5.15j. <em>(Replaced in turn by 5.17g: the
 step 5 items below build now.)</em></p>
 <ul>
@@ -3047,7 +3051,7 @@ parameter already is.</p>
 the function is gone.</strong> That is a borrow with a lifetime, which Rust
 needs names and annotations for. One statement is a lifetime nobody has
 to write.</p>
-<p><strong>Provisional.</strong> A function that uses another function value which has
+<p><strong>Was provisional (11.2).</strong> A function that uses another function value which has
 an owner (<code>function(n) { return f(f(n)) }</code> where <code>f</code> is a parameter)
 looks at it, so it cannot be returned. Writing "compose" needs a way to
 take a value into a function. To be looked at with real programs.</p>
@@ -3078,7 +3082,7 @@ first), and NULL for a function of the program. The owner calls
 <code>zeno run</code> (<code>==</code> says so), and one rule for every literal is simpler
 than two. It costs one small block of three words.</p>
 <p>A build with a collector has no <code>drop</code> entry and is unchanged.</p>
-<h3 id="517g-what-a-no-collector-build-still-refuses-provisional">5.17g What a no-collector build still refuses <em>(provisional)</em></h3>
+<h3 id="517g-what-a-no-collector-build-still-refuses-was-provisional-112">5.17g What a no-collector build still refuses <em>(was provisional: 11.2)</em></h3>
 <p>This replaces the list in 5.16i.</p>
 <ul>
 <li>A function that uses a <code>var</code> of the function around it (5.17c), and
@@ -3199,7 +3203,7 @@ that read it would print one thing under <code>zeno run</code> and another when
 compiled. Zeroing costs one <code>calloc</code>.</p>
 <p><strong>Why running out stops the program.</strong> Giving back <code>none</code> would put a
 check on every <code>allocate</code>, for a case most programs cannot recover
-from. <em>Provisional</em>: firmware that must survive it will want
+from. <em>Was provisional (11.2)</em>: firmware that must survive it will want
 <code>pointer[u8] or none</code>.</p>
 <p>There is no null pointer. A pointer that may be missing is
 <code>pointer[u8] or none</code>, checked like any other value that may be <code>none</code>.</p>
@@ -3318,7 +3322,7 @@ vanish would surprise everyone.</p>
 <p><strong>Turned down: a mark at the call as well</strong> (<code>retire(take task)</code>). It
 would show the move where it happens. But the checker reports any use
 after a move with the line of the move, and one way to write a call is
-worth more than a second reminder. <em>(Provisional, as in 5.8a.)</em></p>
+worth more than a second reminder. <em>(Was provisional (11.2), as in 5.8a.)</em></p>
 <h3 id="519b-the-word-is-take-and-it-stands-in-front-of-the-type">5.19b The word is <code>take</code>, and it stands in front of the type</h3>
 <p><code>frame: take Frame</code>, and in a function type <code>function(take Frame) -&gt; int</code>.</p>
 <p><strong>Why <code>take</code>.</strong> It is what the function does, said from the function's
@@ -3735,7 +3739,7 @@ those items, so write the loop that puts them in yours".</p>
 that nobody has to be told. Tasks could be ordered by name or by
 priority, and a <code>sort()</code> that picked one would be a guess. Sorting by
 a function that the program gives is left for when a real program
-needs it <em>(provisional)</em>.</p>
+needs it <em>(was provisional: 11.3)</em>.</p>
 <p><strong>Why heapsort.</strong> It sorts inside the list, so it asks for no memory.
 It is a loop and not a function that calls itself, so it needs no
 deep stack, and MISRA has nothing to say against it. It takes about
@@ -3766,7 +3770,7 @@ so <code>"€".code()</code> is 8364.</p>
 mistake.</p>
 <p><code>char(n)</code> is a <code>ValueError</code> for a number that is no character: below
 1, above 1114111, or in the range Unicode keeps free (55296 to 57343).</p>
-<p><strong>Why not <code>char(0)</code></strong> <em>(provisional)</em>. In a compiled program text ends
+<p><strong>Why not <code>char(0)</code></strong> <em>(was provisional: 11.3)</em>. In a compiled program text ends
 at the first zero byte, as in C, so text with a zero in it would be
 cut short there and not in <code>zeno run</code>. Bytes that may be zero belong
 in a <code>list[u8]</code>.</p>
@@ -3779,7 +3783,7 @@ error that can be caught, and a firmware build stops.</p>
 says <code>raises ValueError</code> with nothing in it that raises one as a value
 is refused in a firmware build. <code>int(text)</code> does raise one as a value
 there, so <code>raises ValueError</code> beside <code>int(text)</code> is still right.</p>
-<h3 id="610-these-methods-are-written-in-rust-and-c-not-in-zeno-provisional">6.10 These methods are written in Rust and C, not in Zeno <em>(provisional)</em></h3>
+<h3 id="610-these-methods-are-written-in-rust-and-c-not-in-zeno-was-provisional-113">6.10 These methods are written in Rust and C, not in Zeno <em>(was provisional: 11.3)</em></h3>
 <p>Each method is written once for <code>zeno run</code> and the VM (<code>builtins.rs</code>),
 described to the checker (<code>checker.rs</code>), and compiled by both backends
 (<code>emit_c.rs</code>, <code>emit_llvm.rs</code>) into a call of one C function in
@@ -3842,7 +3846,7 @@ work on.</p>
 argument is text that picks what the function does, so a wrong letter
 is found when the program runs and not when it is checked. Python's
 <code>with open(...) as f</code>: a new kind of block for one use.</p>
-<p><em>(provisional)</em> A file too large to hold at once needs reading in
+<p><em>(was provisional: 11.3)</em> A file too large to hold at once needs reading in
 pieces. That will be added, with an owner for the open file, when a
 real program needs it.</p>
 <h3 id="613-write-replaces-append-adds-and-neither-adds-a-line-end">6.13 <code>write</code> replaces, <code>append</code> adds, and neither adds a line end</h3>
@@ -3875,7 +3879,7 @@ how it went, as C's <code>errno</code> does: nothing makes the caller look at it
 <p><strong>One kind of error, not several.</strong> <code>FileNotFoundError</code>,
 <code>PermissionError</code> and the rest of Python's family are told apart by
 programs that go on to do something different for each. The message
-tells a person which it was. <em>(provisional)</em></p>
+tells a person which it was. <em>(was provisional: 11.3)</em></p>
 <h3 id="615-exists-asks-whether-there-is-a-file-that-can-be-read">6.15 <code>exists</code> asks whether there is a file that can be read</h3>
 <p><code>files.exists(path)</code> is <code>true</code> for a file that <code>files.read</code> could
 open. It is <code>false</code> for a folder, and for a path with nothing at it.
@@ -3896,7 +3900,7 @@ count characters would be working on bytes that are no characters.</p>
 bytes, so <code>"\r\n"</code> in a file from Windows arrives as <code>"\r\n"</code>, and
 <code>write</code> puts down exactly what it was given. <code>lines()</code> is where line
 ends are dealt with (6.17).</p>
-<p><em>(provisional)</em> Bytes that are not text belong in a <code>list[u8]</code>, and a
+<p><em>(was provisional: 11.3)</em> Bytes that are not text belong in a <code>list[u8]</code>, and a
 <code>files.read_bytes</code> that gives one is for the stage that needs it.</p>
 <h3 id="617-lines-is-a-method-of-text-and-knows-both-line-ends">6.17 <code>lines()</code> is a method of text, and knows both line ends</h3>
 <p><code>text.lines()</code> gives a <code>list[str]</code>, one item to a line, without the
@@ -3956,7 +3960,7 @@ the file. <code>zeno run copy.zeno --strict</code> gives the program <code>--str
 knows, and which words those are would change with each version.</p>
 <p><strong><code>main</code> takes the command line only in a program that asks for it</strong>,
 so the C and the IR of every other program are what they were.</p>
-<p><strong>Left out</strong> <em>(provisional)</em>: <code>program.exit(code)</code>. A program ends by
+<p><strong>Left out</strong> <em>(was provisional: 11.3)</em>: <code>program.exit(code)</code>. A program ends by
 reaching its end, or with an error nobody caught, which ends it with
 status 1. Environment variables: no program has needed one yet.</p>
 <h3 id="620-with-no-collector-and-on-a-board">6.20 With no collector and on a board</h3>
@@ -3968,7 +3972,7 @@ program with the message that names the macro, and so does a typed
 line that is longer than the room. A line is read straight into the
 room, a byte at a time, so it takes its own length and no more.
 <code>--memory</code> prints how much of the room was used.</p>
-<p><em>(provisional)</em> Reading a large file a line at a time, straight into
+<p><em>(was provisional: 11.3)</em> Reading a large file a line at a time, straight into
 the pool, belongs with the open file of 6.12.</p>
 <p><strong>On a board</strong> these functions are the C library's: <code>fopen</code> for files,
 standard input for <code>input()</code>, which firmware C libraries usually tie
@@ -4051,7 +4055,7 @@ charge of a capacitor, a sine table (<code>examples/instruments.zeno</code>).</p
 </tr>
 </tbody>
 </table>
-<p><strong>Left out until something needs it</strong> <em>(provisional)</em>: <code>hypot</code>, the
+<p><strong>Left out until something needs it</strong> <em>(was provisional: 11.3)</em>: <code>hypot</code>, the
 hyperbolic functions, <code>gcd</code>, <code>factorial</code>, <code>clamp</code>, <code>inf</code> and <code>nan</code> as
 names, and random numbers, which are not arithmetic and want a module
 of their own.</p>
@@ -4093,7 +4097,7 @@ never was an angle somebody measured.</p>
 has: two names for one thing.</p>
 <p>A quantity that is not an angle is refused by the checker:</p>
 <pre><code>`sin` needs a number or an angle, such as `30 deg`, but this is a quantity in s</code></pre>
-<h3 id="624-asin-acos-atan-and-atan2-give-an-angle-in-radians-provisional">6.24 <code>asin</code>, <code>acos</code>, <code>atan</code> and <code>atan2</code> give an angle in radians <em>(provisional)</em></h3>
+<h3 id="624-asin-acos-atan-and-atan2-give-an-angle-in-radians-was-provisional-113">6.24 <code>asin</code>, <code>acos</code>, <code>atan</code> and <code>atan2</code> give an angle in radians <em>(was provisional: 11.3)</em></h3>
 <p>Their answer is a quantity in <code>rad</code>, not a float.</p>
 <p><strong>Why.</strong> A float that is secretly an angle is what units are there to
 end (1.15). <code>math.atan2(y, x) &gt; 45</code> would compare radians with a
@@ -4102,12 +4106,12 @@ refused, and <code>math.atan2(y, x).deg &gt; 45 deg</code> says what is meant.</
 <p><strong>What it costs.</strong> Arithmetic with a plain number needs the unit put
 on or taken off, as with any quantity: <code>angle + 2 * math.pi * 1 rad</code>,
 <code>angle / 1 rad</code>. Passing it on to <code>sin</code> needs nothing.</p>
-<p><strong>Provisional</strong> because it is the first time a library function gives
+<p><strong>It was provisional (11.3)</strong> because it was the first time a library function gives
 a quantity back that is not a time. If it gets in the way of real
 signal code, a plain float is the other choice.</p>
 <p><strong><code>atan2(y, x)</code> takes y first</strong>, as in C, Python, JavaScript and Rust.
 It is the angle of the point (x, y), and the order is the one in
-<code>atan(y / x)</code>. It takes plain numbers only <em>(provisional)</em>: two
+<code>atan(y / x)</code>. It takes plain numbers only <em>(was provisional: 11.3)</em>: two
 lengths would be reasonable, and can come later.</p>
 <h3 id="625-round-sends-a-half-away-from-zero-and-gives-an-int">6.25 <code>round</code> sends a half away from zero, and gives an int</h3>
 <p><code>math.round(2.5)</code> is 3 and <code>math.round(-2.5)</code> is -3.</p>
@@ -4187,20 +4191,11 @@ wrong place. An enum case would be a good key and is the likely next
 one.</p>
 <p><strong>All the keys of one dict are the same type</strong>, and the checker refuses
 <code>["a": 1, 2: 3]</code>. That is what lets it say what a loop variable is.</p>
-<h3 id="632-a-value-is-an-int-a-float-a-bool-or-a-str-provisional">6.32 A value is an <code>int</code>, a <code>float</code>, a <code>bool</code> or a <code>str</code> <em>(provisional)</em></h3>
-<pre class="out"><code>error: a value of a dict is an int, a float, a bool or a str for now, and
-this says list[int]. Keep those in a list, and the position of each in the
-dict</code></pre>
-<p><strong>Why only these.</strong> They are the values that are copied when they are
-stored. So a dict holds nothing that anything else can reach, and a
-build with no collector frees a dict in one step with no new rule. A
-list or an object as a value raises a question each: who owns it, the
-dict or the variable it came from? Is <code>d[key]</code> a look at it, and is
-<code>pop</code> the way to take it back? Those have answers, modelled on a list
-of owned items, and they will be given when a real program needs them
-(keep what works, and add when a real program asks).</p>
-<p><strong>Meanwhile.</strong> Objects go in a list, and the dict holds the position of
-each: <code>people[index["Ada"]]</code>.</p>
+<h3 id="632-a-value-is-anything-a-list-can-hold-and-never-none">6.32 A value is anything a list can hold, and never <code>none</code></h3>
+<p>This section used to say "an <code>int</code>, a <code>float</code>, a <code>bool</code> or a <code>str</code>",
+and was marked provisional until a real program asked for more. One
+did, and 10.11 has the rule as it is now and the reasons. With no
+collector the first rule still holds (10.14).</p>
 <p><strong>All the values of one dict are the same type</strong>, like the items of a
 list that says what it holds.</p>
 <h3 id="633-a-dict-remembers-the-order-its-keys-were-put-in">6.33 A dict remembers the order its keys were put in</h3>
@@ -4288,9 +4283,9 @@ is missing: <code>in</code> asks.</p>
 <p><strong>Why the keys.</strong> With the key the value is one lookup away, and with
 only the value the key is lost. <code>in</code> asks about keys for the same
 reason.</p>
-<p><strong>Why not pairs.</strong> <code>for code, count in seen</code> needs a value that is two
-values, and Zeno has no such thing yet. When it does, that loop can be
-added without changing what this one means.</p>
+<p><strong>Pairs.</strong> <code>for code, count in seen</code> is given each key and what is
+under it (10.12). It was added without changing what the loop with
+one name means, as this section said it could be.</p>
 <p><strong>The loop walks the keys as they were when it began</strong>, like a loop
 over a list. The body may add keys and take them out. <code>keys()</code> and
 <code>values()</code> give lists that are the caller's own for the same reason:
@@ -4359,11 +4354,11 @@ another in <code>sensors/</code>, and one file could be reached under two names
 and be read twice.</p>
 <p><strong>Turned down.</strong> A list of folders to search, set outside the program
 (Python's path, C's <code>-I</code>): which file is read then depends on the
-machine. That question comes back with the package manager, which
-will have to say where other people's files are.</p>
+machine. Where other people's files are is said in the program's
+<code>zeno.package</code>: see section 8.</p>
 <p><strong>The five modules that come with Zeno keep their names</strong>: <code>math</code>,
 <code>time</code>, <code>board</code>, <code>files</code>, <code>program</code>. A file called <code>math.zeno</code> is
-never looked for by <code>import math</code>. <em>(Provisional: once library
+never looked for by <code>import math</code>. <em>(Was provisional (11.4): once library
 modules are themselves Zeno files, they will be found by one rule.)</em></p>
 <h3 id="73-import-ab-is-used-as-abname">7.3 <code>import a.b</code> is used as <code>a.b.name</code></h3>
 <pre><code class="zeno">import drivers.uart
@@ -4376,9 +4371,12 @@ modules called <code>uart</code> in two folders then collide, and the fix is a
 second name for one of them. A second name by request,
 <code>import drivers.uart as uart</code>: two spellings for one module, and
 <code>from drivers.uart import send</code> already gives the short form.
-<em>(Provisional: if long names turn out to hurt in real programs, <code>as</code>
+<em>(Was provisional (11.4): if long names turn out to hurt in real programs, <code>as</code>
 is the way to add.)</em></p>
-<h3 id="74-everything-declared-at-the-top-of-a-file-can-be-imported-provisional">7.4 Everything declared at the top of a file can be imported <em>(provisional)</em></h3>
+<h3 id="74-everything-declared-at-the-top-of-a-file-can-be-imported-unless-it-says-private">7.4 Everything declared at the top of a file can be imported, unless it says <code>private</code></h3>
+<p><em>(Was provisional. The word that hides a declaration is <code>private</code>,
+and it arrived in 10.1. The reasoning below is as it was written, and
+it held: no program had to change.)</em></p>
 <p>Functions, classes, enums and their cases, and <code>let</code>, <code>var</code> and
 <code>const</code> variables. What the file itself imports is not passed on:
 <code>shapes.math</code> is not a name, even though <code>shapes.zeno</code> imports <code>math</code>.</p>
@@ -4459,8 +4457,8 @@ changed through it, exactly as through a <code>let</code>.</p>
 <td><code>shapes.x</code> is a name of the module, or a field of the variable</td>
 </tr>
 <tr>
-<td><code>import a</code> and <code>import a.b</code></td>
-<td><code>a.b.x</code> is <code>x</code> of <code>a.b</code>, or <code>b.x</code> of <code>a</code></td>
+<td><code>import a</code> and <code>import a.b</code>, where the module <code>a</code> declares a <code>b</code></td>
+<td><code>a.b.x</code> is <code>x</code> of <code>a.b</code>, or <code>b.x</code> of <code>a</code>. (With no <code>b</code> in <code>a</code> there is one reading, and both can be imported: see 8.11)</td>
 </tr>
 <tr>
 <td><code>let s = shapes</code></td>
@@ -4505,7 +4503,7 @@ still drops what nothing calls.</p>
 the results. That needs a written-down description of what every
 module offers, and generics and worked-out types make that
 description large. It is what makes a big program quick to rebuild,
-and it will be wanted then. <em>(Provisional.)</em></p>
+and it will be wanted then. <em>(Was provisional: 11.4.)</em></p>
 <p><strong>In C a module's name is part of the C name</strong>: <code>shapes.area</code> is
 <code>z_shapes_area</code>. Two classes or enums that would get the same C name
 (<code>shapes.Point</code> and a class called <code>shapes_Point</code>) are refused with a
@@ -4524,6 +4522,2014 @@ number into all the source text.</p>
 <p><strong>The cost.</strong> A file can have at most 999,999 lines and a program at
 most 2,000 files, so that the number fits in a C <code>int</code>. Both are
 checked.</p>
+<h2 id="8-packages">8. Packages</h2>
+<p>A module is a file of the program itself. A <strong>package</strong> is a folder of
+modules that lives somewhere else: beside the program, or in somebody
+else's git repository. This section says how a program names the
+packages it needs, how an import finds a module of one, and how
+<code>zeno fetch</code> gets them. The walk through the code is in
+<a href="/docs/packages/"><code>packages.md</code></a>.</p>
+<p><strong>Checked against "unambiguous and intuitive".</strong> The project file is
+read aloud as it is written (8.2). A version is one exact thing, never
+a range that something has to solve (8.4). An import still names one
+file, and a file still has one name (8.5, 8.8). A package means the
+same in every program that needs it (8.6). There is one copy of each
+package in a program (8.7). Running a program never reaches for the
+network: one command does, and it is the one you typed (8.9). And
+there is still one mechanism: a module of a package is imported with
+the words that import a file of your own.</p>
+<h3 id="81-a-package-is-a-folder-with-a-zenopackage-in-it">8.1 A package is a folder with a <code>zeno.package</code> in it</h3>
+<pre><code>filters/
+    zeno.package        package filters
+    filters.zeno        the module `filters`
+    lowpass.zeno        the module `filters.lowpass`</code></pre>
+<p>The file <code>zeno.package</code> makes the folder a package and gives it its
+name. Every <code>.zeno</code> file in the folder is a module of it. Nothing is
+listed: no table of modules, no exports. That is 7.1 again, one step
+up: the folder is the package as the file is the module.</p>
+<p>A program is a package too. It has a <code>zeno.package</code> from the day it
+needs another package, and not before: a program in one folder that
+needs nothing has nothing to write.</p>
+<p><strong>Turned down.</strong> A list of the package's modules in the project file
+(a Cargo <code>[lib]</code> path, a <code>package.json</code> <code>files</code> list): a second place
+that has to be kept in step with the folder.</p>
+<h3 id="82-zenopackage-is-written-in-plain-words">8.2 <code>zeno.package</code> is written in plain words</h3>
+<pre><code># What this program is called, and the packages it needs.
+package thermostat
+
+needs filters in "../filters"
+needs units from "https://github.com/someone/zeno-units" at "v1.2.0"</code></pre>
+<p>One line names the package. One line for each package it needs. A
+comment starts with <code>#</code> and a string is written as in a program,
+because the file is split into words by Zeno's own lexer.</p>
+<p><strong>Why.</strong> <em>Decided by Partha on 2026-11-15</em>, from a card with three
+options and three more in conversation. The file has two kinds of
+line, and both can be read aloud. It needs no second syntax to learn
+and no parser to add: Zeno has no dependencies, and a TOML reader
+would be the first. Minimal punctuation is the rule of the language
+(section 1), and it would be odd for the first file a newcomer opens to
+break it.</p>
+<p><strong>Turned down.</strong>
+- TOML, <code>zeno.toml</code> (Cargo, Python): well known, but a second syntax,
+  and a parser for all of it to read two kinds of line.
+- A Zeno program, <code>package.zeno</code> (Swift, Zig): no new syntax, but then
+  the file can compute, and finding out what a program needs means
+  running code.
+- JSON: no comments, and more punctuation than words.
+- The address in the import line, <code>import units from "https://..."</code>
+  (Go before modules, Deno): the version is repeated in every file
+  that imports the package, and two files can disagree.
+- <code>needs</code> lines at the top of <code>main.zeno</code>: a package that is only a
+  library has no <code>main.zeno</code>.</p>
+<p>A mistake in a <code>zeno.package</code> is shown as a mistake in any file is,
+with the file, the line and what to write:</p>
+<pre class="out"><code>error: this does not say which version of `units` is needed. Add `at` and a tag,
+a branch or a commit of that repository, as in `needs units from "..." at "v1.0.0"`
+ --&gt; zeno.package:4:1</code></pre>
+<h3 id="83-a-needed-package-is-in-a-folder-or-in-a-git-repository">8.3 A needed package is in a folder, or in a git repository</h3>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>needs filters in "../filters"</code></td>
+<td>the package in that folder, used where it is. The folder is counted from the folder of this <code>zeno.package</code></td>
+</tr>
+<tr>
+<td><code>needs units from "address" at "v1.2.0"</code></td>
+<td>a git repository, and a tag, a branch or a commit of it. <code>zeno fetch</code> gets it</td>
+</tr>
+</tbody>
+</table>
+<p><code>in</code> and <code>from</code> are words Zeno already has, and they say which of the
+two it is. A line with <code>from</code> and no <code>at</code> is refused: see 8.4.</p>
+<p><strong>Why a folder at all.</strong> A package is written beside the first
+program that uses it, long before it has a repository of its own. And
+firmware projects often keep everything in one tree. The folder form
+makes a package something you can have in the first five minutes.</p>
+<p><strong>Why git, and no registry.</strong> A registry is a server, accounts,
+uploads and a name-squatting problem, for a language whose goal is
+learning by building. Git is on every machine that builds firmware,
+it already knows how to reach a private repository with the keys that
+are there, and a commit hash already says exactly what was fetched.
+So <code>zeno fetch</code> runs <code>git</code>, and Zeno still links nothing.</p>
+<p><strong>Turned down.</strong> Downloading an archive over HTTPS: Zeno would need a
+TLS library, its first dependency. A central registry with short
+names (<code>needs units "1.2"</code>): see above. <em>(Was provisional (11.4): a registry
+could be added later as a third kind of line. The two here would stay
+as they are.)</em></p>
+<h3 id="84-a-version-is-one-exact-thing-what-stands-after-at">8.4 A version is one exact thing: what stands after <code>at</code></h3>
+<p><code>at "v1.2.0"</code> is a tag, a branch or a commit, looked for in that
+order. There are no ranges (<code>^1.2</code>, <code>&gt;=1.0</code>), and a <code>zeno.package</code>
+has no <code>version</code> line of its own.</p>
+<p><strong>Why.</strong> A range needs a solver, and what the solver picks depends on
+what was published this morning. Nobody can read the answer off the
+file. With one exact name after <code>at</code>, the file says what is built.
+And a <code>version</code> line in the package would be a second place for what
+the tag already says, with nothing to check that the two agree.</p>
+<p><strong>The cost.</strong> Two packages that need the same package must name the
+same version (8.7). When they do not, the message says which lines to
+make agree, and a person decides. That is the work a solver would
+hide.</p>
+<h3 id="85-an-import-whose-first-word-is-a-needed-package-reads-that-package">8.5 An import whose first word is a needed package reads that package</h3>
+<pre><code class="zeno">import filters              # filters.zeno in the package's folder
+import filters.lowpass      # lowpass.zeno in the package's folder
+import control              # control.zeno of the program itself</code></pre>
+<p><code>zeno.package</code> says <code>needs filters ...</code>, so in this program an import
+that begins with <code>filters</code> is about the package. The words after it
+are a file inside the package's folder, with a dot for a folder as
+ever. <code>import filters</code> on its own is the package's module of its own
+name. Every other import is a file of the program, as before.</p>
+<p>What is written at the import is still what is written at the use
+(7.3): <code>filters.lowpass.start(...)</code>.</p>
+<p><strong>Why the package's name is the first word.</strong> The reader of
+<code>filters.lowpass.start</code> sees which package it comes from, and
+<code>zeno.package</code> says where that package is. No import has to be looked
+up in a search path.</p>
+<p><strong>Why <code>import filters</code> is <code>filters.zeno</code>.</strong> A small package is one
+file, and its users should write one word. Python's <code>__init__.py</code> and
+Rust's <code>lib.rs</code> do this with a special file name. Here no name is
+special: it is the file with the package's name.</p>
+<p><strong>Refused, each with what to write.</strong> <code>import filters.filters</code> (it is
+<code>import filters</code>). A file <code>filters.zeno</code> of the program beside a
+needed package <code>filters</code>: <code>import filters</code> would have two readings.</p>
+<h3 id="86-inside-a-package-an-import-means-the-same-in-every-program">8.6 Inside a package, an import means the same in every program</h3>
+<p>The files of the package <code>filters</code> import each other as <code>import
+lowpass</code> and <code>import filters</code>: files of their own folder. A package
+reaches another package only if its own <code>zeno.package</code> needs it, and
+it cannot reach a module of the program that uses it.</p>
+<p>This widens 7.2 by one word. A module is looked for from the folder
+of the <strong>package</strong> the importing file is in. For a file of the
+program that is the folder of the program's first file, as it always
+was.</p>
+<p><strong>Why.</strong> A package is written once and used by many programs. If an
+import inside it were looked for from the program's folder, what the
+package means would depend on who uses it. This is 7.7 for packages.
+It also means a package can be run on its own: <code>examples/filters</code> has
+a <code>main.zeno</code> that tries its modules, and they are found the same way.</p>
+<p><strong>The program's folder is the folder of its first file.</strong> Its
+<code>zeno.package</code> is looked for there and nowhere else. <em>Turned down:</em>
+walking up through the folders above until a project file is found
+(Cargo, npm). What an import means would then depend on a file in a
+folder you may not know is there.</p>
+<h3 id="87-a-program-has-one-package-of-each-name">8.7 A program has one package of each name</h3>
+<p>If the program needs <code>units</code> and so does <code>filters</code>, they get the same
+<code>units</code>. Fetched packages all go into one folder, <code>packages/</code>, beside
+the program's <code>zeno.package</code>, whichever package needs them. Two
+<code>needs</code> lines for one name that point at different folders, different
+repositories or different versions are refused, and the message names
+the lines.</p>
+<p><strong>Why.</strong> One name is one file (7.2). With two copies of <code>units</code> in
+one program there would be two classes called <code>units.Length</code>, and a
+value of one would not be a value of the other, with both printing
+the same. npm allows this and it is a well known source of puzzles.
+In firmware it would also put the code in flash twice.</p>
+<h3 id="88-a-module-of-a-package-has-the-packages-name-in-front">8.8 A module of a package has the package's name in front</h3>
+<p>In the joined program (7.11) the module <code>lowpass</code> of the package
+<code>filters</code> is <code>filters.lowpass</code>, and its <code>start</code> is
+<code>filters.lowpass.start</code>, whoever wrote the import. That is the name a
+compiler message uses. The package's own files write <code>lowpass.start</code>.
+The modules of the program itself keep their plain names.</p>
+<p>Because one name must be one file and one file one name, three things
+are refused when the loader meets them:</p>
+<table>
+<thead>
+<tr>
+<th>Met</th>
+<th>Refused because</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>two different files that would both be the module <code>units</code></td>
+<td>which one is <code>units.x</code>?</td>
+</tr>
+<tr>
+<td>one file reached as two modules, <code>filters</code> and <code>lib.filters</code></td>
+<td>it would run twice, and its types would exist twice</td>
+</tr>
+<tr>
+<td>an import of the file the program starts in</td>
+<td>it would run twice</td>
+</tr>
+</tbody>
+</table>
+<h3 id="89-only-zeno-fetch-uses-the-network">8.9 Only <code>zeno fetch</code> uses the network</h3>
+<pre><code>zeno fetch              in the folder of the program
+zeno fetch --update     look every version up again</code></pre>
+<p><code>zeno run</code>, <code>zeno check</code> and <code>zeno build</code> read files and nothing
+else. A needed package that is not in <code>packages/</code> is a mistake with a
+message: "the package <code>units</code> has not been fetched ... Run <code>zeno
+fetch</code> in the folder of the program".</p>
+<p><strong>Why.</strong> A build that may or may not download something is two
+different commands under one name. On a build machine with no
+network, or with firmware that must be the same next year, the one
+that downloads has to be a step somebody chose.</p>
+<p><strong>Turned down.</strong> Fetching on the first <code>zeno run</code> (Cargo, Go).
+<code>zeno add units ...</code> that edits the project file: the file is two
+kinds of line, and writing one is the simplest way to say it.
+<code>zeno new</code> has come since (10.22), and the file it writes shows both
+kinds of <code>needs</code> line in a comment, so the line to write is in front
+of whoever needs it.</p>
+<h3 id="810-zenolock-pins-what-was-fetched">8.10 <code>zeno.lock</code> pins what was fetched</h3>
+<p><code>zeno fetch</code> writes, for each fetched package, the commit it got:</p>
+<pre><code>units from "https://github.com/someone/zeno-units" at "v1.2.0" commit "9f8e7d6..."</code></pre>
+<p>The next <code>zeno fetch</code>, on this machine or another, gets that commit
+even if the tag or the branch has moved since. <code>--update</code> looks each
+<code>at</code> up again and writes the file afresh. The lock is kept with the
+program. A package in a folder (<code>needs ... in</code>) is not in it: it is
+used where it is, and there is nothing to pin.</p>
+<p><strong>Why.</strong> <code>at "main"</code> is allowed (8.4), and a branch moves. Without
+the lock two people would build two programs from one source. With
+it, what <code>at</code> says is what you asked for and what the lock says is
+what you have.</p>
+<p>The lock of a needed package is not read: the program's own lock pins
+everything in the program. One file answers "what exactly is built?".</p>
+<h3 id="811-a-file-can-import-a-module-and-a-module-below-it-revises-78">8.11 A file can import a module and a module below it <em>(revises 7.8)</em></h3>
+<p><code>import filters</code> and <code>import filters.lowpass</code> in one file was refused
+in 7.8, because <code>filters.lowpass.x</code> could be <code>x</code> of the module
+<code>filters.lowpass</code> or the field <code>x</code> of a <code>lowpass</code> that the module
+<code>filters</code> declares. With packages, that pair of imports is the most
+natural thing to write.</p>
+<p>It is now refused only when there really are two readings: when the
+module <code>filters</code> declares a <code>lowpass</code> of its own. Otherwise
+<code>filters.lowpass</code> can only be the module. The message, when it comes,
+names the name that clashes.</p>
+<h3 id="the-rules-all-of-them">The rules, all of them</h3>
+<ol>
+<li><strong>A package is a folder with a <code>zeno.package</code></strong>, which names it
+   (8.1, 8.2).</li>
+<li><strong>A program says what it needs</strong> in its own <code>zeno.package</code>: a
+   folder, or a git repository and one exact version (8.3, 8.4).</li>
+<li><strong>An import whose first word is a needed package</strong> reads a file of
+   that package. Any other import reads a file of the package the
+   importing file is in (8.5, 8.6).</li>
+<li><strong>One package of each name</strong> in a program, and one name for each
+   module (8.7, 8.8).</li>
+<li><strong><code>zeno fetch</code> fetches. Nothing else does</strong> (8.9). <code>zeno.lock</code>
+   remembers what it got (8.10).</li>
+</ol>
+<h2 id="9-editor-support">9. Editor support</h2>
+<p>What an editor needs from a language: a formatter, so that every file
+looks the same, and a language server, so that mistakes show as
+you type. The walks through the code are in <a href="/docs/format/"><code>format.md</code></a>
+and <a href="/docs/lsp/"><code>lsp.md</code></a>.</p>
+<p><strong>Checked against "unambiguous and intuitive".</strong> There is one layout
+and nothing to configure (9.1). Formatting cannot change what a
+program means, and the formatter proves that to itself on every run
+(9.2). Each rule of spacing is the one the examples and the documents
+have used since the first stage, so <code>zeno format</code> surprises nobody
+who has read Zeno (9.5). The language server shows what <code>zeno check</code>
+shows, says about a name what the checker knows of it, and answers
+nothing where it would have to guess (9.10, 9.11).</p>
+<h3 id="91-one-layout-and-no-options">9.1 One layout, and no options</h3>
+<pre><code>zeno format main.zeno        write the file again, laid out
+zeno format examples         every .zeno file in the folder and below
+zeno format --check .        change nothing; say which files are not laid out</code></pre>
+<p>There is no setting for the width of an indent, where a brace goes or
+how many blank lines are allowed.</p>
+<p><strong>Why.</strong> "One obvious way to write each thing" is the first principle
+of the language, and layout is where programmers disagree most and
+gain least. With no options there is nothing to decide per project,
+no file of settings to copy around, and a diff shows what changed and
+never how somebody likes their spaces. Go showed that this works.</p>
+<p><strong>Turned down.</strong> A settings file (clang-format, rustfmt.toml): every
+project then has its own Zeno.</p>
+<h3 id="92-the-formatter-changes-white-space-and-nothing-else">9.2 The formatter changes white space, and nothing else</h3>
+<p>It works on the tokens of the file. Every token stays as it was
+written, in the order it was written, on the line it was written on.
+Numbers keep their spelling (<code>0x4000_4400</code>), texts keep their quotes.</p>
+<p><strong>Why.</strong> A formatter that works from the syntax tree has to print
+every construct of the language, and the tree has already forgotten
+the comments, the blank lines and how a number was spelled. Each new
+piece of syntax would need a new piece of printer, and a slip in one
+would quietly change a program. Working on tokens, the formatter
+needs to know only which token it is looking at and which came
+before. It cannot change a meaning, because it never adds, removes or
+moves a token.</p>
+<p><strong>Checked on every run.</strong> After laying a file out, the formatter
+reads its own output back and compares the tokens and the comments
+with the ones it started from. If they differ it writes nothing and
+says that the mistake is Zeno's.</p>
+<p><strong>A file with a mistake is not formatted.</strong> It has to lex and parse.
+Indentation is counted from brackets that match, and the parser is
+what knows that they do. The mistakes are shown as <code>zeno check</code> shows
+them.</p>
+<h3 id="93-line-breaks-are-the-authors-was-provisional-114">9.3 Line breaks are the author's <em>(was provisional: 11.4)</em></h3>
+<p>The formatter never joins two lines and never splits one. There is no
+line width.</p>
+<p><strong>Why.</strong> <code>case Off { return 0 }</code> on one line and a long block on
+several are both right, and which is right depends on the code around
+it. Choosing for the author needs a width limit and a search for the
+best way to break each line, which is most of the code of prettier
+and rustfmt, and still produces layouts people fight. A line break in
+Zeno also ends a statement, so moving one is no longer only layout.</p>
+<p><strong>The cost.</strong> Two people can break one long call in two ways. If that
+turns out to matter, a rule for where a too-long line breaks is the
+thing to add.</p>
+<h3 id="94-four-spaces-for-each-bracket-open-counted-in-lines">9.4 Four spaces for each bracket open, counted in lines</h3>
+<pre><code class="zeno">each(items, function(item) {
+    print(item)
+})</code></pre>
+<p>A line is indented once for each line above it that has left a <code>{</code>,
+<code>(</code> or <code>[</code> open. The first line here opens two brackets and the body
+is still indented once. A line that starts by closing brackets goes
+back to where the line that opened them is. A statement that goes on
+after an operator is indented once more:</p>
+<pre><code class="zeno">let total = price +
+    tax</code></pre>
+<p>Tabs are replaced. Four spaces is what every example has used, and a
+file that mixes tabs and spaces looks different in every editor.</p>
+<h3 id="95-where-a-space-goes">9.5 Where a space goes</h3>
+<table>
+<thead>
+<tr>
+<th>Rule</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>one space around an operator, <code>=</code> and <code>-&gt;</code></td>
+<td><code>a + b</code>, <code>x = 1</code>, <code>-&gt; int</code></td>
+</tr>
+<tr>
+<td>one space after <code>,</code> and <code>:</code>, none before</td>
+<td><code>f(a, b)</code>, <code>port: int</code>, <code>["a": 1]</code></td>
+</tr>
+<tr>
+<td>none inside <code>( )</code> and <code>[ ]</code></td>
+<td><code>(a + b)</code>, <code>[1, 2]</code></td>
+</tr>
+<tr>
+<td>none before the <code>(</code> of a call or the <code>[</code> of an index or a type</td>
+<td><code>print(x)</code>, <code>items[0]</code>, <code>list[int]</code></td>
+</tr>
+<tr>
+<td>one space before any other <code>(</code> or <code>[</code></td>
+<td><code>if (a or b) and c</code>, <code>return [1, 2]</code></td>
+</tr>
+<tr>
+<td>none around <code>.</code></td>
+<td><code>shapes.area</code></td>
+</tr>
+<tr>
+<td>one inside <code>{ }</code> on one line, and before <code>{</code></td>
+<td><code>if ready { go() }</code>, <code>case _ { }</code></td>
+</tr>
+<tr>
+<td>a <code>-</code> that is a sign holds on to its number</td>
+<td><code>-1</code>, <code>a - -1</code>, <code>f(-x)</code></td>
+</tr>
+<tr>
+<td>one space between two words</td>
+<td><code>500 ms</code>, <code>not ready</code></td>
+</tr>
+</tbody>
+</table>
+<p>These are the spaces the examples and the documents already had. The
+proof is a test: every file in <code>examples/</code> is taken apart into its
+tokens, put together again with three spaces between each two, and
+formatted. What comes out is the file as it is in the repository.</p>
+<p><strong>How a <code>-</code> is told apart.</strong> If the token ahead of it can end a value
+(a name, a number, a text, <code>)</code> or <code>]</code>), it subtracts. Otherwise it is
+a sign. The same question, "can a value end here?", tells a call's
+<code>(</code> from a grouping one and an index's <code>[</code> from a list's.</p>
+<h3 id="96-the-that-names-an-argument-has-no-spaces">9.6 The <code>=</code> that names an argument has no spaces</h3>
+<pre><code class="zeno">let here = Point(x=3.0, y=4.0)
+function greet(who: str, excited: bool = false, times=1) { }</code></pre>
+<p>Inside <code>( )</code>, an <code>=</code> straight after a name that begins an argument
+names that argument, and is written tight. Every other <code>=</code> has a
+space on each side, including a parameter's value after its type.</p>
+<p><strong>Why.</strong> A call with named arguments reads as a list of pairs, and
+the tight <code>=</code> keeps each pair together and apart from the next:
+<code>Point(x=3.0, y=4.0)</code> against <code>Point(x = 3.0, y = 4.0)</code>. It also
+tells naming an argument from assigning to a variable at a glance.
+Python settled on the same two forms for the same reason.</p>
+<h3 id="97-at-most-one-blank-line">9.7 At most one blank line</h3>
+<p>Never two in a row. None at the top of the file or of a block, and
+none at the bottom of either. A blank line after a comment stays.</p>
+<p><strong>Why.</strong> One blank line parts two things. A second one says nothing
+more, and "one or two?" is a choice nobody needs to make.</p>
+<h3 id="98-comments">9.8 Comments</h3>
+<p>A comment gets a space after its <code>#</code> when a word follows: <code>#note</code>
+becomes <code># note</code>. What stands after that is the author's, so a
+commented-out example keeps its indentation, and <code>#!</code> and <code>#---</code> are
+left alone. A comment on a line of its own is indented as code there
+would be.</p>
+<p>A comment after code keeps the distance the author gave it, with at
+least two spaces. So comments that were lined up stay lined up:</p>
+<pre><code class="zeno">bytes: pointer[u8]    # `size` bytes, asked for with `allocate`
+size: int             # how many fit</code></pre>
+<p><em>(Was provisional: 11.4.)</em> The formatter does not line comments up by itself.
+gofmt does, and needs rules for when a long line should break the
+column. Keeping the author's distance is simple and never fights a
+layout somebody made on purpose.</p>
+<h3 id="99-zeno-format-writes-the-file-and-check-only-looks">9.9 <code>zeno format</code> writes the file, and <code>--check</code> only looks</h3>
+<p><code>zeno format main.zeno</code> changes the file in place and says
+"Formatted main.zeno", or that it was laid out already. With
+<code>--check</code> nothing is written, each file that would change is named,
+and the command fails if there is one: that is the form for a script
+that guards a repository.</p>
+<p>A folder stands for every <code>.zeno</code> file in it and below it, except the
+folder <code>packages</code>: what <code>zeno fetch</code> put there is somebody else's.</p>
+<p><strong>Turned down.</strong> Printing the result and leaving the file (gofmt's
+default): the common wish is to fix the file, and the common wish
+should be the short command.</p>
+<h3 id="910-a-language-server-and-it-is-the-zeno-program-itself">9.10 A language server, and it is the <code>zeno</code> program itself</h3>
+<p><code>zeno lsp</code> speaks the Language Server Protocol on its standard input
+and output. An editor starts it and is then told the mistakes in each
+open file as it is typed, and can ask for a file to be laid out.</p>
+<p><strong>Why the protocol.</strong> Writing a plugin for each editor is one piece
+of work per editor, each in that editor's own language. The protocol
+turns that into one server, which VS Code, Neovim, Helix, Zed, Emacs
+and others can all use. What is left per editor is a few lines that
+say "for <code>.zeno</code> files, start <code>zeno lsp</code>", and the colours.</p>
+<p><strong>Why inside <code>zeno</code>.</strong> The server shows exactly what <code>zeno check</code>
+shows, because it runs the same loader and the same checker in the
+same program. A separate server program would be a second thing to
+build, install and keep at the same version. There is still no
+library: the protocol is JSON with a length in front, and
+<code>src/json.rs</code> reads and writes it in 250 lines.</p>
+<p><strong>Turned down.</strong> A server written in TypeScript on a ready-made
+library: quick to start, but a second implementation of "what is a
+mistake in Zeno", which is the one thing that must not exist twice.</p>
+<h3 id="911-the-server-answers-from-the-checker-and-nothing-it-has-to-guess">9.11 The server answers from the checker, and nothing it has to guess</h3>
+<table>
+<thead>
+<tr>
+<th>The editor says</th>
+<th>The server does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a file was opened, or its text changed</td>
+<td>checks every open file, and sends the mistakes of each file whose mistakes changed</td>
+</tr>
+<tr>
+<td>lay this file out</td>
+<td>answers with the file as <code>zeno format</code> writes it</td>
+</tr>
+<tr>
+<td>where is this name declared?</td>
+<td>answers with the file and the line of its declaration</td>
+</tr>
+<tr>
+<td>what is this name?</td>
+<td>answers with the name and its type: <code>count: int</code></td>
+</tr>
+<tr>
+<td>the same two about a field, a method, or the name of a module</td>
+<td>answers "nothing"</td>
+</tr>
+</tbody>
+</table>
+<p>A mistake is marked from where the checker says it is to the end of
+the word there, with the message <code>zeno check</code> prints.</p>
+<p><strong>Where the answers about a name come from.</strong> To say rightly where a
+name was declared, the server must know which declaration the name
+means, with every rule of scope the checker applies: inside
+<code>function twice(count: int)</code>, <code>count</code> is the parameter, and not the
+<code>count</code> at the top of the file. Guessing from the spelling is right
+most of the time, and an editor that is wrong some of the time
+teaches you not to trust it. So the checker, which works this out
+anyway, now writes it down: for every place a name is used, what it
+means there, its type, and where it was declared (<code>checker::Use</code>).
+The server looks the cursor's place up in that record and adds
+nothing of its own.</p>
+<p>For a function the type is shown the way its first line is written,
+<code>twice: function(count: int) -&gt; int</code>, with the names of the
+parameters, because Zeno lets a call name them (<code>twice(count=3)</code>).</p>
+<p><strong>Why a field gets no answer yet.</strong> <em>(Was provisional: 11.4.)</em> The record holds
+names: variables, parameters, functions, classes, enums, and the
+names of a module (<code>shapes.area</code> is one name). A field or a method
+(<code>p.x</code>, <code>queue.put</code>) is found from the type of what stands before the
+dot, and the checker does not write that down yet. An empty answer
+is honest, and an editor shows nothing for it. A guess would be
+shown as if it were known.</p>
+<p><strong>Turned down.</strong>
+- <em>Finding the declaration by searching the file for <code>let name</code> or
+  <code>function name</code>.</em> Wrong as soon as two scopes use one name, which
+  is ordinary code.
+- <em>A second, small scope walker in the server.</em> Two sets of scope
+  rules that have to agree for ever. The checker's are the rules.
+- <em>Completion and rename now.</em> Completion has to work on a file that
+  does not parse (the line being typed), and the checker never sees
+  such a file. Rename changes many files at once, and needs the uses
+  in files that are not open. Both wait until a real program misses
+  them.</p>
+<h3 id="912-the-editors-text-is-the-program-and-its-folder-is-worked-out">9.12 The editor's text is the program, and its folder is worked out</h3>
+<p>The server checks what is in the editor, not what is on disk: a file
+that is open is read from the editor, also when another file imports
+it, and only a file that is not open is read from disk. So a mistake
+shows as it is typed, before anything is saved.</p>
+<p><code>zeno check</code> is given the file a program starts in, and that file's
+folder is the program's (8.6). An editor opens any file, perhaps
+<code>drivers/uart.zeno</code>. The server takes as the program's folder the
+nearest folder, from the file's own upward, that has a <code>zeno.package</code>
+or a <code>main.zeno</code>, and no folder above the one the editor has open.
+With neither, it is the file's own folder, as for <code>zeno check</code>.</p>
+<p><strong>Why this is not the walking up that 8.6 turned down.</strong> 8.6 is about
+what a program <em>means</em>, and that must not depend on a folder above.
+This is about which program a file on the screen most likely belongs
+to, so that its imports can be found at all. If the guess is wrong
+the worst is a mistake shown that <code>zeno check</code> on the real first file
+would not show, and a <code>zeno.package</code> in the right folder settles it.</p>
+<p><strong>Every open file is checked at every change.</strong> A change in one file
+can make or mend a mistake in a file that imports it. Programs are
+small and the checker is fast, so the simple thing is done:
+everything open is checked again, and only what changed is sent.</p>
+<h3 id="913-colours-are-per-editor-and-are-not-the-servers-work">9.13 Colours are per editor, and are not the server's work</h3>
+<p>The repository has a grammar for VS Code and a syntax file for Vim
+and Neovim, in <code>editors/</code>. Both know Zeno's words from a list.</p>
+<p><strong>Why not from the server.</strong> The protocol can carry colours
+("semantic tokens"), but an editor asks for them after the file is
+checked, so the text would flash from plain to coloured. A grammar in
+the editor colours at once and needs no server at all. <em>(Was provisional (11.4):
+semantic tokens can be added on top for what a grammar cannot know,
+such as whether a name is a variable or a function.)</em></p>
+<h2 id="10-what-real-programs-needed">10. What real programs needed</h2>
+<p>The last stage before the language is called version 0.1. Each
+section is something a program of more than a few files ran into, and
+the README's roadmap lists them.</p>
+<p><strong>Checked against "unambiguous and intuitive".</strong> <code>private</code> is one
+word with one meaning wherever it stands: only the file it is written
+in can use this (10.1). There is no second level and no exception to
+remember. The message for a private name says that it is private and
+what to change, and never "no such name" (10.2).</p>
+<p>An interface is declared with one word, and a class says which
+interfaces it is with one more (10.4). Whether a class is a <code>Shape</code>
+is written on its first line and checked there. The class writes
+each function exactly as the interface does (10.6), so there is one
+way to write it and nothing to work out. A list of circles is not
+quietly a list of shapes (10.7), and nothing is cast: a list that is
+written out is told by the place it goes what it is a list of.</p>
+<p>A test is a block with a name, and <code>assert</code> says what must be so
+(10.16, 10.17). There is one way to write each, a failure shows the
+two values that were compared, and no test runs by surprise: <code>zeno
+run</code> and a build go past them.</p>
+<p><code>zeno new</code> does one thing, and it is the same thing every time
+(10.22): it asks nothing, it has one option, and what it writes is a
+program you could have typed. A name that will not do is refused with
+one that will, and is never changed quietly (10.23).</p>
+<p><code>x += y</code> means <code>x = x + y</code>, for every operator and every type, and it
+means it in the same order in every build (10.25, 10.28). Where that
+reading would do something nobody meant, a call in the place that
+would run twice, the statement is refused and the message says what
+to write (10.26). On a sized number it is the checked conversion, the
+safe one of the two, and cutting stays a word in the program (10.27).
+A format on a quantity never loses the unit (10.29).</p>
+<p>A dict holds what a list holds (10.11), so there is one answer to
+"what can I keep in a collection" and not two. The one thing it does
+not hold is <code>none</code>, because <code>get</code> already means something by it. A
+loop with two names reads the same over everything that can be
+looped over: the second name is what is at the first (10.12).</p>
+<h3 id="101-private-for-the-file-it-is-written-in">10.1 <code>private</code>: for the file it is written in</h3>
+<pre><code class="zeno">private let highest = ["temperature": 60.0]
+
+private function wrapped(place: int, size: int) -&gt; int {
+    return place % size
+}
+
+class Ring {
+    private slots: list[int]
+    private count: int
+
+    function size(self) -&gt; int {
+        return self.count
+    }
+
+    private function slot(self, steps: int) -&gt; int { ... }
+}</code></pre>
+<p>The word goes in front of a declaration at the top of a file
+(<code>function</code>, <code>class</code>, <code>enum</code>, <code>let</code>, <code>var</code>, <code>const</code>), and in front of
+a field or a function of a class. What it marks can be used by the
+file it is written in, and by no other.</p>
+<p><strong>Why at all.</strong> 7.4 let every file use everything, and said a word
+that hides could come later without breaking a program. Later is
+now: a module of any size has parts that hold only as long as nobody
+else touches them. A ring's count has to agree with its slots. If
+any file can write <code>queue.count = 0</code>, the module cannot promise that,
+and whoever reads it cannot tell what is safe to change.</p>
+<p><strong>Why the file is the boundary, for a field as well.</strong> In Java and
+C++ a private field is for the class. In Rust and Go it is for the
+module. Zeno takes the module, because then the word means one thing
+in both places it can stand, and "who can use this?" has the same
+answer everywhere: look at which file you are in. It also fits how
+Zeno code is written: a function that builds a <code>Ring</code> or prints one
+sits beside the class in its file, is not a method, and needs the
+fields. With privacy by class it would need a second word such as
+C++'s <code>friend</code>.</p>
+<p><strong>Why the word <code>private</code>.</strong> It is the word Java, C++, C#, Kotlin,
+Swift and TypeScript use, so it is the one most readers know. It is
+a whole word (principle 2). <code>pub</code> on what is open (Rust) was turned
+down in 7.4: a mark on nearly every line. A leading underscore and a
+capital first letter were turned down there too.</p>
+<p><strong>Everything is still open unless it says otherwise.</strong> A program in
+one file never needs the word, and a first module works with no mark
+on it. Hiding is something a module does once it has something to
+protect.</p>
+<p><strong>An enum is private whole.</strong> <code>private enum Mode</code> hides the enum and
+its cases. A single case cannot be private: a <code>match</code> on the enum has
+to name every case, so a file that can see the enum must be able to
+see them all.</p>
+<p><strong>Not inside a block.</strong> <code>private let x</code> in a function is refused,
+with the reason: a name declared in a block is seen only in the block
+already.</p>
+<p><strong>Turned down.</strong>
+- <em>Three levels</em> (<code>private</code>, <code>protected</code>, <code>public</code>). <code>protected</code> is
+  about inheritance, which Zeno does not have. Two levels need one
+  word.
+- <em>Private to the package</em>, so that the files of a package share what
+  other packages cannot see. A real need in a big package, and it
+  can be added as its own word. No program here has needed it.
+- <em>Checking it when the program runs.</em> It is checked by <code>zeno check</code>,
+  as types are. It is there to keep a program's parts honest with
+  each other, and is not a lock.</p>
+<h3 id="102-a-private-name-is-said-to-be-private">10.2 A private name is said to be private</h3>
+<pre class="out"><code>error: `wrapped` is private in the module `ring`: only its own file
+can use it. To use it from another file, take the word `private` off
+where it is declared</code></pre>
+<p><strong>Why not "module <code>ring</code> has no <code>wrapped</code>".</strong> That would be the
+safer thing to say to a stranger and the less useful thing to say to
+the person who wrote both files, which is who reads it. The name is
+there, the reader can see it, and a message that denies it sends them
+looking for a spelling mistake.</p>
+<p>When a module has no such name at all, the names it is said to have
+are the ones another file can use.</p>
+<h3 id="103-only-its-own-file-builds-a-class-that-has-a-private-field">10.3 Only its own file builds a class that has a private field</h3>
+<pre><code class="zeno"># ring.zeno
+function ring(size: int) -&gt; Ring raises ValueError {
+    if size &lt; 1 {
+        raise ValueError("a ring has room for one byte at least")
+    }
+    return Ring([0 for slot in range(size)], 0, 0)
+}
+
+# main.zeno
+let queue = ring.ring(4)          # yes
+let mine = ring.Ring([1], 0, 1)   # no</code></pre>
+<p>A class gets a constructor for free, which takes a value for each
+field (3.7). Another file cannot see the private fields, so it cannot
+fill them in, so it cannot call that constructor. The module writes a
+function that builds one, and the other files call it.</p>
+<p><strong>Why not leave the private fields out of the constructor for other
+files</strong>, so that <code>ring.Ring()</code> fills them from their defaults. Then
+one class would take different arguments depending on which file the
+call is in, and the third argument here would be the fifth there. One
+name, one list of arguments.</p>
+<p><strong>Why this is no burden.</strong> It is what a module with something to
+protect wants anyway: <code>ring.ring(4)</code> asks for a size, and how the
+slots, the first place and the count start is the module's business.
+This is the rule Rust has for a struct with a private field.</p>
+<p>A class whose only private parts are functions is built as ever:
+there is nothing to fill in.</p>
+<h3 id="104-interface-and-a-class-says-which-ones-it-is">10.4 <code>interface</code>, and a class says which ones it is</h3>
+<pre><code class="zeno">interface Shape {
+    function area(self) -&gt; float
+    function scale(self, by: float)
+}
+
+class Circle is Shape {
+    radius: float
+
+    function area(self) -&gt; float {
+        return 3.0 * self.radius * self.radius
+    }
+
+    function scale(self, by: float) {
+        self.radius = self.radius * by
+    }
+}
+
+function total(shapes: list[Shape]) -&gt; float { ... }</code></pre>
+<p>An interface is a list of functions. A class says, on its first
+line, which interfaces it is, and from then on an object of the class
+goes wherever one of them is wanted. One function, <code>total</code>, serves
+every class that is a <code>Shape</code>, the ones written and the ones not
+written yet.</p>
+<p><strong>Why the class has to say so.</strong> The other design is that any class
+with an <code>area</code> and a <code>scale</code> is a <code>Shape</code> without a word (Go, and
+Python's protocols). It saves one line, and costs two things. A class
+that happens to have an <code>area</code> meaning something else is a <code>Shape</code> by
+accident. And a class that was meant to be one and has <code>scale</code>
+misspelt is found out far away, at some call that passes it, with a
+message about that call. With <code>is Shape</code> the promise is written where
+the reader of the class sees it, and it is checked there:</p>
+<pre class="out"><code>error: `Dot` says it is a `Shape`, and a `Shape` has
+`function scale(self, by: float)`. Give `Dot` that function</code></pre>
+<p><em>(Principle 1: found before the program runs, at the place the
+mistake is. And "unambiguous": whether a class is a <code>Shape</code> is
+written down, never worked out.)</em></p>
+<p><strong>Why the words <code>interface</code> and <code>is</code>.</strong> <code>interface</code> is the word Java,
+C#, Go and TypeScript use for this, and the word a firmware engineer
+uses for the thing itself: what a part shows to the rest. <code>trait</code> and
+<code>protocol</code> mean it only to people who already know those languages.
+<code>is</code> is already a word of the language, it reads as the sentence it
+is (<code>class Circle is Shape</code>), and it cannot be taken for the test
+<code>x is none</code>: one comes after the name of a class being declared, the
+other between two values. <code>implements</code> says the same in four more
+letters, and a colon (<code>class Circle: Shape</code>) is punctuation where a
+word will do (1.4).</p>
+<p><strong>A class has no parent class.</strong> <code>class B is A</code> where <code>A</code> is a class
+is refused, and the message says what to do instead: declare what
+the two share as an interface. Inheriting fields and code brings the
+questions every language with it has had to answer (which <code>area</code>
+runs, what the object looks like in memory, what happens when two
+parents have the same field), and none of them is needed to write
+<code>total</code>. A class can be several interfaces: <code>class Box is Named,
+Sized</code>.</p>
+<h3 id="105-an-interface-has-functions-and-nothing-about-how-they-are-done">10.5 An interface has functions, and nothing about how they are done</h3>
+<p>No fields, no bodies, <code>self</code> first, and a type on every parameter and
+on the result.</p>
+<p><strong>Why no fields.</strong> How a class keeps its data is the class's own
+business, and in firmware the layout of an object is something its
+author decides. A field in an interface would decide it for every
+class. If other code needs the value, the interface has a function
+that returns it.</p>
+<p><strong>Why no bodies.</strong> A body in an interface is code that every class
+gets without writing it, which is inheritance again by another door,
+with its question of which body runs. With none, the code of a
+function is in exactly one place: the class.</p>
+<p><strong>Why everything is typed.</strong> Elsewhere a type that is left out is
+worked out from the body. Here there is no body. The interface
+is all a caller has, so all of it is written.</p>
+<p>Also refused, each with a message that says so <em>(was provisional: 11.5)</em>: a
+default for a parameter, type parameters on an interface or on one of
+its functions, an interface that is another interface, and a private
+function (an interface lists what other code may ask).</p>
+<h3 id="106-the-class-writes-each-function-as-the-interface-does">10.6 The class writes each function as the interface does</h3>
+<p>The same names for the parameters, the same types, the same result.</p>
+<pre class="out"><code>error: `scale` of `Dot` is `function scale(self, factor: float)`, and
+`Shape` asks for `function scale(self, by: float)`. Write the two the
+same</code></pre>
+<p><strong>Why the names count.</strong> An argument can be given by name (3.6):
+<code>shape.scale(by=2.0)</code>. Through the interface that has to mean the
+same for every class, so every class calls it <code>by</code>.</p>
+<p><strong>Why the types are the same and not merely fitting.</strong> A class could
+safely take more than the interface asks, or return less. Allowing it
+means a reader has to work out whether two different first lines
+agree. The same line twice needs no working out. <em>("One obvious way
+to write each thing.")</em></p>
+<p><strong>A class may raise less than its interface says, never more.</strong>
+Whoever calls through the interface knows only what the interface
+says: <code>function send(self, text: str) -&gt; int raises Full</code>. A class
+whose <code>send</code> never fills up raises nothing, and that is fine. One
+that raises something the interface does not list is an error at the
+class, because the caller could not have been warned. In a firmware
+build this is also what tells the compiler that a call through the
+interface carries an error as a value (5.5l).</p>
+<h3 id="107-a-class-goes-where-its-interface-is-wanted-and-a-list-of-it-does-not">10.7 A class goes where its interface is wanted, and a list of it does not</h3>
+<p>A <code>Circle</code> is a <code>Shape</code> in a variable, a parameter, a result, a
+field, and in each of those with <code>or none</code>. A <code>list[Circle]</code> is not a
+<code>list[Shape]</code>.</p>
+<p><strong>Why not the list.</strong> Whoever holds it as a list of shapes may append
+a <code>Square</code>, and the first holder would then find a square in a list
+of circles. This is the reason a <code>list[u8]</code> is not a <code>list[int]</code>
+(2.8c), and it is given in the message:</p>
+<pre class="out"><code>error: `shapes` should be list[Shape], but this is list[Circle].
+Whoever holds it as a list of Shape could append another class to it.
+Say what the list holds where it is made, as in
+`let items: list[Shape] = [...]`</code></pre>
+<p><strong>A list that is written out is a list of what the place wants.</strong>
+<code>[Circle(1.0), Square(2.0)]</code> has items of two classes, and the items
+do not say that they are shapes. The place does: a <code>let</code> with a type,
+a parameter, a result, a field, an <code>append</code>. So the list is told what
+it is a list of, and each item is checked against that. Nothing new
+has to be written, and there is no cast.</p>
+<p>The same rule repaired something older. <code>show([1, 2])</code>, where <code>show</code>
+takes a <code>list[int or none]</code>, was accepted, and the compiled program
+crashed: the list was built as a list of ints and read as a list of
+<code>int or none</code>, which are kept differently (5.5j). It worked in a
+<code>let</code> and not in an argument. Now a written list is built as what the
+place wants wherever it is written.</p>
+<p><strong>A generic takes the interface from the place its result goes.</strong>
+<code>let pair: Pair[Shape] = Pair(Circle(1.0), Square(2.0))</code> is a pair of
+shapes, and <code>let box: Box[int or none] = Box(count)</code> can hold <code>none</code>
+later. This holds when each argument goes straight into a <code>T</code>. A
+<code>list[Circle]</code> given for a <code>list[T]</code> stays a list of circles, for the
+reason above.</p>
+<h3 id="108-there-is-no-way-back-from-an-interface-to-a-class-was-provisional-115">10.8 There is no way back from an interface to a class <em>(was provisional: 11.5)</em></h3>
+<p>A <code>Shape</code> cannot be asked which class it is, and it cannot go where a
+<code>Circle</code> is wanted. Through an interface only the interface's
+functions are there.</p>
+<p><strong>Why.</strong> With a way back, code that was given a <code>Shape</code> begins to
+ask "are you a <code>Circle</code>?", and from then on it works only for the
+classes it asks about. The interface stops being the whole
+agreement. For a value that is one of a few known things there is
+already a better tool: an <code>enum</code>, where <code>match</code> has to name every
+case (3.11). An interface is for the open set, an enum for the closed
+one, and each is checked in its own way.</p>
+<p>It also keeps one promise simple: what a function is given is all it
+can use.</p>
+<p><strong>What it costs.</strong> Now and then a program does know what it has and
+has to keep the object in a second variable of its own class. If
+real programs keep running into that, a checked way back
+(<code>match shape { case Circle as c ... }</code>) can be added without
+changing anything written before. The message says what to do today.</p>
+<p>Two shapes are equal when they are objects of the same class and
+that class says they are equal. An object prints as the class it
+really is.</p>
+<h3 id="109-in-a-compiled-program-a-number-in-the-object-and-a-switch">10.9 In a compiled program: a number in the object, and a <code>switch</code></h3>
+<pre><code>struct z_Circle {
+    int32_t zeno_class;     /* 1: this is a Circle */
+    double z_radius;
+};
+
+static double z_Shape_area(z_Shape *a0) {
+    switch (a0-&gt;zeno_class) {
+    case 1: return z_Circle_area((z_Circle *)a0);
+    default: return z_Square_area((z_Square *)a0);
+    }
+}</code></pre>
+<p>A class that is some interface carries a small number as its first
+field, which says which class the object is. A call through the
+interface goes to one function per function of the interface, which
+looks at the number and calls the function of that class.</p>
+<p><strong>Why not a table of pointers to functions</strong>, which is how C++, Java
+and Rust do it. Three reasons, and the first is the one that decides.</p>
+<ul>
+<li>Zeno compiles a whole program at once (7.11), so every class that
+  is a <code>Shape</code> is known. A <code>switch</code> over a known set is something the
+  C compiler and LLVM can see through: they can put the class's
+  function inline, and they know every place a call can go. A call
+  through a pointer hides both.</li>
+<li>No pointer to a function sits in memory where a stray write can
+  change where the program jumps. Firmware coding rules (MISRA among
+  them) ask for that, and a tool that works out the deepest the stack
+  can get needs to know every call.</li>
+<li>It costs four bytes in an object, and nothing in an object of a
+  class that is no interface: such a class is exactly what it was.
+  Rust and Go instead make every reference to an interface two words
+  wide, which would change the size of every slot of every list
+  (5.5h).</li>
+</ul>
+<p><strong>What it costs.</strong> Adding a class to an interface compiles the
+<code>switch</code> again, which a whole-program compiler does anyway. And the
+number is in the object, so a class cannot be made an interface
+after the fact from outside its own declaration, which 10.4 already
+rules out.</p>
+<p>The interpreter and the VM needed no change at all: they look a
+method up by its name on the object in front of them, and always
+did.</p>
+<p>To every stage after the parser an interface is a class with no
+fields whose functions have no bodies. That is why the change is
+small: the checker fills in what the functions are from their first
+lines, and the two compilers write the <code>switch</code> where they would
+have compiled a body.</p>
+<h3 id="1010-what-interfaces-leave-out-was-provisional-115">10.10 What interfaces leave out <em>(was provisional: 11.5)</em></h3>
+<p>Each is refused with a message that says so.</p>
+<ul>
+<li><strong>An <code>owned class</code> that is an interface.</strong> In a build with no
+  collector an owned object is freed by its one owner, through code
+  written for its class. Freeing through an interface works (the
+  example does it, and gives every block back), and an ordinary class
+  can be used. What has not been thought through is an owned class
+  whose functions take something out of the object, called through
+  an interface that says nothing about it.</li>
+<li><strong>A function that takes out or replaces what its object owns</strong>
+  cannot stand for one of an interface, for the same reason.</li>
+<li><strong>Type parameters</strong> on an interface or on its functions
+  (<code>interface Stack[T]</code>). Bounds on a generic (<code>T is Ordered</code>, 3.16d)
+  wait for the same thing.</li>
+<li><strong>An interface that is another interface.</strong> A class names both.</li>
+</ul>
+<p>A dict whose values are of an interface was on this list, and is in
+the language since 10.11.</p>
+<h3 id="1011-a-value-of-a-dict-is-anything-a-list-can-hold-except-none">10.11 A value of a dict is anything a list can hold, except <code>none</code></h3>
+<pre><code class="zeno">let readings: dict[str, list[float]] = [:]
+let limits = ["voltage": Limit(11.5, 12.5)]
+let shapes: dict[str, Shape] = ["round": Circle(1.0), "square": Square(2.0)]
+let ranges: dict[str, dict[str, float]] = [:]</code></pre>
+<p>A list, an object, a value of an interface, an enum, another dict, a
+quantity, a function, a sized number. Keys are as they were: a <code>str</code>
+or an <code>int</code> (6.31).</p>
+<p><strong>Why.</strong> The first real programs with a dict wanted the readings of
+each channel under its name, and an object for each name. The way
+round it (the objects in a list, and the dict holding positions) is
+two collections kept in step by hand, which is where mistakes come
+from. And "a list holds anything, a dict holds four types" was a
+rule to remember with no reason a reader could see.</p>
+<p><strong>What is under a key is the thing itself</strong>, as it is in a list.
+<code>readings["voltage"].append(12.0)</code> adds to the list in the dict, and
+<code>limits["voltage"].high = 13.5</code> changes the object in the dict. There
+is no copy that the change could be lost in.</p>
+<p><strong>Why not <code>none</code>.</strong> <code>get(key)</code> gives <code>none</code> for a key that is not
+there (6.35). In a <code>dict[str, int or none]</code> a <code>none</code> from <code>get</code> would
+mean two things, "no such key" and "the key is there and holds
+<code>none</code>", and no program could tell which.</p>
+<pre class="out"><code>error: a value of a dict cannot be `int or none`: `get` gives `none` for a
+key that is not there, and that could not be told from a value that is
+`none`. Make it a `dict[..., int]`, and leave the key out where there is
+no value</code></pre>
+<p>Leaving the key out says the same thing with what is already there.
+Inside a value <code>none</code> is as anywhere: <code>dict[str, list[int or none]]</code>
+is fine.</p>
+<p><strong>Turned down.</strong> Allowing it and saying "use <code>in</code> to tell them apart":
+that is the surprise this language is meant not to have. A third
+answer from <code>get</code> for a missing key: one more thing to check on every
+call, for a dict nobody has asked for.</p>
+<p><strong>In a generic</strong> the key and the value can be type parameters:
+<code>function flip[K, V](d: dict[K, V]) -&gt; dict[V, K]</code>. What <code>K</code> and <code>V</code>
+are is checked for each copy, with the same rules and the same
+messages, and the message says which copy it is in.</p>
+<p><strong>In a compiled program</strong> a value that is not a plain one is a
+pointer in the dict's list of values. How such a value is shown and
+compared depends on its type, so the compiler writes a function for
+each, as it does for a list of them, and hands it to the runtime
+(<code>zeno_dict_str_with</code>, <code>zeno_dict_eq_with</code>).</p>
+<h3 id="1012-for-key-value-in-ages-a-loop-with-two-names">10.12 <code>for key, value in ages</code>: a loop with two names</h3>
+<pre><code class="zeno">for name, age in ages {
+    print(name, age)
+}
+for at, word in words {
+    print(at, word)
+}</code></pre>
+<p>Over a dict the loop is given each key and what is under it. Over a
+list, text or a range it is given the position, counted from 0, and
+what is there.</p>
+<p><strong>One rule for all of them: the second name is what is at the
+first.</strong> In a dict <code>age</code> is <code>ages[name]</code>, and in a list <code>word</code> is
+<code>words[at]</code>. Nothing else has to be remembered, and it is why the
+position comes first: it is the key of a list.</p>
+<p><strong>Why.</strong> <code>for name in ages</code> and then <code>ages[name]</code> on the next line is
+what every loop over a dict did, and it is a lookup the loop has
+already done. For a list the position was a <code>var</code> counted by hand
+beside the loop, or <code>for i in range(len(words))</code> and <code>words[i]</code>: two
+ways, both longer than what they mean.</p>
+<p><strong>Over a range</strong> the first name counts the trips: <code>for trip, n in
+range(10, 0, -4)</code> gives <code>0 10</code>, <code>1 6</code>, <code>2 2</code>. That is the position of
+the number in the list the range would be.</p>
+<p><strong>The pairs are as they were when the loop began</strong>, like the keys of
+the loop with one name (6.38). The body may store into the dict and
+take keys out.</p>
+<p><strong>Each name is the loop's own</strong>, cannot be changed, and is gone after
+the loop, as the one name is. With no collector the value is looked
+at, and the dict is whole again after the loop.</p>
+<p><strong>Turned down.</strong>
+- <code>for (name, age) in ages</code>, or a pair as a value of its own: Zeno has
+  no tuple, and a new kind of value for one loop is more than the
+  loop needs.
+- <code>for name, age in ages.items()</code> and <code>for at, word in
+  enumerate(words)</code>, as in Python: two more names to learn, and each
+  builds a list of pairs that the language has no type for.
+- The item first and the position second over a list: then the two
+  names mean one thing over a dict and the other way round over a
+  list.
+- Three names, or two that are the same, are refused with a message
+  that says what two names are for.</p>
+<h3 id="1013-a-dict-that-is-written-out-is-a-dict-of-what-the-place-wants">10.13 A dict that is written out is a dict of what the place wants</h3>
+<pre><code class="zeno">let shapes: dict[str, Shape] = ["round": Circle(1.0), "square": Square(2.0)]
+let bytes: dict[str, u8] = ["start": 200, "stop": 7]</code></pre>
+<p>The same rule as for a list (10.7): the place says what the values
+are, and each written value is checked against that. A dict that is
+made already stays what it is, so a <code>dict[str, Circle]</code> is not a
+<code>dict[str, Shape]</code>, for the reason a list of circles is not a list
+of shapes: a <code>Square</code> could be stored into it through the other name.</p>
+<p>With no type to go by, all the values are one type, and a mix says
+so. A message for a number names the fix:</p>
+<pre class="out"><code>error: the values of this dict are float here, but this one is int.
+Write the number with a decimal point, as in `1.0`</code></pre>
+<h3 id="1014-with-no-collector-a-dict-holds-plain-values-was-provisional-115">10.14 With no collector a dict holds plain values <em>(was provisional: 11.5)</em></h3>
+<pre class="out"><code>error: with no collector a value of a dict is an int, a float, a bool or
+a str for now, and this is list[int]. Keep those in a list, and the
+position of each in the dict</code></pre>
+<p>In a build with no collector a value of a dict is an <code>int</code>, a
+<code>float</code>, a <code>bool</code>, a <code>str</code>, a sized number or a quantity: the values
+that are copied when they are stored. Lists, objects and the rest
+need the collector.</p>
+<p><strong>Why.</strong> With no collector everything has one owner (5.15). A dict of
+lists would own its lists, and each way into the dict needs a rule:
+<code>d[key]</code> would lend, <code>d[key] = value</code> would free the old value,
+<code>pop</code> would hand its value over, <code>clear</code> and the end of the dict
+would free every one, <code>values()</code> could not give a second list of
+them, and <code>get(key, instead)</code> would have to say who owns <code>instead</code>.
+Those are the rules of a list of owned items (5.15e) written out again
+for a second collection, and so far no program for a board has needed
+them: such programs keep a few objects in a list or in fields, and a
+dict for looking a number or a name up.</p>
+<p><strong>Meanwhile.</strong> The objects go in a list, and the dict holds the
+position of each: <code>channels[index["voltage"]]</code>.</p>
+<p><strong>When this changes.</strong> When a program that has to run with no
+collector needs it. The rules above are the plan.</p>
+<h3 id="1015-print-makes-its-texts-in-the-order-they-are-written">10.15 <code>print</code> makes its texts in the order they are written</h3>
+<p>Not a rule of the language, but a repair that this stage found. The C
+for <code>print(table, x)</code> made the text of each value inside the call of
+<code>zeno_print</code>, and C does not say in which order the arguments of a
+call are worked out. Making the text of a list, a dict or an object
+takes room for its pieces while it is made. So how much of the text
+room was in use at most depended on the C compiler, and the report of
+a build with no collector differed by a few bytes between the C and
+the LLVM backend, which 5.11t says must not happen.</p>
+<p>Where a <code>print</code> has two or more values with work to do, and one of
+them is a list, a dict, an object, a call or text that is made there,
+the work is now done on lines of its own, in the order the LLVM
+backend does it: every value first, and then the text of each, as
+written. Numbers alone stay inside the call, since their text takes
+no room while it is made. What is printed never differed, and does
+not change.</p>
+<h3 id="1016-a-test-is-test-what-it-checks-at-the-top-of-a-file">10.16 A test is <code>test "what it checks" { ... }</code>, at the top of a file</h3>
+<pre><code class="zeno">test "a full ring keeps what it has" {
+    let queue = ring(2)
+    assert queue.put(1)
+    assert queue.put(2)
+    assert not queue.put(3)
+}</code></pre>
+<p>A block with a name. The name is plain text in quotes, so it can say
+what is checked in ordinary words, and it is what a failure is
+reported under. Two tests of one file cannot have the same name.</p>
+<p><strong>Where.</strong> At the top of a file, and in any file. A test that stands
+in the file it tests sees what is private to that file (10.1), which
+is where the things worth testing usually are. A file of tests alone
+(<code>ring_test.zeno</code>, which imports <code>ring</code>) is the same thing with
+nothing else in it.</p>
+<p><strong>What a test is to the rest.</strong> A block of its own: what it declares
+is gone when it ends. An error that leaves it fails that test, so a
+test needs no <code>try</code> around what should work. It is checked with the
+program, by <code>zeno check</code> and <code>zeno run</code>, so a test cannot go stale
+unseen. It is run only by <code>zeno test</code>.</p>
+<p><strong><code>test</code> is not a reserved word.</strong> <code>test "</code> at the start of a
+statement can be nothing else, since a name followed by text means
+nothing in Zeno. Everywhere else <code>test</code> is a name, and programs use
+it as one: <code>examples/generics.zeno</code> has a parameter called <code>test</code>.
+<code>owned</code>, <code>take</code> and <code>strict</code> are reserved (5.19c) because each stands
+where a name could, and here no name could.</p>
+<p><strong>Turned down.</strong>
+- Functions whose names begin with <code>test_</code>, as in Python and Go: a
+  name that changes what a function is for is a rule nobody can see
+  in the program, and names with spaces say more.
+- A mark above a function, <code>@test</code>: Zeno has no marks, and one kind
+  of them for one use is a new piece of syntax to learn.
+- Tests only in files of their own: then nothing private could be
+  tested, or <code>private</code> would need an exception for test files.
+- Reserving <code>test</code>: it takes a common name away and settles nothing.</p>
+<h3 id="1017-assert-says-what-must-be-so-and-a-failure-shows-both-sides">10.17 <code>assert</code> says what must be so, and a failure shows both sides</h3>
+<pre><code>FAILED: a push is counted
+error: this is false. The left of `==` is 1, and the right is 2
+  --&gt; ring.zeno:33:12
+   |
+33 |     assert length(r) == 2
+   |            ^</code></pre>
+<p><code>assert</code> and a condition. If the condition is a comparison (<code>==</code>,
+<code>!=</code>, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>in</code>, <code>not in</code>, <code>is</code>, <code>is not</code>), a
+failure says what was on each side, shown as <code>print</code> would show it
+inside a list, so that text has its quotes.</p>
+<p><strong>Why one statement.</strong> Other languages grow a family: <code>assert_eq</code>,
+<code>assert_ne</code>, <code>assertTrue</code>, <code>assertIn</code>. Each exists so that a failure
+can show the values. The interpreter has the comparison in front of
+it, so it can show them for the plain <code>assert</code>, and there is one
+thing to learn.</p>
+<p><strong>A failed <code>assert</code> ends its test, and nothing catches it.</strong> It is
+not an error of the program, so <code>except Error</code> does not see it. A
+test that expects an error can then be written without care for
+what its own asserts raise.</p>
+<p><strong>Only in a test.</strong> In the program itself, <code>if</code> and <code>raise</code> say what
+is wrong and to whom, and can be caught. An <code>assert</code> that vanishes
+from a build, or that stops a board, would be a second way to report
+a mistake with rules of its own. The word is reserved, so that
+<code>assert (a or b)</code> is never read as a call.</p>
+<p><strong>Turned down.</strong> A message after the condition (<code>assert x &gt; 0,
+"..."</code>): the test has a name and the failure shows the line and the
+values. It can be added without changing anything here.</p>
+<h3 id="1018-assert-raises-valueerror-the-block-must-raise-that">10.18 <code>assert raises ValueError { ... }</code>: the block must raise that</h3>
+<pre><code class="zeno">test "a ring of no size is refused" {
+    assert raises ValueError {
+        ring(0)
+    }
+}</code></pre>
+<p>The test goes on if the block raises an error of that kind, or of a
+kind that is one (<code>Error</code> takes any). It fails if the block raises
+nothing, or raises something else, and says which.</p>
+<p><strong>Why a form of its own.</strong> Fault paths are half of what firmware has
+to get right, so tests for them should be the easy ones to write.
+Without this it is <code>try</code>, the call, an <code>assert false</code> that says
+nothing when it fails, and an <code>except</code>. <code>raises</code> is the word a
+function's first line already uses for the same thing.</p>
+<h3 id="1019-zeno-test-runs-a-file-and-then-the-tests-written-in-it">10.19 <code>zeno test</code> runs a file and then the tests written in it</h3>
+<pre><code>$ zeno test examples/ring
+examples/ring/ring.zeno
+  ok      a new ring is empty
+  ok      bytes come out in the order they went in
+  ok      a full ring keeps what it has
+  ok      the ring goes round
+  ok      a ring of no size is refused
+
+5 tests: 5 passed, 0 failed.</code></pre>
+<p><code>zeno test ring.zeno</code> runs the file as <code>zeno run</code> would, and then
+each test in it, in the order written. <code>zeno test folder</code> does that
+for every file in the folder and below it that has a test, and <code>zeno
+test</code> alone means the folder it is run in. The command fails (for a
+script or a CI job) if any test failed or any file could not be run.</p>
+<p><strong>Each file is tested as a program of its own.</strong> Its tests start
+from the state the file leaves, and the tests of two files cannot
+disturb each other. A file with no test in it is not run at all, so
+<code>main.zeno</code> does not blink its LED because its folder was tested.</p>
+<p><strong>The tests of an imported file are not run</strong> when the file that
+imports it is tested. They are that file's own, and run when it is
+tested. So a test runs once, however many files import its module.</p>
+<p><strong>Where a file's imports are looked for.</strong> In the folder of its
+program: the nearest folder, from the file's own upward, with a
+<code>zeno.package</code> or a <code>main.zeno</code> in it. That is the rule the language
+server has (9.12), and it is what lets <code>drivers/uart.zeno</code> be tested
+with the <code>import sensors</code> it has in the real program.</p>
+<p><strong>Tests of one file share what the file declares.</strong> A test that
+changes a variable of the file leaves it changed for the next. That
+is what a <code>var</code> at the top of a file is, and a test that needs a
+fresh one makes it inside itself.</p>
+<p><strong>The tests run in <code>zeno run</code>'s engine.</strong> The compiler's own tests
+hold every engine and build to the same output, so a second run of
+a program's tests in the VM or in C would test Zeno and not the
+program.</p>
+<h3 id="1020-a-build-leaves-the-tests-out">10.20 A build leaves the tests out</h3>
+<p><code>zeno build</code>, with any of its options, takes the tests out before
+the program is checked. They are not in the C, the IR or the
+program, so a board pays nothing for them. And they are not held to
+the rules of the build: a test may share a list, or use a dict of
+lists, in a program that is built with no collector. <code>zeno check
+--no-collector</code> checks what that build would build, so it leaves
+them out too. <code>zeno run</code> and plain <code>zeno check</code> check them.</p>
+<p><strong>Why.</strong> A test is run on the computer where the program is written.
+Asking it to follow the rules of a board would make tests harder to
+write than the code they test, and fewer would be written.</p>
+<h3 id="1021-what-tests-leave-out-was-provisional-115">10.21 What tests leave out <em>(was provisional: 11.5)</em></h3>
+<ul>
+<li>A message on <code>assert</code> (10.17).</li>
+<li><code>assert</code> in a function outside a test. A helper gives back a
+  <code>bool</code> and the test asserts it.</li>
+<li>Lines to run before and after each test. A function that builds
+  what the tests need does that today.</li>
+<li>Choosing tests by name on the command line, and running them side
+  by side.</li>
+<li>Running the tests of a compiled program, on a board or in the VM.</li>
+</ul>
+<h3 id="1022-zeno-new-blinker-makes-a-program-that-runs-and-has-a-test">10.22 <code>zeno new blinker</code> makes a program that runs and has a test</h3>
+<pre><code>zeno new blinker</code></pre>
+<p>makes the folder <code>blinker</code>, and three files in it:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zeno.package</code></td>
+<td><code>package blinker</code>, under a comment that shows the two kinds of <code>needs</code> line</td>
+</tr>
+<tr>
+<td><code>main.zeno</code></td>
+<td>imports <code>greeting</code> and prints what <code>greeting.hello("world")</code> gives</td>
+</tr>
+<tr>
+<td><code>greeting.zeno</code></td>
+<td>the function <code>hello</code>, and one test of it</td>
+</tr>
+</tbody>
+</table>
+<p>Then it says what it made, and the two commands to try: <code>zeno run
+blinker/main.zeno</code> and <code>zeno test blinker</code>.</p>
+<p><strong>Why these three.</strong> Whoever runs <code>zeno new</code> wants to see something
+run, and then wants to know where things go. A lone <code>main.zeno</code> with
+a <code>print</code> in it answers the first and not the second, and nobody
+needs a command to write one line. The three files are the three
+things a program of more than one file is made of: the file it starts
+in (7.2), a module that is imported (7.1), and the project file
+(8.1). The test is there so that <code>zeno test</code> works in the first
+minute, and so that the first test a person writes has one to copy
+that stands where tests stand (10.16).</p>
+<p><strong>Why it is so small.</strong> What is written is read once and then
+changed. Every line more is a line to delete. Each file starts with a
+comment that says what the file is, and that is all the teaching
+there is room for.</p>
+<p><strong>It is checked.</strong> The compiler's own tests make a program and a
+package with <code>zeno new</code>, check them, run them, run their tests and
+compare each file with what <code>zeno format</code> would write. What <code>zeno
+new</code> writes cannot fall behind the language without a test failing.</p>
+<p><strong>Turned down.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Idea</th>
+<th>Why not</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Templates: <code>zeno new --template firmware</code></td>
+<td>Several starting points means choosing one before knowing the language, and each one is a program that has to be kept right. A program for a board differs in what <code>main.zeno</code> says, and <a href="/docs/board/"><code>board.md</code></a> says it</td>
+</tr>
+<tr>
+<td>Questions at the prompt (name? licence? author?), as <code>npm init</code> asks</td>
+<td>The command would have two ways to be run, and a script could not run it. The name is the one thing needed, and it is on the command line</td>
+</tr>
+<tr>
+<td><code>git init</code> and a <code>.gitignore</code>, as Cargo does</td>
+<td>Whether a program is in git, and in which repository, is not the compiler's to decide. A folder made inside a repository would get a second one</td>
+</tr>
+<tr>
+<td>A <code>README.md</code>, a licence, a <code>src/</code> folder</td>
+<td>Not Zeno's files. The folder of a program is the folder its <code>main.zeno</code> is in (7.2), so a <code>src/</code> would be a second answer to "where does the program start"</td>
+</tr>
+<tr>
+<td><code>zeno init</code>, into the folder you are in</td>
+<td>See 10.23</td>
+</tr>
+<tr>
+<td><code>zeno add units ...</code></td>
+<td>8.9: a <code>needs</code> line is one line, and the new <code>zeno.package</code> shows it</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1023-the-name-is-a-zeno-name-and-a-folder-that-is-there-is-left-alone">10.23 The name is a Zeno name, and a folder that is there is left alone</h3>
+<p>The last part of the path is the name: of the folder, of the program
+on the <code>package</code> line, and, for a package, of the module <code>import</code>
+reads. So it has to be a name of the language. These are refused:</p>
+<table>
+<thead>
+<tr>
+<th><code>zeno new ...</code></th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>my-app</code>, <code>2fast</code></td>
+<td>not a name: "A name is letters, digits and <code>_</code>, and does not start with a digit ... Try <code>my_app</code>"</td>
+</tr>
+<tr>
+<td><code>while</code></td>
+<td>a word of the language</td>
+</tr>
+<tr>
+<td><code>math</code></td>
+<td>a module that comes with Zeno, which an <code>import math</code> already means</td>
+</tr>
+<tr>
+<td>a path where something already is</td>
+<td>"<code>zeno new</code> makes a new folder, and writes nothing into one that is there"</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why refuse and not repair.</strong> Cargo takes <code>my-app</code>, keeps it as the
+package's name and calls the crate <code>my_app</code>, so one thing has two
+names from its first day. Here the folder, the <code>package</code> line and the
+<code>import</code> say the same word. The message gives the word to use, so the
+repair is one more try.</p>
+<p><strong>Why nothing is written into a folder that is there.</strong> A command
+that makes files must never be able to replace one. If the folder is
+there, either it has work in it or the name was a slip, and in
+neither case is writing into it what was wanted. Checking each file
+instead ("write <code>main.zeno</code> unless there is one") leaves a folder
+that is half what was there and half new, which nobody asked for.</p>
+<p><strong>Turned down.</strong> <code>--force</code>. <code>zeno init</code> for a folder that is there:
+the files are three, and in a folder with work in it the right ones
+to add depend on the work.</p>
+<h3 id="1024-zeno-new-package-filters-makes-a-package">10.24 <code>zeno new --package filters</code> makes a package</h3>
+<pre><code>zeno new --package filters</code></pre>
+<p>makes <code>filters/zeno.package</code> and <code>filters/filters.zeno</code>: the module
+with the package's own name, which is the file <code>import filters</code> reads
+(8.5), with the same <code>hello</code> and the same test. There is no
+<code>main.zeno</code>, because a package is not run. The comment in its
+<code>zeno.package</code> shows the line a program writes to need it.</p>
+<p><strong>Why an option, and why this word.</strong> A package and a program differ
+in which files they start with, and in nothing else, so one command
+with one option says it. The option is the word the language already
+uses for the thing: <code>package</code> is the first line of the file that
+makes a folder one.</p>
+<p><strong>Turned down.</strong> <code>zeno new package filters</code>: then <code>zeno new package</code>
+would have two readings, a program called <code>package</code> or a package
+with no name. <code>--lib</code>, Cargo's word: Zeno has no libraries, it has
+packages. Writing both a <code>main.zeno</code> and the named module into every
+new folder: a program would start with a file it does not use.</p>
+<h3 id="1025-x-y-is-x-x-y-what-is-there-is-read-first">10.25 <code>x += y</code> is <code>x = x + y</code>: what is there is read first</h3>
+<pre><code class="zeno">var count = 1
+
+function bump() -&gt; int {
+    count = 10
+    return 1
+}
+
+count += bump()     # 2</code></pre>
+<p><code>count</code> is read, then <code>bump()</code> runs, then the two are added and the
+sum is stored. It is the order of <code>count = count + bump()</code>, which is
+left to right like every other expression.</p>
+<p><strong>What was wrong.</strong> This program printed 2 when it was built through
+C, and 11 in the interpreter, in the VM and when it was built through
+LLVM: those three worked the value out first and read <code>count</code>
+afterwards. No test had a value that changes the place it is added
+to, so the four engines had never been asked. It was found while
+<code>+=</code> on a sized number was being made (10.27), and it was mended
+first.</p>
+<p><strong>Why this order.</strong> <code>x += y</code> is explained everywhere in Zeno as "<code>x =
+x + y</code>" (5.8k), and now it is that, instruction for instruction: the
+VM's code for the two statements is the same four instructions. It
+is also the answer of Python, Java, JavaScript and C#. The other
+order has nothing to explain it by.</p>
+<p><strong>Turned down.</strong> Leaving it to each engine, as C leaves it to each
+compiler: a program must do the same thing however it is run.</p>
+<h3 id="1026-the-place-of-a-has-no-call-in-it">10.26 The place of a <code>+=</code> has no call in it</h3>
+<pre><code class="zeno">xs[next()] += 5</code></pre>
+<pre class="out"><code>error: `+=` reads this place and then writes it, so a call in the
+       place would run twice. Keep what the call gives in a `let`
+       first, and use that name here</code></pre>
+<pre><code class="zeno">let position = next()
+xs[position] += 5</code></pre>
+<p><strong>What was wrong.</strong> <code>x += y</code> is <code>x = x + y</code>, so <code>xs[next()] += 5</code>
+was <code>xs[next()] = xs[next()] + 5</code>: two calls. With a <code>next</code> that
+counts, it read item 1 and wrote item 2. Every engine did this
+alike, so no test caught it, and nobody who writes that line means
+it.</p>
+<p><strong>Why refuse.</strong> There are two things the line could mean, one call or
+two, and the one that follows from the rule (two) is the one nobody
+wants. A line with two readings is refused, and the message gives the
+line that has one. The <code>let</code> is what a compiler would have to add in
+secret to call once. Here it is in the program, where the reader can
+see which value was kept.</p>
+<p><strong>It can be lifted.</strong> If working the place out once turns out to be
+wanted, allowing it later changes no program that is accepted today.
+Keeping the two calls would have been the choice that cannot be
+undone.</p>
+<p><strong>Cost.</strong> <code>xs[len(xs) - 1] += 1</code> needs a <code>let</code> too, though <code>len</code>
+changes nothing. The rule is "no call", with no list of calls that
+are harmless to remember, and a function of the program could never
+be on such a list.</p>
+<p><strong>Turned down.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Idea</th>
+<th>Why not</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Work the place out once, with a hidden variable (C, Python, Rust)</td>
+<td>Right, and four engines each have to do it and be kept alike. The <code>let</code> costs one line and is visible</td>
+</tr>
+<tr>
+<td>Allow calls that change nothing, such as <code>len</code></td>
+<td>A list to learn, and the checker cannot know it of a function the program wrote</td>
+</tr>
+<tr>
+<td>Leave it: the rule says two calls</td>
+<td>The rule is for reading programs, and this reading is a trap</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1027-count-1-on-a-sized-number-is-count-u8count-1">10.27 <code>count += 1</code> on a sized number is <code>count = u8(count + 1)</code></h3>
+<pre><code class="zeno">var count: u8 = 250
+count += 5      # 255
+count += 1      # OverflowError: 256 does not fit in a u8 (0 to 255)</code></pre>
+<p>The sum is an int, as 2.8a says every sum is. Then it is stored
+through the checked conversion (2.8b): it goes in if it fits, and it
+is an <code>OverflowError</code> if it does not. This is so for every operator
+with an <code>=</code> form, and for every place a sized number is kept: a
+variable, a field, an item of a <code>list[u8]</code>.</p>
+<pre><code class="zeno">flags |= 0x80                       # always fits
+left -= 3                           # an error below 0, for a u8
+count = u8.wrap(count + 1)          # going round is still said in a word</code></pre>
+<p><strong>Why.</strong> 2.8a made the place a number is stored the one place it may
+not fit, "where the program has to say what it wants". <code>count += 1</code>
+names the place and what goes into it. The only thing it leaves out
+is whether to check or to cut, and 2.8b already answers that: the
+short spelling is the safe one, and cutting is a word that a reviewer
+can search for. So the shortest spelling of all is the check. A
+counter that passes 255 without anybody deciding it should is a bug
+in most programs, and the ones that mean it say <code>wrap</code>.</p>
+<p>Before this, the most common thing done to a counter needed the
+longest line, <code>count = u8(count + 1)</code>, and the first programs with a
+<code>u8</code> in them ran into it.</p>
+<p><strong><code>/=</code> is still refused</strong> on a sized number, as on an <code>int</code>: <code>/</code>
+gives a float. <code>//=</code> is the one that divides whole numbers (10.28).</p>
+<p><strong>How it is built.</strong> The checker is the only stage that knows <code>count</code>
+is a <code>u8</code>. It notes each such statement, and <code>checker::checked</code>
+rewrites it into the long form before anything runs or compiles it
+(<code>Program::with_fits</code>). The interpreter, the VM and both compilers
+only ever see <code>count = u8(count + 1)</code>, which they could all do
+already, so there is nothing new that four engines must do alike.
+<code>zeno parse</code> and <code>zeno format</code> show the program as it is written.</p>
+<p><strong>Turned down.</strong></p>
+<table>
+<thead>
+<tr>
+<th>Idea</th>
+<th>Why not</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>+=</code> cuts at the size, as in C</td>
+<td><code>250 + 10</code> is quietly <code>4</code>. That is the bug 2.2 and 2.8a exist to stop</td>
+</tr>
+<tr>
+<td>Keep refusing it</td>
+<td>It refused the line everybody writes, to protect a choice that 2.8b had already made</td>
+</tr>
+<tr>
+<td>A second operator for cutting, such as Zig's <code>+%=</code></td>
+<td>New punctuation where a word, <code>wrap</code>, is there already</td>
+</tr>
+<tr>
+<td>Teach each engine the check</td>
+<td>Four pieces of code to keep alike, for what one rewrite says once</td>
+</tr>
+</tbody>
+</table>
+<h3 id="1028-every-operator-on-two-numbers-has-an-form">10.28 Every operator on two numbers has an <code>=</code> form</h3>
+<p><code>+=</code>, <code>-=</code>, <code>*=</code>, <code>/=</code>, <code>//=</code>, <code>%=</code>, <code>**=</code>, <code>&amp;=</code>, <code>|=</code>, <code>^=</code>, <code>&lt;&lt;=</code>,
+<code>&gt;&gt;=</code>. Each is <code>x = x op y</code>.</p>
+<p><code>//=</code>, <code>%=</code> and <code>**=</code> were missing. <code>count //= 2</code> was "expected an
+expression, found <code>=</code>", and <code>/=</code> on a whole number can never be
+right, because <code>/</code> gives a float. Halving an <code>int</code> in place had no
+short spelling at all.</p>
+<p><strong>Why.</strong> The rule is now one sentence with no exceptions to remember.
+Whoever knows <code>//</code> and <code>+=</code> will write <code>//=</code> without looking it up,
+and it should work.</p>
+<p><strong>Left out.</strong> <code>and=</code> and <code>or=</code>: they are words, they work on <code>bool</code>,
+and nobody expects them. <code>=</code> forms of the comparisons mean nothing.</p>
+<h3 id="1029-a-format-on-a-quantity-is-the-numbers-and-the-unit-stays">10.29 A format on a quantity is the number's, and the unit stays</h3>
+<pre><code class="zeno">let angle = 30.456 deg
+let supply = 3.3 V
+print(f"{angle:.1f}")        # 30.5 deg
+print(f"[{supply:8.2f}]")    # [  3.30 V]</code></pre>
+<p>A quantity takes the formats a float takes. The decimals are the
+number's. The unit follows it after a space, as it does whenever a
+quantity is shown. The width counts both, and a quantity lines up on
+the right, as numbers do.</p>
+<p>Before, <code>f"{angle:.1f}"</code> was refused ("<code>.1f</code> needs a number"), and
+the way round it was <code>f"{angle / 1 deg:.1f} deg"</code>: the unit taken
+off by hand and written back as text, where nothing checks that the
+two agree.</p>
+<p><strong>Why the unit stays.</strong> A quantity that prints as <code>30.5</code> has lost
+the one thing that made it a quantity, at the moment it reaches a
+person. Whoever wants the bare number divides by one of the unit
+(<code>angle / 1 deg</code>), which says which unit the number is in.</p>
+<p><strong>Why the width counts the unit.</strong> "At least this many characters"
+should be true of what is printed. With it, a column of quantities
+ends at the same place whatever their units are, when the width is
+enough for the longest.</p>
+<p><strong>Changed with it.</strong> <code>f"{wait:10}"</code>, a width and nothing else, was
+already allowed, and laid the quantity out as text, on the left. It
+is on the right now, like <code>f"{n:10}"</code> for a number. <code>x</code>, <code>b</code> and <code>d</code>
+are still refused: a quantity is not a whole number.</p>
+<p><strong>Turned down.</strong> Dropping the unit when there is a format. A second
+format for the unit (<code>{angle:.1f:unit}</code>): there is nothing to choose
+about a unit except whether it is there, and it always is.</p>
+<h2 id="11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</h2>
+<p>A decision was marked provisional when it was made on less than it
+deserved: before a later stage existed, before a real program had
+tried it, or to keep a stage small. The last thing on the list for
+version 0.1 was to read each one again and say what it is now. There
+were about eighty. This chapter has every one of them.</p>
+<p>Each has one of three answers.</p>
+<ul>
+<li><strong>Settled.</strong> It is the rule, and it is no longer waiting for
+  anything. The reason says what was learned since.</li>
+<li><strong>A limit of 0.1.</strong> The thing that was left out stays out of this
+  version. It is a known edge of the language and not an open
+  question about it: the program is refused with a message that says
+  so, or the page that describes the feature says what to write
+  instead. The reason names what would bring it in.</li>
+<li><strong>Changed.</strong> It is not as it was. The row says which decision
+  changed it.</li>
+</ul>
+<p>A mark in the chapters above now reads "was provisional", and points
+here. The text around it is left as it was written, because the
+reasons a thing was once uncertain are worth keeping.</p>
+<p><strong>How each was judged.</strong> By the two tests every decision has had
+since 2026-11-14. Is the rule one sentence that a reader can hold,
+with no second reading? And where something is left out, does Zeno
+say so in plain words, with what to write instead? A provisional
+decision that passes both is settled. A thing left out that would
+need a new rule is a limit, and adding it later must not change what
+any program that is accepted today means. Nothing on the lists below
+fails that last test, which is why none of them had to be decided in
+a hurry.</p>
+<p><strong>One limit is silent</strong>, and it is stated here because the rest are
+not. In a program that is not strict, a value whose type is not
+known until the program runs can be put where a <code>u8</code> is wanted, and
+nothing checks it, just as it can be put where an <code>int</code> is wanted.
+<code>--strict</code>, a file that begins with <code>strict</code>, and every build check
+it. (5.13, <a href="/docs/sized-ints/"><code>sized-ints.md</code></a>.)</p>
+<h3 id="111-the-language-chapters-0-to-3">11.1 The language: chapters 0 to 3</h3>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>What was left open</th>
+<th>Now</th>
+<th>The reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0.1, 3.7</td>
+<td>Classes have no inheritance</td>
+<td>Settled: there is none</td>
+<td>Interfaces (10.4) give what inheritance is mostly used for, one function that serves many classes. What they leave out is a class whose fields and behaviour are written in another class, and that is the part that makes a class hard to read. A class in Zeno is read in one place</td>
+</tr>
+<tr>
+<td>1.13</td>
+<td>General unions, <code>int or str</code></td>
+<td>A limit of 0.1</td>
+<td><code>T or none</code> and an enum whose cases carry values cover the uses, and each has one way to be taken apart (<code>is none</code>, <code>match</code>). A union would be a second way to write an enum</td>
+</tr>
+<tr>
+<td>1.15</td>
+<td>Derived units (<code>V * A</code> is <code>W</code>), and units a program declares</td>
+<td>A limit of 0.1</td>
+<td>Two quantities cannot be multiplied, and the message says so. Doing it right is an algebra of dimensions, which is a feature of its own size</td>
+</tr>
+<tr>
+<td>2.8c</td>
+<td>A <code>u8</code> could go where a <code>u16</code> is wanted without <code>u16( )</code></td>
+<td>Settled: it is written</td>
+<td>"A sized number is an <code>int</code> for free, and everything else is written" is one rule. The loosened rule is a table of thirty pairs (does a <code>u8</code> fit an <code>i8</code>? an <code>i8</code> a <code>u16</code>?) that every reader would have to know</td>
+</tr>
+<tr>
+<td>2.8d</td>
+<td>No <code>u64</code></td>
+<td>A limit of 0.1</td>
+<td>Half its values do not fit in an <code>int</code>, so "the answer of an operator is an <code>int</code>" (2.8a) would stop being true. It needs its own answer to what <code>u64 + u64</code> is</td>
+</tr>
+<tr>
+<td>3.6a</td>
+<td>A shorter way to write a one-line function</td>
+<td>Settled: there is one way to write a function</td>
+<td>Comprehensions and a named function handed to <code>map</code> cover the short cases in every example. A second syntax for the same thing is what principle 4 is against</td>
+</tr>
+<tr>
+<td>3.7</td>
+<td>No constructor written by the program</td>
+<td>Settled: a function builds one</td>
+<td>The fields, in order, are the constructor. A class that must check what it is given keeps a field <code>private</code> and offers a function with a name (<code>ring.ring(4)</code>, 10.3), which says what it does better than a constructor could</td>
+</tr>
+<tr>
+<td>3.9</td>
+<td><code>let</code> fixes the name, not what it names</td>
+<td>Settled</td>
+<td>It is one sentence: the name always means the same thing. It is what <code>final</code> means in Java and <code>const</code> in JavaScript, so it is what most readers expect. A list that nobody may change would be a second kind of list, and no program has asked for one</td>
+</tr>
+<tr>
+<td>3.10</td>
+<td>Lists and objects are shared</td>
+<td>Changed, long ago: kept, with a collector to make it safe (5.7), and with one owner where there is none (5.15)</td>
+<td></td>
+</tr>
+<tr>
+<td>3.10a</td>
+<td>The copy a <code>for</code> loop takes could be skipped</td>
+<td>Settled as it is</td>
+<td>The loop sees the list as it was when it began, always. The copy is given back when the loop ends (5.8j). Skipping it where the body cannot touch the list would change no program, so it is not a question about the language</td>
+</tr>
+<tr>
+<td>3.12</td>
+<td>A shared variable that was narrowed is looked at again as it is used</td>
+<td>Settled</td>
+<td>The other rule, Kotlin's, refuses to narrow such a variable at all, which makes <code>if port is not none</code> useless for every <code>var</code> at the top of a file. The second look is one comparison, made only for variables that something else can reach</td>
+</tr>
+<tr>
+<td>3.14</td>
+<td><code>upper</code>, <code>lower</code>, <code>strip</code> and <code>split</code> know plain letters and blanks</td>
+<td>Settled for the language</td>
+<td>The full rules need tables of tens of kilobytes, and a method must do the same on a board as on a computer. They belong in a module for programs with the room</td>
+</tr>
+<tr>
+<td>3.15b</td>
+<td>One LED and numbered pins, and no inputs</td>
+<td>A limit of 0.1, and the one item taken off the list for it</td>
+<td>Reading a pin, an ADC or a UART is designed against a real board. A design made without one would be a guess, and the simulated board would agree with whatever was guessed</td>
+</tr>
+<tr>
+<td>3.16d</td>
+<td>A generic has no bounds: its body is checked for each type it is used with</td>
+<td>A limit of 0.1</td>
+<td>The error is in the generic, with a note that names the copy and the call. Bounds (<code>T is Ordered</code>) wait for interfaces that have type parameters (10.10), since a bound is an interface</td>
+</tr>
+<tr>
+<td>3.16e</td>
+<td>Generic enums, a method with type parameters of its own, a generic kept as a value, an owned value as a type argument</td>
+<td>A limit of 0.1</td>
+<td>Each is refused with a message that says so</td>
+</tr>
+</tbody>
+</table>
+<h3 id="112-how-it-is-built-chapter-5">11.2 How it is built: chapter 5</h3>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>What was left open</th>
+<th>Now</th>
+<th>The reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5.5c</td>
+<td>A value of unknown type in a compiled program</td>
+<td>Settled: a build is strict</td>
+<td>Types that are not written are worked out, so most programs with none written build as they are. One that truly needs a value of any type runs with <code>zeno run</code></td>
+</tr>
+<tr>
+<td>5.5e</td>
+<td>Checked arithmetic uses built-ins of GCC and Clang</td>
+<td>A limit of 0.1</td>
+<td>They cover the toolchains for ARM, RISC-V, AVR and ESP. Another C compiler needs the checks written out, in one place in <code>runtime.c</code></td>
+</tr>
+<tr>
+<td>5.5g</td>
+<td>An object that never leaves its function could live on the stack</td>
+<td>Settled as it is</td>
+<td>It would be an optimisation that changes no program. With no collector the object is freed where its owner ends in any case</td>
+</tr>
+<tr>
+<td>5.5k</td>
+<td>A function value is always a block, even one that keeps no variables</td>
+<td>Settled</td>
+<td>Two function values are equal only when they are the same one, in every engine. The fixed value would save a block and break that for a function written in a loop</td>
+</tr>
+<tr>
+<td>5.5l</td>
+<td>A function that can raise cannot be used as a value in a firmware build</td>
+<td>A limit of 0.1</td>
+<td>The type <code>function(str) -&gt; int</code> does not say whether it raises, and the two sorts are called differently there. The way in is <code>raises</code> in a function type</td>
+</tr>
+<tr>
+<td>5.7</td>
+<td>Three things about the collector</td>
+<td>Changed, twice, and settled once</td>
+<td>A build with no heap at all exists: <code>--no-collector</code> (5.9). It takes its memory from one fixed pool (5.9h). Counting references was not needed: a program that cannot pause is built with no collector, and one that can keeps the collector as it is</td>
+</tr>
+<tr>
+<td>5.8a, 5.19a</td>
+<td>No mark at the call for a value that is taken (<code>send(take p)</code>)</td>
+<td>Settled</td>
+<td>The function's own header says <code>take</code> (5.19b), and a use after it is an error that names the line of the call. One way to write a call was worth more than a second reminder</td>
+</tr>
+<tr>
+<td>5.8c, 5.15b</td>
+<td>Whether a plain parameter takes or looks</td>
+<td>Changed in 5.19a: a plain parameter looks, and <code>take</code> takes</td>
+<td>The count asked for in 5.15b was made in the audit: most parameters only look</td>
+</tr>
+<tr>
+<td>5.8i</td>
+<td>What an owned value cannot do: sit in an <code>or none</code>, an enum case or a function type, be moved out of a field, be replaced through a borrow, be matched, be raised</td>
+<td>A limit of 0.1</td>
+<td>Each is an error that says what to do instead, and allowing any of them later breaks no program</td>
+</tr>
+<tr>
+<td>5.9d</td>
+<td><code>raise e</code>, to pass a caught error on, is refused with no collector</td>
+<td>A limit of 0.1</td>
+<td>The <code>except</code> that caught it frees it. Raise a new error, or lend the caught one to a function</td>
+</tr>
+<tr>
+<td>5.9g, 5.15j, 5.16i, 5.17g</td>
+<td>What a build with no collector refuses</td>
+<td>A limit of 0.1. The list is the one in 5.17g, with 5.16h and 10.14</td>
+<td>Two of them are the design and not a gap: a function that shares a <code>var</code> with the function around it, and keeping a function that only looks. The rest each need a rule for one more kind of owner</td>
+</tr>
+<tr>
+<td>5.9h</td>
+<td>The pool does not join spare blocks back together</td>
+<td>Settled</td>
+<td>Sizes double, so a spare block is used again by the next thing of its size. Joining is three times the code, and no example is short of memory for the lack of it</td>
+</tr>
+<tr>
+<td>5.9j</td>
+<td>The pool's size is one number in the C, and not an option of <code>zeno build</code></td>
+<td>A limit of 0.1</td>
+<td><code>--memory</code> prints the number to change it to. <code>--pool N</code> is an exercise in <a href="/docs/pool/"><code>pool.md</code></a></td>
+</tr>
+<tr>
+<td>5.9k</td>
+<td>Spare blocks are not poisoned in a checking build</td>
+<td>A limit of 0.1</td>
+<td>A block given back twice is caught already. The rest is an exercise in the same page</td>
+</tr>
+<tr>
+<td>5.9l</td>
+<td>With no collector text is kept by copying it, not by counting who holds it</td>
+<td>Settled</td>
+<td>A count would keep text alive by a route no line of the program shows, which is what this build exists to rule out</td>
+</tr>
+<tr>
+<td>5.9o</td>
+<td>Text read from a place a function can change is copied even when nothing is called</td>
+<td>Settled</td>
+<td>"Read from a place, it is copied" is one rule. Whether a copy is made should not depend on what else is on the line</td>
+</tr>
+<tr>
+<td>5.9p</td>
+<td>The copy a <code>for</code> loop takes of a list of text is deep</td>
+<td>Settled</td>
+<td>The body may replace an item while the loop still holds it</td>
+</tr>
+<tr>
+<td>5.9s</td>
+<td>A plain list parameter could not be given a list that was just made</td>
+<td>Changed in 5.15: a list has an owner in this build, and since 5.19a the parameter looks at it for the length of the call</td>
+<td></td>
+</tr>
+<tr>
+<td>5.9w</td>
+<td><code>for ch in text</code> makes a list of the characters</td>
+<td>Settled</td>
+<td>It is a made list like any other, and it is freed when the loop ends. Counting with <code>range(len(text))</code> is there for the program that cannot spare the blocks</td>
+</tr>
+<tr>
+<td>5.10c</td>
+<td>A bytecode instruction is a Rust enum, not bytes</td>
+<td>Settled</td>
+<td>The VM is there to be read and to check the interpreter against. Speed is what the two compilers are for</td>
+</tr>
+<tr>
+<td>5.10g</td>
+<td><code>zeno run</code> uses the interpreter unless told <code>--vm</code></td>
+<td>Settled</td>
+<td>It is the plainest statement of what a program means, it is the engine <code>zeno test</code> uses, and every other engine is tested against it</td>
+</tr>
+<tr>
+<td>5.11d</td>
+<td>The LLVM build's runtime is the C build's, with <code>static</code> taken off</td>
+<td>Settled</td>
+<td>One runtime means one place for a mistake to be, and the test that the two builds use memory alike depends on it</td>
+</tr>
+<tr>
+<td>5.11i</td>
+<td>A list item crosses into the runtime as an <code>i64</code></td>
+<td>Settled</td>
+<td>One list type in the runtime (5.5h) is what both builds share</td>
+</tr>
+<tr>
+<td>5.11l</td>
+<td><code>_setjmp</code> is the name on Linux and macOS</td>
+<td>A limit of 0.1</td>
+<td>Those are the systems Zeno is built and tested on. A firmware build has no <code>setjmp</code> at all</td>
+</tr>
+<tr>
+<td>5.11o</td>
+<td>In <code>--llvm --firmware</code> an error comes back through a pointer and not as a pair</td>
+<td>Settled until a board says otherwise</td>
+<td>A pointer is the same on every processor, and LLVM removes it for small functions</td>
+</tr>
+<tr>
+<td>5.11p</td>
+<td>The drop of a list that is certainly empty stays a call</td>
+<td>Settled as it is</td>
+<td>It is a call that does nothing, and removing it changes no program. It is an exercise in <a href="/docs/llvm/"><code>llvm.md</code></a></td>
+</tr>
+<tr>
+<td>5.13a</td>
+<td>Only a field of an object is stored small. A <code>list[u8]</code> takes eight bytes an item</td>
+<td>A limit of 0.1</td>
+<td>The runtime has one list type. A packed list of bytes is the first thing a real driver will ask for, and is a stage of its own</td>
+</tr>
+<tr>
+<td>5.14c</td>
+<td>Two copies of a generic that would get the same C name are refused</td>
+<td>Settled</td>
+<td>Names that could never clash would be unreadable, and reading the C is half the point of that build</td>
+</tr>
+<tr>
+<td>5.15e</td>
+<td>A method cannot take out what its object owns while the object is lent</td>
+<td>A limit of 0.1</td>
+<td>The four rules of 5.8d stay four. The smallest growth is written in that section</td>
+</tr>
+<tr>
+<td>5.16h</td>
+<td><code>list[int or none]</code> with no collector</td>
+<td>A limit of 0.1</td>
+<td>A number that may be <code>none</code> sits in a block of its own inside a list, and those blocks have no owner yet</td>
+</tr>
+<tr>
+<td>5.17d</td>
+<td>A function that uses another function value which has an owner cannot be returned</td>
+<td>A limit of 0.1</td>
+<td>"compose" needs a way to take a value into a function</td>
+</tr>
+<tr>
+<td>5.18d</td>
+<td><code>allocate</code> that finds no memory stops the program</td>
+<td>Settled for 0.1</td>
+<td>Giving back <code>none</code> would put a check on every <code>allocate</code> for a case most programs cannot recover from. Firmware that must survive it will want <code>pointer[u8] or none</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="113-the-standard-library-chapter-6">11.3 The standard library: chapter 6</h3>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>What was left open</th>
+<th>Now</th>
+<th>The reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6.6</td>
+<td><code>sort()</code> by a function the program gives</td>
+<td>A limit of 0.1</td>
+<td>Numbers and text have one order that nobody has to be told. Tasks could be ordered by name or by priority, and a <code>sort()</code> that picked one would be a guess</td>
+</tr>
+<tr>
+<td>6.8</td>
+<td><code>char(0)</code> is refused</td>
+<td>Settled</td>
+<td>In a compiled program text ends at the first zero byte. A byte that may be zero belongs in a <code>list[u8]</code></td>
+</tr>
+<tr>
+<td>6.10</td>
+<td>The methods of text and lists are written in Rust and C, not in Zeno</td>
+<td>Settled for 0.1</td>
+<td>Each is written once for the interpreter and once for the runtime, and the tests hold the two together. A library in Zeno is the natural next thing after 0.1, and 7.2 waits for it</td>
+</tr>
+<tr>
+<td>6.12, 6.20</td>
+<td>A file is read whole. One too large to hold cannot be read in pieces</td>
+<td>A limit of 0.1</td>
+<td>Reading in pieces needs an open file, which is a value with an owner and a moment at which it closes</td>
+</tr>
+<tr>
+<td>6.14</td>
+<td>One kind of error for a file, <code>FileError</code></td>
+<td>Settled</td>
+<td>The message says which it was, for a person. A program that must tell them apart asks first, with <code>files.exists</code></td>
+</tr>
+<tr>
+<td>6.16</td>
+<td>A file holds text. There is no <code>files.read_bytes</code></td>
+<td>A limit of 0.1</td>
+<td>It gives a <code>list[u8]</code>, and is worth having when that list is packed (5.13a)</td>
+</tr>
+<tr>
+<td>6.19</td>
+<td>No <code>program.exit(code)</code>, and no environment variables</td>
+<td>A limit of 0.1</td>
+<td>A program ends by reaching its end, or with an error nobody caught, which ends it with status 1</td>
+</tr>
+<tr>
+<td>6.21</td>
+<td><code>hypot</code>, the hyperbolic functions, <code>gcd</code>, <code>clamp</code>, and random numbers</td>
+<td>A limit of 0.1</td>
+<td>Each is a few lines of Zeno today. Random numbers want a module of their own, and on a board a source of them</td>
+</tr>
+<tr>
+<td>6.24</td>
+<td><code>asin</code>, <code>acos</code>, <code>atan</code> and <code>atan2</code> give a quantity in <code>rad</code></td>
+<td>Settled</td>
+<td>A float that is secretly an angle is what units are there to stop. Since 10.29 it prints with any number of decimals, which was the one thing that made it awkward</td>
+</tr>
+<tr>
+<td>6.24</td>
+<td><code>atan2</code> takes plain numbers, not two lengths</td>
+<td>A limit of 0.1</td>
+<td>Divide each by one of its unit first</td>
+</tr>
+<tr>
+<td>6.32</td>
+<td>A dict held only ints, floats, bools and text</td>
+<td>Changed in 10.11: it holds what a list holds</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="114-files-packages-and-editors-chapters-7-to-9">11.4 Files, packages and editors: chapters 7 to 9</h3>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>What was left open</th>
+<th>Now</th>
+<th>The reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7.2</td>
+<td>The five modules that come with Zeno keep their names</td>
+<td>Settled</td>
+<td><code>zeno new</code> refuses those names for a program (10.23), so the rule is met on the first day and not by an import that finds the wrong thing</td>
+</tr>
+<tr>
+<td>7.3</td>
+<td>No <code>import drivers.uart as uart</code></td>
+<td>Settled</td>
+<td>One module has one name. <code>from drivers.uart import send</code> gives the short form of what is used, and since this pass an <code>as</code> after an <code>import</code> gets a message that says so</td>
+</tr>
+<tr>
+<td>7.4</td>
+<td>Everything at the top of a file could be imported</td>
+<td>Changed in 10.1: <code>private</code></td>
+<td></td>
+</tr>
+<tr>
+<td>7.11</td>
+<td>The files of a program are joined and compiled together</td>
+<td>A limit of 0.1</td>
+<td>Compiling each file by itself needs a written description of what every module offers. It is what a large program will want, and no program is that large yet</td>
+</tr>
+<tr>
+<td>8.3</td>
+<td>No registry of packages with short names</td>
+<td>Settled for 0.1</td>
+<td>A package is a folder or a git address. A registry could be added as a third kind of <code>needs</code> line, and the two that exist would stay as they are</td>
+</tr>
+<tr>
+<td>8.9</td>
+<td>No <code>zeno new</code>, no <code>zeno add</code></td>
+<td>Changed in 10.22: <code>zeno new</code>. <code>zeno add</code> is settled: there is none</td>
+<td>A <code>needs</code> line is one line, and a new <code>zeno.package</code> shows both kinds</td>
+</tr>
+<tr>
+<td>9.3</td>
+<td>The formatter never joins or splits a line</td>
+<td>Settled</td>
+<td>Where a line breaks is the one thing about layout that carries the author's meaning. Everything else has one answer</td>
+</tr>
+<tr>
+<td>9.8</td>
+<td>The formatter does not line comments up</td>
+<td>Settled</td>
+<td>It keeps the distance the author chose, and never fights a column somebody made on purpose</td>
+</tr>
+<tr>
+<td>9.11</td>
+<td>Hover on a field or a method (<code>p.x</code>, <code>queue.put</code>) gives no answer</td>
+<td>A limit of 0.1</td>
+<td>The checker notes names, and does not yet note what a dot found. An empty answer is better than a guess</td>
+</tr>
+<tr>
+<td>9.13</td>
+<td>Colours come from a grammar in the editor, not from the server</td>
+<td>Settled</td>
+<td>The text is coloured at once and needs no server. Colours from the server could be added on top without changing either</td>
+</tr>
+</tbody>
+</table>
+<h3 id="115-what-real-programs-needed-chapter-10">11.5 What real programs needed: chapter 10</h3>
+<table>
+<thead>
+<tr>
+<th>Decision</th>
+<th>What was left open</th>
+<th>Now</th>
+<th>The reason</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10.5</td>
+<td>A function of an interface has no default for a parameter, no type parameters, and cannot be private</td>
+<td>A limit of 0.1</td>
+<td>Each is refused with a message. The last is settled: an interface lists what other code may ask</td>
+</tr>
+<tr>
+<td>10.8</td>
+<td>No way back from an interface to a class</td>
+<td>Settled</td>
+<td>A function that needs to know the class is a function the interface should have. Asking "which class are you?" is how code that was written against an interface comes to depend on every class behind it</td>
+</tr>
+<tr>
+<td>10.10</td>
+<td>An owned class as an interface, a function that takes out of its object as one of an interface, type parameters on an interface, an interface that is another interface</td>
+<td>A limit of 0.1</td>
+<td>Each is refused with a message. The first two are the same question about who frees what, and need the same answer</td>
+</tr>
+<tr>
+<td>10.14</td>
+<td>With no collector a dict holds ints, floats, bools, text, sized numbers and quantities</td>
+<td>A limit of 0.1</td>
+<td>A list or an object under a key needs the dict to be its owner, as a list is of its items (5.15c). That is one more owner, built the same way</td>
+</tr>
+<tr>
+<td>10.21</td>
+<td>No message on <code>assert</code>, no <code>assert</code> outside a test, nothing run before each test, no choosing tests by name, no tests in a compiled program</td>
+<td>A limit of 0.1</td>
+<td>The failure already shows both sides of the comparison (10.17), which is what a message is usually written to say</td>
+</tr>
+</tbody>
+</table>
+<h3 id="116-what-01-is-then">11.6 What 0.1 is, then</h3>
+<p>The language is what chapters 0 to 10 decide, with the limits in the
+tables above, and nothing in it is waiting to be decided.</p>
+<p>Everything marked "a limit of 0.1" is one list, and it is the list
+for whatever comes after: inputs on a board, a packed <code>list[u8]</code>,
+the last few things a build with no collector refuses, interfaces
+with type parameters and the bounds that come with them, a file read
+in pieces, and a library written in Zeno. Each can be added without
+changing what a program written today means, because each is refused
+today and not quietly given some other meaning.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

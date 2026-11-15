@@ -67,13 +67,14 @@ for code in arrived {
     seen[code] = seen.get(code, 0) + 1
 }
 
-# A loop over a dict is given its keys, in the order they were put in.
-for code in seen {
+# A loop with two names is given each key and what is under it, in the
+# order the keys were put in.
+for code, count in seen {
     let meaning = meanings.get(code, "a code nobody wrote down")
-    print(f"{code}: {meaning} (x{seen[code]})")
+    print(f"{code}: {meaning} (x{count})")
 }
 
-# Which one came most often?
+# Which one came most often? A loop with one name is given the keys.
 var worst = arrived[0]
 for code in seen {
     if seen[code] &gt; seen[worst] {
@@ -120,7 +121,7 @@ left out 1 reading with an unknown code
 3</code></pre></figure></div>
   
   <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/faults.zeno">examples/faults.zeno</a>.</p>
-  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/sentence/"><span>Previous</span>sentence.zeno</a><a class="next" href="/examples/instruments/"><span>Next</span>instruments.zeno</a></nav>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/sentence/"><span>Previous</span>sentence.zeno</a><a class="next" href="/examples/channels/"><span>Next</span>channels.zeno</a></nav>
 </div>
 </main>
 <footer class="foot">

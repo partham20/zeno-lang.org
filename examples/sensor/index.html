@@ -50,7 +50,6 @@
 # readings are missing. Turn the lines into numbers, keep the good ones,
 # and report on them.
 
-
 # --- A value that may be missing ---
 
 # One line from the sensor becomes a temperature, or `none` for a gap.
@@ -65,7 +64,6 @@ function parse_line(line: str) -&gt; float or none raises ValueError {
     }
     return value
 }
-
 
 # --- An error of our own, carrying data ---
 
@@ -92,7 +90,6 @@ function read_all(lines: list[str], limit: int) -&gt; list[float or none] raises
     return readings
 }
 
-
 # --- Functions as values ---
 
 # Gives back a new function that remembers `low` and `high`.
@@ -110,7 +107,6 @@ function counter() {
         return count
     }
 }
-
 
 let lines = ["21.5", " 22.0 ", "--", "abc", "23.5", "900", "24.0"]
 let readings = read_all(lines, 5)

@@ -124,8 +124,9 @@ for value in [215, 1023, 64000] {
         flags = ALARM
     }
     if value &gt; 60000 {
-        # `|` gives an int, like every operator. It is a u8 again once checked.
-        flags = u8(ALARM | BATTERY_LOW)
+        # `|` gives an int, like every operator, and `|=` checks that it
+        # fits as it is stored: this is `flags = u8(flags | BATTERY_LOW)`.
+        flags |= BATTERY_LOW
     }
     let reading = Reading(sensor=3, flags=flags, value=u16(value), count=count)
     let frame = encode(reading)

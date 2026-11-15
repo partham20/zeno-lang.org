@@ -38,7 +38,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/" aria-current="page">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/" aria-current="page">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>How the bytecode VM works</h1>
@@ -192,15 +192,14 @@ while n &gt; 0 {
 0001    2  GetLocal     0          ; n
 0002    |  Const        1          ; 0
 0003    |  Binary       &gt;
-0004    |  JumpIfFalse  11
-0005    3  Const        2          ; 1
-0006    |  GetLocal     0          ; n
-0007    |  Swap
-0008    |  Binary       -
-0009    |  SetLocal     0          ; n
-0010    2  Jump         1
-0011    |  Const        3          ; none</code></pre>
-<p><code>JumpIfFalse 11</code> leaves the loop, <code>Jump 1</code> goes round again. When the
+0004    |  JumpIfFalse  10
+0005    3  GetLocal     0          ; n
+0006    |  Const        2          ; 1
+0007    |  Binary       -
+0008    |  SetLocal     0          ; n
+0009    2  Jump         1
+0010    |  Const        3          ; none</code></pre>
+<p><code>JumpIfFalse 10</code> leaves the loop, <code>Jump 1</code> goes round again. When the
 compiler writes the <code>JumpIfFalse</code> it does not know yet where the loop
 ends. It writes <code>JumpIfFalse 0</code>, remembers where, and fills the number in
 when it gets there (<code>patch</code>).</p>
@@ -208,8 +207,9 @@ when it gets there (<code>patch</code>).</p>
 Either can be deep inside other blocks, with their variables on the
 stack, so each is preceded by <code>PopTo</code>: drop everything above the height
 the loop started at.</p>
-<p>(<code>n -= 1</code> works out the <code>1</code> before it reads <code>n</code>, because that is the order
-the interpreter does it in. Hence the <code>Swap</code>.)</p>
+<p>(<code>n -= 1</code> is <code>n = n - 1</code>, instruction for instruction: <code>n</code> is read,
+then the <code>1</code> is worked out. Every engine does it in that order, which
+is decision 10.25.)</p>
 <p><code>for</code> keeps two values on the stack that the program cannot see: a copy
 of the list, and how far along it is. <code>ForNext</code> pushes the next item or
 jumps out.</p>
@@ -279,13 +279,12 @@ and the inner function goes on using <code>count</code> after that.</p>
 
 == function() ==
    captures: count
-0001    4  Const        0          ; 1
-0002    |  GetCaptured  0          ; count
-0003    |  Swap
-0004    |  Binary       +
-0005    |  SetCaptured  0          ; count
-0006    5  GetCaptured  0          ; count
-0007    |  Return</code></pre>
+0001    4  GetCaptured  0          ; count
+0002    |  Const        0          ; 1
+0003    |  Binary       +
+0004    |  SetCaptured  0          ; count
+0005    5  GetCaptured  0          ; count
+0006    |  Return</code></pre>
 <p>So <code>count</code> lives in a <strong>cell</strong>: a box of its own, off the stack, that is
 kept for as long as anything points at it. <code>Closure</code> makes the function
 value, and at that moment hands it the cells it uses. The function's code
@@ -439,10 +438,10 @@ cannot:</p>
    runs. In <code>expr</code>, when both sides of a <code>Binary</code> are number constants,
    work it out with <code>ops::binary</code> and emit one <code>Const</code>. What should
    happen for <code>1 // 0</code>?</li>
-<li><code>x += 1</code> compiles to <code>Const, GetLocal, Swap, Binary, SetLocal</code>. When
-   the value is a constant like <code>1</code>, nothing can tell which side was
-   read first. Compile that case as <code>GetLocal, Const, Binary, SetLocal</code>
-   and drop the <code>Swap</code>. Why is it not safe for <code>x += f()</code>?</li>
+<li><code>x += 1</code> compiles to <code>GetLocal, Const, Binary, SetLocal</code>, the same
+   four instructions as <code>x = x + 1</code>. Check it with <code>zeno bytecode</code>.
+   Then write <code>x += f()</code> where <code>f</code> changes <code>x</code>, and work out on paper
+   what <code>x</code> is afterwards. Decision 10.25 says why <code>x</code> is read first.</li>
 <li>Add an instruction <code>AddInt(n)</code> for "add the small number n to the
    top", and use it for <code>i + 1</code>. Time <code>fib(27)</code> before and after. Where
    must it give up and call <code>ops::binary</code>?</li>
