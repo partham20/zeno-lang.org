@@ -23,6 +23,18 @@ jobs:
           mkdir _site
           rsync -a --exclude .git --exclude .github --exclude .gitignore \
             --exclude README.md --exclude tools --exclude _site ./ _site/
+      - name: Check the token and the account ID
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          api() { curl -s -H "Authorization: Bearer $TOKEN" "https://api.cloudflare.com/client/v4$1"; }
+          echo "token status: $(api /user/tokens/verify | jq -r '.result.status // .errors[0].message')"
+          echo "account ID length: ${#ACCOUNT} (should be 32)"
+          echo "accounts this token can see:"
+          api /accounts | jq -r '.result[] | "  \(.name) matches_secret=\(.id == env.ACCOUNT)"'
+          echo "pages projects under the secret's account:"
+          api "/accounts/$ACCOUNT/pages/projects" | jq -r 'if .success then (.result[] | "  " + .name) else "  error: " + (.errors[0].message) end'
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
