@@ -1,0 +1,11 @@
+let limits = ["temp": 85, "volt": 5]    # a key and its value
+limits["fan"] = 3000                    # add one
+print(limits["temp"], len(limits))
+print("fan" in limits, limits.get("rpm", 0))
+
+var seen: dict[int, int] = [:]          # empty: the type says what goes in
+for code in [23, 17, 23, 40, 23] {
+    seen[code] = seen.get(code, 0) + 1
+}
+print(seen)
+print(limits["rpm"])                    # a key that was never stored

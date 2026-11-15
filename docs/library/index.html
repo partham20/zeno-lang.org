@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The standard library, part 1: text and lists · Zeno</title>
+<meta name="description" content="A language is its grammar and its library. Until now Zeno&#x27;s library was thin: text could be split and replaced but not searched, and a list could grow at the end and shrink at the end and nothing else. This page adds the methods that nearly every…">
+<meta property="og:title" content="The standard library, part 1: text and lists · Zeno">
+<meta property="og:description" content="A language is its grammar and its library. Until now Zeno&#x27;s library was thin: text could be split and replaced but not searched, and a list could grow at the end and shrink at the end and nothing else. This page adds the methods that nearly every…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/library/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/library/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/" aria-current="page">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>The standard library, part 1: text and lists</h1>
+  <p>A language is its grammar and its library. Until now Zeno's library was
+thin: text could be split and replaced but not searched, and a list
+could grow at the end and shrink at the end and nothing else. This page
+adds the methods that nearly every program reaches for, and shows how
+one method is added to a compiler that has five engines.</p>
+<p>Part 2, <a href="/docs/reading-and-writing/"><code>reading-and-writing.md</code></a>, adds files,
+the keyboard and the command line. Part 3, <a href="/docs/math/"><code>math.md</code></a>, adds
+the rest of <code>math</code>. Part 4, <a href="/docs/dict/"><code>dict.md</code></a>, adds a dictionary.</p>
+<pre><code>cargo run -- run examples/sentence.zeno</code></pre>
+<pre><code>$TEMP,21.5,19.0,22.25*07
+   TEMP: median 21.5 of 21.5 19.0 22.25
+$VOLT,3.3,3.1,3.4,3.2,3.3*07
+   VOLT: median 3.3 of 3.3 3.1 3.4 3.2 3.3
+$VOLT,3.3,3.1*00
+   bad checksum: 03, not 00
+$VOLT,3.3,high*21
+   VOLT: `high` is not a number
+$FLOW*12
+   FLOW: no readings
+hello
+   not a sentence
+VOLT &gt; TEMP
+Zeno</code></pre>
+<p><a href="/examples/sentence/"><code>examples/sentence.zeno</code></a> reads lines in the
+style of a GPS receiver: a <code>$</code>, a name, readings with commas between, a
+<code>*</code> and a checksum. <code>zeno run</code>, the VM and all six kinds of compiled
+build print these fourteen lines, and the build with no collector ends
+with 0 blocks left.</p>
+<h2 id="what-was-added">What was added</h2>
+<p>Text:</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Gives</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>"set speed".find(" ")</code></td>
+<td><code>3</code></td>
+<td>where the piece begins, or <code>none</code></td>
+</tr>
+<tr>
+<td><code>"set speed".slice(4)</code></td>
+<td><code>"speed"</code></td>
+<td>from position 4 to the end</td>
+</tr>
+<tr>
+<td><code>"set speed".slice(0, 3)</code></td>
+<td><code>"set"</code></td>
+<td>positions 0, 1 and 2</td>
+</tr>
+<tr>
+<td><code>"A".code()</code></td>
+<td><code>65</code></td>
+<td>the number of one character</td>
+</tr>
+<tr>
+<td><code>char(65)</code></td>
+<td><code>"A"</code></td>
+<td>and back</td>
+</tr>
+</tbody>
+</table>
+<p>Lists:</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xs.insert(0, x)</code></td>
+<td>puts <code>x</code> at position 0, and moves the rest up</td>
+</tr>
+<tr>
+<td><code>xs.pop(2)</code></td>
+<td>takes out the item at position 2, and gives it</td>
+</tr>
+<tr>
+<td><code>xs.reverse()</code></td>
+<td>turns the list round, where it is</td>
+</tr>
+<tr>
+<td><code>xs.sort()</code></td>
+<td>smallest first, where it is. Numbers or text</td>
+</tr>
+<tr>
+<td><code>xs.clear()</code></td>
+<td>empties the list</td>
+</tr>
+<tr>
+<td><code>xs.find(x)</code></td>
+<td>the position of the first item equal to <code>x</code>, or <code>none</code></td>
+</tr>
+<tr>
+<td><code>xs.slice(1, 3)</code></td>
+<td>a new list with the items at 1 and 2</td>
+</tr>
+<tr>
+<td><code>words.join(", ")</code></td>
+<td>one text, with the separator between the items</td>
+</tr>
+</tbody>
+</table>
+<p>That is all of it. What was left out, and why, is decision 6.1: if Zeno
+can already say a thing in one short expression (<code>x in xs</code>), it does not
+get a method as well.</p>
+<h2 id="the-files">The files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it has for this stage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/builtins.rs</code></td>
+<td>each method, for <code>zeno run</code> and the VM; <code>sort</code>, <code>ends</code>, <code>char_of</code></td>
+</tr>
+<tr>
+<td><code>src/checker.rs</code></td>
+<td>the type of each method, in <code>method</code>; who may <code>clear</code> and <code>pop(at)</code></td>
+</tr>
+<tr>
+<td><code>src/parser.rs</code></td>
+<td>the message for <code>xs[1:3]</code></td>
+</tr>
+<tr>
+<td><code>src/runtime.c</code></td>
+<td>each method again, in C: <code>zeno_list_sort</code>, <code>zeno_slice</code>, <code>zeno_char</code></td>
+</tr>
+<tr>
+<td><code>src/emit_c.rs</code></td>
+<td>the call of each C function, in <code>method</code></td>
+</tr>
+<tr>
+<td><code>src/emit_llvm.rs</code></td>
+<td>the same call in IR, and <code>found</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="find-gives-a-position-or-none"><code>find</code> gives a position, or <code>none</code></h2>
+<pre><code class="zeno">function first_word(line: str) -&gt; str {
+    let space = line.find(" ")
+    if space is none { return line }
+    return line.slice(0, space)
+}</code></pre>
+<p>Python's <code>find</code> gives -1 when the piece is not there, and -1 is a
+number, so nothing stops a program from using it as a position. Zeno's
+gives <code>int or none</code>. The checker will not let <code>space</code> be used as a
+number until the program has asked:</p>
+<pre class="out"><code>error: `+` does not work between int or none and int. Check for `none` first</code></pre>
+<p>After <code>if space is none { return line }</code> the lines below know it is an
+<code>int</code>. A <code>match</code> does the same (decision 5.19h):</p>
+<pre><code class="zeno">match line.find(" ") {
+    case none { return "" }
+    case at { return line.slice(at + 1) }
+}</code></pre>
+<p><code>xs.find(item)</code> on a list works the same way, and compares with <code>==</code>.</p>
+<h2 id="slice-takes-a-part"><code>slice</code> takes a part</h2>
+<p><code>slice(from, to)</code> takes the positions from <code>from</code> up to <code>to</code>, and not
+<code>to</code> itself, as <code>range(from, to)</code> counts. <code>slice(from)</code> goes to the end.</p>
+<pre><code class="zeno">let text = "hello, wörld"
+print(text.slice(7))        # wörld
+print(text.slice(0, 5))     # hello
+print(text.slice(12) == "") # true: an empty slice at the very end is fine</code></pre>
+<p>Anything outside is an error, and not a shorter slice:</p>
+<pre class="out"><code>error: uncaught IndexError: slice 2 to 9 is out of range for a str of length 3</code></pre>
+<p>Positions count characters. <code>ö</code> is two bytes in UTF-8, and <code>slice</code>
+never cuts it in half. In <code>runtime.c</code>, <code>zeno_slice</code> walks to each end
+one character at a time with <code>zeno_char_size</code>, which reads how many
+bytes a character has from its first byte.</p>
+<p>If you write Python's <code>xs[1:3]</code>, the parser says what Zeno's way is:</p>
+<pre class="out"><code>error: a part of a list or a str is taken with `.slice(from, to)`, as in `xs.slice(1, 3)`</code></pre>
+<h2 id="insert-popat-clear-reverse"><code>insert</code>, <code>pop(at)</code>, <code>clear</code>, <code>reverse</code></h2>
+<pre><code class="zeno">let xs = [3, 1, 2]
+xs.insert(1, 9)         # [3, 9, 1, 2]
+print(xs.pop(0))        # 3, and xs is [9, 1, 2]
+xs.reverse()            # [2, 1, 9]
+xs.clear()              # []</code></pre>
+<p><code>insert(len(xs), x)</code> is allowed and is <code>append</code>. One past that is an
+<code>IndexError</code>.</p>
+<p>In C a list is a count, a room and a row of slots (<code>zeno_list</code> in
+<code>runtime.c</code>). <code>insert</code> makes room by appending the item at the end,
+then moves every slot from <code>at</code> on up by one, and writes the item into
+the gap. <code>pop(at)</code> is the other way round: read the slot, move the rest
+down, and wipe the slot that is now spare, so that a collector does not
+go on thinking the list holds it.</p>
+<h2 id="sort"><code>sort</code></h2>
+<pre><code class="zeno">let numbers = [5, 3, 9, 1]
+numbers.sort()          # [1, 3, 5, 9]</code></pre>
+<p><code>sort</code> works on ints, floats, sized numbers and text: the things <code>&lt;</code>
+compares. A list of anything else is refused, with the reason.</p>
+<p>The way it sorts is <strong>heapsort</strong>, and it is worth reading, because it
+is short and it is the kind of algorithm firmware likes: it needs no
+second list, it never calls itself, and it is never slow.</p>
+<p>See the list as a tree. The items at positions <code>2i + 1</code> and <code>2i + 2</code>
+are the two "below" the item at <code>i</code>:</p>
+<pre><code>position:  0  1  2  3            5
+value:     5  3  9  1          /   \
+                              3     9
+                             /
+                            1</code></pre>
+<p>A <strong>heap</strong> is such a tree in which no item is smaller than one below
+it. So in a heap, the biggest item is at the front.</p>
+<p>Sorting has two halves. <code>sift</code> is the one tool both use: it moves one
+item down the tree, swapping it with the bigger of the two below, until
+neither is bigger.</p>
+<ol>
+<li><strong>Make the list a heap.</strong> Sift each item that has something below
+   it, last one first.</li>
+</ol>
+<pre><code>5 3 9 1     sift position 1 (the 3): only 1 is below. Stay.
+5 3 9 1     sift position 0 (the 5): 9 is the bigger below. Swap.
+9 3 5 1     a heap</code></pre>
+<ol start="2">
+<li><strong>Take the biggest off the front, again and again.</strong> Swap the front
+   with the last item of the heap. The biggest is now in its final
+   place, and the heap is one shorter. The item that came to the front
+   is probably too small to be there, so sift it down.</li>
+</ol>
+<pre><code>9 3 5 1     swap front and last     1 3 5 | 9     sift:  5 3 1 | 9
+5 3 1 | 9   swap front and last     1 3 | 5 9     sift:  3 1 | 5 9
+3 1 | 5 9   swap front and last     1 | 3 5 9     done</code></pre>
+<p>The whole of it in C is <code>zeno_before</code>, <code>zeno_sift</code> and <code>zeno_list_sort</code>
+in <code>runtime.c</code>, about thirty lines.</p>
+<p>There is a second copy, in Rust: <code>sort</code> in <code>builtins.rs</code>. <code>zeno run</code>
+could have called Rust's own <code>sort</code>, which is faster. It does not,
+because a compiled program must print what <code>zeno run</code> prints (decision
+5.5d), and heapsort can swap two items that compare equal. For most
+values nobody can tell. For <code>0.0</code> and <code>-0.0</code> they can: the two are
+equal, and print differently. With the same steps on both sides, every
+engine gives <code>[-1.0, -0.0, 0.0, 0.5, 2.5]</code> for the list in the test.</p>
+<h2 id="join-code-and-char"><code>join</code>, <code>code</code> and <code>char</code></h2>
+<pre><code class="zeno">print(["pear", "fig"].join(", "))    # pear, fig
+print("A".code(), char(66))          # 65 B
+print("€".code())                    # 8364</code></pre>
+<p><code>join</code> is asked of the list. It adds up the length of every item first
+(<code>zeno_list_join</code>), so the text is made in one piece and not one item
+at a time.</p>
+<p><code>code</code> gives the number Unicode has for a character, and <code>char</code> makes
+the character for a number. UTF-8 spreads the bits of that number over
+one to four bytes. The first byte says how many there are, by how many
+1s it starts with, and each byte after it starts with <code>10</code> and carries
+six bits:</p>
+<pre><code>0xxxxxxx                              up to 127
+110xxxxx 10xxxxxx                     up to 2047
+1110xxxx 10xxxxxx 10xxxxxx            up to 65535
+11110xxx 10xxxxxx 10xxxxxx 10xxxxxx   the rest</code></pre>
+<p><code>€</code> is 8364, which is <code>0010 000010 101100</code> in bits, so its bytes are
+<code>1110 0010</code>, <code>10 000010</code>, <code>10 101100</code>. <code>zeno_char_code</code> and <code>zeno_char</code>
+in <code>runtime.c</code> are those four cases, one way and the other.</p>
+<p><code>code()</code> wants exactly one character, and <code>char</code> refuses a number that
+is no character, 0 among them (decision 6.8).</p>
+<h2 id="one-method-through-five-engines">One method, through five engines</h2>
+<p>Follow <code>text.find(part)</code> from the source to the machine.</p>
+<p><strong>1. <code>zeno run</code> and the VM</strong> share <code>call_method</code> in <code>builtins.rs</code>:</p>
+<pre><code>"find" =&gt; {
+    arity(name, &amp;args, 1, 1, span)?;
+    Ok(match this.find(text(name, &amp;args[0], span)?) {
+        Some(byte) =&gt; Value::Int(this[..byte].chars().count() as i64),
+        None =&gt; Value::None,
+    })
+}</code></pre>
+<p>Rust's <code>find</code> answers in bytes, so the bytes before the place are
+counted as characters. The name also goes into <code>STR_METHODS</code>, which is
+how <code>text.find</code> is known to be a method at all.</p>
+<p><strong>2. The checker</strong> gives it a type, in <code>method</code>:</p>
+<pre><code>(Ty::Str, "find") =&gt; {
+    self.arity(name, arguments, 1, 1, span);
+    strs(self);
+    Ty::Optional(Box::new(Ty::Int))
+}</code></pre>
+<p>One argument, it must be text, and the answer is <code>int or none</code>. That
+last line is the whole reason a program has to test the answer.</p>
+<p><strong>3. The runtime</strong> has the C that does the work:</p>
+<pre><code>static int64_t zeno_find(const char *text, const char *part) {
+    const char *found = strstr(text, part);
+    if (found == NULL) return -1;
+    int64_t position = 0;
+    for (const char *p = text; p &lt; found; p++) {
+        if (((unsigned char)*p &amp; 0xC0) != 0x80) position++;
+    }
+    return position;
+}</code></pre>
+<p>Inside the runtime -1 is fine: no Zeno program ever sees it.</p>
+<p><strong>4. The C backend</strong> writes the call, and wraps it in <code>zeno_found</code>,
+which turns -1 into the <code>none</code> of an <code>int or none</code>:</p>
+<pre><code>z_space = zeno_found(zeno_find(z_line, " "));
+if (z_space.present) {
+    zeno_print(1, zeno_slice(z_line, 0, z_space.value, false, 17, 11));
+}</code></pre>
+<p>An <code>int or none</code> in C is a small struct, a flag and a number. The
+<code>17, 11</code> is the line and column, for the message if the slice is out
+of range.</p>
+<p><strong>5. The LLVM backend</strong> writes the same call in IR, and does the work
+of <code>zeno_found</code> itself, in <code>found</code>:</p>
+<pre><code>%t35 = call i64 @zeno_find(ptr %t34, ptr @.str.7)
+%t36 = icmp sge i64 %t35, 0                         ; found?
+%t37 = select i1 %t36, i64 %t35, i64 0
+%t38 = insertvalue { i1, i64 } undef, i1 %t36, 0    ; the flag
+%t39 = insertvalue { i1, i64 } %t38, i64 %t37, 1    ; the position</code></pre>
+<p>Five places for one method is a lot, and it is why the library is kept
+small. Decision 6.10 says what will change that: once Zeno can bring in
+modules written in Zeno, what can be written in Zeno will be.</p>
+<h2 id="with-no-collector">With no collector</h2>
+<p>In a build with <code>--no-collector</code> every list and object has one owner,
+and each new method has to say what it does with what it is handed.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>What happens to the item</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>insert(at, item)</code></td>
+<td>the list keeps it, as <code>append</code> does. Text is kept as a copy</td>
+</tr>
+<tr>
+<td><code>pop(at)</code></td>
+<td>it leaves the list, and whoever receives it owns it</td>
+</tr>
+<tr>
+<td><code>clear()</code></td>
+<td>every item is freed, then the list is emptied</td>
+</tr>
+<tr>
+<td><code>find(item)</code></td>
+<td>only looked at. An item made in the brackets is freed by the statement</td>
+</tr>
+<tr>
+<td><code>slice(from, to)</code></td>
+<td>numbers are copied, text is copied, objects are refused</td>
+</tr>
+<tr>
+<td><code>reverse()</code>, <code>sort()</code></td>
+<td>nothing is made and nothing freed</td>
+</tr>
+<tr>
+<td><code>join(sep)</code></td>
+<td>the text is built in the text room, like any built text</td>
+</tr>
+</tbody>
+</table>
+<p><code>pop(at)</code> and <code>clear()</code> take items out, so the checker holds them to
+the rules <code>pop()</code> has always had (decision 5.15e): only the owner, not
+inside a loop over the same list, and on a line of its own.</p>
+<pre class="out"><code>error: the `for` on line 5 is walking a list that `tasks` owns, and is
+still looking at its items. Nothing can take an item out of this list
+until the loop is over</code></pre>
+<p>This is what a list of tasks compiles to:</p>
+<pre><code class="zeno">tasks.insert(0, Task("c"))
+let first = tasks.pop(1)
+tasks.clear()</code></pre>
+<pre><code>zeno_list_insert(z_tasks, 0, (zeno_slot){.p = zeno_new_Task("c")}, 5, 1);
+z_first = ((z_Task *)zeno_list_pop_at(z_tasks, 1, 6, 13).p);
+zeno_list *t2 = z_tasks;
+for (int64_t i = 0; i &lt; t2-&gt;len; i++) zeno_drop_Task(((z_Task *)t2-&gt;items[i].p));
+zeno_list_clear(t2);
+...
+zeno_drop_Task(z_first);        /* at the end of the block: `first` owns it now */</code></pre>
+<p>The loop before <code>zeno_list_clear</code> is written by the compiler, because
+only the compiler knows what kind of item the list holds and so which
+function frees one.</p>
+<h2 id="in-a-firmware-build">In a firmware build</h2>
+<p>A slice out of range, an <code>insert</code> or <code>pop</code> at a position that is not
+there, <code>code()</code> of two characters and <code>char(0)</code> are <strong>faults</strong>, like a
+bad index. <code>zeno run</code> and an ordinary build raise an error that can be
+caught. A firmware build stops, with the same message at the same
+place (see <a href="/docs/firmware/"><code>firmware.md</code></a>). The test runs each of them in
+every build and compares.</p>
+<h2 id="what-it-does-not-do">What it does not do</h2>
+<ul>
+<li><code>sort</code> takes no function, so a list of objects cannot be sorted by a
+  field yet (decision 6.6, provisional).</li>
+<li><code>slice</code> of a list of objects is refused where each has one owner.</li>
+<li>Text methods still know only plain letters for <code>upper</code> and <code>lower</code>
+  (decision 3.14).</li>
+<li><code>char(0)</code> is refused (decision 6.8).</li>
+<li>A built-in function cannot be handed to <code>map</code> in a compiled program:
+  <code>xs.map(str)</code> runs but does not build. Write
+  <code>xs.map(function(n: int) -&gt; str { return str(n) })</code>.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li><strong>The interpreter and the VM</strong> (<code>interpreter.rs</code>):
+  <code>text_and_list_methods_of_the_library</code> runs each method and each
+  error through both.</li>
+<li><strong>The checker</strong> (<code>checker.rs</code>): <code>text_and_list_methods_are_checked</code>
+  for the types and the messages,
+  <code>with_one_owner_a_list_method_that_takes_out_is_for_the_owner</code> for
+  who may <code>clear</code> and <code>pop(at)</code>, and
+  <code>a_firmware_build_cannot_raise_a_fault_to_a_caller</code> for
+  <code>raises ValueError</code>.</li>
+<li><strong>The parser</strong> (<code>parser.rs</code>): <code>a_part_is_taken_with_slice</code>.</li>
+<li><strong>Both compilers</strong> (<code>emit_c.rs</code>):
+  <code>text_and_list_methods_are_the_same_in_every_build</code> builds one
+  program and <code>examples/sentence.zeno</code> six ways (ordinary, <code>--firmware</code>
+  and <code>--no-collector</code>, each through C and through LLVM). Each must
+  print what <code>zeno run</code> prints, and with no collector must end with 0
+  blocks left and the same memory report from both backends.
+  <code>a_position_outside_the_text_or_the_list_is_an_error_in_every_build</code>
+  does the same for the errors, caught and not caught.</li>
+</ul>
+<p>361 tests in all.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Write <code>function last_word(line: str) -&gt; str</code>. There is no <code>rfind</code>.
+   What is the shortest way with what there is? (One answer uses
+   <code>split</code>, another a loop over <code>find</code> and <code>slice</code>.)</li>
+<li>Sort <code>[3, 1, 2]</code> by hand with the two halves of heapsort, writing the
+   list after every swap. Then put a <code>printf</code> in <code>zeno_sift</code> in a built
+   <code>.c</code> file and compare.</li>
+<li>Sort <code>[0.0, -0.0]</code>, print it, sort it again and print it again. The
+   two zeros change places each time. Follow the two halves of heapsort
+   to see why, and say why neither answer is wrong.</li>
+<li>Build <code>examples/sentence.zeno</code> with <code>--no-collector --memory</code>. Then
+   change <code>median</code> so that it sorts <code>values</code> itself, without <code>slice(0)</code>,
+   and print <code>readings</code> after the call in <code>report</code>. The program still
+   builds. What happened to the caller's list, and why is that a worse
+   function?</li>
+<li>In a program with a <code>list[Task]</code>, call <code>tasks.clear()</code> inside
+   <code>for task in tasks</code>. Read the message, then find the line in
+   <code>checker.rs</code> that makes <code>clear</code> follow the rule <code>pop</code> follows.</li>
+<li>Add a method <code>text.count(part)</code> that says how many times <code>part</code> is in
+   <code>text</code>. Go through the five places in "One method, through five
+   engines". Which of the five could you leave out and still have
+   <code>zeno run</code> work?</li>
+<li><code>char(0)</code> is refused. Take the test out of <code>zeno_char</code> and out of
+   <code>char_of</code>, and print <code>"a" + char(0) + "b"</code> with <code>zeno run</code> and with a
+   built program. What does each print?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/library.md">docs/library.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/unsafe/"><span>Previous</span>Memory by hand: unsafe { }, pointers and registers</a><a class="next" href="/docs/reading-and-writing/"><span>Next</span>The standard library, part 2: reading and writing</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-was-added">What was added</a></li><li><a href="#the-files">The files</a></li><li><a href="#find-gives-a-position-or-none">find gives a position, or none</a></li><li><a href="#slice-takes-a-part">slice takes a part</a></li><li><a href="#insert-popat-clear-reverse">insert, pop(at), clear, reverse</a></li><li><a href="#sort">sort</a></li><li><a href="#join-code-and-char">join, code and char</a></li><li><a href="#one-method-through-five-engines">One method, through five engines</a></li><li><a href="#with-no-collector">With no collector</a></li><li><a href="#in-a-firmware-build">In a firmware build</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

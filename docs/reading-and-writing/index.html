@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The standard library, part 2: reading and writing · Zeno</title>
+<meta name="description" content="Until now a Zeno program could say things and could not be told anything. Whatever it worked on was written in the program. This page gives it the three ways in that a program on a computer has: files, the keyboard, and the words it was started with.">
+<meta property="og:title" content="The standard library, part 2: reading and writing · Zeno">
+<meta property="og:description" content="Until now a Zeno program could say things and could not be told anything. Whatever it worked on was written in the program. This page gives it the three ways in that a program on a computer has: files, the keyboard, and the words it was started with.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/reading-and-writing/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/reading-and-writing/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/" aria-current="page">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>The standard library, part 2: reading and writing</h1>
+  <p>Until now a Zeno program could say things and could not be told
+anything. Whatever it worked on was written in the program. This page
+gives it the three ways in that a program on a computer has: files, the
+keyboard, and the words it was started with.</p>
+<pre><code>cargo run -- run examples/logbook.zeno bench.txt</code></pre>
+<p>Type three lines and close the keyboard with Ctrl-D:</p>
+<pre><code>reading&gt; temp 23.5
+reading&gt; hello
+reading&gt; humidity 40
+reading&gt;
+3 lines typed
+4 readings in bench.txt, mean 26.75, lines skipped: 1
+still there: false
+FileError: there is no file `bench.txt`</code></pre>
+<p><a href="/examples/logbook/"><code>examples/logbook.zeno</code></a> takes the name of a
+file from its command line, starts the file with two readings, adds
+every line that is typed, reads the file back, and removes it. The
+decisions behind each part are 6.11 to 6.20 in
+<a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-was-added">What was added</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Written</th>
+<th>Gives</th>
+<th>Can fail with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read a file</td>
+<td><code>files.read(path)</code></td>
+<td><code>str</code></td>
+<td><code>FileError</code></td>
+</tr>
+<tr>
+<td>Write a file</td>
+<td><code>files.write(path, text)</code></td>
+<td>nothing</td>
+<td><code>FileError</code></td>
+</tr>
+<tr>
+<td>Add to a file</td>
+<td><code>files.append(path, text)</code></td>
+<td>nothing</td>
+<td><code>FileError</code></td>
+</tr>
+<tr>
+<td>Is there a file?</td>
+<td><code>files.exists(path)</code></td>
+<td><code>bool</code></td>
+<td>never</td>
+</tr>
+<tr>
+<td>Remove a file</td>
+<td><code>files.remove(path)</code></td>
+<td>nothing</td>
+<td><code>FileError</code></td>
+</tr>
+<tr>
+<td>The lines of a text</td>
+<td><code>text.lines()</code></td>
+<td><code>list[str]</code></td>
+<td>never</td>
+</tr>
+<tr>
+<td>A line from the keyboard</td>
+<td><code>input()</code>, <code>input("Name: ")</code></td>
+<td><code>str or none</code></td>
+<td>never</td>
+</tr>
+<tr>
+<td>The command line</td>
+<td><code>program.arguments()</code></td>
+<td><code>list[str]</code></td>
+<td>never</td>
+</tr>
+</tbody>
+</table>
+<p><code>files</code> and <code>program</code> are modules: <code>import files</code>, <code>import program</code>.
+<code>input</code> is a plain word, like <code>print</code>.</p>
+<h2 id="the-files">The files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What part 2 added</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/value.rs</code></td>
+<td><code>Outside</code>: the keyboard and the arguments, as both engines see them</td>
+</tr>
+<tr>
+<td><code>src/builtins.rs</code></td>
+<td>The functions, for <code>zeno run</code> and the VM</td>
+</tr>
+<tr>
+<td><code>src/checker.rs</code></td>
+<td>Their types, and that four of them raise <code>FileError</code></td>
+</tr>
+<tr>
+<td><code>src/runtime.c</code></td>
+<td>The same functions in C, for compiled programs</td>
+</tr>
+<tr>
+<td><code>src/emit_c.rs</code>, <code>src/emit_llvm.rs</code></td>
+<td>A call of the C function, and a <code>main</code> that takes the command line</td>
+</tr>
+<tr>
+<td><code>src/main.rs</code></td>
+<td>The words after the file of <code>zeno run</code> go to the program</td>
+</tr>
+</tbody>
+</table>
+<h2 id="files">Files</h2>
+<pre><code class="zeno">import files
+
+files.write("notes.txt", "milk\neggs\n")     # makes it, or empties it
+files.append("notes.txt", "bread\n")         # makes it, or adds to it
+print(files.read("notes.txt"))               # all of it, as one str
+print(files.exists("notes.txt"))             # true
+files.remove("notes.txt")</code></pre>
+<p>A file is read whole and written whole. There is no <code>open</code> and no
+<code>close</code>, so there is nothing to forget to close (6.12).</p>
+<p><code>write</code> and <code>append</code> put down the text they are given and nothing else.
+A program that wants lines ends each with <code>"\n"</code> (6.13).</p>
+<h3 id="what-can-go-wrong">What can go wrong</h3>
+<table>
+<thead>
+<tr>
+<th>What happened</th>
+<th>The message of the <code>FileError</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nothing is at the path</td>
+<td><code>there is no file `notes.txt`</code></td>
+</tr>
+<tr>
+<td>It is a folder, or the system will not let it be read</td>
+<td><code>cannot read `notes.txt`</code></td>
+</tr>
+<tr>
+<td>It is not text</td>
+<td><code>`notes.txt` does not hold text</code></td>
+</tr>
+<tr>
+<td>It cannot be made or written, such as a folder that is not there</td>
+<td><code>cannot write `notes.txt`</code></td>
+</tr>
+<tr>
+<td>It cannot be removed</td>
+<td><code>cannot remove `notes.txt`</code></td>
+</tr>
+</tbody>
+</table>
+<p>A function that uses a file either catches the error or says it can
+happen:</p>
+<pre><code class="zeno">function first_line(path: str) -&gt; str raises FileError {
+    return files.read(path).lines()[0]
+}</code></pre>
+<p>Leave <code>raises FileError</code> out and <code>zeno build</code> (or <code>zeno check
+--strict</code>) says:</p>
+<pre class="out"><code>error: `first_line` can raise FileError here but does not say so. Add `raises FileError` to it, or catch the error</code></pre>
+<p>This holds in a firmware build too. A bad index is a fault there and
+stops the program, because the program could have checked the length.
+No check rules out a missing file, so <code>FileError</code> travels as a value
+and can always be caught (6.14).</p>
+<h3 id="a-file-holds-text">A file holds text</h3>
+<p><code>files.read</code> gives a <code>str</code>, and a <code>str</code> is characters. So the file has
+to be UTF-8 with no zero byte in it. Anything else is refused:</p>
+<pre><code>FileError: `logo.png` does not hold text</code></pre>
+<p>The interpreter asks Rust (<code>String::from_utf8</code>). A compiled program has
+its own test, <code>zeno_is_text</code> in <code>runtime.c</code>, about forty lines. The
+first byte of a character says how many follow:</p>
+<pre><code>0xxxxxxx                             one byte: the ASCII characters
+110xxxxx 10xxxxxx                    two bytes
+1110xxxx 10xxxxxx 10xxxxxx           three
+11110xxx 10xxxxxx 10xxxxxx 10xxxxxx  four</code></pre>
+<p>and four first bytes hold the byte after them to a tighter range. That
+rules out a character written in more bytes than it needs (<code>C0 80</code>),
+the numbers Unicode keeps free (<code>ED A0 80</code>), and anything past the last
+character (<code>F4 90 80 80</code>). The test
+<code>what_is_text_is_the_same_in_every_build</code> gives both tests nine files
+and requires the same answer about each.</p>
+<p>Files are opened as bytes (<code>"rb"</code>, <code>"wb"</code>, <code>"ab"</code>), so nothing is
+changed on the way in or out. A file from Windows arrives with its
+<code>"\r\n"</code> line ends, and <code>lines()</code> deals with them.</p>
+<h2 id="lines"><code>lines()</code></h2>
+<pre><code class="zeno">for line in files.read("notes.txt").lines() {
+    print(f"[{line}]")
+}</code></pre>
+<table>
+<thead>
+<tr>
+<th>Text</th>
+<th><code>.lines()</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>""</code></td>
+<td><code>[]</code></td>
+</tr>
+<tr>
+<td><code>"one"</code></td>
+<td><code>["one"]</code></td>
+</tr>
+<tr>
+<td><code>"one\n"</code></td>
+<td><code>["one"]</code></td>
+</tr>
+<tr>
+<td><code>"one\ntwo"</code></td>
+<td><code>["one", "two"]</code></td>
+</tr>
+<tr>
+<td><code>"one\r\ntwo\r\n"</code></td>
+<td><code>["one", "two"]</code></td>
+</tr>
+<tr>
+<td><code>"\n"</code></td>
+<td><code>[""]</code></td>
+</tr>
+<tr>
+<td><code>"a\n\nb"</code></td>
+<td><code>["a", "", "b"]</code></td>
+</tr>
+</tbody>
+</table>
+<p>A line ends at <code>"\n"</code>. A <code>"\r"</code> just before that <code>"\n"</code> goes with it.
+The last line need not end.</p>
+<p><code>split("\n")</code> is not the same: it gives <code>"a\nb\n"</code> a third, empty,
+piece, and leaves the <code>"\r"</code> on. The C is a dozen lines:</p>
+<pre><code>static zeno_list *zeno_lines(const char *text) {
+    zeno_list *lines = zeno_list_new(0);
+    const char *start = text;
+    while (*start != '\0') {
+        const char *end = strchr(start, '\n');
+        size_t length = end != NULL ? (size_t)(end - start) : strlen(start);
+        const char *next = start + length + (end != NULL ? 1 : 0);
+        if (end != NULL &amp;&amp; length &gt; 0 &amp;&amp; start[length - 1] == '\r') length--;
+        zeno_list_append(lines, (zeno_slot){.s = zeno_piece(start, length)});
+        start = next;
+    }
+    return lines;
+}</code></pre>
+<p>In the interpreter it is one call, because Rust's own <code>str::lines</code> has
+the same rules.</p>
+<h2 id="input"><code>input()</code></h2>
+<pre><code class="zeno">let name = input("Name: ")
+if name is none {
+    print("nobody there")
+} else {
+    print(f"Hello, {name}!")
+}</code></pre>
+<p><code>input()</code> gives the next line without its line end. With a question,
+it prints the question first and stays on that line. When there are no
+more lines it gives <code>none</code>: Ctrl-D at a keyboard, or the end of a file
+that was piped in (<code>zeno run count.zeno &lt; notes.txt</code>).</p>
+<p>Because the answer is <code>str or none</code>, the checker will not let it be
+used as text until it has been tested:</p>
+<pre class="out"><code>error: this is str or none. Check it with `is not none` before using `.upper`</code></pre>
+<p>A loop that reads everything:</p>
+<pre><code class="zeno">var count = 0
+while true {
+    let line = input()
+    if line is none {
+        break
+    }
+    count += 1
+}
+print(count, "lines")</code></pre>
+<p>After <code>if line is none { break }</code> the checker knows <code>line</code> is a <code>str</code>
+for the rest of the loop.</p>
+<h3 id="how-a-line-is-read">How a line is read</h3>
+<p><code>zeno_input</code> in <code>runtime.c</code> reads one byte at a time with <code>fgetc</code>:</p>
+<pre><code>'\n'        the line is finished
+'\r'        held back: it is dropped if '\n' comes next, kept if not
+'\0'        left out, because text ends at a zero byte
+end         the line is finished, if there was anything in it
+anything    added to the line</code></pre>
+<p>Nobody knows how long the line will be, so it grows as it is read, and
+the two kinds of build grow it differently (<code>zeno_line_add</code>):</p>
+<ul>
+<li><strong>With a collector</strong> the line is a block. When it is full it moves to
+  a block twice the size, and the collector takes the old one.</li>
+<li><strong>With no collector</strong> it grows in the text room, which is a stack:
+  each byte goes on top of the one before. The line takes exactly its
+  own length.</li>
+</ul>
+<p>The interpreter's version is <code>Outside::line</code> in <code>value.rs</code>. It reads a
+whole line with Rust's <code>read_until</code>, then takes off the line end and
+any zero bytes, so that both come to the same text.</p>
+<h2 id="programarguments"><code>program.arguments()</code></h2>
+<pre><code class="zeno">import program
+
+let words = program.arguments()
+if len(words) != 2 {
+    print("usage: copy &lt;from&gt; &lt;to&gt;")
+}</code></pre>
+<pre><code>zeno run copy.zeno a.txt b.txt        ["a.txt", "b.txt"]
+./copy a.txt b.txt                    ["a.txt", "b.txt"]</code></pre>
+<p>The program's own name is not in the list, so <code>words[0]</code> is the first
+thing the user wrote (6.19).</p>
+<p>With <code>zeno run</code>, every word after the file is the program's, even one
+that looks like an option of Zeno's. Zeno's options go before the file:</p>
+<pre><code>zeno run --vm copy.zeno a.txt --strict     the program gets ["a.txt", "--strict"]</code></pre>
+<p>In a compiled program the words come from C's <code>main</code>. A program that
+never asks keeps the <code>main</code> it always had:</p>
+<pre><code>int main(int argc, char **argv) {       /* was: int main(void) */
+    ...
+    zeno_program_start(argc, argv);     /* the runtime keeps both */
+    zeno_program();
+    return 0;
+}</code></pre>
+<pre><code>define i32 @main(i32 %argc, ptr %argv) {
+entry:
+  ...
+  call void @zeno_program_start(i32 signext %argc, ptr %argv)
+  call void @zeno_program()
+  ret i32 0
+}</code></pre>
+<p><code>zeno_program_arguments</code> then makes a new list from <code>argv[1]</code> onward
+at each call.</p>
+<h2 id="one-function-through-the-engines">One function, through the engines</h2>
+<p>Follow <code>files.read(path)</code>.</p>
+<p><strong>1. <code>zeno run</code> and the VM</strong> (<code>builtins.rs</code>). One Rust function, in the
+table for <code>import files</code>:</p>
+<pre><code>fn files_read(_: &amp;mut dyn Machine, args: Vec&lt;Value&gt;, span: Span) -&gt; Result {
+    let path = paths("read", &amp;args, 1, span)?[0];
+    match at(path) {
+        At::Nothing =&gt; return file_error(format!("there is no file `{path}`"), span),
+        At::Other =&gt; return file_error(format!("cannot read `{path}`"), span),
+        At::File =&gt; {}
+    }
+    let Ok(bytes) = std::fs::read(path) else {
+        return file_error(format!("cannot read `{path}`"), span);
+    };
+    match String::from_utf8(bytes) {
+        Ok(text) if !text.contains('\0') =&gt; Ok(Value::str(text)),
+        _ =&gt; file_error(format!("`{path}` does not hold text"), span),
+    }
+}</code></pre>
+<p><strong>2. The checker</strong> (<code>checker.rs</code>, <code>builtin</code>). The argument is a <code>str</code>,
+the answer is a <code>str</code>, and the function it is called in can now raise:</p>
+<pre><code>if short != "exists" {
+    self.can_raise("FileError", span);
+}</code></pre>
+<p>That one line is what makes a function say <code>raises FileError</code>.</p>
+<p><strong>3. The runtime</strong> (<code>runtime.c</code>). <code>zeno_file_read</code> does the work and
+answers <code>NULL</code>, or the message of what went wrong. Around it are two
+thin faces, one for each way errors travel:</p>
+<pre><code>#ifndef ZENO_FIRMWARE
+static const char *zeno_files_read(const char *path, int line, int col);                    /* jumps */
+#else
+static bool zeno_files_read(const char *path, int line, int col, const char **result);      /* says */
+#endif</code></pre>
+<p><strong>4. The C backend.</strong> In an ordinary build the call is an expression,
+and an error jumps out of it:</p>
+<pre><code>static const char *z_first(const char *z_path) {
+    return (*zeno_list_at(zeno_lines(zeno_files_read(z_path, 5, 12)), 0, 5, 12)).s;
+}</code></pre>
+<p>In a firmware build the same line is a test, and the function passes
+the failure to its own caller:</p>
+<pre><code>static bool z_first(const char *z_path, const char **zeno_result) {
+    const char *t2;
+    if (!zeno_files_read(z_path, 5, 12, &amp;t2)) return false;
+    *zeno_result = (*zeno_list_at(zeno_lines(t2), 0, 5, 12)).s;
+    return true;
+}</code></pre>
+<p><strong>5. The LLVM backend.</strong> The firmware build again:</p>
+<pre><code>define internal zeroext i1 @z_first(ptr %arg.path, ptr %result) {
+entry:
+  %answer.1 = alloca ptr
+  %t1 = call zeroext i1 @zeno_files_read(ptr %arg.path, i32 5, i32 12, ptr %answer.1)
+  br i1 %t1, label %worked2, label %failed2
+
+failed2:
+  ret i1 false
+
+worked2:
+  %t2 = load ptr, ptr %answer.1
+  %t3 = call ptr @zeno_lines(ptr %t2)
+  ...</code></pre>
+<p>Nothing new was needed in either backend for the firmware build: a
+runtime function that says whether it worked is called the way
+<code>int(text)</code> already was (<code>checked_call</code>).</p>
+<h2 id="with-no-collector">With no collector</h2>
+<p>The text of a file and a line from <code>input()</code> are built text, like the
+answer of <code>upper()</code>: they are in the text room until the statement
+ends, and text that is kept is copied to the pool
+(<a href="/docs/text/"><code>text.md</code></a>). <code>lines()</code> and <code>program.arguments()</code> make their
+items in the pool directly.</p>
+<p>So the size of the text room is the size of the largest file that can
+be read. It is 1024 bytes unless the C is compiled with another:</p>
+<pre class="out"><code>error: a statement built more text than there is room for (ZENO_TEXT_ROOM is 1024 bytes)</code></pre>
+<pre><code>zeno build --no-collector copy.zeno
+cc -O2 -DZENO_TEXT_ROOM=8192 -o copy copy.c -lm</code></pre>
+<p><code>zeno build --no-collector --memory</code> prints how much of the room a run
+used. The logbook example, with three lines typed:</p>
+<pre><code>memory: 35 blocks made (661 bytes), at most 214 bytes in use at once, no collector, 0 blocks left at the end
+pool: 384 bytes taken, in a pool of 32768
+text: at most 64 bytes in use at once, in a room of 1024</code></pre>
+<h2 id="on-a-board">On a board</h2>
+<p>These functions are the C library's: <code>fopen</code>, <code>fgetc</code>, <code>remove</code>. A
+firmware C library usually ties standard input to a serial line, and
+then <code>input()</code> reads a line from that. Where there is no file system,
+every <code>files</code> call but <code>exists</code> raises a <code>FileError</code>, which the program
+can catch. The simulated board (<code>board.md</code>) is not involved.</p>
+<h2 id="what-it-does-not-do">What it does not do</h2>
+<ul>
+<li><strong>Large files.</strong> A file is read whole. Reading in pieces needs an
+  open file with an owner, and is left until a program needs it (6.12).</li>
+<li><strong>Bytes.</strong> A file that is not text cannot be read at all yet (6.16).</li>
+<li><strong>Folders.</strong> No listing, making or removing of folders.</li>
+<li><strong><code>program.exit(code)</code> and environment variables</strong> (6.19).</li>
+<li><strong>Typed text that is not UTF-8.</strong> <code>zeno run</code> replaces the bad bytes
+  with <code>�</code>. A compiled program passes them on as they came.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<p>Every engine and every build has to do the same with the same keyboard
+and the same command line, so the tests supply both. A test wraps its
+programs in <code>with_outside</code> (<code>value.rs</code>):</p>
+<pre><code>with_outside("temp 23.5\nhello\n", &amp;["bench.txt"], || {
+    no_collector_as_interpreter("logbook", source);
+});</code></pre>
+<p>Inside it, the interpreter and the VM read the typed text in place of
+the keyboard, and each built program is started with the arguments and
+has the text piped to its standard input. With no <code>with_outside</code>,
+nothing is typed and there are no arguments, so no test can sit waiting
+for a keyboard.</p>
+<p>Each program that writes a file removes it again, so the eight runs of
+one test (interpreter, VM, and C and LLVM in three builds) each start
+from the same. Every test's file has its own name in the system's
+temporary folder.</p>
+<p>The tests:</p>
+<ul>
+<li><code>files_are_the_same_in_every_build</code>: all five functions, the error
+  messages, caught in a function and passed on by one.</li>
+<li><code>an_uncaught_file_error_is_the_same_in_every_build</code>: the same message
+  and the same line and column.</li>
+<li><code>what_is_text_is_the_same_in_every_build</code>: nine files of bytes.</li>
+<li><code>the_keyboard_and_the_arguments_are_the_same_in_every_build</code>: a line
+  of 300 characters, <code>"\r"</code> in every position, an empty line, a zero
+  byte, Tamil, and no line end on the last line.</li>
+<li><code>the_logbook_example_is_the_same_in_every_build</code>.</li>
+<li><code>main_takes_the_command_line_only_when_the_program_reads_it</code>.</li>
+<li>In the interpreter and the checker: the exact output and the exact
+  messages.</li>
+</ul>
+<p>There are 373 tests in all.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>
+<p>Run <code>zeno run examples/logbook.zeno</code> and type a few readings. Then
+   put them in a file and run <code>zeno run examples/logbook.zeno &lt;
+   readings.txt</code>. Why does <code>reading&gt;</code> appear once more than there are
+   lines?</p>
+</li>
+<li>
+<p>In <code>logbook.zeno</code>, change the first <code>files.write</code> to <code>files.append</code>
+   and put a <code>#</code> in front of <code>files.remove(path)</code>. Run it twice with
+   nothing typed (<code>&lt; /dev/null</code>). The second run reports 4 readings.
+   Which decision says why <code>write</code> would have reported 2?</p>
+</li>
+<li>
+<p>Take <code>raises FileError</code> off <code>summary</code> and run <code>zeno check --strict
+   examples/logbook.zeno</code>. Read the message, then fix it the other way:
+   keep the <code>raises</code> off and catch the error inside <code>summary</code>.</p>
+</li>
+<li>
+<p>Run this, and say where the third item of the first list comes from:</p>
+</li>
+</ol>
+<pre><code class="zeno">print("a\nb\n".split("\n"))
+print("a\nb\n".lines())</code></pre>
+<ol start="5">
+<li>
+<p>Write <code>copy.zeno</code>: with two arguments it copies the first file to
+   the second, with any other number it prints how to use it, and a
+   <code>FileError</code> is caught and its message printed. Build it, run
+   <code>./copy copy.zeno again.zeno</code>, and compare the two with <code>cmp</code>.</p>
+</li>
+<li>
+<p>Build your <code>copy.zeno</code> with <code>--no-collector --memory</code> and copy a
+   file of more than 1024 bytes. Read the message, then compile the C
+   again with <code>-DZENO_TEXT_ROOM=8192</code> as shown above. What does the
+   <code>text:</code> line say the copy needed?</p>
+</li>
+<li>
+<p>In a shell, <code>printf '\xC0\x80' &gt; odd.bin</code>, then read <code>odd.bin</code> with
+   <code>files.read</code>. Find the line of <code>zeno_is_text</code> in <code>src/runtime.c</code>
+   that refuses it. Which bytes would the same character be, written
+   properly?</p>
+</li>
+<li>
+<p><code>input()</code> leaves out zero bytes. Find the two places that do it, one
+   in <code>src/value.rs</code> and one in <code>src/runtime.c</code>. What would go wrong in
+   a compiled program if only the Rust one did?</p>
+</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/reading-and-writing.md">docs/reading-and-writing.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/library/"><span>Previous</span>The standard library, part 1: text and lists</a><a class="next" href="/docs/math/"><span>Next</span>The standard library, part 3: more of math</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-was-added">What was added</a></li><li><a href="#the-files">The files</a></li><li><a href="#files">Files</a></li><li><a href="#lines">lines()</a></li><li><a href="#input">input()</a></li><li><a href="#programarguments">program.arguments()</a></li><li><a href="#one-function-through-the-engines">One function, through the engines</a></li><li><a href="#with-no-collector">With no collector</a></li><li><a href="#on-a-board">On a board</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

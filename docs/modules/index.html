@@ -1,0 +1,382 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Programs in several files · Zeno</title>
+<meta name="description" content="Until now a Zeno program was one file. This page adds the second file, and the tenth: import shapes brings in shapes.zeno, and shapes.area(s) calls the area that file declares.">
+<meta property="og:title" content="Programs in several files · Zeno">
+<meta property="og:description" content="Until now a Zeno program was one file. This page adds the second file, and the tenth: import shapes brings in shapes.zeno, and shapes.area(s) calls the area that file declares.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/modules/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/modules/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/" aria-current="page">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Programs in several files</h1>
+  <p>Until now a Zeno program was one file. This page adds the second file,
+and the tenth: <code>import shapes</code> brings in <code>shapes.zeno</code>, and
+<code>shapes.area(s)</code> calls the <code>area</code> that file declares.</p>
+<pre><code>cargo run -- run examples/station/main.zeno</code></pre>
+<pre><code>uart&gt; temperature     21.5 C
+uart&gt; humidity       104.0 %   suspect: over 100.0
+uart&gt; pressure      1013.2 hPa
+uart&gt; wind            12.0 km/h   suspect: no limit is known for it
+uart&gt; 2 of 4 readings are good
+180 bytes sent at 9600 baud</code></pre>
+<p><a href="/examples/station/"><code>examples/station</code></a> is a small weather station
+in four files:</p>
+<pre><code>examples/station/
+    main.zeno            the file the program starts in
+    sensors.zeno         the module `sensors`
+    report.zeno          the module `report`
+    drivers/
+        uart.zeno        the module `drivers.uart`</code></pre>
+<p>The decisions are 7.1 to 7.12 in <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-a-module-is">What a module is</h2>
+<p>A module is a file. There is nothing to declare and nothing to
+register: the file <code>sensors.zeno</code> is the module <code>sensors</code>.</p>
+<pre><code class="zeno">import sensors                       # the whole module
+import drivers.uart                  # a dot is a folder: drivers/uart.zeno
+from sensors import Reading, Good    # single names
+
+let health = sensors.check(Reading("wind", 12.0, "km/h"))
+drivers.uart.send("ready")</code></pre>
+<p>These are the two forms that <code>import math</code> and <code>from math import sqrt</code>
+have always had. A file of your own is used exactly as a module that
+comes with Zeno is.</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>import shapes</code></td>
+<td>read <code>shapes.zeno</code>. Its names are then written <code>shapes.area</code>, <code>shapes.Point</code></td>
+</tr>
+<tr>
+<td><code>import drivers.uart</code></td>
+<td>read <code>drivers/uart.zeno</code>. Its names are written <code>drivers.uart.send</code></td>
+</tr>
+<tr>
+<td><code>from shapes import area, Point</code></td>
+<td>read <code>shapes.zeno</code>, and let <code>area</code> and <code>Point</code> be written with nothing in front</td>
+</tr>
+<tr>
+<td><code>let p: shapes.Point = ...</code></td>
+<td>a type from a module</td>
+</tr>
+<tr>
+<td><code>case shapes.Circle(r) { }</code></td>
+<td>an enum case from a module, in a <code>match</code></td>
+</tr>
+<tr>
+<td><code>except shapes.BadShape as bad { }</code></td>
+<td>an error class from a module</td>
+</tr>
+</tbody>
+</table>
+<h3 id="the-rules-all-of-them">The rules, all of them</h3>
+<ol>
+<li><strong>Where a module is looked for.</strong> From the folder of the file you
+   gave to <code>zeno run</code>, whichever file does the importing. One name is
+   one file, everywhere in the program (7.2).</li>
+<li><strong>What can be imported.</strong> Everything a file declares at its top:
+   functions, classes, enums and their cases, <code>let</code>, <code>var</code> and <code>const</code>.
+   What the file itself imports is not passed on (7.4).</li>
+<li><strong>When an imported file runs.</strong> Once, before the file that imports
+   it. So an <code>import</code> of a file goes at the top of the file, above
+   everything that is not an import (7.5).</li>
+<li><strong>Files cannot import each other</strong>, directly or in a longer circle
+   (7.6).</li>
+<li><strong>A file sees what it declares and what it imports.</strong> An imported
+   file cannot use a name of the file that imports it. And only the
+   file of a module gives its variables a new value: others read them
+   (7.7).</li>
+<li><strong>No name has two readings.</strong> Importing <code>x</code> from two modules, or
+   declaring your own <code>x</code> beside an imported one, is refused. A name
+   declared inside a function or a block hides an imported one, as it
+   hides any name from the top of the file (7.8).</li>
+<li><strong>A value prints by the name its file gave it.</strong>
+   <code>print(shapes.Point(1, 2))</code> prints <code>Point(x=1, y=2)</code> (7.9).</li>
+</ol>
+<p>Each of these has a message that says what to write instead. A few:</p>
+<pre class="out"><code>error: there is no module `shapes`. `import shapes` reads the file `demo/shapes.zeno`,
+and there is no such file. So far Zeno has `math`, `time`, `board`, `files` and `program`
+
+error: module `sensors` has no `chek`. It has `Reading`, `Health`, `Good`, `Suspect`,
+`highest` and `check`
+
+error: these files import each other: `a` imports `b`, and `b` imports `a`. An imported
+file runs before the file that imports it, and here none of them can be the first.
+Move what they share into a file of its own, and import that
+
+error: `drivers.uart.sent` is a variable of the module `drivers.uart`, and only the
+file of `drivers.uart` gives it a new value. Give `drivers.uart` a function that
+changes it, and call that</code></pre>
+<p>A mistake in an imported file is shown in that file:</p>
+<pre class="out"><code>error: the returned value should be int, but this is float
+ --&gt; shapes.zeno:2:12
+  |
+2 |     return n / 2
+  |            ^</code></pre>
+<h2 id="how-it-is-built">How it is built</h2>
+<h3 id="one-new-stage-and-none-of-the-old-ones-change">One new stage, and none of the old ones change</h3>
+<p>A compiler for several files usually means that every stage learns
+about files: the checker keeps a table of names for each module, the
+interpreter a set of variables for each, the C backend a name scheme.
+Zeno has five stages after the parser (the checker, the interpreter,
+the VM, the C backend and the LLVM backend), so that would be the
+same work five times.</p>
+<p>Instead there is one new stage, <a href="https://github.com/partham20/zeno-lang/blob/main/src/modules.rs"><code>src/modules.rs</code></a>,
+between the parser and everything else:</p>
+<pre><code>main.zeno ----&gt; lexer -&gt; parser --+
+sensors.zeno -&gt; lexer -&gt; parser --+--&gt; modules --&gt; ONE program --&gt; checker
+report.zeno --&gt; lexer -&gt; parser --+                               interpreter, VM
+uart.zeno ----&gt; lexer -&gt; parser --+                               C, LLVM</code></pre>
+<p>What comes out is one ordinary program, as if it had been written in
+one file. The stages after it do not know there were ever several.</p>
+<p>You can see that program:</p>
+<pre><code>cargo run -- join examples/station/main.zeno</code></pre>
+<pre><code class="zeno">class sensors.Reading
+    field name: str
+    field value: float
+    field unit: str
+enum sensors.Health
+    sensors.Good
+    sensors.Suspect(why: str)
+let sensors.highest = ["temperature": 60.0, "humidity": 100.0, "pressure": 1100.0]
+function sensors.check(reading: sensors.Reading) -&gt; sensors.Health
+    ...
+function report.line(reading: sensors.Reading, health: sensors.Health) -&gt; str
+    ...
+let drivers.uart.speed = 9600
+var drivers.uart.sent = 0
+function drivers.uart.send(text: str)
+    print(f"uart&gt; {text}")
+    drivers.uart.sent += (len(text) + 1)
+...
+let readings = [sensors.Reading("temperature", 21.5, "C"), ...]</code></pre>
+<p>Three things happened: the files were <strong>loaded</strong>, their names were
+<strong>renamed</strong>, and their statements were <strong>joined</strong>.</p>
+<h3 id="load">Load</h3>
+<p><code>Loader::file</code> reads one file, and calls itself for each file that one
+imports. That is a walk down a tree, and three small tables keep it
+honest:</p>
+<pre><code>struct Loader&lt;'a&gt; {
+    files: Vec&lt;File&gt;,                 // every file read, the first file first
+    numbers: HashMap&lt;String, usize&gt;,  // which file each module is: read once
+    order: Vec&lt;usize&gt;,                // the files in the order they will run
+    loading: Vec&lt;String&gt;,             // the modules being read right now
+    ...
+}</code></pre>
+<ul>
+<li><code>numbers</code> is looked at before a file is read. If <code>report.zeno</code> and
+  <code>main.zeno</code> both import <code>sensors</code>, the second import finds it there
+  and reads nothing.</li>
+<li><code>loading</code> is the path from the first file down to the file being
+  read. If an import names a module that is already on that path, the
+  files form a circle, and the path itself is the error message.</li>
+<li><code>order</code> gets a file's number <em>after</em> its imports have been
+  followed. So everything a file imports is in the list before the
+  file is. That is the order the statements are joined in, and
+  therefore the order they run in.</li>
+</ul>
+<h3 id="rename">Rename</h3>
+<p>Two files may each have a function called <code>check</code>. In one program
+they need two names. The renamer gives every name that an imported
+file declares at its top the module's name in front:</p>
+<pre><code>check        in sensors.zeno             becomes   sensors.check
+sensors.check   in main.zeno             becomes   sensors.check
+check        after `from sensors import check`   becomes   sensors.check</code></pre>
+<p>All three end as the one word <code>sensors.check</code>. To the stages after
+this one that is a single name with a dot in it, no different from
+<code>total</code>. It can never collide with a name somebody wrote, because
+nobody can write <code>sensors.check</code> as one word: the parser reads that
+as a field of a variable called <code>sensors</code>. That reading is exactly
+what the renamer looks for:</p>
+<pre><code>// `shapes.area`: the parser read a field of a variable `shapes`.
+// It is the name `area` of the module `shapes`.
+if let ExprKind::Field { object, name } = &amp;expr.kind {
+    if let Some(module) = self.module_named(object).filter(|module| self.whole.contains(module)) {
+        let names = &amp;self.declared[&amp;module];
+        match names.contains(name) {
+            true =&gt; expr.kind = ExprKind::Name(format!("{module}.{name}")),
+            false =&gt; self.error(no_such_name(&amp;module, name, names), span),
+        }
+        return;
+    }
+}</code></pre>
+<p>The one hard part is knowing when a name is <em>not</em> the module's. In</p>
+<pre><code class="zeno">from shapes import area
+
+function paint(area: int) {
+    print(area)          # the parameter, not shapes.area
+}</code></pre>
+<p>the <code>area</code> inside <code>paint</code> is the parameter. So the renamer walks the
+file keeping a list of what the functions and blocks around it have
+declared (<code>scopes</code>), the same way the checker and the interpreter do,
+and leaves those names alone.</p>
+<p>It is also where a file is kept from seeing too much. The first
+file's names stay as they are written, so after the join an imported
+file could reach one of them just by spelling it. <code>Renamer::plain</code>
+refuses that:</p>
+<pre class="out"><code>error: this file declares no `total`. The program's first file has one, and an
+imported file cannot see what the file that imports it declares. Hand the value
+to the function that needs it, as an argument</code></pre>
+<h3 id="join">Join</h3>
+<p>The statements of the files, in <code>order</code>, become one list. The import
+lines of files are taken out: they have done their work. <code>import math</code>
+stays, because the stages after this one handle that themselves.</p>
+<h3 id="which-file-is-this-error-in">Which file is this error in?</h3>
+<p>Every part of the syntax tree remembers where it was written, as a
+<code>Span</code>: a line and a column. Error messages are built from it. With
+several files, "line 12" is no longer enough.</p>
+<p>The obvious fix is a third number, the file. But a position is passed
+along everywhere, down to the runtime of a compiled program, where
+every operation that can fail takes <code>line, col</code>:</p>
+<pre><code>zeno_floordiv(z_a, z_b, 31, 12)</code></pre>
+<p>So instead the lines of the whole program are numbered in one run
+(7.12). The first file's lines are 1 to 999,999, as your editor shows
+them. The second file's start at 1,000,001:</p>
+<pre><code>pub const LINES_A_FILE: usize = 1_000_000;
+
+impl Span {
+    pub fn file(self) -&gt; usize { self.line / LINES_A_FILE }
+    pub fn line_in_file(self) -&gt; usize { self.line % LINES_A_FILE }
+}</code></pre>
+<p>The lexer is told which file it is reading and starts counting from
+there. Nothing else changes, and the same line in a compiled program
+is now</p>
+<pre><code>zeno_floordiv(z_a, z_b, 1000031, 12)     /* line 31 of the second file */</code></pre>
+<p>Only the few places that show a position to a person take the number
+apart: <code>report</code> in <code>src/main.rs</code>, and two lines of the C runtime,
+which has been given the names of the files:</p>
+<pre><code>static const char *zeno_file_of(int line) {
+    return line &lt; 1000000 ? zeno_file : zeno_modules[line / 1000000 - 1];
+}</code></pre>
+<p>Clang and the Rust compiler keep positions the same way.</p>
+<h3 id="what-the-compilers-do-with-a-dotted-name">What the compilers do with a dotted name</h3>
+<p>A C name cannot have a dot in it. The C backend already had a
+function for names that C does not allow, written for generics, where
+<code>Stack[int]</code> becomes <code>Stack_int</code>. The same function turns
+<code>shapes.area</code> into <code>shapes_area</code>:</p>
+<pre><code>static double z_shapes_area(z_shapes_Shape *z_shape);
+static int64_t z_drivers_uart_sent;</code></pre>
+<p>LLVM IR allows a dot in a name, so there the function is
+<code>@z_shapes.area</code>.</p>
+<p>What a program <em>prints</em> must not have the module in it (rule 7).
+<code>shown_name</code> in <code>src/ast.rs</code> cuts a name down to what its file
+called it, and the three places that print a class or a case (the
+interpreter's <code>Display</code>, the C <code>zeno_show_</code> functions and the IR ones)
+use it.</p>
+<h2 id="what-is-left-out">What is left out</h2>
+<ul>
+<li><strong>No way to hide a declaration.</strong> Everything at the top of a file
+  can be imported. A word such as <code>private</code> can be added without
+  breaking any program (7.4).</li>
+<li><strong>No second name for a module</strong> (<code>import drivers.uart as uart</code>).
+  <code>from drivers.uart import send</code> gives the short form (7.3).</li>
+<li><strong>The whole program is compiled together.</strong> Change one file and
+  everything is checked and built again. That is fast for the
+  programs Zeno has now, and it is what lets types be worked out
+  across files (7.11).</li>
+<li><strong>A module that comes with Zeno wins over a file of the same
+  name.</strong> <code>math.zeno</code> is never read by <code>import math</code> (7.2).</li>
+<li><strong>Other people's modules.</strong> A module is found from the program's
+  own folder and nowhere else. Saying where libraries live is the
+  package manager's job, which is the next stage.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Run <code>cargo run -- join examples/station/main.zeno</code> and find the
+   first line that came from <code>main.zeno</code>. Which file's statements are
+   first, and why that one?</li>
+<li>In <code>main.zeno</code>, move <code>import report</code> below the <code>let readings</code>
+   line. Read the message. Then put it back.</li>
+<li>Add <code>import report</code> to the top of <code>sensors.zeno</code>. <code>report.zeno</code>
+   already imports <code>sensors</code>. What does Zeno say, and which file does
+   it point at?</li>
+<li>In <code>main.zeno</code>, write <code>drivers.uart.sent = 0</code> before the last
+   line. Then add a function <code>reset()</code> to <code>drivers/uart.zeno</code> that
+   does it, and call that instead.</li>
+<li>Change <code>sensors.check(reading)</code> to <code>sensors.chek(reading)</code>. The
+   message lists what the module has. Where does that list come from
+   in <code>src/modules.rs</code>?</li>
+<li>Make a mistake inside <code>report.zeno</code>, such as <code>return good + 1</code> in
+   <code>summary</code>. Which file and line does the error name? Now look at
+   <code>Span::file</code> in <code>src/token.rs</code> and work out what number the
+   checker saw as the line.</li>
+<li>Add a class <code>Health</code> to <code>main.zeno</code> with one field, and print one.
+   The program now has a class <code>Health</code> and an enum <code>Health</code>, in two
+   files. Run it and build it: both work. Now call your class
+   <code>sensors_Health</code> and build again. Read the message, and work out
+   from "What the compilers do with a dotted name" why <code>zeno run</code>
+   does not mind.</li>
+<li>Build the station with no collector:
+   <code>cargo run -- build --no-collector --memory examples/station/main.zeno</code>
+   and run <code>./main</code>. How many blocks are left at the end?</li>
+<li>Open the <code>main.c</code> that step 8 wrote and search for <code>1000</code>. Find a
+   line number of the second file, and find where <code>zeno_modules</code> is
+   set.</li>
+<li>Put <code>strict</code> as the first line of <code>sensors.zeno</code> and take the
+    type off <code>reading</code> in <code>check</code>. Run it. It still passes: why? (Read
+    7.10, then look at how <code>check</code> is called.) Now add a function
+    there that nothing calls, with a parameter that has no type.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/modules.md">docs/modules.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/dict/"><span>Previous</span>The standard library, part 4: a dictionary</a><a class="next" href="/docs/audit/"><span>Next</span>The audit: unambiguous and intuitive</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-module-is">What a module is</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

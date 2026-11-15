@@ -39,12 +39,14 @@ PAGES = []          # every path written, for the sitemap
 
 # --- Running Zeno -------------------------------------------------------------
 
-def run_zeno(path, lines=None):
-    """What `zeno run` prints for a file, errors included, as on a terminal."""
+def run_zeno(path, lines=None, typed=None):
+    """What `zeno run` prints for a file, errors included, as on a terminal.
+    `typed` is what is typed on the keyboard; with none, the keyboard is closed."""
     exe = Path(ARGS.zeno) / "target" / "release" / "zeno"
     try:
         done = subprocess.run([str(exe), "run", path.name], cwd=path.parent,
-                              capture_output=True, text=True, timeout=lines and 3 or 30)
+                              capture_output=True, text=True, timeout=lines and 3 or 30,
+                              input=typed if typed is not None else "")
         out = done.stdout + done.stderr
     except subprocess.TimeoutExpired as stopped:
         out = (stopped.stdout or b"").decode() if isinstance(stopped.stdout, bytes) else (stopped.stdout or "")
@@ -208,6 +210,8 @@ def md_to_html(text, here="docs"):
             return f'href="/docs/{name[:-3]}/{anchor}"'
         if name.endswith(".zeno") and (SNIPPET_EXAMPLES / name).exists():
             return f'href="/examples/{name[:-5]}/"'
+        if re.search(r"(^|/)examples/[\w-]+/?$", path) and (SNIPPET_EXAMPLES / name / "main.zeno").exists():
+            return f'href="/examples/{name}/"'
         clean = re.sub(r"^(\.\./)+", "", path)
         return f'href="{GITHUB}/blob/main/{clean}{anchor}"'
 
@@ -243,7 +247,9 @@ def toc_html(tokens, depth=2):
 # --- Docs --------------------------------------------------------------------
 
 DOC_ICONS = {"The front end": "tree", "The engines": "play", "Memory": "memory",
-             "Firmware and hardware": "cpu", "The type system": "copies", "More": "book"}
+             "Firmware and hardware": "cpu", "The type system": "copies", "Memory by hand": "key",
+             "The standard library": "package", "Programs in many files": "layers", "The audit": "eye",
+             "More": "book"}
 
 DOC_GROUPS = [
     ("The front end", "From text to a checked program.",
@@ -251,11 +257,19 @@ DOC_GROUPS = [
     ("The engines", "Four ways to run the same program.",
      ["interpreter", "vm", "compiler", "llvm"]),
     ("Memory", "A collector, owners, and a fixed pool.",
-     ["memory", "ownership", "no-collector", "pool", "text", "temporaries", "one-owner", "unsafe"]),
+     ["memory", "ownership", "no-collector", "pool", "text", "temporaries", "one-owner", "enums-and-none", "functions-and-errors"]),
     ("Firmware and hardware", "Errors as values, pins and clocks, sized numbers.",
      ["firmware", "board", "sized-ints"]),
     ("The type system", "Code written once for many types.",
      ["generics"]),
+    ("Memory by hand", "Pointers and registers, inside unsafe blocks.",
+     ["unsafe"]),
+    ("The standard library", "Text, lists, files and input, maths and dictionaries.",
+     ["library", "reading-and-writing", "math", "dict"]),
+    ("Programs in many files", "Modules, imports and folders.",
+     ["modules"]),
+    ("The audit", "Every feature checked against one rule.",
+     ["audit"]),
 ]
 
 
@@ -358,41 +372,65 @@ def example_meta(path):
     return title
 
 
+TYPED = {"logbook": "temp 21.5\ntemp 22.0\nhello\n"}   # keyboard input for programs that read it
+
+
 def build_examples():
     folder = Path(ARGS.zeno) / "examples"
     order = ["hello", "tour", "styles", "primes", "shapes", "sensor", "generics", "packet",
-             "commands", "handlers", "signal", "blink", "buffer", "memory", "labels", "words",
-             "scheduler", "driver"]
-    names = [n for n in order if (folder / f"{n}.zeno").exists()]
-    names += sorted(p.stem for p in folder.glob("*.zeno") if p.stem not in names)
+             "sentence", "faults", "instruments", "logbook", "station", "commands", "handlers",
+             "signal", "blink", "buffer", "memory", "labels", "words", "scheduler", "driver"]
+    found = {p.stem for p in folder.glob("*.zeno")} | {p.name for p in folder.iterdir() if (p / "main.zeno").exists()}
+    names = [n for n in order if n in found] + sorted(found - set(order))
+    label = lambda n: f"{n}/" if (folder / n).is_dir() else f"{n}.zeno"
     cards = ""
     for i, name in enumerate(names):
-        path = folder / f"{name}.zeno"
+        many = (folder / name).is_dir()
+        path = folder / name / "main.zeno" if many else folder / f"{name}.zeno"
         title = example_meta(path)
-        code = path.read_text().rstrip("\n")
         lines = FOREVER.get(name)
-        output = run_zeno(path, lines)
-        note = (f'<p class="note-small">This program runs until it is stopped. The first {lines} lines are shown.</p>'
-                if lines else "")
-        prev_link = f'<a class="prev" href="/examples/{names[i-1]}/"><span>Previous</span>{names[i-1]}.zeno</a>' if i else "<span></span>"
-        next_link = f'<a class="next" href="/examples/{names[i+1]}/"><span>Next</span>{names[i+1]}.zeno</a>' if i + 1 < len(names) else "<span></span>"
+        typed = TYPED.get(name)
+        output = run_zeno(path, lines, typed)
+        run_cmd = f"zeno run examples/{name}/main.zeno" if many else f"zeno run examples/{name}.zeno"
+        if many:
+            files = sorted((folder / name).rglob("*.zeno"), key=lambda f: (f.name != "main.zeno", str(f)))
+            parts = [(str(f.relative_to(folder / name)).replace(os.sep, "/"), f.read_text().rstrip("\n")) for f in files]
+            windows = "".join(window(f"{name}/{rel}", code) for rel, code in parts[:-1])
+            windows += window(f"{name}/{parts[-1][0]}", parts[-1][1], output, run_cmd)
+            whole = f"The {len(parts)} files of <code>examples/{name}/</code>, and what <code>{run_cmd}</code> prints."
+            code_lines = sum(len(c.split("\n")) for _, c in parts)
+            gh = f"{GITHUB}/tree/main/examples/{name}"
+        else:
+            code = path.read_text().rstrip("\n")
+            windows = window(f"{name}.zeno", code, output, run_cmd)
+            whole = f"The whole of <code>examples/{name}.zeno</code>, and what <code>zeno run</code> prints for it."
+            code_lines = len(code.split("\n"))
+            gh = f"{GITHUB}/blob/main/examples/{name}.zeno"
+        note = ""
+        if lines:
+            note = f'<p class="note-small">This program runs until it is stopped. The first {lines} lines are shown.</p>'
+        if typed:
+            shown = ", ".join(f"<code>{esc(t)}</code>" for t in typed.strip().split("\n"))
+            note = f'<p class="note-small">Run with these lines typed on the keyboard: {shown}. The keyboard is not echoed, so the prompts run together.</p>'
+        prev_link = f'<a class="prev" href="/examples/{names[i-1]}/"><span>Previous</span>{label(names[i-1])}</a>' if i else "<span></span>"
+        next_link = f'<a class="next" href="/examples/{names[i+1]}/"><span>Next</span>{label(names[i+1])}</a>' if i + 1 < len(names) else "<span></span>"
         page = f"""<div class="narrow">
   <p class="eyebrow">{icon("code")}<a href="/examples/">Examples</a></p>
   <h1 class="example-title">{esc(title)}</h1>
-  <p class="lede small">The whole of <code>examples/{name}.zeno</code>, and what <code>zeno run</code> prints for it.</p>
-  {window(f"{name}.zeno", code, output, f"zeno run examples/{name}.zeno")}
+  <p class="lede small">{whole}</p>
+  <div class="example-files">{windows}</div>
   {note}
-  <p class="source">See it on GitHub: <a href="{GITHUB}/blob/main/examples/{name}.zeno">examples/{name}.zeno</a>.</p>
+  <p class="source">See it on GitHub: <a href="{gh}">examples/{label(name)}</a>.</p>
   <nav class="pager" aria-label="Previous and next">{prev_link}{next_link}</nav>
 </div>"""
-        layout(f"/examples/{name}/", f"{name}.zeno", f"{title}. A Zeno example, with its output.", page, "/examples/")
-        lines_count = len(code.split("\n"))
-        kind = "cpu" if name in FIRMWARE else "code"
+        layout(f"/examples/{name}/", label(name), f"{title}. A Zeno example, with its output.", page, "/examples/")
+        kind = "layers" if many else "cpu" if name in FIRMWARE else "code"
         cards += (f'<li><a href="/examples/{name}/">{icon(kind)}<b>{esc(title)}</b>'
-                  f'<span><code>{name}.zeno</code></span><small>{lines_count} lines</small></a></li>')
+                  f'<span><code>{label(name)}</code></span><small>{code_lines} lines</small></a></li>')
     body = page_head("Examples", "Programs to read and run",
-                     "Every example in the language repository, from one line to a driver that works memory by hand. "
-                     "Each page shows what <code>zeno run</code> printed. The chip marks a firmware program.", "code") + \
+                     "Every example in the language repository, from one line to a weather station in four files. "
+                     "Each page shows what <code>zeno run</code> printed. The chip marks a firmware program, "
+                     "and the layers a program in several files.", "code") + \
         f'<ul class="index examples">{cards}</ul>'
     layout("/examples/", "Examples", "Example Zeno programs, from one line to firmware, each with its output.", body, "/examples/")
 
@@ -428,6 +466,8 @@ cargo build --release
 <p>A function written inside another keeps the variables it can see, and can change them.</p>"""),
     ("lists", "Lists and text", "lists", """
 <p>Lists are written with <code>[ ]</code>, and have <code>append</code>, <code>map</code>, <code>filter</code> and <code>reduce</code>. Comprehensions read like the sentence they stand for. Formatted text needs the <code>f</code> prefix, so a brace in ordinary text is just a brace.</p>"""),
+    ("dicts", "Dictionaries", "dict", """
+<p>A <code>dict</code> keeps one value under each key, written with the same square brackets as a list: <code>["temp": 85]</code>, and <code>[:]</code> for an empty one. Asking for a key that was never stored is an error, not a quiet zero; <code>get</code> gives <code>none</code> or a default instead.</p>"""),
     ("classes", "Classes", "classes", """
 <p>A class lists its fields at the top and gets a constructor for free, which takes the fields in order or by name. Methods name <code>self</code> explicitly.</p>"""),
     ("enums", "Enums and match", "shapes", """
@@ -436,6 +476,8 @@ cargo build --release
 <p>A value can be <code>none</code> only if its type says <code>or none</code>. Before you use it, you check it with <code>is not none</code>, and inside that check it is the plain type.</p>"""),
     ("errors", "Errors", "ports", """
 <p><code>try</code>, <code>except</code> and <code>raise</code> read as they do in Python. A function that can fail says so with <code>raises</code>, and the checker makes sure the error is handled or passed on. Any class can be raised, so an error can carry data.</p>"""),
+    ("files", "Files and input", "files", """
+<p><code>import files</code> reads and writes files, <code>input()</code> reads a line from the keyboard, and <code>import program</code> gives the words a program was started with. A file that is not there is a <code>FileError</code> you can catch.</p>"""),
     ("units", "Units", "delay", """
 <p>A number can carry a unit: <code>500 ms</code>, <code>3.3 V</code>. The unit is part of the type, so a function that wants milliseconds will not take a bare number.</p>"""),
     ("sized", "Numbers with a size", "packet", """
@@ -444,6 +486,8 @@ cargo build --release
 <p><code>class Stack[T]</code> and <code>function largest[T]</code> are written once, with <code>T</code> standing for a type. A call never says what <code>T</code> is: the checker works it out, and the compilers make one copy for each type used, so a <code>Stack[u8]</code> is as small as one written for bytes by hand.</p>"""),
     ("ownership", "Owned values", "frame", """
 <p>Most values are shared, and a garbage collector frees them. A value marked <code>owned</code> has one owner instead, and is freed the moment its owner's block ends. A parameter only looks at what it is given, unless it says <code>take</code>. Giving the value away empties the old name, and the checker points at any later use.</p>"""),
+    ("modules", "Programs in several files", None, """
+<p>A file is a module. <code>import sensors</code> brings in <code>sensors.zeno</code> from the same folder, and its names are written <code>sensors.check</code>; <code>from sensors import Reading</code> brings in one name to use as it is. A dot is a folder, so <code>import drivers.uart</code> is <code>drivers/uart.zeno</code>. There is nothing to declare and nothing to export: what a file declares at the top is what others can import. See the weather station in <a href="/examples/station/">examples/station</a>, four files with its output.</p>"""),
     ("board", "Pins and time", "board", """
 <p><code>from board import led, pin</code> and <code>from time import sleep, now</code> give a program pins and a clock. On a computer the board is simulated and prints each pin as it changes. A compiled program meets a real board through four C functions.</p>"""),
 ]
@@ -452,7 +496,8 @@ cargo build --release
 LESSON_ICONS = {"install": "terminal", "first": "play", "variables": "type", "typos": "scan", "numbers": "chart",
                 "overflow": "gauge", "control": "loop", "truth": "check", "functions": "function", "closures": "braces",
                 "lists": "words", "classes": "package", "enums": "layers", "none": "none", "errors": "alert",
-                "units": "ruler", "sized": "memory", "generics": "copies", "ownership": "key", "board": "board"}
+                "units": "ruler", "sized": "memory", "generics": "copies", "ownership": "key", "board": "board",
+                "dicts": "key", "files": "edit", "modules": "layers"}
 
 
 def icons_in(text):
@@ -522,12 +567,15 @@ DONE = [
     ("One owner", "Whoever receives a value owns it, with no collector.", "one-owner"),
     ("Enums, none, closures and errors with one owner", "The whole language builds with no collector.", "one-owner"),
     ("Memory by hand", "<code>unsafe { }</code>, raw pointers, <code>allocate</code>, <code>free</code> and registers.", "unsafe"),
+    ("An audit for clarity", "Every feature checked: a parameter looks, and <code>take</code> takes.", "audit"),
+    ("Text and lists", "<code>find</code>, <code>slice</code>, <code>sort</code>, <code>join</code> and more.", "library"),
+    ("Files, input and arguments", "<code>import files</code>, <code>input()</code> and <code>import program</code>.", "reading-and-writing"),
+    ("More maths", "Angles, logarithms, powers and rounding in <code>math</code>.", "math"),
+    ("Dictionaries", "<code>dict[str, int]</code>, written <code>[&quot;a&quot;: 1]</code>.", "dict"),
+    ("Programs in several files", "<code>import sensors</code>, and folders as modules.", "modules"),
 ]
 NEXT = [
-    ("In progress", "An audit for clarity", "Every part of the language checked against one rule: unambiguous and intuitive. A parameter now looks, and <code>take</code> takes."),
-    ("Planned", "Standard library", "Files, text and collections."),
-    ("Planned", "Modules", "Programs across many files."),
-    ("Planned", "Package manager", "Share and reuse code."),
+    ("Next", "Package manager", "Share and reuse code."),
     ("Planned", "Editor support", "A formatter and a language server."),
     ("Planned", "C interop", "Call C libraries, and be called from C."),
     ("Planned", "WebAssembly", "Zeno in the browser."),
@@ -539,7 +587,7 @@ def build_roadmap():
     done = "".join(
         f'<li><a href="/docs/{doc}/">{icon("check")}<b>{t}</b><span>{d}</span></a></li>' for t, d, doc in DONE)
     upcoming = "".join(
-        f'<li class="{s.split()[0].lower()}">{icon("clock" if s == "In progress" else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
+        f'<li class="{s.split()[0].lower()}">{icon("clock" if s in ("In progress", "Next") else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
         for s, t, d in NEXT)
     body = page_head("Roadmap", "Where Zeno stands",
                      "The goal is one language for every job you would reach for C, C++, Python, JavaScript, Java or Rust to do. "
@@ -571,7 +619,7 @@ def build_about():
 <h2>The name</h2>
 <p>Zeno of Elea argued that Achilles can never catch a tortoise: before he reaches it he must cover half the distance, then half of what is left, forever. The quantum Zeno effect says a system watched closely enough never changes. Both suit a compiler that will always be almost finished. The bar at the top of every page closes half the distance that is left as you scroll, and never arrives.</p>
 <h2>Status</h2>
-<p>Zeno is young. It runs programs, checks them, and compiles them to C and to LLVM, but the syntax can still change and there is no standard library yet. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
+<p>Zeno is young. It runs programs, checks them, and compiles them to C and to LLVM, has a first standard library (text, lists, files, maths and dictionaries) and programs in several files, but the syntax can still change and there is no package manager yet. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
 <p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 </div>"""

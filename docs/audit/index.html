@@ -38,7 +38,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>More</h4><a href="/docs/audit/" aria-current="page">The audit: unambiguous and intuitive</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/" aria-current="page">The audit: unambiguous and intuitive</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>The audit: unambiguous and intuitive</h1>
@@ -157,10 +157,240 @@ of the language, so it cannot be a name. It goes in front of the type
 of a parameter: `frame: take Frame`</code></pre>
 <p>The names of types (<code>int</code>, <code>list</code>, <code>pointer</code>) are not reserved. They
 are names, and a type and a variable never stand in the same place.</p>
+<h2 id="3-after-case-none-the-value-is-there">3. After <code>case none</code>, the value is there</h2>
+<pre><code class="zeno">match found {
+    case none { return "nothing" }
+    case point { return point.name }
+}</code></pre>
+<p><code>point</code> used to be <code>Point or none</code> here, although <code>none</code> had just been
+dealt with, and the body had to ask <code>if point is not none</code> again. That
+failed question 3 from the other side: the line said more than the
+checker would believe.</p>
+<p>Now the cases after <code>case none</code> know. It works by a new name
+(<code>case point</code>) and by the variable's own (<code>case _ { return found.name }</code>),
+exactly as the <code>else</code> of <code>if found is none</code> does. If <code>case none</code> always
+leaves, what follows the <code>match</code> knows too:</p>
+<pre><code class="zeno">match reading {
+    case none { return 0 }
+    case _ { }
+}
+return reading + 1        # an int here</code></pre>
+<p>An enum that may be <code>none</code> no longer needs a final <code>case _</code>. It is
+complete once <code>none</code> and each of its cases has a <code>case</code>, and a missing
+one is named: "this <code>match</code> does not handle <code>none</code>".</p>
+<p>Both compilers already knew how to read a narrowed variable, because
+<code>if x is not none</code> needs it: an <code>int or none</code> is stored differently
+from an <code>int</code>. The checker now tells them the same thing for <code>match</code>.</p>
+<h2 id="4-on-two-lists-follows-the-rule-append-has">4. <code>+</code> on two lists follows the rule <code>append</code> has</h2>
+<pre><code class="zeno">var xs = [1, 2]
+xs.append("three")        # refused, as it always was
+xs += ["three"]           # passed, also under --strict</code></pre>
+<p>Two ways to add to a list, and only one was checked: question 1. <code>+</code>
+and <code>+=</code> now refuse two lists of known, unrelated things, with or
+without <code>--strict</code>:</p>
+<pre class="out"><code>error: `+` joins two lists that hold the same kind of thing, and these
+are list[int] and list[str]</code></pre>
+<p>A list that may hold <code>none</code> still joins one that does not, and a list
+that is not known yet (<code>[]</code>) joins anything.</p>
+<h2 id="5-every-function-can-look-at-a-let-at-the-top-of-the-file">5. Every function can look at a <code>let</code> at the top of the file</h2>
+<p>This is the first thing a firmware program does, and with no collector
+it was refused:</p>
+<pre><code class="zeno">let table = [10, 20, 30, 40]
+
+function scaled(i: int) -&gt; int {
+    return table[i] * 3
+}</code></pre>
+<p>The reason given was true: the top of the file owns <code>table</code>, and could
+give it away before <code>scaled</code> runs. But the fix it asked for, passing the
+table to every function that reads it, is not what anyone expects to
+write.</p>
+<p>A <code>let</code> cannot be given a new value. So if the top of the file never
+gives it away, it holds its value until the program ends, and any
+function may look at it for as long as it likes. That is the rule now:</p>
+<ul>
+<li>A function, a method and a function that is kept
+  (<code>let pick = function(i: int) -&gt; int { return table[i] }</code>) may all
+  read a <code>let</code> at the top of the file, and change what is inside it
+  (<code>table[0] = 5</code>, <code>config.gain += 1</code>, <code>tasks.append(...)</code>).</li>
+<li>In return the top of the file may not give it away, before or after:</li>
+</ul>
+<pre class="out"><code>error: `table` is used by a function, on line 3, so it cannot be given
+away: the function could be called when `table` holds nothing. Pass
+`table` to that function instead, or give away a copy</code></pre>
+<ul>
+<li>A function only looks. It cannot take an item out of the list or put a
+  new value in an owned field: the top of the file is the owner.</li>
+<li>A <code>var</code> is still out of reach. It could be given a new value while a
+  function is looking at the old one, and the message says to use <code>let</code>
+  if it never changes.</li>
+</ul>
+<p>Where there is a collector the same holds for an <code>owned</code> list or object.</p>
+<p>One more message was fixed on the way. A name used above its
+declaration said "<code>table</code> is not defined", which is not true. It says
+now which line declares it, and that the declaration has to move up.</p>
+<h2 id="6-a-method-can-take-out-what-its-own-object-holds">6. A method can take out what its own object holds</h2>
+<pre><code class="zeno">class Queue {
+    tasks: list[Task]
+    last: Task or none
+
+    function next(self) -&gt; Task { return self.tasks.pop() }
+    function remember(self, task: take Task) { self.last = task }
+}</code></pre>
+<p>Both methods were refused, because <code>self</code> only looks, and taking an
+item out (or replacing a value, which frees the old one) is for the
+owner. So a class could not look after its own parts, which is what a
+class is for.</p>
+<p>The danger the rule guards against is real: somebody may be looking at
+the item that is about to go.</p>
+<pre><code class="zeno">for task in queue.tasks {
+    queue.next()          # frees the task the loop is looking at
+}</code></pre>
+<p>So the rule is not dropped. It moves to the caller. A method that
+takes out or replaces something its object owns is marked as doing so,
+and calling it is checked exactly as doing it by hand would be:</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Checked as</th>
+<th>So</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>queue.next()</code></td>
+<td><code>queue.tasks.pop()</code></td>
+<td>only the owner of <code>queue</code> may call it</td>
+</tr>
+<tr>
+<td>inside <code>for task in queue.tasks</code></td>
+<td>the same</td>
+<td>refused: the loop is looking</td>
+</tr>
+<tr>
+<td><code>print(queue.size(), queue.next())</code></td>
+<td>the same</td>
+<td>refused: the line already looked</td>
+</tr>
+<tr>
+<td><code>queue.swap(queue.tasks[0])</code></td>
+<td></td>
+<td>refused: the argument looks at the queue</td>
+</tr>
+</tbody>
+</table>
+<pre class="out"><code>error: the `for` on line 3 is walking a list that `queue` owns, and is
+still looking at its items. Nothing can call `next`, which takes out or
+replaces something the object owns until the loop is over</code></pre>
+<p>Inside the method the same three rules hold for <code>self</code>. A method that
+only reads can be called by anyone, as before. Nothing is written to
+mark a method: the checker reads its body, as it does for a return type
+that is not written.</p>
+<h2 id="7-var-f-double-can-be-given-another-function">7. <code>var f = double</code> can be given another function</h2>
+<pre><code class="zeno">var f = double
+f = triple</code></pre>
+<pre class="out"><code>error: the new value should be a function, but this is a function. ...</code></pre>
+<p>With no type written, <code>f</code> held "the function <code>double</code>" and nothing
+else, which is right for a <code>let</code> and makes no sense for a <code>var</code>. A
+<code>var</code> now gets the type of the function, <code>function(int) -&gt; int</code>, and
+can be given any function that fits. A <code>let</code> still holds the one.</p>
+<h2 id="8-a-firmware-build-never-disagrees-in-silence">8. A firmware build never disagrees in silence</h2>
+<p>A firmware build stops at a division by zero, a bad index or a number
+that does not fit. <code>zeno run</code> and an ordinary build raise an error that
+can be caught. That difference is by design, and the compiler refused a
+<code>try</code> around such a fault. One step away it got through:</p>
+<pre><code class="zeno">function half(a: int, b: int) -&gt; int raises ZeroDivisionError { return a // b }
+
+try { print(half(1, 0)) } except ZeroDivisionError { print("no") }</code></pre>
+<p><code>zeno run</code> printed <code>no</code>. The firmware build compiled, and stopped at
+the division. Now a function that says <code>raises</code> for one of the three
+faults, with nothing in it that raises one itself, is refused in a
+firmware build, with the reason and what to do
+(<a href="/docs/firmware/"><code>firmware.md</code></a>).</p>
+<h2 id="9-messages-count-in-words">9. Messages count in words</h2>
+<p><code>`f` takes 2 argument(s), but 1 were given</code> is now
+<code>`f` takes 2 arguments, but 1 was given</code>, and the memory report of
+a compiled program says <code>1 block</code> and <code>2 blocks</code>. Small, and it was in
+every message that counts.</p>
+<h2 id="looked-at-and-left-as-it-is">Looked at and left as it is</h2>
+<p>Each of these was read against the five questions and kept, with the
+reason.</p>
+<ul>
+<li><strong>A list of numbers that may be <code>none</code>, with no collector</strong>
+  (<code>list[int or none]</code>). Still refused. Each number would sit in a block
+  of its own, and the list would have to copy and free them everywhere.
+  The message says what to write: an enum with a case for the missing
+  value.</li>
+<li><strong>A function that is kept cannot take over a list or an object from
+  outside it.</strong> It can look for one line, or look at a <code>let</code> at the top
+  of the file. To own something it is given it as a parameter.</li>
+<li><strong>A value read inside <code>unsafe { }</code> and used after it needs a <code>var</code>
+  declared before the block.</strong> Every <code>{ }</code> in Zeno opens a scope. One
+  that did not would be the only one.</li>
+<li><strong>How full the text room gets can differ by a few bytes between C
+  compilers</strong>, when one statement shows a list and builds other text. C
+  does not say in which order the arguments of a call are worked out.
+  What is printed never differs, and a call that changes something is
+  already worked out in order. Only the high-water mark in the
+  <code>--memory</code> report can move, so leave the room a little headroom.
+  Fixing it means writing every piece of text into a temporary first,
+  which makes all the C harder to read for a few bytes in a report.</li>
+<li><strong>A method of a class sees only what is declared above the class</strong>,
+  and so does a function. One rule for both. The message now names the
+  line of the declaration.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li><strong>The parser</strong> (<code>parser.rs</code>): <code>a_parameter_that_takes_says_take</code> and
+  <code>a_file_can_declare_itself_strict</code> for the words.</li>
+<li><strong>The checker</strong> (<code>checker.rs</code>):
+  <code>a_plain_parameter_looks_and_take_takes</code>,
+  <code>where_owned_and_take_can_be_written</code>,
+  <code>after_case_none_the_value_is_known_to_be_there</code>,
+  <code>every_function_can_look_at_a_let_at_the_top_of_the_file</code>,
+  <code>only_the_owner_takes_out_what_has_one_owner</code> (methods),
+  <code>with_one_owner_a_function_value_has_one</code> (<code>var f = double</code>),
+  <code>a_firmware_build_cannot_raise_a_fault_to_a_caller</code>, and the list
+  tests for <code>+</code>.</li>
+<li><strong>Both compilers</strong> (<code>emit_c.rs</code>, <code>emit_llvm.rs</code>): four programs are
+  built every way (ordinary, <code>--firmware</code>, <code>--no-collector</code>, each
+  through C and through LLVM), must print what <code>zeno run</code> prints, and
+  with no collector must end with 0 blocks left:
+  <code>after_case_none_the_value_is_there_in_every_build</code>,
+  <code>a_let_at_the_top_of_the_file_can_be_read_by_every_function</code>,
+  <code>a_method_can_take_out_what_its_object_owns</code> and
+  <code>a_var_that_holds_a_function_can_be_given_another</code>.</li>
+<li>Every test program and example written before the audit was changed
+  to the new parameter rule and still passes: 355 tests in all.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>In <code>examples/buffer.zeno</code>, take <code>take</code> off <code>send</code>'s parameter and run
+   <code>zeno check</code>. Which line complains, and what does it tell you to
+   write?</li>
+<li>Write <code>let take = 3</code> and read the message. Then find <code>unexpected</code> in
+   <code>parser.rs</code>, where the message is made, and add a hint of your own
+   for <code>unsafe</code>.</li>
+<li>Write a function that returns the area of a <code>Shape or none</code> with a
+   <code>match</code> and no <code>case _</code>. Leave out one case and read the message.
+   Then leave out <code>case none</code>.</li>
+<li>Put a table of numbers at the top of a file with <code>let</code>, read it from
+   two functions, and build with <code>--no-collector --memory</code>. Which line
+   of the C frees the table? Now change <code>let</code> to <code>var</code> and read the
+   message.</li>
+<li>Give the <code>Queue</code> on this page a method <code>clear(self)</code> that pops until
+   the list is empty, and call it inside <code>for task in queue.tasks</code>. Then
+   move the call out of the loop.</li>
+<li>In <code>checker.rs</code>, find <code>takes_self</code>. Follow it from the <code>pop()</code> in a
+   method's body to the call of that method. Which three checks does the
+   call go through?</li>
+<li>Write <code>function half(a: int, b: int) -&gt; int raises ZeroDivisionError</code>
+   two ways, so that one builds with <code>--firmware</code> and one does not.</li>
+</ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/audit.md">docs/audit.md</a> in the language repository.</p>
-  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/generics/"><span>Previous</span>How generics work</a><a class="next" href="/docs/enums-and-none/"><span>Next</span>Enum values and none, with one owner</a></nav>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/modules/"><span>Previous</span>Programs in several files</a><span></span></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#1-a-parameter-looks-unless-it-says-take">1. A parameter looks, unless it says take</a></li><li><a href="#2-a-word-of-the-language-is-never-a-name">2. A word of the language is never a name</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#1-a-parameter-looks-unless-it-says-take">1. A parameter looks, unless it says take</a></li><li><a href="#2-a-word-of-the-language-is-never-a-name">2. A word of the language is never a name</a></li><li><a href="#3-after-case-none-the-value-is-there">3. After case none, the value is there</a></li><li><a href="#4-on-two-lists-follows-the-rule-append-has">4. + on two lists follows the rule append has</a></li><li><a href="#5-every-function-can-look-at-a-let-at-the-top-of-the-file">5. Every function can look at a let at the top of the file</a></li><li><a href="#6-a-method-can-take-out-what-its-own-object-holds">6. A method can take out what its own object holds</a></li><li><a href="#7-var-f-double-can-be-given-another-function">7. var f = double can be given another function</a></li><li><a href="#8-a-firmware-build-never-disagrees-in-silence">8. A firmware build never disagrees in silence</a></li><li><a href="#9-messages-count-in-words">9. Messages count in words</a></li><li><a href="#looked-at-and-left-as-it-is">Looked at and left as it is</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">

@@ -281,7 +281,7 @@ main:not(.home) { padding-bottom: 4rem; }
 
 /* --- Milestones --- */
 .track { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); position: relative; }
-.track::before { content: ""; position: absolute; left: 0; right: 0; top: 1.25rem; height: 2px; background: linear-gradient(90deg, var(--good) 0 40%, var(--cobalt) 40% 60%, var(--rule) 60%); }
+.track::before { content: ""; position: absolute; left: 0; right: 0; top: 1.25rem; height: 2px; background: linear-gradient(90deg, var(--good) 0 60%, var(--cobalt) 60% 80%, var(--rule) 80%); }
 .track li { position: relative; padding: 3.25rem 1.5rem 0 0; }
 .track .pin { position: absolute; top: 0.3rem; left: 0; width: 2rem; height: 2rem; border-radius: 50%; display: grid; place-items: center; background: var(--paper); border: 2px solid var(--rule); color: var(--faint); }
 .track .pin .icon { width: 1rem; height: 1rem; }
@@ -328,6 +328,7 @@ main:not(.home) { padding-bottom: 4rem; }
 .narrow { max-width: 52rem; margin: 0 auto; padding: 4rem 0 0; }
 .narrow > h1 { font-size: clamp(2.4rem, 5.5vw, 3.75rem); letter-spacing: -0.04em; }
 .source { font-size: 0.875rem; color: var(--faint); margin-top: 3rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); }
+.example-files { display: grid; gap: 1.25rem; }
 .note-small { font-size: 0.875rem; color: var(--faint); margin: 0.75rem 0 0; }
 
 /* A list of links with rules: used for docs and examples */
@@ -472,7 +473,7 @@ main:not(.home) { padding-bottom: 4rem; }
   .diagram svg.lines { display: none; }
   .after-diagram { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
   .track { grid-template-columns: minmax(0, 1fr); }
-  .track::before { left: 0.95rem; right: auto; top: 0; bottom: 0; width: 2px; height: auto; background: linear-gradient(var(--good) 0 40%, var(--cobalt) 40% 60%, var(--rule) 60%); }
+  .track::before { left: 0.95rem; right: auto; top: 0; bottom: 0; width: 2px; height: auto; background: linear-gradient(var(--good) 0 60%, var(--cobalt) 60% 80%, var(--rule) 80%); }
   .track li { padding: 0.2rem 0 1.75rem 3rem; }
   .track .pin { top: 0; }
   .doc-layout, .doc-layout.wide-toc, .learn-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }

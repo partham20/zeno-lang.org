@@ -1,0 +1,15 @@
+import files
+
+files.write("log.txt", "temp 21.5\ntemp 22.0\n")
+files.append("log.txt", "temp 22.5\n")
+
+var total = 0.0
+let lines = files.read("log.txt").split("\n")
+for line in lines {
+    if len(line) > 0 {
+        total += float(line.split(" ")[1])
+    }
+}
+print(len(lines) - 1, "readings, mean", total / 3)
+files.remove("log.txt")
+print(files.exists("log.txt"))

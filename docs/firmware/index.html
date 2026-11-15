@@ -38,7 +38,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>Firmware and hardware</h4><a href="/docs/firmware/" aria-current="page">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>More</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/" aria-current="page">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>How a firmware build handles errors</h1>
@@ -207,11 +207,26 @@ prints and exits, as on a PC.)</p>
 <p>The compiler does not leave you to find this out when the board resets:</p>
 <pre class="out"><code>error: nothing in this `try` can be caught. In a firmware build, an error
 the program raises itself (and `int` or `float` of text) travels as a value
-and can be caught. A division by zero, a bad index or an overflow stops the
-program. Test for it before it happens, or build without `--firmware`</code></pre>
+and can be caught. A division by zero, a bad index, a key that is not in a
+dict or an overflow stops the program. Test for it before it happens, or
+build without `--firmware`</code></pre>
 <p>That is what <code>try { print(1 // n) } except ZeroDivisionError { ... }</code> gets
 in a firmware build. An <code>except</code> that names a built-in kind which nothing
 in the body raises as a value is refused the same way.</p>
+<p>So is the fault moved one function away, which used to get through:</p>
+<pre><code class="zeno">function half(a: int, b: int) -&gt; int raises ZeroDivisionError { return a // b }
+
+try { print(half(1, 0)) } except ZeroDivisionError { print("no") }</code></pre>
+<p><code>zeno run</code> prints <code>no</code>. A firmware build compiled this, and then stopped
+at the division. Now it says so before anything is built:</p>
+<pre class="out"><code>error: `half` says `raises ZeroDivisionError`, but nothing in it raises
+one itself. In a firmware build a division by zero stops the program
+where it happens, and cannot be caught by a caller. Test for it before it
+happens and take `raises ZeroDivisionError` off, or build without
+`--firmware`</code></pre>
+<p>A function that raises the error itself (<code>if b == 0 { raise
+ZeroDivisionError("nothing to halve") }</code>) is fine: that one travels as a
+value (<a href="/docs/audit/"><code>audit.md</code></a>).</p>
 <p>One case is not refused. <code>except</code> with no kind (or <code>except Error</code>) around
 a body that <em>does</em> raise something as a value is accepted, and catches
 those. A fault in the same body still stops the program. This is the one
@@ -284,7 +299,7 @@ one test checks that the C of a firmware build contains no <code>setjmp</code>.<
    can compile in a firmware build.</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/firmware.md">docs/firmware.md</a> in the language repository.</p>
-  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/unsafe/"><span>Previous</span>Memory by hand: unsafe { }, pointers and registers</a><a class="next" href="/docs/board/"><span>Next</span>How the board and the clock work</a></nav>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/functions-and-errors/"><span>Previous</span>Functions and errors, with one owner</a><a class="next" href="/docs/board/"><span>Next</span>How the board and the clock work</a></nav>
 </article>
 <aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why-a-second-way">Why a second way</a></li><li><a href="#the-files">The files</a></li><li><a href="#a-function-that-can-raise">A function that can raise</a></li><li><a href="#try-and-except">try and except</a></li><li><a href="#errors-that-stop-the-program-instead">Errors that stop the program instead</a></li><li><a href="#what-a-firmware-build-does-not-accept-yet">What a firmware build does not accept yet</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#the-same-through-llvm">The same, through LLVM</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>

@@ -38,11 +38,11 @@
 </header>
 <main id="content">
 <div class="learn-layout">
-<aside class="learn-toc"><h4>The guide</h4><ol><li><a href="#install">Install</a></li><li><a href="#first">Your first program</a></li><li><a href="#variables">Variables</a></li><li><a href="#typos">A misspelt name is an error</a></li><li><a href="#numbers">Numbers</a></li><li><a href="#overflow">Overflow is an error</a></li><li><a href="#control">Choices and loops</a></li><li><a href="#truth">Conditions are true or false</a></li><li><a href="#functions">Functions</a></li><li><a href="#closures">Functions that remember</a></li><li><a href="#lists">Lists and text</a></li><li><a href="#classes">Classes</a></li><li><a href="#enums">Enums and match</a></li><li><a href="#none">Values that may be missing</a></li><li><a href="#errors">Errors</a></li><li><a href="#units">Units</a></li><li><a href="#sized">Numbers with a size</a></li><li><a href="#generics">Generics</a></li><li><a href="#ownership">Owned values</a></li><li><a href="#board">Pins and time</a></li><li><a href="#commands">The commands</a></li><li><a href="#next">Where next</a></li></ol></aside>
+<aside class="learn-toc"><h4>The guide</h4><ol><li><a href="#install">Install</a></li><li><a href="#first">Your first program</a></li><li><a href="#variables">Variables</a></li><li><a href="#typos">A misspelt name is an error</a></li><li><a href="#numbers">Numbers</a></li><li><a href="#overflow">Overflow is an error</a></li><li><a href="#control">Choices and loops</a></li><li><a href="#truth">Conditions are true or false</a></li><li><a href="#functions">Functions</a></li><li><a href="#closures">Functions that remember</a></li><li><a href="#lists">Lists and text</a></li><li><a href="#dicts">Dictionaries</a></li><li><a href="#classes">Classes</a></li><li><a href="#enums">Enums and match</a></li><li><a href="#none">Values that may be missing</a></li><li><a href="#errors">Errors</a></li><li><a href="#files">Files and input</a></li><li><a href="#units">Units</a></li><li><a href="#sized">Numbers with a size</a></li><li><a href="#generics">Generics</a></li><li><a href="#ownership">Owned values</a></li><li><a href="#modules">Programs in several files</a></li><li><a href="#board">Pins and time</a></li><li><a href="#commands">The commands</a></li><li><a href="#next">Where next</a></li></ol></aside>
 <div class="learn-main">
 <header class="page-head"><p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/></svg>Learn</p><h1>The Zeno guide</h1><p class="lede">Everything in the language, a step at a time. Every sample on this page was run with <code>zeno run</code>, and what is under it is exactly what Zeno printed, error messages included. If you know Python or C, you can read it in twenty minutes.</p></header>
 <section class="lesson wide" id="install">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/></svg>Step 1 of 20</div><h2>Install</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/></svg>Step 1 of 23</div><h2>Install</h2>
 <p>Zeno is built from source. You need <a href="https://rustup.rs">Rust</a>, and a C compiler if you want <code>zeno build</code>. For <code>zeno build --llvm</code> you also need clang 15 or later. There is nothing else to install.</p>
 <figure class="window shell"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/></svg><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8.5" y="8.5" width="11" height="11" rx="2"/><path d="M15.5 8.5V6.5a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></svg><span>Copy</span></button></figcaption>
 <pre id="install-cmd"><code>git clone https://github.com/partham20/zeno-lang
@@ -52,11 +52,11 @@ cargo build --release
 <p>The rest of this guide writes <code>zeno</code> for that program. Put <code>target/release</code> on your <code>PATH</code>, or use <code>cargo run --</code> in its place.</p></div>
   <div class="lesson-code"></div>
 </section><section class="lesson" id="first">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z"/></svg>Step 2 of 20</div><h2>Your first program</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M10 8.5l5.5 3.5-5.5 3.5z"/></svg>Step 2 of 23</div><h2>Your first program</h2>
 <p>A program is a file of statements, run from the top. There is no <code>main</code>, nothing to import for printing, and no semicolons: a line break ends a statement.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">hello.zeno</span></figcaption><pre><code class="zeno">print("Hello, Zeno!")</code></pre><div class="out-label">output</div><pre class="out"><code>Hello, Zeno!</code></pre></figure></div>
 </section><section class="lesson" id="variables">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 8.5h8M12 8.5v8"/></svg>Step 3 of 20</div><h2>Variables</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="4"/><path d="M8 8.5h8M12 8.5v8"/></svg>Step 3 of 23</div><h2>Variables</h2>
 <p>A variable says once whether it can change. <code>let</code> is set once. <code>var</code> can change, and a plain <code>=</code> updates it. <code>const</code> is fixed when the program is built. A type goes after the name, and only where you want one.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">basics.zeno</span></figcaption><pre><code class="zeno">let name = "Zeno"            # let: set once
 var count = 3                # var: can change
@@ -66,7 +66,7 @@ const LIMIT = 10             # const: fixed when the program is built
 let ports: list[int] = [80, 443, 8080]   # a type, only where you want one
 print(name, count, LIMIT, ports)</code></pre><div class="out-label">output</div><pre class="out"><code>Zeno 4 10 [80, 443, 8080]</code></pre></figure></div>
 </section><section class="lesson" id="typos">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7.5 12h9"/></svg>Step 4 of 20</div><h2>A misspelt name is an error</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16M7.5 12h9"/></svg>Step 4 of 23</div><h2>A misspelt name is an error</h2>
 <p>Because <code>=</code> only updates, assigning to a name that was never declared cannot quietly make a new variable. The checker stops before anything runs, and says what to write.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">typo.zeno</span></figcaption><pre><code class="zeno">var count = 3
 cuont = count + 1</code></pre><div class="out-label">output</div><pre class="out"><code>error: `cuont` is not declared. Create it with `let` or `var` first
@@ -77,7 +77,7 @@ cuont = count + 1</code></pre><div class="out-label">output</div><pre class="out
 
 1 error found. Nothing was run.</code></pre></figure></div>
 </section><section class="lesson" id="numbers">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 16l3.5-4 3 2.5L19 9"/></svg>Step 5 of 20</div><h2>Numbers</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V4M4 20h16"/><path d="M8 16l3.5-4 3 2.5L19 9"/></svg>Step 5 of 23</div><h2>Numbers</h2>
 <p><code>/</code> always gives a float and <code>//</code> divides and rounds down, so you can see which one you meant. Comparisons chain as they do in maths. An <code>int</code> and a <code>float</code> can be mixed in arithmetic; nothing else converts by itself.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">numbers.zeno</span></figcaption><pre><code class="zeno">print(7 / 2, 7 // 2, 7 % 2, 2 ** 10)
 print(1 &lt; 2 &lt; 3, 0 &lt;= 5 &lt; 4)
@@ -85,7 +85,7 @@ print(0xFF, 0b1010, 1 + 2.5)</code></pre><div class="out-label">output</div><pre
 true false
 255 10 3.5</code></pre></figure></div>
 </section><section class="lesson" id="overflow">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5.5"/><circle cx="12" cy="17" r="1.3"/></svg>Step 6 of 20</div><h2>Overflow is an error</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-5.5"/><circle cx="12" cy="17" r="1.3"/></svg>Step 6 of 23</div><h2>Overflow is an error</h2>
 <p>Whole-number arithmetic is checked. A sum that does not fit is an error you can catch, never a silent wrap to a negative number.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">overflow.zeno</span></figcaption><pre><code class="zeno">var big = 9223372036854775807
 big = big + 1</code></pre><div class="out-label">output</div><pre class="out"><code>error: uncaught OverflowError: the result is too big for an int
@@ -94,7 +94,7 @@ big = big + 1</code></pre><div class="out-label">output</div><pre class="out"><c
 2 | big = big + 1
   |       ^</code></pre></figure></div>
 </section><section class="lesson" id="control">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3l3 3-3 3"/><path d="M20 6H9a5 5 0 0 0-5 5v1M7 21l-3-3 3-3"/><path d="M4 18h11a5 5 0 0 0 5-5v-1"/></svg>Step 7 of 20</div><h2>Choices and loops</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3l3 3-3 3"/><path d="M20 6H9a5 5 0 0 0-5 5v1M7 21l-3-3 3-3"/><path d="M4 18h11a5 5 0 0 0 5-5v-1"/></svg>Step 7 of 23</div><h2>Choices and loops</h2>
 <p><code>if</code>, <code>else if</code>, <code>for</code> and <code>while</code> need no brackets around the condition and no colon after it. The brace opens the block, and the block always has braces, so a stray space can never change what the code does.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">control.zeno</span></figcaption><pre><code class="zeno">let temperature = 31
 
@@ -120,7 +120,7 @@ tick 1
 tick 2
 done, left = 0</code></pre></figure></div>
 </section><section class="lesson" id="truth">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Step 8 of 20</div><h2>Conditions are true or false</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7.5 3v5.5c0 4.5-3.2 8.2-7.5 9.5-4.3-1.3-7.5-5-7.5-9.5V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>Step 8 of 23</div><h2>Conditions are true or false</h2>
 <p>There is no truthiness. An empty list, zero and empty text are not quietly <code>false</code>: write what you mean, such as <code>len(items) &gt; 0</code>.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">truthy.zeno</span></figcaption><pre><code class="zeno">let items = [1, 2]
 if items {
@@ -133,7 +133,7 @@ if items {
 
 1 error found. Nothing was run.</code></pre></figure></div>
 </section><section class="lesson" id="functions">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4.5c-2.5-.5-4 .5-4.5 3L8 18c-.5 2.2-2 2.7-3.5 2.3M6.5 11h7"/><path d="M15 12l4 6M19 12l-4 6"/></svg>Step 9 of 20</div><h2>Functions</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4.5c-2.5-.5-4 .5-4.5 3L8 18c-.5 2.2-2 2.7-3.5 2.3M6.5 11h7"/><path d="M15 12l4 6M19 12l-4 6"/></svg>Step 9 of 23</div><h2>Functions</h2>
 <p>A function is declared with the word <code>function</code>. Types on parameters and the result are optional. Arguments can be named, parameters can have defaults, and a function with no name is written in place with <code>function(n) { }</code>.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">functions.zeno</span></figcaption><pre><code class="zeno">function area(width: float, height: float) -&gt; float {
     return width * height
@@ -157,7 +157,7 @@ print([1, 2, 3].map(triple), [n * n for n in range(6) if n % 2 == 0])</code></pr
 Hello, Achilles. Hello, tortoise!
 [3, 6, 9] [0, 4, 16]</code></pre></figure></div>
 </section><section class="lesson" id="closures">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H8a2 2 0 0 0-2 2v3.5a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 6 14.5V18a2 2 0 0 0 2 2h1M15 4h1a2 2 0 0 1 2 2v3.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0-2.5 2.5V18a2 2 0 0 1-2 2h-1"/></svg>Step 10 of 20</div><h2>Functions that remember</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H8a2 2 0 0 0-2 2v3.5a2.5 2.5 0 0 1-2.5 2.5A2.5 2.5 0 0 1 6 14.5V18a2 2 0 0 0 2 2h1M15 4h1a2 2 0 0 1 2 2v3.5a2.5 2.5 0 0 0 2.5 2.5 2.5 2.5 0 0 0-2.5 2.5V18a2 2 0 0 1-2 2h-1"/></svg>Step 10 of 23</div><h2>Functions that remember</h2>
 <p>A function written inside another keeps the variables it can see, and can change them.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">closures.zeno</span></figcaption><pre><code class="zeno">function counter() {
     var count = 0
@@ -170,7 +170,7 @@ Hello, Achilles. Hello, tortoise!
 let next_id = counter()
 print(next_id(), next_id(), next_id())</code></pre><div class="out-label">output</div><pre class="out"><code>1 2 3</code></pre></figure></div>
 </section><section class="lesson" id="lists">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h13"/></svg>Step 11 of 20</div><h2>Lists and text</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h13"/></svg>Step 11 of 23</div><h2>Lists and text</h2>
 <p>Lists are written with <code>[ ]</code>, and have <code>append</code>, <code>map</code>, <code>filter</code> and <code>reduce</code>. Comprehensions read like the sentence they stand for. Formatted text needs the <code>f</code> prefix, so a brace in ordinary text is just a brace.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">lists.zeno</span></figcaption><pre><code class="zeno">var ports = [80, 443]
 ports.append(8080)
@@ -185,8 +185,29 @@ print("a,b,c".split(","), "zeno".upper(), f"{3.14159:.2f}")</code></pre><div cla
 [0, 20, 40, 60, 80]
 [6, 8]
 ["a", "b", "c"] ZENO 3.14</code></pre></figure></div>
+</section><section class="lesson" id="dicts">
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2.5 2.5M14 9l2 2"/></svg>Step 12 of 23</div><h2>Dictionaries</h2>
+<p>A <code>dict</code> keeps one value under each key, written with the same square brackets as a list: <code>["temp": 85]</code>, and <code>[:]</code> for an empty one. Asking for a key that was never stored is an error, not a quiet zero; <code>get</code> gives <code>none</code> or a default instead.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">dict.zeno</span></figcaption><pre><code class="zeno">let limits = ["temp": 85, "volt": 5]    # a key and its value
+limits["fan"] = 3000                    # add one
+print(limits["temp"], len(limits))
+print("fan" in limits, limits.get("rpm", 0))
+
+var seen: dict[int, int] = [:]          # empty: the type says what goes in
+for code in [23, 17, 23, 40, 23] {
+    seen[code] = seen.get(code, 0) + 1
+}
+print(seen)
+print(limits["rpm"])                    # a key that was never stored</code></pre><div class="out-label">output</div><pre class="out"><code>85 3
+true 0
+[23: 3, 17: 1, 40: 1]
+error: uncaught KeyError: this dict has no key "rpm"
+  --&gt; dict.zeno:11:7
+   |
+11 | print(limits["rpm"])                    # a key that was never stored
+   |       ^</code></pre></figure></div>
 </section><section class="lesson" id="classes">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg>Step 12 of 20</div><h2>Classes</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg>Step 13 of 23</div><h2>Classes</h2>
 <p>A class lists its fields at the top and gets a constructor for free, which takes the fields in order or by name. Methods name <code>self</code> explicitly.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">classes.zeno</span></figcaption><pre><code class="zeno">from math import sqrt
 
@@ -203,7 +224,7 @@ let origin = Point(0.0, 0.0)
 let here = Point(x=3.0, y=4.0)
 print(here, origin.distance_to(here))</code></pre><div class="out-label">output</div><pre class="out"><code>Point(x=3.0, y=4.0) 5.0</code></pre></figure></div>
 </section><section class="lesson" id="enums">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></svg>Step 13 of 20</div><h2>Enums and match</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></svg>Step 14 of 23</div><h2>Enums and match</h2>
 <p>Each case of an enum can carry its own values, and <code>match</code> takes them apart. A <code>match</code> must handle every case. This one forgets <code>Dot</code>, so nothing runs.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">shapes.zeno</span></figcaption><pre><code class="zeno">enum Shape {
     Circle(radius: float)
@@ -226,7 +247,7 @@ print(area(Rect(2.0, 3.0)))</code></pre><div class="out-label">output</div><pre 
 
 1 error found. Nothing was run.</code></pre></figure></div>
 </section><section class="lesson" id="none">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/></svg>Step 14 of 20</div><h2>Values that may be missing</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M6 18L18 6"/></svg>Step 15 of 23</div><h2>Values that may be missing</h2>
 <p>A value can be <code>none</code> only if its type says <code>or none</code>. Before you use it, you check it with <code>is not none</code>, and inside that check it is the plain type.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">users.zeno</span></figcaption><pre><code class="zeno">function find_user(id: int) -&gt; str or none {
     if id == 1 {
@@ -248,7 +269,7 @@ if user is not none {
 
 1 error found. Nothing was run.</code></pre></figure></div>
 </section><section class="lesson" id="errors">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.2v.1"/></svg>Step 15 of 20</div><h2>Errors</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.2v.1"/></svg>Step 16 of 23</div><h2>Errors</h2>
 <p><code>try</code>, <code>except</code> and <code>raise</code> read as they do in Python. A function that can fail says so with <code>raises</code>, and the checker makes sure the error is handled or passed on. Any class can be raised, so an error can carry data.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">ports.zeno</span></figcaption><pre><code class="zeno">function parse_port(text: str) -&gt; int raises ValueError {
     let port = int(text)             # int() may raise; it passes up
@@ -265,8 +286,27 @@ try {
     print(f"error: {err}")
 }</code></pre><div class="out-label">output</div><pre class="out"><code>listening on 8080
 error: port out of range</code></pre></figure></div>
+</section><section class="lesson" id="files">
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>Step 17 of 23</div><h2>Files and input</h2>
+<p><code>import files</code> reads and writes files, <code>input()</code> reads a line from the keyboard, and <code>import program</code> gives the words a program was started with. A file that is not there is a <code>FileError</code> you can catch.</p></div>
+  <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">files.zeno</span></figcaption><pre><code class="zeno">import files
+
+files.write("log.txt", "temp 21.5\ntemp 22.0\n")
+files.append("log.txt", "temp 22.5\n")
+
+var total = 0.0
+let lines = files.read("log.txt").split("\n")
+for line in lines {
+    if len(line) &gt; 0 {
+        total += float(line.split(" ")[1])
+    }
+}
+print(len(lines) - 1, "readings, mean", total / 3)
+files.remove("log.txt")
+print(files.exists("log.txt"))</code></pre><div class="out-label">output</div><pre class="out"><code>3 readings, mean 22.0
+false</code></pre></figure></div>
 </section><section class="lesson" id="units">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5"/></svg>Step 16 of 20</div><h2>Units</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5"/></svg>Step 18 of 23</div><h2>Units</h2>
 <p>A number can carry a unit: <code>500 ms</code>, <code>3.3 V</code>. The unit is part of the type, so a function that wants milliseconds will not take a bare number.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">delay.zeno</span></figcaption><pre><code class="zeno">from time import sleep
 
@@ -285,7 +325,7 @@ print(blink_for(20))</code></pre><div class="out-label">output</div><pre class="
 
 1 error found. Nothing was run.</code></pre></figure></div>
 </section><section class="lesson" id="sized">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v10M11 7v10M15 7v10M3 20h18"/></svg>Step 17 of 20</div><h2>Numbers with a size</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="18" height="10" rx="2"/><path d="M7 7v10M11 7v10M15 7v10M3 20h18"/></svg>Step 19 of 23</div><h2>Numbers with a size</h2>
 <p><code>u8</code>, <code>u16</code>, <code>u32</code>, <code>i8</code>, <code>i16</code> and <code>i32</code> have a size, and <code>&amp;</code>, <code>|</code>, <code>^</code>, <code>~</code>, <code>&lt;&lt;</code> and <code>&gt;&gt;</code> work on their bits. Arithmetic gives a full <code>int</code>, <code>u8(n)</code> checks that <code>n</code> fits, and <code>u8.wrap(n)</code> keeps the low eight bits on purpose. A <code>u8</code> field is one byte in a compiled object.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">packet.zeno</span></figcaption><pre><code class="zeno">class Header {
     sensor: u8          # one byte in the compiled struct
@@ -304,7 +344,7 @@ error: uncaught OverflowError: 300 does not fit in a u8 (0 to 255)
 10 | print(u8(total))                 # 300 does not fit in a byte
    |       ^</code></pre></figure></div>
 </section><section class="lesson" id="generics">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>Step 18 of 20</div><h2>Generics</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>Step 20 of 23</div><h2>Generics</h2>
 <p><code>class Stack[T]</code> and <code>function largest[T]</code> are written once, with <code>T</code> standing for a type. A call never says what <code>T</code> is: the checker works it out, and the compilers make one copy for each type used, so a <code>Stack[u8]</code> is as small as one written for bytes by hand.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">stack.zeno</span></figcaption><pre><code class="zeno">class Stack[T] {
     items: list[T]
@@ -335,7 +375,7 @@ let bytes: Stack[u8] = Stack([])
 bytes.push(u8(72))
 print(bytes.top(), largest([3.1 V, 3.3 V, 2.9 V]), largest(["boot", "ready"]))</code></pre><div class="out-label">output</div><pre class="out"><code>72 3.3 V ready</code></pre></figure></div>
 </section><section class="lesson" id="ownership">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2.5 2.5M14 9l2 2"/></svg>Step 19 of 20</div><h2>Owned values</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l8-8M16 7l2.5 2.5M14 9l2 2"/></svg>Step 21 of 23</div><h2>Owned values</h2>
 <p>Most values are shared, and a garbage collector frees them. A value marked <code>owned</code> has one owner instead, and is freed the moment its owner's block ends. A parameter only looks at what it is given, unless it says <code>take</code>. Giving the value away empties the old name, and the checker points at any later use.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">frame.zeno</span></figcaption><pre><code class="zeno">owned class Frame {
     channel: int
@@ -365,8 +405,12 @@ print(frame.channel)</code></pre><div class="out-label">output</div><pre class="
    |       ^
 
 1 error found. Nothing was run.</code></pre></figure></div>
+</section><section class="lesson wide" id="modules">
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l8.5 4.5-8.5 4.5L3.5 8z"/><path d="M3.5 12l8.5 4.5 8.5-4.5M3.5 16l8.5 4.5 8.5-4.5"/></svg>Step 22 of 23</div><h2>Programs in several files</h2>
+<p>A file is a module. <code>import sensors</code> brings in <code>sensors.zeno</code> from the same folder, and its names are written <code>sensors.check</code>; <code>from sensors import Reading</code> brings in one name to use as it is. A dot is a folder, so <code>import drivers.uart</code> is <code>drivers/uart.zeno</code>. There is nothing to declare and nothing to export: what a file declares at the top is what others can import. See the weather station in <a href="/examples/station/">examples/station</a>, four files with its output.</p></div>
+  <div class="lesson-code"></div>
 </section><section class="lesson" id="board">
-  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8" cy="12" r="1.6"/><circle cx="12.5" cy="12" r="1.6"/><path d="M16.5 10.5h2M16.5 13.5h2"/></svg>Step 20 of 20</div><h2>Pins and time</h2>
+  <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2.5"/><circle cx="8" cy="12" r="1.6"/><circle cx="12.5" cy="12" r="1.6"/><path d="M16.5 10.5h2M16.5 13.5h2"/></svg>Step 23 of 23</div><h2>Pins and time</h2>
 <p><code>from board import led, pin</code> and <code>from time import sleep, now</code> give a program pins and a clock. On a computer the board is simulated and prints each pin as it changes. A compiled program meets a real board through four C functions.</p></div>
   <div class="lesson-code"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">board.zeno</span></figcaption><pre><code class="zeno">from board import led, pin
 from time import sleep, now

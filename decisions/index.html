@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 202 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 262 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -333,7 +333,9 @@ would print <code>3 s</code> where the compiled program, which knows the paramet
 means the same thing everywhere. <em>(Principle 1, and 5.5d.)</em></p>
 <p><strong>What does not convert.</strong> <code>degC</code> and <code>K</code> differ by an offset, not a scale,
 so adding them means nothing. <code>deg</code> and <code>rad</code> have no exact factor between
-them. Both pairs are kept apart on purpose.</p>
+them. Both pairs are kept apart on purpose. <em>(Changed in 6.22: <code>.rad</code> and
+<code>.deg</code> now change an angle when the program asks. The two still never
+meet by themselves.)</em></p>
 <p><strong>Provisional.</strong> No derived units yet (<code>V * A</code> is not <code>W</code>), and no
 user-defined units.</p>
 <h3 id="116-comparisons-chain-0-i-len">1.16 Comparisons chain: <code>0 &lt;= i &lt; len</code></h3>
@@ -3100,6 +3102,7 @@ should be the one that is visible.</p>
 checker, both backends' tests, every example and every page that shows
 <code>borrow</code>, so it is done in one piece and not mixed into another stage.
 The word is to be chosen then, with the reasons written here.</p>
+<p><em>(Done: 5.19 to 5.19o.)</em></p>
 <p><strong>The audit's list</strong>, carried on from 5.16i: functions reaching
 top-level lists and objects, methods taking out what the object owns,
 narrowing after <code>case none</code>, the order C evaluates arguments in (5.9q),
@@ -3421,6 +3424,1106 @@ writes <code>owned</code>, or writes it on every list it means, never meets this
   (<code>--no-collector</code> needs every type written), so the question of what
   it does with an owner does not come up.</li>
 </ul>
+<h3 id="519g-on-two-lists-follows-the-rule-append-has">5.19g <code>+</code> on two lists follows the rule <code>append</code> has</h3>
+<p><code>xs.append("three")</code> on a <code>list[int]</code> was always refused. <code>xs += ["three"]</code>
+and <code>[1, 2] + ["three"]</code> were not, even under <code>--strict</code>. Now <code>+</code> and
+<code>+=</code> refuse two lists whose item types are both known and have nothing
+in common: "<code>+</code> joins two lists that hold the same kind of thing, and
+these are list[int] and list[str]".</p>
+<p><strong>Why.</strong> Two ways to add to a list with two different rules fails
+question 1 of the audit (one way to write each thing, and the same
+answer from each way). The compilers also had to give such a list the
+kind "anything", which a program that wrote types everywhere never
+asked for.</p>
+<p><strong>What still joins.</strong> A list that may hold <code>none</code> with one that does
+not (the result may hold <code>none</code>), and a list whose items are not known
+yet, such as <code>[]</code>. The test is exactly: neither side holds "anything",
+and the joined type would.</p>
+<p><strong>Turned down.</strong> Refusing only under <code>--strict</code>. <code>append</code> refuses
+without it, so <code>+</code> would still disagree with <code>append</code> in an ordinary
+check.</p>
+<h3 id="519h-after-case-none-the-later-cases-know-the-value-is-there">5.19h After <code>case none</code>, the later cases know the value is there</h3>
+<p>In a <code>match</code> on a value that may be <code>none</code>, every case after
+<code>case none</code> sees the value without the <code>none</code>. It works for a new name
+(<code>case point { point.name }</code>) and for the variable itself
+(<code>case _ { found.name }</code>). If every <code>case none</code> leaves (<code>return</code>,
+<code>raise</code>, <code>break</code>, <code>continue</code>), the lines after the <code>match</code> know too.
+An enum that may be <code>none</code> is complete with <code>case none</code> and a case for
+each of its own, and needs no <code>case _</code>. A missing <code>none</code> is named:
+"this <code>match</code> does not handle <code>none</code>".</p>
+<p><strong>Why.</strong> <code>if found is none { return }</code> already taught the lines below
+it. A <code>match</code> that said the same thing and was not believed made the
+writer ask twice, and there were two spellings of one test with two
+different results (questions 1 and 3).</p>
+<p><strong>How.</strong> The checker narrows the name in its scope, the same record
+that <code>if x is not none</code> makes, so both compilers unwrap the value with
+the code they already had. A new name is declared with the whole type
+and then narrowed, because the compilers store an <code>int or none</code>
+differently from an <code>int</code> and need to know that the box is still there.</p>
+<p><strong>Turned down.</strong> Narrowing only the new name and not the variable. The
+<code>else</code> of an <code>if</code> narrows the variable, so <code>match</code> would have been the
+odd one.</p>
+<h3 id="519i-every-function-can-look-at-a-let-at-the-top-of-the-file">5.19i Every function can look at a <code>let</code> at the top of the file</h3>
+<p>With one owner (an <code>owned</code> value, or any list or object with no
+collector), a <code>let</code> at the top of the file can be read by any function,
+any method and any function that is kept in a variable. They may change
+what is inside it (<code>table[0] = 5</code>, <code>tasks.append(t)</code>), but not take an
+item out or put a new value in an owned field. In return the top of the
+file may never give that <code>let</code> away, before or after the function is
+written: "<code>table</code> is used by a function, on line 3, so it cannot be
+given away".</p>
+<p><strong>Why.</strong> A table or a configuration object at the top of the file,
+read by the functions below it, is the first thing a firmware program
+writes. The old refusal was sound and nobody would guess it (question
+3: nothing surprising). A <code>let</code> cannot be given a new value, so if it
+is never given away it holds the same value until the program ends,
+and a look at it can never outlive it. That is a proof, and it needs no
+new word.</p>
+<p><strong>Why not a <code>var</code>.</strong> A <code>var</code> can be given a new value, which frees the
+old one while a function may be looking at it. The message says so and
+names <code>let</code> as the fix when the value never changes.</p>
+<p><strong>Why a function may not take out of it.</strong> The top of the file owns
+it. A function that popped from it would be doing the owner's work
+from a place that cannot see what the owner's loops are looking at.
+A method of the object can (5.19k), because the call is then checked
+where the owner is.</p>
+<p><strong>Found on the way.</strong> A name used above the line that declares it said
+"<code>table</code> is not defined". It now says "<code>table</code> is declared on line N,
+which is further down", and that the declaration has to come first.
+The rule itself (a name is usable below its declaration, in functions
+and methods too) stays: one rule for every name.</p>
+<p><strong>Turned down.</strong> A word such as <code>global</code> or <code>static</code>. <code>let</code> at the top
+of the file already says everything the word would.</p>
+<h3 id="519k-a-method-can-take-out-what-its-own-object-holds">5.19k A method can take out what its own object holds</h3>
+<p><code>function next(self) -&gt; Task { return self.tasks.pop() }</code> and
+<code>function remember(self, task: take Task) { self.last = task }</code> are
+allowed. They were refused because <code>self</code> only looks, and taking out or
+replacing is for the owner.</p>
+<p><strong>The rule moves to the caller.</strong> The checker reads the method's body.
+If it takes out or replaces something <code>self</code> owns, the method is
+marked, and each call of it is checked as the same act done by hand:
+only the owner of the object may call it, not inside a loop or a
+<code>match</code> that is looking at something the object owns, not on a line
+that has already looked at it, and not with an argument that looks at
+the same object. Inside the method the loops and cases over <code>self</code>
+count in the same way.</p>
+<p><strong>Why.</strong> A class that cannot pop from its own list cannot look after
+its own parts, and the only way round was a free function that took
+the whole object, which is not what a class is for. The danger (a loop
+is looking at the item that goes) is at the call, so that is where the
+check belongs.</p>
+<p><strong>Why it is not written down.</strong> A word on the method (<code>function next(take self)</code>
+or <code>changes</code>) would be a second thing to keep in step with the body,
+and a method that said it and did not do it would be a new kind of
+mistake. The checker already works out a return type that is not
+written in the same way. The message at the call names the method and
+says what it does: "call <code>next</code>, which takes out or replaces something
+the object owns".</p>
+<p><strong>Turned down.</strong> Letting any parameter that looks do this. <code>self</code> is
+special because the call names the object (<code>queue.next()</code>), so the
+caller's own checks can be run on it. For a plain parameter the word
+<code>take</code> already says "this function is the owner now".</p>
+<p><em>(There is no 5.19j: the letter is left out so it is not read as an i.)</em></p>
+<h3 id="519l-var-f-double-gets-the-type-of-the-function">5.19l <code>var f = double</code> gets the type of the function</h3>
+<p><code>let f = double</code> holds the one function <code>double</code>, as before. <code>var f = double</code>
+with no type written now has the type <code>function(int) -&gt; int</code>, so
+<code>f = triple</code> is allowed when <code>triple</code> fits.</p>
+<p><strong>Why.</strong> A <code>var</code> is something that will be given another value. A type
+that only one value fits made the <code>var</code> useless and the message absurd:
+"the new value should be a function, but this is a function". For a
+<code>let</code> the narrow type is the useful one, since a call through it is a
+direct call.</p>
+<p><strong>Turned down.</strong> Asking for the type to be written
+(<code>var f: function(int) -&gt; int = double</code>). It still can be, but
+<code>var n = 1</code> does not need <code>: int</code>, and this is the same case.</p>
+<h3 id="519m-in-a-firmware-build-raises-of-a-fault-that-nothing-raises-is-refused">5.19m In a firmware build, <code>raises</code> of a fault that nothing raises is refused</h3>
+<p>A firmware build stops at a division by zero, an index out of range or
+a number that does not fit (5.5l). A <code>try</code> around such a line was
+already refused there. A function could still say
+<code>raises ZeroDivisionError</code>, divide, and be called inside a <code>try</code>:
+<code>zeno run</code> caught the error and the firmware program stopped. Now a
+function that declares <code>ZeroDivisionError</code>, <code>IndexError</code> or
+<code>OverflowError</code>, with no <code>raise</code> of that kind in its body and no call
+that raises it as a value, is refused when the build is firmware (and
+so with no collector), with what to do: test before it happens and
+take the <code>raises</code> off, or build without <code>--firmware</code>.</p>
+<p><strong>Why.</strong> The two ways of running a program may differ only where the
+compiler has said so (question 4 of the audit). This was a place where
+they differed in silence.</p>
+<p><strong>Why not make the fault travel as a value.</strong> Then every division and
+every index in a firmware program would carry a status and a branch,
+and a function that divides could fail in a way its type does not say.
+5.5l chose a stop for exactly that reason, and MISRA wants the test
+written before the division anyway.</p>
+<p><strong>What still works.</strong> <code>raise ZeroDivisionError("...")</code> written by
+hand travels as a value in every build, so a function that tests
+<code>b == 0</code> and raises may say <code>raises ZeroDivisionError</code>.</p>
+<h3 id="519n-messages-count-in-words">5.19n Messages count in words</h3>
+<p>"takes 2 argument(s), but 1 were given" is now "takes 2 arguments, but
+1 was given", and a compiled program's memory report says "1 block"
+and "2 blocks". Two small functions in <code>error.rs</code> (<code>counted</code>, <code>were</code>)
+do it for the interpreter, the VM and the checker, so the three cannot
+drift apart again.</p>
+<p><strong>Why.</strong> A message is part of the language. One that is not a sentence
+makes the reader stop at the grammar and not at the mistake.</p>
+<h3 id="519o-looked-at-in-the-audit-and-left-as-it-is">5.19o Looked at in the audit and left as it is</h3>
+<p>Each was held against the five questions of 5.19 and kept.</p>
+<ul>
+<li><strong><code>list[int or none]</code> with no collector</strong> stays refused (5.16h).
+  Every number would need a block of its own. The message names what
+  to write, so it is a limit and not a surprise.</li>
+<li><strong>A function that is kept cannot take over a list or an object from
+  outside it</strong> (5.17c). It may look for one line, or look at a <code>let</code>
+  at the top of the file (5.19i). The kept function has no place to
+  say <code>take</code>, and a parameter does.</li>
+<li><strong>A value made inside <code>unsafe { }</code> and used after it needs a <code>var</code>
+  before the block</strong> (5.18a). Every pair of braces opens a scope. A
+  block that did not would be the one exception.</li>
+<li><strong>The order C works out the arguments of a call</strong> (5.9q). What is
+  printed never depends on it, and calls that change something are
+  already put in order. Only the highest mark of the text room in a
+  <code>--memory</code> report can move by a few bytes, when one statement shows
+  a list and builds other text. Fixing it means a temporary for every
+  piece of text, which makes all the C harder to read. The page on the
+  audit says to leave the room some headroom.</li>
+<li><strong>A function or a method sees only what is declared above it.</strong> One
+  rule for every name, and the message now names the line (5.19i).</li>
+</ul>
+<p><strong>What is left for later</strong>, none of it part of the audit: the limits
+in 5.19f, and the lists in 5.16i and 5.17g.</p>
+<hr />
+<h2 id="6-the-standard-library">6. The standard library</h2>
+<h3 id="61-what-goes-into-the-library-and-in-what-order-it-is-built">6.1 What goes into the library, and in what order it is built</h3>
+<p>The standard library is everything a program can use without writing
+it: the functions that have no module (<code>print</code>, <code>len</code>), the methods of
+text and lists, and the modules (<code>math</code>, <code>time</code>, <code>board</code>). It is built
+in this order:</p>
+<ol>
+<li>Text and lists (this stage).</li>
+<li>Reading and writing: a line from the keyboard, files, the arguments
+   a program was started with.</li>
+<li>More of <code>math</code>.</li>
+<li>A dictionary, which is a new type of the language and a stage of
+   its own.</li>
+</ol>
+<p><strong>Why text and lists first.</strong> Everything after them is written with
+them: a file is read as text and cut into lines, and a line is found,
+sliced and joined.</p>
+<p><strong>What gets in.</strong> A method is added only if (a) most programs in the
+big languages use it, and (b) it cannot be said in one short expression
+with what Zeno already has. That keeps out more than it lets in:</p>
+<table>
+<thead>
+<tr>
+<th>Left out</th>
+<th>Because Zeno already says it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text.contains(part)</code>, <code>xs.contains(x)</code></td>
+<td><code>part in text</code>, <code>x in xs</code></td>
+</tr>
+<tr>
+<td><code>text.is_digit()</code></td>
+<td><code>"0" &lt;= ch and ch &lt;= "9"</code></td>
+</tr>
+<tr>
+<td><code>sorted(xs)</code>, <code>reversed(xs)</code></td>
+<td><code>xs.slice(0)</code>, then <code>sort()</code> or <code>reverse()</code></td>
+</tr>
+<tr>
+<td><code>xs.remove(x)</code></td>
+<td><code>xs.find(x)</code>, then <code>pop(at)</code> (6.5)</td>
+</tr>
+<tr>
+<td><code>xs.extend(ys)</code></td>
+<td><code>xs += ys</code></td>
+</tr>
+</tbody>
+</table>
+<p>Python's <code>str</code> has 47 methods and its <code>list</code> 11. Zeno's text now has
+10 and its list 12. Every one of them was held against the five
+questions of the audit (5.19): one way to write it, one way to read
+it, nothing surprising, the same in every build, and a message that
+says what to write.</p>
+<h3 id="62-a-method-is-asked-of-a-value-and-a-function-makes-a-value-of-another-kind">6.2 A method is asked of a value, and a function makes a value of another kind</h3>
+<p><code>text.find(" ")</code>, <code>xs.sort()</code>, <code>words.join(", ")</code> are methods.
+<code>int("12")</code>, <code>str(3)</code>, <code>float("1.5")</code>, <code>u8(n)</code> and now <code>char(65)</code> are
+functions, each named for what it gives.</p>
+<p><strong>Why.</strong> A method reads in the order things happen (3.6b), and the
+value in front says what is being worked on. A conversion has no
+value of the new kind to be asked of yet, so it is a function, and its
+name is the kind it makes.</p>
+<p><strong>So</strong> the number of a character is <code>"A".code()</code> (asked of the
+character), and the character of a number is <code>char(65)</code> (made from a
+number, as <code>str(65)</code> makes <code>"65"</code>).</p>
+<p><strong>Turned down.</strong> <code>ord</code> and <code>chr</code>, Python's names: abbreviations that
+say nothing to someone who has not met them (principle 2). A function
+<code>code("A")</code>: it would take a name, <code>code</code>, that half of all programs
+want for a variable.</p>
+<p><strong>Kept as they were.</strong> <code>len</code>, <code>min</code>, <code>max</code> and <code>sum</code> are functions and
+stay functions. They were decided with the first interpreter, every
+example uses them, and making them methods would add a second way to
+write each for nothing.</p>
+<h3 id="63-find-answers-a-position-or-none-never-1">6.3 <code>find</code> answers a position or <code>none</code>, never -1</h3>
+<pre><code class="zeno">let space = line.find(" ")
+if space is none { return line }
+return line.slice(0, space)</code></pre>
+<p><code>text.find(part)</code> and <code>xs.find(item)</code> give an <code>int or none</code>.</p>
+<p><strong>Why.</strong> -1 is a number. In Python <code>text[text.find("x")]</code> quietly
+reads the last character when there is no <code>x</code>. In Zeno a negative
+position is an error (2.6), so the mistake would at least stop the
+program, but far from where it was made. <code>none</code> cannot be used as a
+position at all: the checker asks for the test first (3.12), and <code>if</code>
+or <code>match</code> then gives the number (5.19h). The mistake is caught before
+the program runs (principle 1).</p>
+<p><strong>Turned down.</strong> Raising an error when the thing is not there
+(Python's <code>index</code>): "not there" is an ordinary answer, not a failure.
+Having both, as Python does: two ways to ask one question.</p>
+<p><strong>With one owner.</strong> <code>tasks.find(Task("d", 4))</code> only looks at what it
+is given. An item made in the brackets belongs to the statement, which
+frees it when it is over.</p>
+<h3 id="64-a-part-is-taken-with-slicefrom-to-and-xs13-is-not-zeno">6.4 A part is taken with <code>slice(from, to)</code>, and <code>xs[1:3]</code> is not Zeno</h3>
+<p><code>text.slice(1, 3)</code> and <code>xs.slice(1, 3)</code> take positions 1 and 2. <code>to</code>
+is not taken, as in <code>range</code>. <code>slice(from)</code> goes on to the end.</p>
+<p><strong>Why a method.</strong> <code>[1:3]</code> would be the one place where <code>:</code> does not
+mean "a type follows". Python's slice has three optional parts and
+negative positions, and each needs a rule that has to be remembered.
+A method needs a name and nothing else.</p>
+<p><strong>Outside the text or the list is an <code>IndexError</code>.</strong> Python cuts the
+slice to fit without a word, so <code>"abc"[2:9]</code> is <code>"c"</code>. A position that
+is out of range is nearly always a sum that went wrong, and Zeno says
+so, as it does for <code>xs[9]</code>.</p>
+<p><strong>Writing <code>xs[1:3]</code> gets told what to write</strong>: "a part of a list or a
+str is taken with <code>.slice(from, to)</code>, as in <code>xs.slice(1, 3)</code>".</p>
+<p><strong>Positions in text count characters</strong>, as <code>len</code> and <code>text[i]</code> do, and
+not bytes. In UTF-8 a character is one to four bytes, so finding
+position 7 means walking past seven characters. That is the price of
+<code>"wörld".slice(1, 2)</code> being <code>"ö"</code> and never half of it.</p>
+<p><strong>With one owner.</strong> A slice of numbers or of text is a new list with
+copies. A slice of objects is refused, as <code>filter</code> is: the items would
+be in two lists, and each has one owner.</p>
+<h3 id="65-popat-insertat-item-clear-and-reverse">6.5 <code>pop(at)</code>, <code>insert(at, item)</code>, <code>clear()</code> and <code>reverse()</code></h3>
+<p><code>xs.pop()</code> takes the last item out, as before, and <code>xs.pop(2)</code> takes
+out the one at position 2. <code>xs.insert(0, x)</code> puts <code>x</code> in front; the
+position may be the length of the list, which is what <code>append</code> does.
+<code>clear()</code> empties the list. <code>reverse()</code> turns it round where it is.</p>
+<p><strong>Why <code>pop(at)</code> and no <code>remove</code>.</strong> <code>remove</code> means "by value" in Python
+and "by position" in Rust, and in Java <code>list.remove(1)</code> on a list of
+numbers is a well-known trap, because it could be either. <code>pop(at)</code>
+can only be a position. Taking out by value is <code>find</code> and then <code>pop</code>,
+two lines that have to say what happens when the value is not there.</p>
+<p><strong>Why <code>clear()</code>.</strong> Most lists are held by a <code>let</code>, which cannot be
+given a new list.</p>
+<p><strong>Why <code>reverse()</code> and <code>sort()</code> change the list and give nothing back.</strong>
+A new list is a new block of memory, which a program on a small board
+may not want to spend. And a method that gives the list back invites
+<code>let ys = xs.sort()</code>, where it is not clear whether <code>xs</code> changed. A
+copy is asked for by name: <code>xs.slice(0)</code>.</p>
+<p><strong>With one owner</strong> <code>pop(at)</code> and <code>clear()</code> take items out, so they are
+held to the rules of <code>pop()</code> (5.15e): only the owner, not in a loop
+over the list, and on a line of its own. <code>insert</code> keeps what it is
+given, as <code>append</code> does. A method of a class may do all of them to a
+list its object holds (5.19k).</p>
+<h3 id="66-sort-is-for-numbers-and-text-smallest-first-and-is-heapsort-in-every-engine">6.6 <code>sort()</code> is for numbers and text, smallest first, and is heapsort in every engine</h3>
+<p>Only a list of ints, floats, sized numbers or text can be sorted.
+Anything else is refused: "<code>sort</code> puts numbers or text in order,
+smallest first, and this is list[bool]. There is no one order for
+those items, so write the loop that puts them in yours".</p>
+<p><strong>Why only those.</strong> They are what <code>&lt;</code> compares, and each has one order
+that nobody has to be told. Tasks could be ordered by name or by
+priority, and a <code>sort()</code> that picked one would be a guess. Sorting by
+a function that the program gives is left for when a real program
+needs it <em>(provisional)</em>.</p>
+<p><strong>Why heapsort.</strong> It sorts inside the list, so it asks for no memory.
+It is a loop and not a function that calls itself, so it needs no
+deep stack, and MISRA has nothing to say against it. It takes about
+n log n steps whatever the order was to begin with, so there is no bad
+case to find on the bench.</p>
+<p><strong>Why the interpreter does not use Rust's <code>sort</code>.</strong> Decision 5.5d says
+a compiled program prints what <code>zeno run</code> prints. Heapsort may swap two
+items that compare equal, and that can be seen: <code>0.0</code> and <code>-0.0</code> are
+equal and print differently. So <code>zeno run</code> sorts with the same steps
+as the compiled program, written once in Rust (<code>builtins.rs</code>) and once
+in C (<code>runtime.c</code>), and a test sorts such a list in every build.</p>
+<p><strong>Turned down.</strong> C's <code>qsort</code>: it is missing from some firmware C
+libraries, and the order it leaves equal items in is not defined.</p>
+<p><strong>Text is ordered by the code of each character</strong>, as <code>&lt;</code> orders it,
+so <code>"B"</code> comes before <code>"a"</code>.</p>
+<h3 id="67-join-is-a-method-of-the-list">6.7 <code>join</code> is a method of the list</h3>
+<p><code>words.join(", ")</code> reads in order: the words, joined with a comma.
+Python's <code>", ".join(words)</code> starts with the least important part.
+JavaScript and Rust write it Zeno's way.</p>
+<p><strong>Only a list of text.</strong> A list of numbers is refused, with what to do:
+"Make each item text first, with <code>str( )</code>". Nothing in Zeno turns into
+text by itself (2.3).</p>
+<h3 id="68-code-needs-exactly-one-character-and-char-refuses-0">6.8 <code>code()</code> needs exactly one character, and <code>char</code> refuses 0</h3>
+<p><code>"A".code()</code> is 65 and <code>char(65)</code> is <code>"A"</code>. The numbers are Unicode's,
+so <code>"€".code()</code> is 8364.</p>
+<p><code>code()</code> on text that is empty, or longer than one character, is a
+<code>ValueError</code>. Taking the first character without a word would hide a
+mistake.</p>
+<p><code>char(n)</code> is a <code>ValueError</code> for a number that is no character: below
+1, above 1114111, or in the range Unicode keeps free (55296 to 57343).</p>
+<p><strong>Why not <code>char(0)</code></strong> <em>(provisional)</em>. In a compiled program text ends
+at the first zero byte, as in C, so text with a zero in it would be
+cut short there and not in <code>zeno run</code>. Bytes that may be zero belong
+in a <code>list[u8]</code>.</p>
+<h3 id="69-in-a-firmware-build-a-bad-position-or-a-bad-code-stops-the-program">6.9 In a firmware build, a bad position or a bad code stops the program</h3>
+<p>A slice out of range, <code>insert</code> or <code>pop</code> at a position that is not
+there, <code>code()</code> of two characters and <code>char(0)</code> are faults, as a bad
+index always was (5.5l): <code>zeno run</code> and an ordinary build raise an
+error that can be caught, and a firmware build stops.</p>
+<p>The rule of 5.19m now covers <code>ValueError</code> as well: a function that
+says <code>raises ValueError</code> with nothing in it that raises one as a value
+is refused in a firmware build. <code>int(text)</code> does raise one as a value
+there, so <code>raises ValueError</code> beside <code>int(text)</code> is still right.</p>
+<h3 id="610-these-methods-are-written-in-rust-and-c-not-in-zeno-provisional">6.10 These methods are written in Rust and C, not in Zeno <em>(provisional)</em></h3>
+<p>Each method is written once for <code>zeno run</code> and the VM (<code>builtins.rs</code>),
+described to the checker (<code>checker.rs</code>), and compiled by both backends
+(<code>emit_c.rs</code>, <code>emit_llvm.rs</code>) into a call of one C function in
+<code>runtime.c</code>.</p>
+<p><strong>Why not in Zeno itself.</strong> Two things are missing. A library written
+in Zeno has to be brought into the program that uses it, which is the
+next stage (modules across files). And <code>pop(at)</code>, <code>insert</code> and <code>clear</code>
+take items out of a list or put them in, which a function that was
+only lent the list may not do when each item has one owner (5.15e).
+They have to be built in.</p>
+<p>Once modules exist, what can be written in Zeno will be.</p>
+<h3 id="611-the-world-outside-is-files-the-keyboard-and-the-command-line">6.11 The world outside is files, the keyboard and the command line</h3>
+<p>Part 2 of the library lets a program reach what is outside it. There
+are three such things on a computer, and each has one way in:</p>
+<table>
+<thead>
+<tr>
+<th>Outside</th>
+<th>In Zeno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The screen</td>
+<td><code>print(...)</code>, as before</td>
+</tr>
+<tr>
+<td>The keyboard</td>
+<td><code>input()</code></td>
+</tr>
+<tr>
+<td>Files</td>
+<td><code>import files</code>, then <code>files.read(path)</code> and four more</td>
+</tr>
+<tr>
+<td>The command line</td>
+<td><code>import program</code>, then <code>program.arguments()</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why <code>print</code> and <code>input</code> are plain words and the rest are modules.</strong>
+Nearly every first program prints and asks. Files and arguments are
+for some programs, and on a board there may be neither, so they are
+asked for by name, as <code>board</code> and <code>time</code> are (3.15).</p>
+<p><strong>Unambiguous and intuitive.</strong> Each function does one thing and its
+name is the plain word for it. There is no second way to do any of
+them.</p>
+<h3 id="612-a-file-is-read-whole-and-written-whole-with-no-handle">6.12 A file is read whole and written whole, with no handle</h3>
+<pre><code class="zeno">let text = files.read("notes.txt")
+files.write("notes.txt", "a new start\n")
+files.append("notes.txt", "one more line\n")</code></pre>
+<p>There is no <code>open</code>, and so no <code>close</code>.</p>
+<p><strong>Why.</strong> A file that is opened is a thing that has to be closed, on
+every way out of the block, by somebody. That is the question of who
+owns a list (5.8) asked again about something else, and the small
+files that Zeno programs read so far do not need it asked. A whole
+file as one <code>str</code> is also the form the text methods of part 1 already
+work on.</p>
+<p><strong>Turned down.</strong> C's and Python's <code>open(path, "r")</code>: the second
+argument is text that picks what the function does, so a wrong letter
+is found when the program runs and not when it is checked. Python's
+<code>with open(...) as f</code>: a new kind of block for one use.</p>
+<p><em>(provisional)</em> A file too large to hold at once needs reading in
+pieces. That will be added, with an owner for the open file, when a
+real program needs it.</p>
+<h3 id="613-write-replaces-append-adds-and-neither-adds-a-line-end">6.13 <code>write</code> replaces, <code>append</code> adds, and neither adds a line end</h3>
+<p><code>write</code> makes the file, or empties one that is there. <code>append</code> makes
+the file, or adds to the end of one that is there. What is written is
+the text and nothing more: a program that wants lines ends them with
+<code>"\n"</code> itself.</p>
+<p><strong>Why two functions and not a flag.</strong> <code>files.write(path, text, true)</code>
+does not say what <code>true</code> means. Two names do.</p>
+<p><strong>Why no line end is added.</strong> <code>print</code> adds one because it writes lines
+to a screen. A file is whatever the program says it is, and
+<code>files.write(path, files.read(other))</code> must make an exact copy.</p>
+<h3 id="614-a-file-that-cannot-be-used-is-a-fileerror-and-it-is-a-value-in-every-build">6.14 A file that cannot be used is a <code>FileError</code>, and it is a value in every build</h3>
+<p>Reading a file that is not there, writing into a folder that is not
+there, removing a file twice: each raises <code>FileError</code>, with a message
+that names the file (<code>there is no file `notes.txt`</code>, <code>cannot read
+`notes.txt`</code>, <code>cannot write `notes.txt`</code>, <code>cannot remove
+`notes.txt`</code>).</p>
+<p><strong>It can be caught in a firmware build too</strong>, unlike a bad index
+(5.5l, 6.9). <strong>Why.</strong> A bad index is a mistake in the program: the
+program could have looked at the length first. A missing file is not:
+no test beforehand rules it out, because the file can go between the
+test and the read. It is an error in the sense of 4.1, something that
+goes wrong in a correct program, like <code>int(text)</code> on text from
+outside. So a function that reads a file says <code>raises FileError</code> or
+catches it, and the checker holds it to that in every build.</p>
+<p><strong>Turned down.</strong> <code>files.read</code> answering <code>str or none</code>: <code>none</code> cannot
+say whether the file was missing or was not text. A number that says
+how it went, as C's <code>errno</code> does: nothing makes the caller look at it.</p>
+<p><strong>One kind of error, not several.</strong> <code>FileNotFoundError</code>,
+<code>PermissionError</code> and the rest of Python's family are told apart by
+programs that go on to do something different for each. The message
+tells a person which it was. <em>(provisional)</em></p>
+<h3 id="615-exists-asks-whether-there-is-a-file-that-can-be-read">6.15 <code>exists</code> asks whether there is a file that can be read</h3>
+<p><code>files.exists(path)</code> is <code>true</code> for a file that <code>files.read</code> could
+open. It is <code>false</code> for a folder, and for a path with nothing at it.
+It cannot fail, so it does not raise.</p>
+<p><strong>Why a folder is not there.</strong> The module is about files. A program
+asks <code>exists</code> to decide whether to read, and a <code>true</code> that is followed
+by "cannot read" would be a wrong answer to that question.</p>
+<h3 id="616-a-file-holds-text-and-what-is-not-text-is-a-fileerror">6.16 A file holds text, and what is not text is a <code>FileError</code></h3>
+<p><code>files.read</code> gives a <code>str</code>, and a <code>str</code> is characters (6.4). So the
+bytes of the file must be UTF-8, and none of them may be zero, because
+text in a compiled program ends at a zero byte (6.8). A file that is
+something else, such as a picture, raises <code>FileError: `logo.png` does
+not hold text</code>.</p>
+<p><strong>Why not read it anyway.</strong> <code>zeno run</code> and a built program would
+disagree about its length, and the checks that make <code>slice</code> and <code>code</code>
+count characters would be working on bytes that are no characters.</p>
+<p><strong>Nothing is changed on the way in or out.</strong> Files are opened as
+bytes, so <code>"\r\n"</code> in a file from Windows arrives as <code>"\r\n"</code>, and
+<code>write</code> puts down exactly what it was given. <code>lines()</code> is where line
+ends are dealt with (6.17).</p>
+<p><em>(provisional)</em> Bytes that are not text belong in a <code>list[u8]</code>, and a
+<code>files.read_bytes</code> that gives one is for the stage that needs it.</p>
+<h3 id="617-lines-is-a-method-of-text-and-knows-both-line-ends">6.17 <code>lines()</code> is a method of text, and knows both line ends</h3>
+<p><code>text.lines()</code> gives a <code>list[str]</code>, one item to a line, without the
+line ends.</p>
+<ul>
+<li>A line ends at <code>"\n"</code>. A <code>"\r"</code> just before that <code>"\n"</code> goes with it.</li>
+<li>The last line need not end: <code>"a\nb"</code> and <code>"a\nb\n"</code> are both two lines.</li>
+<li>Empty text has no lines. <code>"\n"</code> is one empty line.</li>
+</ul>
+<p><strong>Why not <code>split("\n")</code>.</strong> It gives <code>"a\nb\n"</code> a third, empty, piece,
+and leaves a <code>"\r"</code> on the end of every line of a file from Windows.
+Both are the kind of surprise that is found late.</p>
+<p><strong>Why on text and not <code>files.lines(path)</code>.</strong> Lines also come from the
+keyboard, from a serial port, from a string in a test. One method on
+<code>str</code> serves all of them, and <code>files.read(path).lines()</code> reads as what
+it does.</p>
+<h3 id="618-input-gives-a-line-or-none-when-there-are-no-more">6.18 <code>input()</code> gives a line, or <code>none</code> when there are no more</h3>
+<pre><code class="zeno">while true {
+    let line = input()
+    if line is none {
+        break
+    }
+    print(line.upper())
+}</code></pre>
+<p><code>input()</code> gives the next line without its line end. <code>input("Name: ")</code>
+prints the question first and stays on that line. At the end of what
+there is to read (Ctrl-D at a keyboard, the end of a file piped in) it
+gives <code>none</code>.</p>
+<p><strong>Why <code>str or none</code>.</strong> The end comes to every program that reads until
+there is no more, and that is a correct program, so it is not an error
+to catch. And the type makes the checker ask for the test: <code>input()</code>
+used as text is refused with "Check it with <code>is not none</code>".</p>
+<p><strong>Turned down.</strong> Python's <code>EOFError</code>: the ordinary end of the loop
+written as <code>try</code>/<code>except</code>. An empty <code>str</code> at the end, as in Lua and
+shell: an empty line in the middle looks the same.</p>
+<p><strong>Why the name.</strong> <code>print</code> puts a line out and <code>input</code> takes one in. It
+is the word Python programmers already know. <code>read_line</code> was the other
+candidate, and <code>files.read</code> would then have had a namesake that reads
+something else.</p>
+<p><strong>It gives text and nothing else.</strong> A number is <code>int(line)</code>, which can
+fail, and says so (2.3).</p>
+<h3 id="619-programarguments-gives-the-words-after-the-programs-name">6.19 <code>program.arguments()</code> gives the words after the program's name</h3>
+<pre><code>zeno run copy.zeno a.txt b.txt        ["a.txt", "b.txt"]
+./copy a.txt b.txt                    ["a.txt", "b.txt"]</code></pre>
+<p><strong>The program's own name is not in the list.</strong> In C <code>argv[0]</code> and in
+Python <code>sys.argv[0]</code> it is, and every program that uses them starts by
+stepping over it. <code>words[0]</code> in Zeno is the first thing the user
+wrote.</p>
+<p><strong>A function, giving a new list each time.</strong> <code>board.led</code> is a value
+because there is one LED. A list is something a program appends to and
+gives away, so each call makes one that is the caller's own, which is
+also what one owner needs (5.15).</p>
+<p><strong>With <code>zeno run</code>, the words after the file are the program's</strong>, even
+ones that look like Zeno's options, and Zeno's own options go before
+the file. <code>zeno run copy.zeno --strict</code> gives the program <code>--strict</code>.
+<strong>Why.</strong> Otherwise a program could never be given a word Zeno also
+knows, and which words those are would change with each version.</p>
+<p><strong><code>main</code> takes the command line only in a program that asks for it</strong>,
+so the C and the IR of every other program are what they were.</p>
+<p><strong>Left out</strong> <em>(provisional)</em>: <code>program.exit(code)</code>. A program ends by
+reaching its end, or with an error nobody caught, which ends it with
+status 1. Environment variables: no program has needed one yet.</p>
+<h3 id="620-with-no-collector-and-on-a-board">6.20 With no collector and on a board</h3>
+<p><strong>With no collector</strong> the text of a file, and a line from <code>input()</code>,
+are built text like any other (5.9c): they are in the text room until
+the statement ends, and kept text is copied to the pool. So a file
+larger than <code>ZENO_TEXT_ROOM</code> (1024 bytes unless given) stops the
+program with the message that names the macro, and so does a typed
+line that is longer than the room. A line is read straight into the
+room, a byte at a time, so it takes its own length and no more.
+<code>--memory</code> prints how much of the room was used.</p>
+<p><em>(provisional)</em> Reading a large file a line at a time, straight into
+the pool, belongs with the open file of 6.12.</p>
+<p><strong>On a board</strong> these functions are the C library's: <code>fopen</code> for files,
+standard input for <code>input()</code>, which firmware C libraries usually tie
+to a serial line. A board with no file system gets a <code>FileError</code> from
+every call, which a program can catch. They are not behind
+<code>ZENO_BOARD</code> (5.12): a board that has a C library has them already.</p>
+<h3 id="621-what-math-holds">6.21 What <code>math</code> holds</h3>
+<p>Part 3 fills in the <code>math</code> module. It had <code>pi</code>, <code>sqrt</code>, <code>floor</code>, <code>ceil</code>,
+<code>sin</code> and <code>cos</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Added</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>math.e</code></td>
+<td>2.718281828459045</td>
+</tr>
+<tr>
+<td><code>math.tan(angle)</code></td>
+<td>beside <code>sin</code> and <code>cos</code></td>
+</tr>
+<tr>
+<td><code>math.asin(x)</code>, <code>math.acos(x)</code>, <code>math.atan(x)</code>, <code>math.atan2(y, x)</code></td>
+<td>an angle from a ratio</td>
+</tr>
+<tr>
+<td><code>math.exp(x)</code></td>
+<td>e to the power x</td>
+</tr>
+<tr>
+<td><code>math.log(x)</code>, <code>math.log2(x)</code>, <code>math.log10(x)</code></td>
+<td>logarithms</td>
+</tr>
+<tr>
+<td><code>math.round(x)</code></td>
+<td>the nearest whole number</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How it was chosen.</strong> Each is something firmware arithmetic uses and
+that cannot be written in a line with what was there: a heading from
+two field readings, a temperature from a thermistor, decibels, the
+charge of a capacitor, a sine table (<code>examples/instruments.zeno</code>).</p>
+<p><strong>Left out, because Zeno has one way already.</strong></p>
+<table>
+<thead>
+<tr>
+<th>In other languages</th>
+<th>In Zeno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pow(x, y)</code></td>
+<td><code>x ** y</code></td>
+</tr>
+<tr>
+<td><code>trunc(x)</code></td>
+<td><code>int(x)</code></td>
+</tr>
+<tr>
+<td><code>fabs(x)</code></td>
+<td><code>abs(x)</code></td>
+</tr>
+<tr>
+<td><code>degrees(x)</code>, <code>radians(x)</code></td>
+<td><code>angle.deg</code>, <code>angle.rad</code> (6.22)</td>
+</tr>
+<tr>
+<td><code>round(x, 2)</code></td>
+<td><code>f"{x:.2f}"</code>: digits after the point are a matter of showing</td>
+</tr>
+<tr>
+<td><code>log(x, base)</code></td>
+<td><code>log2</code>, <code>log10</code>, or <code>log(x) / log(base)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Left out until something needs it</strong> <em>(provisional)</em>: <code>hypot</code>, the
+hyperbolic functions, <code>gcd</code>, <code>factorial</code>, <code>clamp</code>, <code>inf</code> and <code>nan</code> as
+names, and random numbers, which are not arithmetic and want a module
+of their own.</p>
+<h3 id="622-rad-and-deg-change-an-angle-degrees-and-radians-still-never-meet-by-themselves">6.22 <code>.rad</code> and <code>.deg</code> change an angle; degrees and radians still never meet by themselves</h3>
+<p><code>(180 deg).rad</code> is <code>3.141592653589793 rad</code>, and
+<code>math.atan2(1, 1).deg</code> is <code>45 deg</code>.</p>
+<p>This changes 1.15, which kept the two apart altogether because the
+factor between them, pi / 180, is not an exact number.</p>
+<p><strong>Why change it.</strong> The functions of 6.24 give radians and people read
+degrees, so every program with an angle in it needs the change, and
+without it each would write <code>* 180 / math.pi</code> by hand. <code>.ms</code> is
+already how a quantity is changed (1.15), so this is that way and not
+a new one.</p>
+<p><strong>Why they still do not meet in <code>+</code> or <code>&lt;</code>.</strong> When two units meet, the
+answer is in the finer one, because that loses nothing. Between
+degrees and radians neither is finer and either way loses something,
+so <code>90 deg + 1 rad</code> has no answer that is obviously right. The message
+says what to write:</p>
+<pre><code>`+` does not work between a quantity in rad and a quantity in deg. Change one of them first, with `.rad` or `.deg`</code></pre>
+<p><strong>The factor is one multiplication</strong>, by <code>pi / 180</code> or by <code>180 / pi</code>,
+which is what Python's <code>radians</code> and <code>degrees</code> do, so <code>(180 deg).rad</code>
+is exactly <code>math.pi</code> and <code>(math.pi * 1 rad).deg</code> is exactly <code>180 deg</code>.</p>
+<h3 id="623-sin-cos-and-tan-take-an-angle-a-plain-number-is-radians">6.23 <code>sin</code>, <code>cos</code> and <code>tan</code> take an angle: a plain number is radians</h3>
+<pre><code class="zeno">math.sin(30 deg)       # 0.49999999999999994
+math.sin(0.5 rad)      # 0.479425538604203
+math.sin(0.5)          # the same</code></pre>
+<p><strong>Why a unit is accepted.</strong> Degrees handed to a function that counts
+in radians is the oldest mistake in this corner, and it gives a wrong
+number, not an error. With the unit on the value the function cannot
+be handed the wrong thing.</p>
+<p><strong>Why a plain number is accepted too, when <code>sleep(500)</code> is refused.</strong>
+<code>sleep(500)</code> is refused because 500 of what is anyone's guess. The
+sine of a plain number is a thing mathematics defines, and it means
+radians in every language and every textbook. Signal code is full of
+it: in <code>sin(2 * math.pi * f * t)</code> the argument was worked out and
+never was an angle somebody measured.</p>
+<p><strong>Turned down.</strong> Refusing plain numbers: every formula would need
+<code>* 1 rad</code> on the end. A second family, <code>sind</code> and <code>cosd</code>, as MATLAB
+has: two names for one thing.</p>
+<p>A quantity that is not an angle is refused by the checker:</p>
+<pre><code>`sin` needs a number or an angle, such as `30 deg`, but this is a quantity in s</code></pre>
+<h3 id="624-asin-acos-atan-and-atan2-give-an-angle-in-radians-provisional">6.24 <code>asin</code>, <code>acos</code>, <code>atan</code> and <code>atan2</code> give an angle in radians <em>(provisional)</em></h3>
+<p>Their answer is a quantity in <code>rad</code>, not a float.</p>
+<p><strong>Why.</strong> A float that is secretly an angle is what units are there to
+end (1.15). <code>math.atan2(y, x) &gt; 45</code> would compare radians with a
+number the writer meant as degrees, and run. As a quantity it is
+refused, and <code>math.atan2(y, x).deg &gt; 45 deg</code> says what is meant.</p>
+<p><strong>What it costs.</strong> Arithmetic with a plain number needs the unit put
+on or taken off, as with any quantity: <code>angle + 2 * math.pi * 1 rad</code>,
+<code>angle / 1 rad</code>. Passing it on to <code>sin</code> needs nothing.</p>
+<p><strong>Provisional</strong> because it is the first time a library function gives
+a quantity back that is not a time. If it gets in the way of real
+signal code, a plain float is the other choice.</p>
+<p><strong><code>atan2(y, x)</code> takes y first</strong>, as in C, Python, JavaScript and Rust.
+It is the angle of the point (x, y), and the order is the one in
+<code>atan(y / x)</code>. It takes plain numbers only <em>(provisional)</em>: two
+lengths would be reasonable, and can come later.</p>
+<h3 id="625-round-sends-a-half-away-from-zero-and-gives-an-int">6.25 <code>round</code> sends a half away from zero, and gives an int</h3>
+<p><code>math.round(2.5)</code> is 3 and <code>math.round(-2.5)</code> is -3.</p>
+<p><strong>Why.</strong> It is the rule taught at school, and the one C's <code>round</code> and
+Rust's <code>round</code> follow. <strong>Turned down.</strong> Python's rule, a half to the
+nearest even number, so that <code>round(2.5)</code> is 2 and <code>round(3.5)</code> is 4:
+better for adding up many rounded numbers, and a surprise to nearly
+everyone who meets it.</p>
+<p><strong>Why an int.</strong> <code>floor</code> and <code>ceil</code> give one (their answer is a whole
+number, and an index or a register value is wanted next). A float too
+large for an int gives the largest int, as they do.</p>
+<h3 id="626-log-is-the-natural-logarithm-with-log2-and-log10-beside-it">6.26 <code>log</code> is the natural logarithm, with <code>log2</code> and <code>log10</code> beside it</h3>
+<p><strong>Why <code>log</code> and not <code>ln</code>.</strong> It is <code>log</code> in C, Python, JavaScript and
+Java, which is where the people Zeno is for come from. On a calculator
+<code>log</code> is base ten, so the two others have their base in their name and
+the walkthrough says which is which.</p>
+<p><strong>Why three functions and not <code>log(x, base)</code>.</strong> <code>math.log(125) /
+math.log(5)</code> is <code>3.0000000000000004</code>. <code>log2(8)</code> and <code>log10(1000)</code> are
+exactly 3, because the C library works them out directly. Bases other
+than e, 2 and 10 are rare.</p>
+<h3 id="627-a-number-that-has-no-answer-is-a-valueerror">6.27 A number that has no answer is a <code>ValueError</code></h3>
+<p><code>math.log(0)</code>, <code>math.log(-1)</code>, <code>math.asin(1.5)</code> and <code>math.acos(-2)</code>
+raise <code>ValueError</code>, with the number in the message, as <code>math.sqrt(-1)</code>
+always did.</p>
+<p><strong>Why not <code>nan</code>.</strong> C gives a <code>nan</code> here, which then spreads through
+every sum it touches and is printed twenty lines later. An error at
+the line that asked is easier to find.</p>
+<p><strong>In a firmware build they are faults</strong> and stop the program, as a bad
+index does (5.5l, 6.9): the program can test the number first.</p>
+<p><strong>An answer too big for a float is <code>inf</code></strong>, as it is for <code>*</code> and <code>**</code>:
+<code>math.exp(710)</code> is <code>inf</code>.</p>
+<h3 id="628-the-answers-are-the-c-librarys-in-every-engine">6.28 The answers are the C library's, in every engine</h3>
+<p>A compiled program calls <code>sin</code>, <code>log</code> and the rest in the C library.
+<code>zeno run</code> and the VM reach the same functions through Rust. So every
+engine and build gives the same digits on one machine, which the tests
+hold them to.</p>
+<p>Two machines with different C libraries can differ in the last digit
+of a result that is not exact. <strong>Why accept that.</strong> The other choice
+is Zeno's own <code>sin</code>, a few hundred lines that would be slower and no
+more right than the one already on the machine.</p>
+<h3 id="629-a-dict-is-written-ada-36-and-one-with-nothing-in-it-is">6.29 A dict is written <code>["Ada": 36]</code>, and one with nothing in it is <code>[:]</code></h3>
+<pre><code class="zeno">let ages = ["Ada": 36, "Alan": 41]
+let seen: dict[str, int] = [:]</code></pre>
+<p>A dict keeps one value under each key. It is written like a list, in
+square brackets, with <code>key: value</code> where a list has an item. Partha
+chose this form on 2026-11-15, from the forms that were put to him.</p>
+<p><strong>Why square brackets.</strong> In Zeno a pair of braces is always a block of
+code, and a pair of square brackets always holds values. Somebody
+reading a line never has to work out which of the two a bracket is.</p>
+<p><strong>Turned down.</strong> <code>{"Ada": 36}</code>, as in Python and JavaScript: braces
+would then mean a block in one place and a value in another, and <code>{}</code>
+after <code>if ready</code> could be read as either. JavaScript lives with exactly
+that puzzle. A word in front, as in <code>dict("Ada": 36)</code>: longer, and it
+looks like a call, which it is not.</p>
+<p><strong>Why <code>[:]</code> for the empty one.</strong> <code>[]</code> is the empty list. The colon is
+what makes a dict a dict, so the empty dict keeps it. The parser knows
+which it is reading as soon as it has seen the first thing after <code>[</code>.</p>
+<p><strong>Unambiguous and intuitive.</strong> After the first value comes <code>,</code> or <code>]</code>
+(a list) or <code>:</code> (a dict), and every entry after that must be the same
+kind. Mixing them is refused with a message that says how each is
+written. A dict prints exactly as it is written.</p>
+<h3 id="630-its-type-is-dictstr-int-the-keys-then-the-values">6.30 Its type is <code>dict[str, int]</code>: the keys, then the values</h3>
+<p>The same shape as <code>list[int]</code>. The name is Python's, which more people
+read than any other (the principles, last paragraph).</p>
+<p><strong>Turned down.</strong> <code>map[str, int]</code>, as in Go: <code>map</code> is already the list
+method that changes every item. <code>[str: int]</code>, as in Swift: a type that
+looks like a value, where every other type in Zeno is a word.</p>
+<h3 id="631-a-key-is-a-str-or-an-int">6.31 A key is a <code>str</code> or an <code>int</code></h3>
+<p>Names and numbers: <code>ages["Ada"]</code>, <code>meanings[404]</code>. Both compare
+exactly, which a key has to.</p>
+<p><strong>Why not a float.</strong> <code>0.1 + 0.2</code> is not <code>0.3</code>, so a value stored under
+one could not be found under the other. That is a mistake the language
+can simply not offer.</p>
+<p><strong>Why not a bool, a list or an object.</strong> Two keys are an <code>if</code>. A list
+or an object can change while it is a key, and then it is filed in the
+wrong place. An enum case would be a good key and is the likely next
+one.</p>
+<p><strong>All the keys of one dict are the same type</strong>, and the checker refuses
+<code>["a": 1, 2: 3]</code>. That is what lets it say what a loop variable is.</p>
+<h3 id="632-a-value-is-an-int-a-float-a-bool-or-a-str-provisional">6.32 A value is an <code>int</code>, a <code>float</code>, a <code>bool</code> or a <code>str</code> <em>(provisional)</em></h3>
+<pre class="out"><code>error: a value of a dict is an int, a float, a bool or a str for now, and
+this says list[int]. Keep those in a list, and the position of each in the
+dict</code></pre>
+<p><strong>Why only these.</strong> They are the values that are copied when they are
+stored. So a dict holds nothing that anything else can reach, and a
+build with no collector frees a dict in one step with no new rule. A
+list or an object as a value raises a question each: who owns it, the
+dict or the variable it came from? Is <code>d[key]</code> a look at it, and is
+<code>pop</code> the way to take it back? Those have answers, modelled on a list
+of owned items, and they will be given when a real program needs them
+(keep what works, and add when a real program asks).</p>
+<p><strong>Meanwhile.</strong> Objects go in a list, and the dict holds the position of
+each: <code>people[index["Ada"]]</code>.</p>
+<p><strong>All the values of one dict are the same type</strong>, like the items of a
+list that says what it holds.</p>
+<h3 id="633-a-dict-remembers-the-order-its-keys-were-put-in">6.33 A dict remembers the order its keys were put in</h3>
+<p>A loop over a dict, <code>keys()</code>, <code>values()</code> and <code>print</code> all follow the
+order in which the keys were first stored. Storing under a key that is
+there does not move it.</p>
+<p><strong>Why.</strong> It is the one order a reader can predict from the program, and
+it is the same on every run, in every engine and in every build. The
+order a hash table happens to have differs between Rust and C, and the
+tests compare the output of eight builds line for line.</p>
+<p><strong>What it costs.</strong> <code>pop</code> closes the gap, so it takes longer the more
+keys come after the one taken out. Finding, storing and <code>in</code> do not
+depend on the size.</p>
+<p><strong>Turned down.</strong> No order at all (cheaper <code>pop</code>, and a program whose
+output changes when a key is added). Sorted by key (every store pays
+for it, whether or not anything is ever printed).</p>
+<h3 id="634-dkey-of-a-key-that-is-not-there-is-a-keyerror">6.34 <code>d[key]</code> of a key that is not there is a <code>KeyError</code></h3>
+<p>There are three ways to ask, and each says what the programmer knows:</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Means</th>
+<th>A key that is not there</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>d[key]</code></td>
+<td>it is there</td>
+<td><code>KeyError</code></td>
+</tr>
+<tr>
+<td><code>d.get(key)</code></td>
+<td>it may not be</td>
+<td><code>none</code></td>
+</tr>
+<tr>
+<td><code>key in d</code></td>
+<td>is it?</td>
+<td><code>false</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why not <code>none</code> from <code>d[key]</code>.</strong> Every read would then be an
+<code>int or none</code> to test first, even where the key was stored on the line
+above. <strong>Why not 0 or <code>""</code>.</strong> That invents a value nobody stored, and
+a misspelt key becomes a wrong total (principle 1).</p>
+<p><strong>In a firmware build it is a fault</strong> and stops the program where it
+happens, as a bad index does (6.9). <code>get</code> and <code>in</code> are how a program
+that must not stop asks first.</p>
+<h3 id="635-getkey-gives-the-value-or-none-and-getkey-instead-gives-a-value">6.35 <code>get(key)</code> gives the value or <code>none</code>, and <code>get(key, instead)</code> gives a value</h3>
+<pre><code class="zeno">let fan = seen.get(40)              # int or none
+seen[code] = seen.get(code, 0) + 1  # int</code></pre>
+<p>With one argument the answer may be <code>none</code>, so the checker asks for
+the test before it is used, as it does for <code>find</code> (6.3). With two, the
+second is what to give when the key is not there, and it must be of
+the dict's value type, so the answer is a plain value.</p>
+<p><strong>Why one name for both.</strong> Both ask without failing. The second
+argument does not change what is asked, only what is given instead.
+It is Python's <code>get</code>.</p>
+<p><strong>It never adds the key.</strong> <code>get</code> only looks.</p>
+<h3 id="636-dkey-value-stores-a-new-key-is-added-one-that-is-there-gets-the-new-value">6.36 <code>d[key] = value</code> stores: a new key is added, one that is there gets the new value</h3>
+<p><strong>Why one form.</strong> Counting, the commonest use, is
+<code>seen[word] = seen.get(word, 0) + 1</code>, where the program does not care
+which of the two happens. A program that does care asks with <code>in</code>.</p>
+<p><strong>Turned down.</strong> A method (<code>d.set(key, value)</code>) beside the brackets:
+two ways to write one thing.</p>
+<p><strong>The same key written twice in a dict that is written out is
+refused</strong>: <code>["a": 1, "a": 2]</code>. Stored one after the other the second
+would replace the first, which is fine in a loop and a slip of the
+hand in one pair of brackets.</p>
+<h3 id="637-popkey-takes-a-key-out-and-gives-its-value">6.37 <code>pop(key)</code> takes a key out and gives its value</h3>
+<p>The word a list already uses for "take it out and hand it to me"
+(6.5). A key that is not there is a <code>KeyError</code>, as for <code>d[key]</code>.</p>
+<p><strong>Turned down.</strong> <code>remove</code>, which would give nothing back: then getting
+the value and removing it are two lookups. A <code>del d[key]</code> statement: a
+new kind of statement for one type. A second argument for a key that
+is missing: <code>in</code> asks.</p>
+<p><code>clear()</code> empties the dict, as it empties a list.</p>
+<h3 id="638-a-loop-over-a-dict-is-given-its-keys-keys-and-values-are-new-lists">6.38 A loop over a dict is given its keys; <code>keys()</code> and <code>values()</code> are new lists</h3>
+<pre><code class="zeno">for code in seen {
+    print(code, seen[code])
+}</code></pre>
+<p><strong>Why the keys.</strong> With the key the value is one lookup away, and with
+only the value the key is lost. <code>in</code> asks about keys for the same
+reason.</p>
+<p><strong>Why not pairs.</strong> <code>for code, count in seen</code> needs a value that is two
+values, and Zeno has no such thing yet. When it does, that loop can be
+added without changing what this one means.</p>
+<p><strong>The loop walks the keys as they were when it began</strong>, like a loop
+over a list. The body may add keys and take them out. <code>keys()</code> and
+<code>values()</code> give lists that are the caller's own for the same reason:
+changing the dict afterwards does not change them.</p>
+<h3 id="639-two-dicts-are-equal-when-the-same-keys-have-the-same-values">6.39 Two dicts are equal when the same keys have the same values</h3>
+<p><code>["x": 1, "y": 2] == ["y": 2, "x": 1]</code> is <code>true</code>. The order says how a
+dict was built, and <code>==</code> asks what it holds. <code>+</code> and <code>&lt;</code> are not
+defined for dicts: there is no one meaning for either.</p>
+<h3 id="640-a-dict-is-a-list-or-two-and-an-index-and-is-owned-like-a-list">6.40 A dict is a list or two and an index, and is owned like a list</h3>
+<p><strong>How it is kept.</strong> In a compiled program: a list of keys, a list of
+values beside it, and a table of positions that a key's hash leads
+into (open addressing, at most half full, doubled when it fills; text
+is hashed with FNV-1a). In <code>zeno run</code> and the VM: a <code>Vec</code> of entries
+and Rust's <code>HashMap</code> of positions. Both give the order of 6.33.</p>
+<p><strong>Why two lists.</strong> <code>keys()</code>, <code>values()</code> and the loop are then the list
+code that already exists, and so is freeing them.</p>
+<p><strong>Who frees it.</strong> In an ordinary build a dict is shared and the
+collector frees it, like a list. <code>owned dict[str, int]</code> gives it one
+owner by request. With no collector it always has one owner, and
+everything written in docs/ownership.md about a list holds for a dict:
+a second name takes it over, a parameter looks unless it says <code>take</code>,
+and the end of the owner's block frees it. The dict has copies of its
+own of any text in it (docs/text.md), and frees them too.</p>
+<p><strong><code>[:]</code> with no type beside it</strong> cannot say what it will hold, and a
+build asks for the type, as it does for <code>[]</code>.</p>
+<p><strong>A program that uses no dict pays nothing for them</strong> in a build for a
+board: the C compiler drops the functions nobody calls.</p>
+<hr />
+<h2 id="7-programs-in-several-files">7. Programs in several files</h2>
+<p>A program that has grown past a few hundred lines wants more than one
+file. This section says how one file uses what another declares. The
+walk through the code is in <a href="/docs/modules/"><code>modules.md</code></a>.</p>
+<p><strong>Checked against "unambiguous and intuitive".</strong> One name is one file
+(7.2). What is written at the import is what is written at the use
+(7.3). A file means the same in every program that imports it (7.7).
+A name that could be read two ways is refused with a message that
+says what to write (7.8). And there is one mechanism, not two: a file
+of your own is imported with the words that import <code>math</code> (7.1).</p>
+<h3 id="71-a-module-is-a-file-and-import-is-how-it-is-brought-in">7.1 A module is a file, and <code>import</code> is how it is brought in</h3>
+<pre><code class="zeno">import shapes                     # then: shapes.area(s), shapes.Point
+from shapes import area, Point    # then: area(s), Point</code></pre>
+<p><code>import shapes</code> reads the file <code>shapes.zeno</code>. These are the two forms
+that <code>import math</code> and <code>from math import sqrt</code> have had since the
+first stage, and a file of your own is used exactly as a module that
+comes with Zeno is.</p>
+<p><strong>Why a file is the module.</strong> There is nothing to declare: no
+<code>module</code> line, no header, no list of exports to keep in step with the
+code. The file's name is the module's name, so the reader of
+<code>shapes.area</code> knows which file to open.</p>
+<p><strong>Turned down.</strong> Pasting the other file in, as C's <code>#include</code> does:
+the names of two files meet, and what a line means depends on what was
+pasted above it. A header beside each file (C, C++): two places that
+describe one thing, and they drift apart. <code>mod</code> and <code>use</code> as two steps
+(Rust): the tree of modules is written out in one file and the files
+have to match it.</p>
+<h3 id="72-a-module-is-looked-for-from-the-folder-of-the-programs-first-file">7.2 A module is looked for from the folder of the program's first file</h3>
+<p><code>import shapes</code> is <code>shapes.zeno</code> in the folder of the file that was
+given to <code>zeno run</code> or <code>zeno build</code>. A dot is a folder:
+<code>import drivers.uart</code> is <code>drivers/uart.zeno</code>. That holds for every
+file of the program, wherever the file is: a file inside <code>drivers/</code>
+that wants its neighbour writes <code>import drivers.pins</code>.</p>
+<p><strong>Why from the first file, and not from the file that imports.</strong> One
+name is then one file, everywhere in the program. If each file looked
+beside itself, <code>import pins</code> would mean one file in <code>drivers/</code> and
+another in <code>sensors/</code>, and one file could be reached under two names
+and be read twice.</p>
+<p><strong>Turned down.</strong> A list of folders to search, set outside the program
+(Python's path, C's <code>-I</code>): which file is read then depends on the
+machine. That question comes back with the package manager, which
+will have to say where other people's files are.</p>
+<p><strong>The five modules that come with Zeno keep their names</strong>: <code>math</code>,
+<code>time</code>, <code>board</code>, <code>files</code>, <code>program</code>. A file called <code>math.zeno</code> is
+never looked for by <code>import math</code>. <em>(Provisional: once library
+modules are themselves Zeno files, they will be found by one rule.)</em></p>
+<h3 id="73-import-ab-is-used-as-abname">7.3 <code>import a.b</code> is used as <code>a.b.name</code></h3>
+<pre><code class="zeno">import drivers.uart
+drivers.uart.send("ready")</code></pre>
+<p>What is written at the import is what is written at the use. A reader
+who meets <code>drivers.uart.send</code> halfway down the file can find its
+import by searching for the same words.</p>
+<p><strong>Turned down.</strong> Only the last word, <code>uart.send</code> (Go, Rust): two
+modules called <code>uart</code> in two folders then collide, and the fix is a
+second name for one of them. A second name by request,
+<code>import drivers.uart as uart</code>: two spellings for one module, and
+<code>from drivers.uart import send</code> already gives the short form.
+<em>(Provisional: if long names turn out to hurt in real programs, <code>as</code>
+is the way to add.)</em></p>
+<h3 id="74-everything-declared-at-the-top-of-a-file-can-be-imported-provisional">7.4 Everything declared at the top of a file can be imported <em>(provisional)</em></h3>
+<p>Functions, classes, enums and their cases, and <code>let</code>, <code>var</code> and
+<code>const</code> variables. What the file itself imports is not passed on:
+<code>shapes.math</code> is not a name, even though <code>shapes.zeno</code> imports <code>math</code>.</p>
+<p><strong>Why everything.</strong> The first program anyone splits in two then
+works with no new word to learn. And it is the choice that can be
+changed without breaking programs: a word that hides a declaration
+(<code>private function helper()</code>) can be added later and every program
+written before it still means the same. Starting hidden and opening
+up later can be added too, but starting hidden means a mark on almost
+every line of every module from the first day.</p>
+<p><strong>Turned down.</strong> A leading underscore that means "leave this alone"
+(Python): a convention the compiler does not check (principle 1). A
+capital first letter that means "visible" (Go): spelling that carries
+meaning (principle 2). <code>pub</code> or <code>export</code> on each declaration: see
+above.</p>
+<p><strong>The cases of an enum are names of their own</strong>, as they are in one
+file. <code>from shapes import Shape</code> brings in the enum's name. Its cases
+are <code>shapes.Circle</code>, or <code>Shape.Circle</code>, or imported by name:
+<code>from shapes import Shape, Circle</code>.</p>
+<h3 id="75-an-imported-file-runs-once-before-the-file-that-imports-it">7.5 An imported file runs once, before the file that imports it</h3>
+<p>A file can have lines at its top that do something: fill a table,
+print a banner. In a program of several files each file runs once,
+and a file's imports have all run before its own first line does. The
+file given to <code>zeno run</code> therefore runs last.</p>
+<p><strong>Why once.</strong> There is then one copy of each of the module's
+variables, whoever imports it.</p>
+<p><strong>So an <code>import</code> of a file goes at the top of the file</strong>, above
+everything that is not an import, and never inside a function or a
+block. The imported file runs first wherever the line is, and a line
+further down would say something else about the order than what
+happens. (<code>import math</code> may still be written anywhere. It has no
+lines of its own to run.)</p>
+<p><strong>Turned down.</strong> Running the imported file when the import line is
+reached (Python). The order in which two modules run then depends on
+which file happened to import one of them first.</p>
+<h3 id="76-files-that-import-each-other-are-refused">7.6 Files that import each other are refused</h3>
+<pre class="out"><code>error: these files import each other: `a` imports `b`, and `b` imports `a`.</code></pre>
+<p>Each would have to run before the other. Python runs one of them
+half-way and hands the other a module with some of its names missing.
+C has the programmer declare things ahead. Zeno says which files form
+the circle and what to do: move what they share into a file of its
+own, and import that from both.</p>
+<h3 id="77-a-file-sees-what-it-declares-and-what-it-imports-and-nothing-else">7.7 A file sees what it declares and what it imports, and nothing else</h3>
+<p><strong>An imported file cannot see the file that imports it.</strong> If
+<code>shapes.zeno</code> uses a name it does not declare, and the program's
+first file happens to declare one, that is an error. Otherwise what
+<code>shapes.zeno</code> means would depend on which program imports it.</p>
+<p><strong>Only the file of a module gives its variables a new value.</strong></p>
+<pre><code class="zeno">import counter
+print(counter.total)     # reading is fine
+counter.total = 0        # refused: give `counter` a function that does it</code></pre>
+<p>Where a variable can change is then one file, which is the first
+thing anyone debugging it wants to know. Python's
+<code>from counter import total</code> followed by <code>total = 0</code> changes a copy
+and leaves the module's own variable alone, silently. In Zeno there
+is one variable, and the assignment is refused under either
+spelling. A list or object that the variable holds can still be
+changed through it, exactly as through a <code>let</code>.</p>
+<h3 id="78-a-name-that-would-have-two-readings-is-refused">7.8 A name that would have two readings is refused</h3>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Refused because</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>from a import x</code> and <code>from b import x</code></td>
+<td>which <code>x</code>?</td>
+</tr>
+<tr>
+<td><code>from a import x</code> and <code>let x = 1</code> at the top of the same file</td>
+<td>which <code>x</code>?</td>
+</tr>
+<tr>
+<td><code>import shapes</code> and <code>let shapes = 1</code> at the top of the same file</td>
+<td><code>shapes.x</code> is a name of the module, or a field of the variable</td>
+</tr>
+<tr>
+<td><code>import a</code> and <code>import a.b</code></td>
+<td><code>a.b.x</code> is <code>x</code> of <code>a.b</code>, or <code>b.x</code> of <code>a</code></td>
+</tr>
+<tr>
+<td><code>let s = shapes</code></td>
+<td>a module is not a value</td>
+</tr>
+</tbody>
+</table>
+<p>A name declared inside a function or a block hides an imported one,
+as it hides any name from the top of the file. That is the rule Zeno
+already has, and a parameter called <code>area</code> should not stop working
+because an import was added.</p>
+<h3 id="79-a-value-prints-by-the-name-its-file-gave-it">7.9 A value prints by the name its file gave it</h3>
+<p><code>print(shapes.Point(1, 2))</code> prints <code>Point(x=1, y=2)</code>, and an enum
+case prints as <code>Dot</code>. An error that nothing catches is reported as
+<code>uncaught BadShape</code>.</p>
+<p><strong>Why not <code>shapes.Point(...)</code>.</strong> Then what <code>shapes.zeno</code> prints would
+change when it is imported instead of run by itself.</p>
+<p><strong>The compiler's own messages use the full name</strong>, <code>shapes.Point</code>,
+also for a mistake inside <code>shapes.zeno</code>. There the question is which
+<code>Point</code>, and two files may each have one.</p>
+<h3 id="710-strict-is-asked-of-one-file">7.10 <code>strict</code> is asked of one file</h3>
+<p>A file that begins with the line <code>strict</code> asks for every type in that
+file to be known before the program runs. Its imports are not made
+strict by it, and it does not make the file that imports it strict.
+<code>zeno check --strict</code> and <code>zeno build</code> ask it of every file.</p>
+<p><strong>Why.</strong> A typed library must be usable from a quick script, and a
+script's looseness must not leak into the library.</p>
+<h3 id="711-the-files-are-joined-into-one-program-before-anything-checks-it">7.11 The files are joined into one program before anything checks it</h3>
+<p>The stage that reads the files gives every name that an imported
+file declares at its top the module's name in front, <code>shapes.area</code>,
+in that file and in every file that uses it, and then puts all the
+statements in one list, an imported file before its importer
+(<a href="https://github.com/partham20/zeno-lang/blob/main/src/modules.rs"><code>src/modules.rs</code></a>). Nobody can write
+<code>shapes.area</code> as one word in a source file, so the name cannot
+collide with one that somebody did write.</p>
+<p><strong>Why.</strong> The type checker, the interpreter, the VM and both compilers
+then take a program in ten files exactly as they take a program in
+one. Types that are worked out from use are worked out across files
+with no extra work. A C build is still one C file, and the C compiler
+still drops what nothing calls.</p>
+<p><strong>Turned down, for now.</strong> Compiling each file by itself and linking
+the results. That needs a written-down description of what every
+module offers, and generics and worked-out types make that
+description large. It is what makes a big program quick to rebuild,
+and it will be wanted then. <em>(Provisional.)</em></p>
+<p><strong>In C a module's name is part of the C name</strong>: <code>shapes.area</code> is
+<code>z_shapes_area</code>. Two classes or enums that would get the same C name
+(<code>shapes.Point</code> and a class called <code>shapes_Point</code>) are refused with a
+message, as <code>Stack[int]</code> and <code>Stack_int</code> already were.</p>
+<h3 id="712-one-number-says-the-file-and-the-line">7.12 One number says the file and the line</h3>
+<p>Every part of a program remembers where it was written: a line and a
+column. With several files that is not enough, and adding a third
+number would have touched every place that passes a position along,
+down to each call into the runtime of a compiled program.</p>
+<p>Instead the lines of the whole program are numbered in one run. The
+first file's lines are 1 to 999,999, as the editor shows them. The
+second file's start at 1,000,001, the third's at 2,000,001. Only the
+places that show a position to a person take the number apart again.
+Clang and the Rust compiler keep positions the same way, as one
+number into all the source text.</p>
+<p><strong>The cost.</strong> A file can have at most 999,999 lines and a program at
+most 2,000 files, so that the number fits in a C <code>int</code>. Both are
+checked.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

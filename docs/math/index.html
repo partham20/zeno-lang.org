@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The standard library, part 3: more of math · Zeno</title>
+<meta name="description" content="math had pi, a square root, floor, ceil, sin and cos. This page adds the rest of what firmware arithmetic reaches for, and joins the module to something Zeno already had: numbers that carry units.">
+<meta property="og:title" content="The standard library, part 3: more of math · Zeno">
+<meta property="og:description" content="math had pi, a square root, floor, ceil, sin and cos. This page adds the rest of what firmware arithmetic reaches for, and joins the module to something Zeno already had: numbers that carry units.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/math/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/math/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/" aria-current="page">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>The standard library, part 3: more of math</h1>
+  <p><code>math</code> had <code>pi</code>, a square root, <code>floor</code>, <code>ceil</code>, <code>sin</code> and <code>cos</code>. This
+page adds the rest of what firmware arithmetic reaches for, and joins
+the module to something Zeno already had: numbers that carry units.</p>
+<pre><code>cargo run -- run examples/instruments.zeno</code></pre>
+<pre><code>compass
+  x   1.0  y   0.0  heading    0.0 deg
+  x   1.0  y   1.0  heading   45.0 deg
+  x   0.0  y   1.0  heading   90.0 deg
+  x  -1.0  y   1.0  heading  135.0 deg
+  x  -1.0  y   0.0  heading  180.0 deg
+  x   0.0  y  -1.0  heading  270.0 deg
+  x   3.0  y  -4.0  heading  306.9 deg
+thermistor
+     32650 ohm     0.6 degC
+     10000 ohm    25.0 degC
+      3603 ohm    49.9 degC
+      1070 ohm    85.5 degC
+level meter
+   1.0 V     0.0 dB
+   0.5 V    -6.0 dB
+   0.1 V   -20.0 dB
+   2.0 V     6.0 dB
+capacitor, tau 0.5 s
+  after 0.0 s    0.0 %
+  after 0.5 s   63.2 %
+  after 1.0 s   86.5 %
+  after 1.5 s   95.0 %
+  after 2.0 s   98.2 %
+  after 2.5 s   99.3 %
+sine table
+  [128, 176, 218, 245, 255, 245, 218, 176, 128, 79, 37, 10, 0, 10, 37, 79]</code></pre>
+<p><a href="/examples/instruments/"><code>examples/instruments.zeno</code></a> is five
+small instruments: a compass (<code>atan2</code>), a thermistor (<code>log</code>), a level
+meter (<code>log10</code>), a charging capacitor (<code>exp</code>) and a sine table (<code>sin</code>
+and <code>round</code>). The decisions are 6.21 to 6.28 in
+<a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-math-holds-now">What <code>math</code> holds now</h2>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Takes</th>
+<th>Gives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>math.pi</code>, <code>math.e</code></td>
+<td></td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td><code>math.sqrt(x)</code></td>
+<td>a number, 0 or more</td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td><code>math.floor(x)</code>, <code>math.ceil(x)</code>, <code>math.round(x)</code></td>
+<td>a number</td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>math.sin(a)</code>, <code>math.cos(a)</code>, <code>math.tan(a)</code></td>
+<td>an angle: a number (radians), <code>deg</code> or <code>rad</code></td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td><code>math.asin(x)</code>, <code>math.acos(x)</code></td>
+<td>a number from -1 to 1</td>
+<td><code>rad</code></td>
+</tr>
+<tr>
+<td><code>math.atan(x)</code></td>
+<td>a number</td>
+<td><code>rad</code></td>
+</tr>
+<tr>
+<td><code>math.atan2(y, x)</code></td>
+<td>two numbers</td>
+<td><code>rad</code></td>
+</tr>
+<tr>
+<td><code>math.exp(x)</code></td>
+<td>a number</td>
+<td><code>float</code></td>
+</tr>
+<tr>
+<td><code>math.log(x)</code>, <code>math.log2(x)</code>, <code>math.log10(x)</code></td>
+<td>a number above 0</td>
+<td><code>float</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>log</code> is the natural logarithm, the one with base e, as in C and
+Python. The other two have their base in their name.</p>
+<p>What is not here, and what to write instead (6.21):</p>
+<table>
+<thead>
+<tr>
+<th>Elsewhere</th>
+<th>In Zeno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pow(x, y)</code></td>
+<td><code>x ** y</code></td>
+</tr>
+<tr>
+<td><code>trunc(x)</code></td>
+<td><code>int(x)</code></td>
+</tr>
+<tr>
+<td><code>fabs(x)</code></td>
+<td><code>abs(x)</code></td>
+</tr>
+<tr>
+<td><code>degrees(x)</code>, <code>radians(x)</code></td>
+<td><code>angle.deg</code>, <code>angle.rad</code></td>
+</tr>
+<tr>
+<td><code>round(x, 2)</code></td>
+<td><code>f"{x:.2f}"</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="angles">Angles</h2>
+<p>Zeno numbers can carry units (<code>500 ms</code>, <code>3.3 V</code>), and two of the units
+are for angles: <code>deg</code> and <code>rad</code>. Until now <code>math</code> ignored them.</p>
+<h3 id="an-angle-goes-in">An angle goes in</h3>
+<pre><code class="zeno">math.sin(30 deg)       # 0.49999999999999994
+math.sin(0.5 rad)      # 0.479425538604203
+math.sin(0.5)          # the same: a plain number is radians</code></pre>
+<p>Degrees handed to a function that counts in radians is the classic
+mistake here, and in C it gives a wrong number with no complaint. A
+value that says <code>deg</code> cannot be misread.</p>
+<p>A plain number is still taken, and means radians, because that is what
+the sine of a number means in mathematics, and signal code is full of
+<code>math.sin(2 * math.pi * f * t)</code> (6.23).</p>
+<p><code>math.sin(30 deg)</code> is not exactly 0.5 because a float cannot hold
+pi / 6 exactly. Python prints the same digits.</p>
+<h3 id="an-angle-comes-out">An angle comes out</h3>
+<pre><code class="zeno">let heading = math.atan2(1, -1)
+print(heading)              # 2.356194490192345 rad
+print(heading.deg)          # 135 deg</code></pre>
+<p><code>asin</code>, <code>acos</code>, <code>atan</code> and <code>atan2</code> answer with a quantity in <code>rad</code>, so
+the value says what it is. Comparing it with a bare number, or with
+degrees, is refused before the program runs:</p>
+<pre class="out"><code>error: `+` does not work between a quantity in rad and a quantity in deg. Change one of them first, with `.rad` or `.deg`</code></pre>
+<p>To use an angle as a plain number, divide by one of its unit, as with
+any quantity: <code>heading / 1 rad</code> is <code>2.356194490192345</code>, and
+<code>heading.deg / 1 deg</code> is <code>135.0</code>.</p>
+<p><code>atan2(y, x)</code> takes y first. It is the angle of the point (x, y) seen
+from (0, 0), and unlike <code>atan(y / x)</code> it knows which side of the
+circle the point is on:</p>
+<table>
+<thead>
+<tr>
+<th>Point</th>
+<th><code>atan2(y, x).deg</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(1, 1)</td>
+<td><code>45 deg</code></td>
+</tr>
+<tr>
+<td>(-1, 1)</td>
+<td><code>135 deg</code></td>
+</tr>
+<tr>
+<td>(-1, -1)</td>
+<td><code>-135 deg</code></td>
+</tr>
+<tr>
+<td>(1, -1)</td>
+<td><code>-45 deg</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="rad-and-deg"><code>.rad</code> and <code>.deg</code></h3>
+<p><code>(3 s).ms</code> has always changed a time into milliseconds. Degrees and
+radians were the one pair of units for the same thing that could not
+be changed, because the factor between them is not a whole number.
+Now they can, when the program asks (6.22):</p>
+<pre><code class="zeno">print((180 deg).rad)                 # 3.141592653589793 rad
+print((math.pi * 1 rad).deg)         # 180 deg</code></pre>
+<p>They still do not meet by themselves. <code>1 s + 500 ms</code> is <code>1500 ms</code>,
+because the finer unit loses nothing. Between degrees and radians
+neither is finer, so <code>90 deg + 1 rad</code> is an error and not a guess.</p>
+<p>The whole of the change is in <code>src/units.rs</code>. <code>convert</code> answers "how
+do I turn this unit into that one", and has two new lines:</p>
+<pre><code>match (from, to) {
+    ("deg", "rad") =&gt; return Some(Scale { times: std::f64::consts::PI / 180.0, over: 1.0 }),
+    ("rad", "deg") =&gt; return Some(Scale { times: 180.0 / std::f64::consts::PI, over: 1.0 }),
+    _ =&gt; {}
+}</code></pre>
+<p><code>common</code> answers "what unit do these two meet in", and now refuses two
+units of different kinds before it asks <code>convert</code>:</p>
+<pre><code>if a_kind != b_kind {
+    return None;
+}</code></pre>
+<p>Every engine asks these two functions, so <code>.rad</code> works in <code>zeno run</code>,
+the VM, and both compilers with no change to any of them.</p>
+<h2 id="how-an-angle-compiles">How an angle compiles</h2>
+<p>A quantity is a <code>double</code> in a compiled program. The unit is known to
+the compiler and is gone by the time the program runs. So the change
+of unit is one multiplication by a number written into the program:</p>
+<pre><code class="zeno">function height(angle: deg, length: float) -&gt; float {
+    return length * math.sin(angle)
+}
+
+function bearing(x: float, y: float) -&gt; deg {
+    return math.atan2(y, x).deg
+}</code></pre>
+<pre><code>static double z_height(double z_angle, double z_length) {
+    return (z_length * sin((z_angle * 0.017453292519943295)));
+}
+
+static double z_bearing(double z_x, double z_y) {
+    return (atan2(z_y, z_x) * 57.29577951308232);
+}</code></pre>
+<pre><code>define internal double @z_height(double %arg.angle, double %arg.length) {
+entry:
+  %t1 = fmul double %arg.angle, 0.017453292519943295
+  %t2 = call double @sin(double %t1)
+  %t3 = fmul double %arg.length, %t2
+  ret double %t3
+}</code></pre>
+<p><code>0.017453292519943295</code> is pi / 180 and <code>57.29577951308232</code> is
+180 / pi, each printed with every digit a float holds, so the C
+compiler reads back the very same number.</p>
+<p>Had <code>height</code> been given <code>angle: rad</code>, or a plain float, there would be
+no multiplication at all.</p>
+<h2 id="round"><code>round</code></h2>
+<pre><code class="zeno">print(math.round(2.5), math.round(-2.5), math.round(2.4))    # 3 -3 2</code></pre>
+<p>A half goes away from zero, as taught at school (6.25). Python sends a
+half to the nearest even number, so its <code>round(2.5)</code> is 2.</p>
+<p>The answer is an <code>int</code>, like <code>floor</code> and <code>ceil</code>. In C:</p>
+<pre><code>zeno_whole(round(2.5))</code></pre>
+<p><code>round</code> is the C library's and gives a float. <code>zeno_whole</code> makes it an
+int, and gives the largest or smallest int for a float that is beyond
+them, where a plain C cast would be undefined.</p>
+<h2 id="logarithms-and-exp">Logarithms and <code>exp</code></h2>
+<pre><code class="zeno">print(math.log(math.e), math.log2(8), math.log10(1000))    # 1.0 3.0 3.0
+print(math.exp(1))                                         # 2.718281828459045</code></pre>
+<p>There are three functions and not <code>log(x, base)</code> because the C library
+works out base 2 and base 10 directly, and dividing two natural
+logarithms does not always land on the whole number:</p>
+<pre><code class="zeno">print(math.log(125) / math.log(5))     # 3.0000000000000004</code></pre>
+<h2 id="a-number-with-no-answer">A number with no answer</h2>
+<pre class="out"><code>error: uncaught ValueError: cannot take the logarithm of 0.0
+error: uncaught ValueError: `asin` needs a number from -1 to 1, and this is 1.5</code></pre>
+<p>C would give <code>nan</code>, which then travels through every sum it touches.
+Zeno stops at the line that asked (6.27). In the runtime each of these
+is a test in front of the C library's function:</p>
+<pre><code>static double zeno_log(double x, int base, int line, int col) {
+    if (x &lt;= 0.0) {
+        zeno_fail("ValueError", zeno_join(2, "cannot take the logarithm of ", zeno_str_float(x)), line, col);
+    }
+    return base == 2 ? log2(x) : base == 10 ? log10(x) : log(x);
+}</code></pre>
+<p>With <code>zeno run</code> and in an ordinary build the error can be caught with
+<code>try</code>. In a firmware build it is a fault, like a bad index, and stops
+the program: test the number first.</p>
+<p>An answer that is too big is <code>inf</code>, as it is for <code>*</code>: <code>math.exp(710)</code>
+prints <code>inf</code>.</p>
+<h2 id="the-files">The files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What part 3 added</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/units.rs</code></td>
+<td><code>deg</code> and <code>rad</code> convert when asked, and never meet by themselves</td>
+</tr>
+<tr>
+<td><code>src/builtins.rs</code></td>
+<td>The functions for <code>zeno run</code> and the VM; <code>angle</code> reads a number or an angle</td>
+</tr>
+<tr>
+<td><code>src/checker.rs</code></td>
+<td>Their types: an angle in, <code>rad</code> out; the hint for <code>rad + deg</code></td>
+</tr>
+<tr>
+<td><code>src/runtime.c</code></td>
+<td><code>zeno_log</code>, <code>zeno_asin</code>, <code>zeno_acos</code>: the tests in front of the C library</td>
+</tr>
+<tr>
+<td><code>src/emit_c.rs</code>, <code>src/emit_llvm.rs</code></td>
+<td><code>math()</code>: one call each, with the angle scaled first</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li><code>more_of_math_is_the_same_in_every_build</code> (emit_c.rs) runs every
+  function, with plain numbers and with angles, and <code>instruments.zeno</code>,
+  through the interpreter, the VM, and C and LLVM in three builds each. Every digit has to agree. The answers
+  are the C library's in every engine (6.28), which is why they can.</li>
+<li>The same test stops four programs on a number with no answer, and
+  compares the message, line and column in every build.</li>
+<li><code>more_of_math</code> (interpreter.rs) pins down the values that are exact:
+  the four quarters of <code>atan2</code>, <code>round</code> on halves, <code>log2(8)</code>.</li>
+<li><code>more_of_math_is_checked</code> (checker.rs) has each message.</li>
+<li><code>an_angle_converts_when_asked_and_never_by_itself</code> (units.rs).</li>
+</ul>
+<p>There are 377 tests in all.</p>
+<h2 id="what-it-does-not-do">What it does not do</h2>
+<ul>
+<li>A quantity cannot take a format: <code>f"{heading:.1f}"</code> is refused. Write
+  <code>f"{heading / 1 deg:.1f} deg"</code>.</li>
+<li><code>atan2</code> takes plain numbers, not two lengths or two voltages (6.24).</li>
+<li>No <code>hypot</code>, hyperbolic functions, <code>gcd</code>, or random numbers yet (6.21).</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>
+<p>In <code>examples/instruments.zeno</code>, take <code>.deg</code> off the first line of
+   <code>heading</code>. Read the message. Which decision explains why Zeno does
+   not simply add 360 degrees to the radians?</p>
+</li>
+<li>
+<p><code>math.sin(30 deg)</code> prints <code>0.49999999999999994</code>. Print
+   <code>math.round(1000 * math.sin(30 deg))</code>. Then find where the
+   multiplication by pi / 180 happens for <code>zeno run</code> (<code>angle</code> in
+   <code>builtins.rs</code>) and for a built program (the C above).</p>
+</li>
+<li>
+<p>Print <code>math.round(x)</code> for 2.5, 3.5, -2.5 and 0.49999999999999994.
+   What would Python print for each? The last one is why <code>round</code> is
+   not written <code>floor(x + 0.5)</code>: try that too.</p>
+</li>
+<li>
+<p>This says how many bits a number needs:</p>
+</li>
+</ol>
+<pre><code class="zeno">function bits(n: int) -&gt; int {
+    return math.floor(math.log2(n)) + 1
+}</code></pre>
+<p>It is right for 255 and 256. Try <code>2 ** 48 - 1</code> and <code>2 ** 49 - 1</code>.
+   What happened, and how would you write <code>bits</code> with whole numbers
+   only?</p>
+<ol start="5">
+<li>
+<p>Put <code>math.log(x)</code> inside <code>try</code> / <code>except ValueError</code> and build with
+   <code>--firmware</code>. Read the message, then rewrite it the way the message
+   asks.</p>
+</li>
+<li>
+<p>In <code>src/units.rs</code>, take the test of <code>a_kind != b_kind</code> out of
+   <code>common</code> and print <code>90 deg + 1 rad</code> and <code>1 rad + 90 deg</code>. Why is
+   that worse than an error? Put it back and run <code>cargo test</code>.</p>
+</li>
+<li>
+<p>Add <code>math.hypot(x, y)</code>, the length of the line from (0, 0) to
+   (x, y). The C library has <code>hypot</code>. Follow <code>atan2</code> through
+   <code>builtins.rs</code>, <code>checker.rs</code>, <code>emit_c.rs</code> and <code>emit_llvm.rs</code>. Which
+   test tells you if you forgot one of them?</p>
+</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/math.md">docs/math.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/reading-and-writing/"><span>Previous</span>The standard library, part 2: reading and writing</a><a class="next" href="/docs/dict/"><span>Next</span>The standard library, part 4: a dictionary</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-math-holds-now">What math holds now</a></li><li><a href="#angles">Angles</a></li><li><a href="#how-an-angle-compiles">How an angle compiles</a></li><li><a href="#round">round</a></li><li><a href="#logarithms-and-exp">Logarithms and exp</a></li><li><a href="#a-number-with-no-answer">A number with no answer</a></li><li><a href="#the-files">The files</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

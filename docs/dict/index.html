@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The standard library, part 4: a dictionary · Zeno</title>
+<meta name="description" content="A list finds a value by its position. A dict finds a value by its key: a name, or a number that is not a position. This page adds the type, and follows it through every stage of the compiler, because a new type touches all of them.">
+<meta property="og:title" content="The standard library, part 4: a dictionary · Zeno">
+<meta property="og:description" content="A list finds a value by its position. A dict finds a value by its key: a name, or a number that is not a position. This page adds the type, and follows it through every stage of the compiler, because a new type touches all of them.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/dict/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/dict/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/" aria-current="page">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The audit</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>The standard library, part 4: a dictionary</h1>
+  <p>A list finds a value by its position. A dict finds a value by its key:
+a name, or a number that is not a position. This page adds the type,
+and follows it through every stage of the compiler, because a new type
+touches all of them.</p>
+<pre><code>cargo run -- run examples/faults.zeno</code></pre>
+<pre><code>23: over temperature (x4)
+17: over voltage (x2)
+40: fan stalled (x1)
+99: a code nobody wrote down (x1)
+most often: over temperature
+true false
+the fan stalled 1 time
+left out 1 reading with an unknown code
+[23: 4, 17: 2, 40: 1]
+["mode": "manual", "unit": "celsius", "limit": "85"]
+["mode", "unit", "limit"]
+["manual", "celsius", "85"]
+3</code></pre>
+<p><a href="/examples/faults/"><code>examples/faults.zeno</code></a> counts the fault
+codes a device has sent and looks up what each one means. The
+decisions are 6.29 to 6.40 in <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-a-dict-does">What a dict does</h2>
+<pre><code class="zeno">let ages = ["Ada": 36, "Alan": 41]      # written out
+let seen: dict[int, int] = [:]          # empty: the type says what it will hold</code></pre>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Gives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ages["Ada"]</code></td>
+<td>the value under that key. A key that is not there is a <code>KeyError</code></td>
+</tr>
+<tr>
+<td><code>ages["Grace"] = 45</code></td>
+<td>stores: adds the key, or replaces its value</td>
+</tr>
+<tr>
+<td><code>"Ada" in ages</code>, <code>"Bob" not in ages</code></td>
+<td><code>bool</code>: is there such a key?</td>
+</tr>
+<tr>
+<td><code>len(ages)</code></td>
+<td>how many keys</td>
+</tr>
+<tr>
+<td><code>for name in ages { }</code></td>
+<td>each key, in the order they were put in</td>
+</tr>
+<tr>
+<td><code>ages.get("Bob")</code></td>
+<td>the value, or <code>none</code></td>
+</tr>
+<tr>
+<td><code>ages.get("Bob", 0)</code></td>
+<td>the value, or the second argument</td>
+</tr>
+<tr>
+<td><code>ages.pop("Alan")</code></td>
+<td>takes the key out and gives its value</td>
+</tr>
+<tr>
+<td><code>ages.keys()</code>, <code>ages.values()</code></td>
+<td>a new list of each</td>
+</tr>
+<tr>
+<td><code>ages.clear()</code></td>
+<td>empties it</td>
+</tr>
+<tr>
+<td><code>a == b</code></td>
+<td><code>true</code> when the same keys have the same values, in any order</td>
+</tr>
+<tr>
+<td><code>print(ages)</code></td>
+<td><code>["Ada": 36, "Alan": 41]</code>, as it is written</td>
+</tr>
+</tbody>
+</table>
+<p>A key is a <code>str</code> or an <code>int</code>. A value is an <code>int</code>, a <code>float</code>, a <code>bool</code>
+or a <code>str</code>. All the keys of one dict are one type and so are all the
+values, so <code>dict[str, int]</code> says everything about what is inside.</p>
+<h3 id="three-ways-to-ask-for-a-key">Three ways to ask for a key</h3>
+<pre><code class="zeno">print(ages["Ada"])            # I know it is there. If not: KeyError
+let age = ages.get("Bob")     # it may not be: int or none
+if "Bob" in ages { ... }      # is it?</code></pre>
+<p>Zeno does not answer <code>none</code> or <code>0</code> for a key that was never stored
+when you wrote <code>ages["Bob"]</code>. A misspelt key would then be a wrong
+total at the end of the program instead of an error at the line with
+the spelling mistake (6.34).</p>
+<h3 id="one-bracket-for-both">One bracket for both</h3>
+<p>Braces in Zeno are always a block of code, and square brackets always
+hold values. So a dict is written in square brackets, and what makes
+it a dict is the colon:</p>
+<pre><code class="zeno">[1, 2, 3]            # a list
+["a": 1, "b": 2]     # a dict
+[]                   # the empty list
+[:]                  # the empty dict</code></pre>
+<h2 id="how-it-is-built">How it is built</h2>
+<p>A new type goes through every stage. Here they are in order, with the
+place in the source where each one does its part.</p>
+<h3 id="the-parser-which-one-is-it">The parser: which one is it?</h3>
+<p><code>list</code> in <code>src/parser.rs</code> is called when the parser meets <code>[</code>. It reads
+one expression and looks at what follows:</p>
+<pre><code>[ ]                 an empty list
+[ : ]               an empty dict
+[ expr ,  or  ]     a list
+[ expr :            a dict: read the value, then more `key: value`</code></pre>
+<p>One token decides, and the parser never has to go back. The tree gets
+a new node, <code>ExprKind::Dict</code>, which holds the pairs. A list item in the
+middle of a dict, or the other way round, gets a message that says how
+an entry is written:</p>
+<pre class="out"><code>error: every entry of a dict is written `key: value`, and this one has no `:`</code></pre>
+<h3 id="the-checker-what-does-it-hold">The checker: what does it hold?</h3>
+<p><code>Ty::Dict(key, value)</code> in <code>src/checker.rs</code> is the type. <code>dict_written</code>
+works out the type of a dict that is written out: it looks at each
+pair, refuses a key that is not text or an int, and refuses a pair that
+does not match the ones before it.</p>
+<pre class="out"><code>error: the values of a dict are all of one type. This one is float, and the
+ones before it are int</code></pre>
+<p>It also refuses the same key written twice, which in any other
+language quietly keeps the second:</p>
+<pre class="out"><code>error: this key is written twice in the dict. A dict has each key once, so
+the second would replace the first. Take one of them out</code></pre>
+<p>Everything else is a few lines each, next to what a list does there:
+<code>ages["Ada"]</code> checks the key against the key type and gives the value
+type; a loop variable gets the key type; <code>get</code> with one argument gives
+<code>V or none</code>, which the rest of the checker already knows must be tested
+before it is used.</p>
+<h3 id="zeno-run-and-the-vm-a-vec-and-a-hashmap"><code>zeno run</code> and the VM: a <code>Vec</code> and a <code>HashMap</code></h3>
+<p><code>Dict</code> in <code>src/value.rs</code>:</p>
+<pre><code>pub struct Dict {
+    entries: Vec&lt;(Value, Value)&gt;,     // in the order the keys were put in
+    places: HashMap&lt;Key, usize&gt;,      // where each key is in `entries`
+}</code></pre>
+<p>The <code>Vec</code> gives the order, and the <code>HashMap</code> finds a key without
+looking at all of them. <code>Key</code> is a small enum with two cases, <code>Int</code>
+and <code>Str</code>, because a Zeno <code>Value</code> in general cannot be hashed (a float
+has no sensible hash) and a key never needs to be.</p>
+<p>The VM has one new instruction. <code>zeno bytecode</code> shows it:</p>
+<pre><code>0000    1  Const        0          ; "Ada"
+0001    |  Const        1          ; 36
+0002    |  Const        2          ; "Alan"
+0003    |  Const        3          ; 41
+0004    |  Dict         2</code></pre>
+<p><code>Dict 2</code> takes two pairs off the stack and leaves one dict. Reading and
+storing use <code>GetIndex</code> and <code>SetIndex</code>, which lists already had: the
+work is in <code>ops::item</code> and <code>ops::set_item</code>, which now look at what kind
+of value they were handed.</p>
+<h3 id="the-c-runtime-a-hash-table">The C runtime: a hash table</h3>
+<p>A compiled program cannot lean on Rust's <code>HashMap</code>, so <code>src/runtime.c</code>
+has its own, under the heading "Dicts". It is about 300 lines, half
+of them comments.</p>
+<pre><code>typedef struct {
+    zeno_list *keys;
+    zeno_list *values;
+    int64_t *index; /* position + 1 of a key in `keys`, or 0 for an empty place */
+    int64_t room;   /* how many places `index` has: 0, or a power of two */
+    char key_kind;
+    char value_kind;
+} zeno_dict;</code></pre>
+<p>The keys are in one list and the values in another, side by side.
+<code>values-&gt;items[i]</code> belongs to <code>keys-&gt;items[i]</code>. Those two lists are the
+order, and they are ordinary lists, so <code>keys()</code>, <code>values()</code> and the
+<code>for</code> loop are code that was already there.</p>
+<p>The index is what makes finding fast:</p>
+<pre><code>keys     "Ada"   "Alan"   "Grace"
+values    36      41       45
+index    [0, 3, 0, 0, 1, 0, 2, 0]</code></pre>
+<p>To find <code>"Alan"</code>:</p>
+<ol>
+<li>Work out a number from the key, its <em>hash</em>. For text this is FNV-1a:
+   start with a fixed number, and for each byte, XOR it in and multiply
+   by a prime. Two different texts almost never give the same number.</li>
+<li>Keep the low bits of the hash. With 8 places that is a number from
+   0 to 7: the place to start at.</li>
+<li>Look at that place in the index. 0 means empty: the key is not in
+   the dict. Otherwise it is a position (plus one). Is the key at that
+   position the one we want? If so, found. If not, two keys landed on
+   the same place: step to the next place and look again.</li>
+</ol>
+<p>The index always has at least twice as many places as there are keys.
+When a store would make it more than half full, <code>zeno_dict_index</code>
+makes one twice the size and puts every key in again. That is why step
+3 ends quickly: half the places are empty, so a run of full ones is
+short.</p>
+<p><code>pop</code> takes the key and the value out of the two lists, which moves
+everything after them down by one. Every position in the index after
+that point is now wrong, so the index is written again from the list.
+That is the price of keeping the order (6.33).</p>
+<p>The two letters, <code>key_kind</code> and <code>value_kind</code>, say what the dict holds:
+<code>'s'</code> text, <code>'i'</code> int, <code>'f'</code> float, <code>'b'</code> bool. With them the runtime
+can compare two keys, show a dict and compare two dicts without help
+from the compiler.</p>
+<h3 id="the-c-backend">The C backend</h3>
+<p><code>let ages = ["Ada": 36, "Alan": 41]</code> and three lines that use it
+become:</p>
+<pre><code>z_ages = zeno_dict_of('s', 'i', 2, (zeno_slot){.s = "Ada"}, (zeno_slot){.i = 36},
+                      (zeno_slot){.s = "Alan"}, (zeno_slot){.i = 41});
+zeno_dict_set(z_ages, (zeno_slot){.s = "Grace"}, (zeno_slot){.i = t1});
+... zeno_dict_at(z_ages, (zeno_slot){.s = "Ada"}, 3, 7).i ...
+... (zeno_dict_find(z_ages, (zeno_slot){.s = "Bob"}) &gt;= 0) ...</code></pre>
+<p>A <code>zeno_slot</code> is the 64-bit box that an item of a list already
+travels in. The <code>3, 7</code> is the line and column, for the <code>KeyError</code>.</p>
+<p>A loop over a dict is a loop over a list of its keys, made for the
+loop:</p>
+<pre><code>zeno_list *t2 = zeno_dict_keys(z_ages);
+for (int64_t t3 = 0; t3 &lt; t2-&gt;len; t3++) {
+    const char *z_name = t2-&gt;items[t3].s;
+    ...
+}
+zeno_list_drop(t2);</code></pre>
+<p>So the body can add keys and take them out, and the loop still walks
+the keys it began with. The work is in <code>open_list_loop</code> in
+<code>src/emit_c.rs</code>: a dict is turned into its list of keys, and the code
+for a list takes over.</p>
+<h3 id="the-llvm-backend">The LLVM backend</h3>
+<p>The same calls, written as IR. <code>let ages = ["Ada": 36]</code> and
+<code>print(ages["Ada"])</code>:</p>
+<pre><code>%t1 = call ptr @zeno_dict_new(i32 115, i32 105)        ; 's' and 'i'
+%t2 = ptrtoint ptr @.str.1 to i64                      ; "Ada" as a slot
+call void @zeno_dict_set(ptr %t1, i64 %t2, i64 36)
+store ptr %t1, ptr @z_ages
+%t3 = load ptr, ptr @z_ages
+%t4 = ptrtoint ptr @.str.1 to i64
+%t5 = call i64 @zeno_dict_at(ptr %t3, i64 %t4, i32 2, i32 7)</code></pre>
+<p>115 and 105 are the letters <code>s</code> and <code>i</code> as numbers. One thing differs
+from the C backend: <code>get(key)</code> on a dict of ints. The answer is an
+<code>int or none</code>, which travels as a pair, a flag and a number. In C the
+runtime gives back that pair as a struct. In IR the backend asks the
+runtime where the key is (<code>zeno_dict_find</code>, which answers -1 for
+"nowhere"), asks for the value there, and builds the pair itself with
+<code>insertvalue</code>. It is the same trick <code>find</code> on a list uses.</p>
+<h3 id="with-no-collector">With no collector</h3>
+<p><code>zeno build --no-collector</code> has no collector to tidy up, so every
+value has one owner that frees it (docs/one-owner.md). A dict follows
+the rules a list follows. The checker needed a line in each place
+where it says "a list has one owner": a dict has one too.</p>
+<pre><code class="zeno">function tally(words: list[str]) -&gt; dict[str, int] {
+    let seen: dict[str, int] = [:]
+    for word in words {
+        seen[word] = seen.get(word, 0) + 1
+    }
+    return seen                       # gives the dict to the caller
+}
+
+let counts = tally(["a", "b", "a"])   # `counts` is its owner now
+print(counts)
+                                      # end of the block: the dict is freed</code></pre>
+<p>When the owner's block ends, the compiled program calls
+<code>zeno_dict_drop</code>, which frees the two lists, the index and the dict.</p>
+<p>Text needs one more thing. With no collector, whatever keeps text has
+a copy of its own (docs/text.md). So a dict has its own copy of every
+key and every value that is text, and <code>zeno_dict_drop</code> frees those as
+well. Storing under a key the dict already has does not copy the key a
+second time, and frees the old value.</p>
+<p><code>zeno build --no-collector --memory examples/faults.zeno</code> shows that
+it adds up:</p>
+<pre><code>memory: 30 blocks made (1032 bytes), at most 784 bytes in use at once, no collector, 0 blocks left at the end
+pool: 1104 bytes taken, in a pool of 32768
+text: at most 148 bytes in use at once, in a room of 1024</code></pre>
+<h3 id="in-a-firmware-build">In a firmware build</h3>
+<p>A key that is not there stops the program, as a bad index does:</p>
+<pre><code class="zeno">let ages = ["Ada": 36]
+print(ages["Bob"])</code></pre>
+<pre class="out"><code>error: uncaught KeyError: this dict has no key "Bob"
+ --&gt; ages.zeno:2:7</code></pre>
+<p>It cannot be caught there, and a <code>try</code> around it is refused when the
+program is built, with a message that says so. A program that must not
+stop asks first, with <code>in</code> or <code>get</code>.</p>
+<h2 id="what-a-dict-cannot-do-yet">What a dict cannot do yet</h2>
+<ul>
+<li>A value cannot be a list, an object or another dict. Keep those in a
+  list and the position of each in the dict (6.32).</li>
+<li>A key cannot be an enum case.</li>
+<li>There is no loop over pairs. <code>for key in d</code> and <code>d[key]</code> do it.</li>
+<li>A generic function cannot take <code>dict[str, T]</code>.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>
+<p>Run <code>examples/faults.zeno</code>. Then add a code to <code>arrived</code> that is
+   already there, and one that is new. Where in the output does each
+   show up, and why there?</p>
+</li>
+<li>
+<p>Write <code>let d = ["a": 1, "a": 2]</code> and read the message. Then store
+   the two one after the other, with <code>d["a"] = 1</code> and <code>d["a"] = 2</code>.
+   Why is one refused and the other not (6.36)?</p>
+</li>
+<li>
+<p>Change <code>meanings[worst]</code> in the example to <code>meanings[99]</code> and run
+   it. Then build it with <code>--firmware</code> and run that. Now wrap the line
+   in <code>try</code> / <code>except KeyError</code> and build both ways again.</p>
+</li>
+<li>
+<p>Write a function that takes a sentence and gives back a
+   <code>dict[str, int]</code> of how often each word is in it. Use <code>split()</code>.
+   Print the word that comes most often.</p>
+</li>
+<li>
+<p>In a loop over a dict, add a new key on every trip. Does the loop
+   ever end? Find the line in <code>open_list_loop</code> (<code>src/emit_c.rs</code>) that
+   makes it so, and the one in <code>src/ops.rs</code> (<code>items</code>) that does the
+   same for <code>zeno run</code>.</p>
+</li>
+<li>
+<p>Run <code>zeno bytecode</code> on a program with <code>d["k"] = d.get("k", 0) + 1</code>.
+   Which instruction stores? Find where the VM runs it and follow it
+   into <code>ops::set_item</code>.</p>
+</li>
+<li>
+<p>In <code>src/runtime.c</code>, make <code>zeno_dict_hash</code> return 0 for every key.
+   Run <code>cargo test dict</code>. Do the tests still pass? What has changed
+   for a dict with ten thousand keys? Put it back.</p>
+</li>
+<li>
+<p>Build a program that fills a dict with 1000 int keys using
+   <code>--no-collector --memory</code>. How many bytes are in use at most? The
+   index doubles each time it fills: which sizes did it go through?
+   Then raise <code>ZENO_POOL</code> (docs/pool.md) and try 10000.</p>
+</li>
+<li>
+<p><code>pop</code> rewrites the whole index. Think of a way to take a key out
+   without moving the ones after it (a "tombstone": a mark that says
+   "something was here"). What would a loop and <code>print</code> then have to
+   skip, and what would <code>len</code> count?</p>
+</li>
+<li>
+<p>Add a method <code>has(key)</code> that means the same as <code>key in d</code>. Follow
+    <code>get</code> through <code>builtins.rs</code>, <code>checker.rs</code>, <code>emit_c.rs</code> and
+    <code>emit_llvm.rs</code>. Then take it out again: why is one way to ask
+    better than two?</p>
+</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/dict.md">docs/dict.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/math/"><span>Previous</span>The standard library, part 3: more of math</a><a class="next" href="/docs/modules/"><span>Next</span>Programs in several files</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-dict-does">What a dict does</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#what-a-dict-cannot-do-yet">What a dict cannot do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

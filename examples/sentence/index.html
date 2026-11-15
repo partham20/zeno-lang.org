@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sentence.zeno · Zeno</title>
+<meta name="description" content="Lines from a sensor, in the style of a GPS receiver:. A Zeno example, with its output.">
+<meta property="og:title" content="sentence.zeno · Zeno">
+<meta property="og:description" content="Lines from a sensor, in the style of a GPS receiver:. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/sentence/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/sentence/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">Lines from a sensor, in the style of a GPS receiver:</h1>
+  <p class="lede small">The whole of <code>examples/sentence.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <div class="example-files"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">sentence.zeno</span></figcaption><pre><code class="zeno"># Lines from a sensor, in the style of a GPS receiver:
+#
+#     $TEMP,21.5,19.0,22.25*07
+#
+# A `$`, a name, some readings with commas between, a `*`, and a checksum
+# in hex: every character between the `$` and the `*`, XORed together.
+#
+# This uses the methods text and lists have (docs/library.md), and
+# builds every way, with no collector too:
+#
+#     zeno run examples/sentence.zeno
+#     zeno build --no-collector --memory examples/sentence.zeno &amp;&amp; ./sentence
+
+# `code()` is the number of one character: 65 for "A".
+function checksum(body: str) -&gt; int {
+    var sum_ = 0
+    for ch in body {
+        sum_ = sum_ ^ ch.code()
+    }
+    return sum_
+}
+
+# The part between `$` and `*`. `find` answers with a position, or with
+# `none` when there is no `*`, and the answer cannot be used as a number
+# until that has been asked.
+function body_of(line: str) -&gt; str or none {
+    let star = line.find("*")
+    if star is none or not line.starts_with("$") {
+        return none
+    }
+    return line.slice(1, star)
+}
+
+# The two hex digits after the `*`, as a number.
+function sent_sum(line: str) -&gt; int or none {
+    let star = line.find("*")
+    if star is none or len(line) != star + 3 {
+        return none
+    }
+    let digits = "0123456789ABCDEF"
+    let high = digits.find(line.slice(star + 1, star + 2))
+    let low = digits.find(line.slice(star + 2))
+    if high is none or low is none {
+        return none
+    }
+    return high * 16 + low
+}
+
+# The middle reading. The caller's list is left as it was: `slice(0)` is
+# a copy of all of it, and the copy is what gets sorted.
+function median(values: list[float]) -&gt; float {
+    let sorted = values.slice(0)
+    sorted.sort()
+    return sorted[len(sorted) // 2]
+}
+
+function report(line: str) -&gt; str {
+    let body = body_of(line)
+    let sent = sent_sum(line)
+    if body is none or sent is none {
+        return "not a sentence"
+    }
+    if checksum(body) != sent {
+        return f"bad checksum: {checksum(body):02X}, not {sent:02X}"
+    }
+    let fields = body.split(",")
+    let name = fields.pop(0)
+    var readings: list[float] = []
+    for field in fields {
+        try {
+            readings.append(float(field))
+        } except ValueError {
+            return f"{name}: `{field}` is not a number"
+        }
+    }
+    if len(readings) == 0 {
+        return f"{name}: no readings"
+    }
+    fields.insert(0, f"median {median(readings)} of")
+    return f"{name}: " + fields.join(" ")
+}
+
+# Makes a sentence, to try the other direction: `char` is `code` backwards.
+function sentence(name: str, readings: list[float]) -&gt; str {
+    var fields = [name]
+    for reading in readings {
+        fields.append(str(reading))
+    }
+    let body = fields.join(",")
+    return f"${body}*{checksum(body):02X}"
+}
+
+let lines = [
+    sentence("TEMP", [21.5, 19.0, 22.25]),
+    "$VOLT,3.3,3.1,3.4,3.2,3.3*07",
+    "$VOLT,3.3,3.1*00",
+    "$VOLT,3.3,high*21",
+    "$FLOW*12",
+    "hello",
+]
+for line in lines {
+    print(line)
+    print("  ", report(line))
+}
+
+# The names of what arrived, in order, and without the ones that failed.
+var names: list[str] = []
+for line in lines {
+    let body = body_of(line)
+    if body is not none {
+        let comma = body.find(",")
+        if comma is not none and body.slice(0, comma) not in names {
+            names.append(body.slice(0, comma))
+        }
+    }
+}
+names.sort()
+names.reverse()
+print(names.join(" &gt; "))
+print(char(90) + char(101) + char(110) + char(111))</code></pre><div class="out-label">zeno run examples/sentence.zeno</div><pre class="out"><code>$TEMP,21.5,19.0,22.25*07
+   TEMP: median 21.5 of 21.5 19.0 22.25
+$VOLT,3.3,3.1,3.4,3.2,3.3*07
+   VOLT: median 3.3 of 3.3 3.1 3.4 3.2 3.3
+$VOLT,3.3,3.1*00
+   bad checksum: 03, not 00
+$VOLT,3.3,high*21
+   VOLT: `high` is not a number
+$FLOW*12
+   FLOW: no readings
+hello
+   not a sentence
+VOLT &gt; TEMP
+Zeno</code></pre></figure></div>
+  
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/sentence.zeno">examples/sentence.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/packet/"><span>Previous</span>packet.zeno</a><a class="next" href="/examples/faults/"><span>Next</span>faults.zeno</a></nav>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>
