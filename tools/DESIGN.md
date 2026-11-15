@@ -23,13 +23,15 @@ runner in the footer who never reaches the tortoise.
 
 ## Logo
 
-The name in block capitals. The Z is drawn as an arrow, with a notched tail
-at the top left and a point at the bottom right, and one dot sits a single
-gap beyond the end of the word: Zeno's arrow, which never arrives. The
-letters take the text colour and the dot is Cobalt, so the logo needs no
-colours of its own. The favicon is the Z and its dot alone on the dark
-page colour, because four letters do not survive 16 pixels. Both are drawn
-from straight lines and one circle, so they stay sharp at any size.
+"Almost": the name in lowercase strokes of one weight, with an o whose
+ring stops just short of closing and a dot where the ends would meet. It
+is the paradox in one letter: nearly there, never quite. The letters take
+the text colour and the dot is Cobalt, so the logo needs no colours of its
+own. The icon is "Checked": a Z whose diagonal is a tick, for a language
+that checks every program before it runs, in the light text colour with a
+Cobalt tick on the dark page colour, because four letters do not survive
+16 pixels. Both were the most-voted of twenty concepts (2026-11-15); the
+tortoise, joint top among the marks, stays as the footer mascot.
 
 `favicon.svg` is the source. `favicon.ico` (16, 32 and 48 pixels) and
 `apple-touch-icon.png` (180 pixels, square, because iOS rounds the corners
