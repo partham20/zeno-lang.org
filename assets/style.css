@@ -305,7 +305,7 @@ main:not(.home) { padding-bottom: 4rem; }
 .chase { position: relative; height: 2.25rem; margin-bottom: 1.5rem; border-bottom: 1.5px solid var(--rule); }
 .chase .tick { position: absolute; bottom: 0; width: 1.5px; height: 0.5rem; background: var(--rule); }
 .chase .runner { position: absolute; bottom: 0.35rem; left: 0; width: 0.9rem; height: 0.9rem; margin-left: -0.45rem; border-radius: 50%; background: var(--cobalt); transition: left 0.9s var(--ease); }
-.chase .tortoise { position: absolute; bottom: 0; right: 0; width: 2rem; height: 1rem; border-radius: 1rem 1rem 0 0; background: var(--signal); }
+.chase .tortoise { position: absolute; bottom: 0; right: 0; width: 2.4rem; height: 1.5rem; color: var(--ink); }
 .chase-text { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
 .chase-text p { margin: 0; font-size: clamp(1.5rem, 3vw, 2.25rem); font-weight: 600; letter-spacing: -0.035em; color: var(--ink); line-height: 1.15; }
 .chase-text span { color: var(--faint); font-size: 0.9375rem; font-variant-numeric: tabular-nums; }

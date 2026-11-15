@@ -282,21 +282,24 @@ progress();
 const runner = document.getElementById("runner");
 if (runner) {
   const counter = document.getElementById("chase-count");
-  const GOAL = 96;      // per cent of the track, where the tortoise stands
+  const chase = document.querySelector(".chase"), tortoise = chase.querySelector(".tortoise");
   let halves = 0, timer = null;
   const place = () => {
-    runner.style.left = (GOAL - GOAL / Math.pow(2, halves)).toFixed(4) + "%";
+    // The goal is the tortoise's tail, less the runner's own half width.
+    const goal = (chase.clientWidth - tortoise.getBoundingClientRect().width - 10) / chase.clientWidth * 100;
+    runner.style.left = (goal - goal / Math.pow(2, halves)).toFixed(4) + "%";
     const gap = 1 / Math.pow(2, halves);
     counter.textContent = halves === 0 ? "Watch the runner"
       : `${halves} ${halves === 1 ? "half" : "halves"} closed, ${gap < 0.0001 ? gap.toExponential(1) : gap.toFixed(4).replace(/0+$/, "")} of the way still to go`;
   };
+  addEventListener("resize", place);
   const tick = () => { halves++; place(); if (halves >= 40) { clearInterval(timer); timer = null; } };
   place();
   if (!still && "IntersectionObserver" in window) {
     new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting && !timer && halves < 40) timer = setInterval(tick, 1100);
       if (!entry.isIntersecting && timer) { clearInterval(timer); timer = null; }
-    }).observe(document.querySelector(".chase"));
+    }).observe(chase);
   } else if (still) {
     halves = 10; place();
   }

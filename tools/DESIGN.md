@@ -31,6 +31,10 @@ colours of its own. The favicon is the Z and its dot alone on the dark
 page colour, because four letters do not survive 16 pixels. Both are drawn
 from straight lines and one circle, so they stay sharp at any size.
 
+`favicon.svg` is the source. `favicon.ico` (16, 32 and 48 pixels) and
+`apple-touch-icon.png` (180 pixels, square, because iOS rounds the corners
+itself) are the same drawing for browsers that do not take an SVG icon.
+
 ## Colour
 
 | Name | Light | Dark | Use |

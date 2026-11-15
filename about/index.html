@@ -14,7 +14,9 @@
 <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="https://zeno-lang.org/about/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -56,7 +58,7 @@
 <div class="foot-inner">
   <div class="chase" aria-hidden="true">
     <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
-    <span class="runner" id="runner"></span><span class="tortoise"></span>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
   </div>
   <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
   <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
