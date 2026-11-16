@@ -483,117 +483,98 @@
   {
    "version": "0.3.0",
    "date": "2026-11-16",
-   "released": false,
+   "released": true,
    "big": {
     "fib": {
-     "c": 0.156,
-     "rust": 0.249,
-     "zeno": 0.48,
-     "zeno-llvm": 0.525,
-     "zeno-release": 0.121,
-     "zeno-owned": 0.138,
-     "zeno-owned-checked": 0.46
+     "c": 0.169,
+     "rust": 0.254,
+     "zeno": 0.478,
+     "zeno-llvm": 0.59,
+     "zeno-nc": 0.491,
+     "zeno-release": 0.156,
+     "zeno-owned": 0.17
     },
     "loop": {
-     "c": 0.92,
-     "rust": 0.88,
-     "zeno": 1.258,
-     "zeno-llvm": 1.215,
-     "zeno-release": 1.01,
-     "zeno-owned": 0.947,
-     "zeno-owned-checked": 1.335
+     "c": 0.952,
+     "rust": 0.958,
+     "zeno": 1.407,
+     "zeno-llvm": 1.184,
+     "zeno-nc": 1.416,
+     "zeno-release": 1.012,
+     "zeno-owned": 1.058
     },
     "sort": {
-     "c": 1.092,
-     "rust": 1.137,
-     "zeno": 1.43,
-     "zeno-llvm": 2.151,
-     "zeno-release": 1.442,
-     "zeno-owned": 1.35,
-     "zeno-owned-checked": 1.324
+     "c": 1.141,
+     "rust": 1.278,
+     "zeno": 1.473,
+     "zeno-llvm": 2.374,
+     "zeno-nc": 1.471,
+     "zeno-release": 1.601,
+     "zeno-owned": 1.421
     },
     "strings": {
-     "c": 0.919,
-     "rust": 0.704,
-     "zeno": 1.157,
-     "zeno-llvm": 1.385,
-     "zeno-release": 1.337,
-     "zeno-owned": 1.285,
-     "zeno-owned-checked": 1.18
+     "c": 0.954,
+     "rust": 0.757,
+     "zeno": 1.309,
+     "zeno-llvm": 1.513,
+     "zeno-release": 1.439,
+     "zeno-owned": 1.483
     },
     "trees": {
-     "c": 6.136,
-     "rust": 7.49,
-     "zeno": 7.7,
-     "zeno-llvm": 7.863,
-     "zeno-release": 6.661,
-     "zeno-owned": 3.979,
-     "zeno-owned-checked": 4.55
+     "c": 7.578,
+     "rust": 8.235,
+     "zeno": 8.255,
+     "zeno-llvm": 8.745,
+     "zeno-nc": 4.907,
+     "zeno-release": 7.707,
+     "zeno-owned": 4.516
     },
     "nbody": {
-     "c": 0.488,
-     "rust": 0.368,
-     "zeno": 0.511,
-     "zeno-llvm": 0.568,
-     "zeno-release": 0.479,
-     "zeno-owned": 0.515,
-     "zeno-owned-checked": 0.502
+     "c": 0.491,
+     "rust": 0.378,
+     "zeno": 0.577,
+     "zeno-llvm": 0.726,
+     "zeno-nc": 0.534,
+     "zeno-release": 0.544,
+     "zeno-owned": 0.528
     }
    },
    "small": {
     "fib": {
      "c": 0.005,
-     "rust": 0.007,
-     "zeno": 0.011,
-     "zeno-owned": 0.004,
-     "vm": 0.787,
-     "run": 2.858,
-     "python": 0.234
+     "python": 0.272,
+     "vm": 0.839,
+     "run": 3.232
     },
     "loop": {
-     "c": 0.092,
-     "rust": 0.113,
-     "zeno": 0.133,
-     "zeno-owned": 0.095,
-     "vm": 6.811,
-     "run": 32.796,
-     "python": 11.329
+     "c": 0.091,
+     "python": 12.17,
+     "vm": 7.865,
+     "run": 33.323
     },
     "sort": {
-     "c": 0.088,
-     "rust": 0.097,
-     "zeno": 0.108,
-     "zeno-owned": 0.109,
-     "vm": 3.313,
-     "run": 12.851,
-     "python": 2.059
+     "c": 0.098,
+     "python": 2.49,
+     "vm": 4.047,
+     "run": 14.322
     },
     "strings": {
      "c": 0.1,
-     "rust": 0.07,
-     "zeno": 0.099,
-     "zeno-owned": 0.114,
-     "vm": 1.765,
-     "run": 2.913,
-     "python": 0.403
+     "python": 0.439,
+     "vm": 2.878,
+     "run": 4.783
     },
     "trees": {
-     "c": 0.213,
-     "rust": 0.293,
-     "zeno": 0.27,
-     "zeno-owned": 0.179,
-     "vm": 10.009,
-     "run": 22.006,
-     "python": 3.948
+     "c": 0.258,
+     "python": 4.23,
+     "vm": 9.924,
+     "run": 23.303
     },
     "nbody": {
-     "c": 0.05,
-     "rust": 0.038,
-     "zeno": 0.053,
-     "zeno-owned": 0.049,
-     "vm": 15.784,
-     "run": 52.314,
-     "python": 3.851
+     "c": 0.049,
+     "python": 3.95,
+     "vm": 17.096,
+     "run": 53.122
     }
    }
   }

@@ -227,8 +227,8 @@ guarded, so nothing is missed. The processor keeps watch, and no line of
 compiled code has to remember to say that it wrote a pointer.</p>
 <p>Pages of text are never guarded: they hold no pointers, and a file read
 into one by the system must not find it read-only. On a chip
-(<code>--firmware</code>), and on systems without <code>mprotect</code> (Windows, for now),
-every collection is full. <code>-DZENO_ONE_GENERATION</code> asks for that anywhere.</p>
+(<code>--firmware</code>), and for now on macOS and Windows, every collection is
+full: generations are used on Linux only (decision 22.11). <code>-DZENO_ONE_GENERATION</code> asks for that anywhere.</p>
 <h2 id="when-it-runs">When it runs</h2>
 <p>Collecting takes time, in proportion to what it looks at. So it is not
 done on every allocation. The runtime counts the bytes in use, and
