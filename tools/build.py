@@ -82,7 +82,7 @@ def sample(name, title=None):
 
 # --- Layout ------------------------------------------------------------------
 
-NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Book", "/book/"), ("Playground", "/playground/"), ("Docs", "/docs/"),
+NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Book", "/book/"), ("Playground", "/playground/"), ("Benchmarks", "/benchmarks/"), ("Docs", "/docs/"),
        ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
 
 # The wordmark, "Almost": the name in lowercase strokes, and an o whose ring
@@ -917,6 +917,99 @@ def build_privacy():
     layout("/privacy/", "Privacy", "Zeno, its installers and this website collect nothing about you.", body)
 
 
+# --- Benchmarks ----------------------------------------------------------------
+
+BENCH_PROGRAMS = [
+    ("fib", "Function calls", "The slow recursive Fibonacci of a number: millions of calls and additions."),
+    ("loop", "A tight loop", "Whole-number arithmetic in a while loop, a billion times round."),
+    ("sort", "Sorting a list", "A quicksort written in the program, over ten million made-up numbers."),
+    ("strings", "Building text", "Ten million numbers turned to text, joined, then read a character at a time."),
+    ("trees", "Many small objects", "The binary-trees test: make and drop millions of small trees."),
+    ("nbody", "Floating point", "Five planets moved ten million small steps, as in the benchmarks game."),
+]
+
+
+def bench_results(name):
+    import json
+    path = Path(ARGS.zeno) / "bench" / "results" / f"{name}.json"
+    return json.loads(path.read_text()) if path.exists() else None
+
+
+def bench_cell(value, c):
+    """A time, how many times C it is, and a bar for that."""
+    if not isinstance(value, (int, float)):
+        return '<td class="bench-fail">did not run</td>'
+    ratio = value / c if c else 0
+    # The bar is on a log scale: 1x C is a sliver, 30x C is the whole cell.
+    import math
+    width = max(3, min(100, 3 + 97 * math.log(max(ratio, 1)) / math.log(30)))
+    tone = "good" if ratio <= 1.15 else ("ok" if ratio <= 3 else "slow")
+    return (f'<td><span class="bench-bar {tone}" style="width:{width:.0f}%"></span>'
+            f'<b>{value:.2f} s</b><i>{ratio:.1f}× C</i></td>')
+
+
+def bench_table(results, engines):
+    head = "".join(f"<th>{esc(label)}</th>" for _, label in engines)
+    rows = ""
+    for key, title, _ in BENCH_PROGRAMS:
+        times = results["times"].get(key, {})
+        c = times.get("c")
+        cells = "".join(bench_cell(times.get(e), c) for e, _ in engines)
+        rows += f'<tr><th scope="row">{esc(title)}<small>{key}.zeno</small></th>{cells}</tr>'
+    return f'<div class="bench-table"><table><thead><tr><th></th>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
+
+
+def build_benchmarks():
+    now_big, now_small = bench_results("now-big"), bench_results("now-small")
+    before_big = bench_results("before-big")
+    if now_big is None or now_small is None or before_big is None:
+        print("  benchmarks: no results in bench/results; page skipped")
+        return
+    m = now_big["machine"]
+    compiled = [("c", "C"), ("rust", "Rust"), ("zeno", "Zeno"), ("zeno-release", "Zeno --release"),
+                ("zeno-owned", "Zeno --release, owned")]
+    interpreted = [("c", "C"), ("python", "Python 3"), ("vm", "zeno run --vm"), ("run", "zeno run")]
+    before = [("c", "C"), ("zeno", "Zeno, collector"), ("zeno-nc", "Zeno, no collector")]
+    programs = "".join(f"<li><b>{esc(t)}</b> <code>{k}</code>: {esc(d)}</li>" for k, t, d in BENCH_PROGRAMS)
+    body = page_head("Benchmarks", "How fast is Zeno?",
+                     "Six programs, each written once in Zeno, C, Rust and Python, doing the same steps and printing "
+                     "the same thing. Every number here was measured, and every time counts only if the program "
+                     "printed exactly what the C program printed.", "chart") + f"""
+<div class="narrow prose bench">
+<h2>Compiled programs</h2>
+<p>Seconds, best of three, at full size. The bar is how many times slower than C, on a scale that grows slowly.
+<b>Zeno</b> is <code>zeno build</code> with the garbage collector, <b>--release</b> drops the overflow checks,
+and <b>owned</b> is <code>memory owned</code>: one owner for each value and no collector, as in Rust.</p>
+{bench_table(now_big, compiled)}
+<h2>What this shows</h2>
+<ul>
+<li><b>With one owner for each value, Zeno is as fast as C and Rust</b> on programs that make many objects, and sometimes faster: its pool hands out and takes back a block in a few instructions, where C calls <code>malloc</code> and <code>free</code>.</li>
+<li><b>On arithmetic and lists it is close to C</b>, and most of what is left is the overflow check on every <code>+</code>, which <code>--release</code> drops, as Rust's release builds do. Index checks stay, as they do in Rust.</li>
+<li><b>Floating point is still about two times slower than C.</b> Each planet is an object reached through a list, where C holds the five in one array, and each <code>sqrt</code> and division checks its argument.</li>
+<li><b>The garbage collector costs.</b> A collector has to look at what is still in use, again and again. Zeno's is now about two times slower than C on many small objects. That is why a program can choose.</li>
+<li><b>Building text</b> is slower than it should be: <code>for ch in text</code> still makes a list of the characters first.</li>
+</ul>
+<h2>Choose how memory is freed</h2>
+<p>A program says it once, in its <code>zeno.package</code>:</p>
+<pre><code>package server
+memory owned</code></pre>
+<p>or for one build, <code>zeno build --owned</code>. Single values can be <code>owned</code> in a collector program, and <code>unsafe {{ }}</code> blocks manage memory by hand, as in C. See <a href="/docs/memory-modes/">Choosing how memory is freed</a>.</p>
+<h2>Where it started</h2>
+<p>The first run, on the same machine, before this work. The collector kept every block in one table that it sorted on each collection; it now keeps blocks in pages and finds them through a hash table (<a href="/decisions/">decision 22.5</a>). The build with no collector was made for a chip, with a fixed pool of memory, and could not build text this big.</p>
+{bench_table(before_big, before)}
+<h2>Interpreted</h2>
+<p>At a tenth of the size, because the interpreters are far slower. <code>zeno run</code> walks the syntax tree; <code>zeno run --vm</code> runs bytecode. Both are made to be simple to read and to give exact error messages, not to be fast, and they are slower than Python, which has had thirty years of tuning: the bytecode one by one and a half to seven times, the tree walker by three to fifteen.</p>
+{bench_table(now_small, interpreted)}
+<h2>The programs</h2>
+<ul>{programs}</ul>
+<p>They are in <a href="{GITHUB}/tree/main/bench"><code>bench/</code></a>, one file per language, with the script that runs them:</p>
+<pre><code>cargo build --release
+python3 bench/run.py --size big --engines c,rust,zeno,zeno-release,zeno-owned</code></pre>
+<p class="muted">Measured on {esc(m["date"])}: {esc(m["cpu"])}, {m["cores"]} cores, Linux. {esc(m["zeno"])} (main), {esc(m["cc"].split(" (")[0])} {esc(m["cc"].split(") ")[-1])} with <code>-O2</code>, {esc(m["rustc"].split(" (")[0])} with <code>-C opt-level=3</code>, Python {esc(m["python"])}. Wall-clock time of the whole program, start to finish.</p>
+</div>"""
+    layout("/benchmarks/", "Benchmarks", "Zeno next to C, Rust and Python on six programs, measured.", body, "/benchmarks/")
+
+
 def build_404():
     body = f"""<div class="narrow lost">
 <p class="eyebrow">{icon("compass")}404</p>
@@ -1001,6 +1094,7 @@ def main():
     build_book()
     build_playground()
     build_download()
+    build_benchmarks()
     build_privacy()
     build_404()
     build_sitemap()

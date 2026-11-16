@@ -585,3 +585,21 @@ main:not(.home) { padding-bottom: 4rem; }
   .dl-table th:nth-child(1), .dl-table td:nth-child(1), .dl-table th:nth-child(5), .dl-table td:nth-child(5) { display: none; }
   .dl-table th, .dl-table td { padding-left: 0.9rem; padding-right: 0.9rem; }
 }
+
+/* Benchmarks: a table of times, each with a bar for how many times C it is. */
+.bench.narrow { max-width: 62rem; }
+.bench-table { overflow-x: auto; margin: 0 0 2rem; border: 1px solid var(--rule); border-radius: 12px; background: var(--sheet); }
+.prose .bench-table table { display: table; margin: 0; font-size: 0.875rem; min-width: 40rem; }
+.bench-table th, .bench-table td { padding: 0.6rem 0.8rem; border-bottom: 1px solid var(--rule); text-align: left; vertical-align: top; }
+.bench-table tbody tr:last-child th, .bench-table tbody tr:last-child td { border-bottom: 0; }
+.bench-table thead th { font-weight: 500; color: var(--faint); font-size: 0.8rem; white-space: nowrap; }
+.bench-table tbody th { font-weight: 600; white-space: nowrap; }
+.bench-table tbody th small { display: block; font: 400 0.75rem var(--mono); color: var(--faint); }
+.bench-table td { position: relative; white-space: nowrap; min-width: 6.5rem; }
+.bench-table td b { display: block; font: 500 0.85rem var(--mono); position: relative; }
+.bench-table td i { display: block; font-style: normal; font-size: 0.75rem; color: var(--slate); position: relative; }
+.bench-bar { position: absolute; left: 0; bottom: 0; height: 3px; border-radius: 2px; background: var(--faint); }
+.bench-bar.good { background: var(--cobalt); }
+.bench-bar.ok { background: var(--slate); }
+.bench-bar.slow { background: var(--signal); }
+.bench-fail { color: var(--faint); font-size: 0.8rem; }

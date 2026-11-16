@@ -374,8 +374,8 @@ box</td>
 <td style="text-align: left;"><code>e.on(event, f)</code></td>
 <td style="text-align: left;">call <code>f</code> whenever that happens
 to it: <code>"click"</code>, <code>"input"</code>,
-<code>"submit"</code>, <code>"mousemove"</code>, or any event a browser
-has</td>
+<code>"submit"</code>, <code>"pointermove"</code> (a mouse, a finger or
+a pen), or any event a browser has</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>e.fire(event)</code></td>
@@ -518,8 +518,9 @@ an <code>&lt;li&gt;</code> inside the <code>&lt;ul&gt;</code> that
 <tr class="odd">
 <td style="text-align: left;"><code>event.x</code>,
 <code>event.y</code></td>
-<td style="text-align: left;">where the mouse was, in pixels from the
-top left corner of the element; 0 for an event of no mouse</td>
+<td style="text-align: left;">where the mouse (or finger) was, in pixels
+from the top left corner of the element, and on a canvas in its own
+pixels; 0 for an event of no mouse</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>event.key</code></td>
@@ -691,17 +692,17 @@ browser, after typing two more things and clicking one:</p>
 </div>
 <h3 class="unnumbered" id="drawing-and-what-is-kept"><span
 class="number">34.5</span> Drawing, and what is kept</h3>
-<p>The second example is a sheet to draw on with the mouse. The page has
-four buttons that are colours, a button that wipes the sheet, and a
-canvas. It shows what the list of things to do does not: a function that
-asks for the <code>Event</code> to learn where the mouse is, drawing,
-the style of one element, and a colour that is kept for the next visit
-with <code>web.save</code> and <code>web.load</code>:</p>
+<p>The second example is a sheet to draw on with the mouse or a finger.
+The page has four buttons that are colours, a button that wipes the
+sheet, and a canvas. It shows what the list of things to do does not: a
+function that asks for the <code>Event</code> to learn where the mouse
+is, drawing, the style of one element, and a colour that is kept for the
+next visit with <code>web.save</code> and <code>web.load</code>:</p>
 <div class="zenofile">
 <p>sketch.zeno</p>
 </div>
 <div class="sourceCode" id="cb12" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A sheet to draw on with the mouse, in a page.</span></span>
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A sheet to draw on with the mouse, a finger or a pen, in a page.</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The page is `sketch.html`, beside this file: four buttons that are</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># colours, a button that wipes the sheet, and a `&lt;canvas&gt;`, which is an</span></span>
@@ -792,40 +793,42 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a>    paper.draw_text(<span class="dv">10</span>, <span class="dv">10</span>, <span class="st">&quot;Draw here&quot;</span>, <span class="st">&quot;silver&quot;</span>)</span>
 <span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mousedown&quot;</span>, pen_down)</span>
-<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mousemove&quot;</span>, pen_moved)</span>
-<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mouseup&quot;</span>, pen_up)</span>
-<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mouseleave&quot;</span>, pen_up)</span>
-<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>web.element(<span class="st">&quot;#wipe&quot;</span>).on(<span class="st">&quot;click&quot;</span>, wipe)</span>
-<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a>choose(colour)</span>
-<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a>wipe()</span>
-<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;the mouse draws only while its button is down&quot;</span> {</span>
-<span id="cb12-102"><a href="#cb12-102" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> before = drawn</span>
-<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
-<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before</span>
-<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousedown&quot;</span>)</span>
-<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
-<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
-<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before + <span class="dv">2</span></span>
-<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mouseup&quot;</span>)</span>
-<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
-<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before + <span class="dv">2</span></span>
-<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;a colour that is chosen is kept&quot;</span> {</span>
-<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a>    choose(<span class="st">&quot;crimson&quot;</span>)</span>
-<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> web.load(<span class="st">&quot;sketch colour&quot;</span>) == <span class="st">&quot;crimson&quot;</span></span>
-<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> lines.get_style(<span class="st">&quot;color&quot;</span>) == <span class="st">&quot;crimson&quot;</span></span>
-<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;wiping starts the count again&quot;</span> {</span>
-<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousedown&quot;</span>)</span>
-<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
-<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a>    web.element(<span class="st">&quot;#wipe&quot;</span>).fire(<span class="st">&quot;click&quot;</span>)</span>
-<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == <span class="dv">0</span></span>
-<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;pointer&quot; events come from a mouse, a finger and a pen alike, so the</span></span>
+<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a><span class="co"># same four lines draw on a desk and on a phone.</span></span>
+<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;pointerdown&quot;</span>, pen_down)</span>
+<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;pointermove&quot;</span>, pen_moved)</span>
+<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;pointerup&quot;</span>, pen_up)</span>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;pointerleave&quot;</span>, pen_up)</span>
+<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a>web.element(<span class="st">&quot;#wipe&quot;</span>).on(<span class="st">&quot;click&quot;</span>, wipe)</span>
+<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a>choose(colour)</span>
+<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a>wipe()</span>
+<span id="cb12-102"><a href="#cb12-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;the mouse draws only while its button is down&quot;</span> {</span>
+<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> before = drawn</span>
+<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointermove&quot;</span>)</span>
+<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before</span>
+<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointerdown&quot;</span>)</span>
+<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointermove&quot;</span>)</span>
+<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointermove&quot;</span>)</span>
+<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before + <span class="dv">2</span></span>
+<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointerup&quot;</span>)</span>
+<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointermove&quot;</span>)</span>
+<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before + <span class="dv">2</span></span>
+<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;a colour that is chosen is kept&quot;</span> {</span>
+<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a>    choose(<span class="st">&quot;crimson&quot;</span>)</span>
+<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> web.load(<span class="st">&quot;sketch colour&quot;</span>) == <span class="st">&quot;crimson&quot;</span></span>
+<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> lines.get_style(<span class="st">&quot;color&quot;</span>) == <span class="st">&quot;crimson&quot;</span></span>
+<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;wiping starts the count again&quot;</span> {</span>
+<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointerdown&quot;</span>)</span>
+<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;pointermove&quot;</span>)</span>
+<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a>    web.element(<span class="st">&quot;#wipe&quot;</span>).fire(<span class="st">&quot;click&quot;</span>)</span>
+<span id="cb12-126"><a href="#cb12-126" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == <span class="dv">0</span></span>
+<span id="cb12-127"><a href="#cb12-127" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>Each colour button says in the page itself which colour it is, with
 an attribute such as <code>data-colour="crimson"</code>, and the program
 reads it with <code>get</code>. So a fifth colour is a line of HTML, and

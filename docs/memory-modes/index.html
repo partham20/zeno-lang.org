@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choosing how memory is freed · Zeno</title>
+<meta name="description" content="A Zeno program that makes lists, objects and text needs memory for them, and has to give it back. There are three ways to do that in Zeno, and a program chooses:">
+<meta property="og:title" content="Choosing how memory is freed · Zeno">
+<meta property="og:description" content="A Zeno program that makes lists, objects and text needs memory for them, and has to give it back. There are three ways to do that in Zeno, and a program chooses:">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/memory-modes/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/memory-modes/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/benchmarks/">Benchmarks</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/memory-modes/" aria-current="page">Choosing how memory is freed</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Choosing how memory is freed</h1>
+  <p>A Zeno program that makes lists, objects and text needs memory for
+them, and has to give it back. There are three ways to do that in
+Zeno, and a program chooses:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>How memory is freed</th>
+<th>Like</th>
+<th>Where you choose it</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>collector</strong></td>
+<td>a garbage collector frees whatever nothing can reach</td>
+<td>Python, Java, Go</td>
+<td>nothing to say: it is what a program gets</td>
+</tr>
+<tr>
+<td><strong>owned</strong></td>
+<td>every list and object has one owner, and is freed on the line its owner ends. No collector</td>
+<td>Rust</td>
+<td><code>memory owned</code> in <code>zeno.package</code>, or <code>zeno build --owned</code></td>
+</tr>
+<tr>
+<td><strong>by hand</strong></td>
+<td>you ask for memory with <code>allocate</code> and give it back with <code>free</code></td>
+<td>C</td>
+<td>an <code>unsafe { }</code> block, for the lines that need it</td>
+</tr>
+</tbody>
+</table>
+<p>They mix, at the sizes where mixing has a clear meaning:</p>
+<ul>
+<li><strong>The program</strong>, in <code>zeno.package</code>: <code>memory owned</code> or <code>memory
+  collector</code>. This is the one most programs set.</li>
+<li><strong>One build</strong>, on the command line: <code>--owned</code> or <code>--collector</code>, over
+  what the file says.</li>
+<li><strong>One value</strong>, in a collector program: <code>owned class Packet</code> or <code>owned
+  list[int]</code> (docs/ownership.md). That value has one owner and is freed
+  where its owner ends, and everything else is the collector's.</li>
+<li><strong>A few lines</strong>, anywhere: <code>unsafe { }</code> (docs/unsafe.md).</li>
+</ul>
+<p>Why not one line at a time: a value is made on one line and used on
+many, and how it is freed has to go with the value. Decision 22.1 has
+the whole reasoning.</p>
+<h2 id="a-program-that-says-memory-owned">A program that says <code>memory owned</code></h2>
+<pre><code>zeno new server</code></pre>
+<p>and add a line to <code>server/zeno.package</code>:</p>
+<pre><code>package server
+memory owned</code></pre>
+<p>Now, in that folder:</p>
+<ul>
+<li><code>zeno build main.zeno</code> builds with no collector. Each list and object
+  is freed on the line its owner ends, as in Rust. The program asks the
+  system for memory as it needs it, in pieces that double.</li>
+<li><code>zeno check main.zeno</code> and <code>zeno run main.zeno</code> check the program by
+  the same rules, so a mistake about who owns what is found before the
+  build. The words for it are in docs/one-owner.md: a parameter looks
+  unless it says <code>take</code>, <code>pop()</code> takes an item out of a list, and so on.</li>
+<li><code>zeno build --collector main.zeno</code> builds it with the collector after
+  all, for one build.</li>
+</ul>
+<h2 id="for-a-chip">For a chip</h2>
+<p><code>--no-collector</code> is the same rules with a pool and a text room of a
+fixed size, set when the program is built (docs/pool.md), so the
+program can never fail to get memory from a system that is not there.
+<code>memory owned</code> with <code>--firmware</code> means the same.</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Collector</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zeno build</code></td>
+<td>yes</td>
+<td>from the system, freed by the collector</td>
+</tr>
+<tr>
+<td><code>zeno build --owned</code></td>
+<td>no</td>
+<td>from the system, in pieces that grow</td>
+</tr>
+<tr>
+<td><code>zeno build --no-collector</code></td>
+<td>no</td>
+<td>one array of a fixed size</td>
+</tr>
+<tr>
+<td><code>zeno build --owned --firmware</code></td>
+<td>no</td>
+<td>one array of a fixed size</td>
+</tr>
+</tbody>
+</table>
+<h2 id="-release"><code>--release</code></h2>
+<pre><code>zeno build --release --owned main.zeno</code></pre>
+<p><code>--release</code> drops the overflow checks: <code>+</code>, <code>-</code> and <code>*</code> of whole numbers
+wrap round, as the processor does, instead of stopping the program with
+an <code>OverflowError</code>. Everything else is still checked (an index past the
+end, <code>//</code> by zero, <code>u8(300)</code>), and <code>zeno run</code> checks everything as it
+always did. It is what Rust's release builds do, for the same reason:
+the check costs a little on every step of a tight loop. Decision 22.3.</p>
+<h2 id="what-it-buys">What it buys</h2>
+<p>On the benchmarks in <code>bench/</code> (<code>python3 bench/run.py --size big</code>; the
+numbers and how they were taken are in bench/README.md), a program
+that makes many small objects runs about as fast as the same program in
+C when it is owned, because the pool hands out and takes back a block
+in a few instructions. With the collector the same program is about two
+times slower than C.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><code>src/package.rs</code>: the <code>memory</code> line of <code>zeno.package</code> (<code>Memory</code>).</li>
+<li><code>src/main.rs</code>: <code>how_built</code>, which turns the options and the file into
+  a kind of build, and <code>package_memory</code>.</li>
+<li><code>src/runtime.c</code>: the pool that grows and the chain of text rooms,
+  marked <code>ZENO_HEAP</code>; the collector, under "Where blocks live".</li>
+<li><code>src/emit_c.rs</code>, <code>src/emit_llvm.rs</code>: <code>Options { release, grows }</code>.</li>
+<li><code>src/ast.rs</code>: <code>walks_in_place</code>, which lets a loop skip its copy.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/scheduler.zeno</code> with <code>--owned --memory</code> and with
+   <code>--no-collector --memory</code>. Compare the last two lines of the reports.</li>
+<li>Write <code>var n = 9223372036854775807</code> and <code>n += 1</code>, and build it with
+   and without <code>--release</code>. Then run it with <code>zeno run</code>.</li>
+<li>Put <code>memory owned</code> in a <code>zeno.package</code> beside a program that shares
+   a list between two variables. What does <code>zeno run</code> say now?</li>
+<li>Time <code>bench/trees.zeno</code> built the three ways in the table above.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/memory-modes.md">docs/memory-modes.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/found-by-the-book/"><span>Previous</span>What writing the book found</a><a class="next" href="/docs/stores/"><span>Next</span>Stores: where each package manager looks for Zeno</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#a-program-that-says-memory-owned">A program that says memory owned</a></li><li><a href="#for-a-chip">For a chip</a></li><li><a href="#-release">--release</a></li><li><a href="#what-it-buys">What it buys</a></li><li><a href="#the-files">The files</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

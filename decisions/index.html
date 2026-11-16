@@ -28,7 +28,7 @@
 <div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
 <header class="nav">
   <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
-  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/benchmarks/">Benchmarks</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
@@ -41,12 +41,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 422 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 429 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -7448,7 +7448,7 @@ stop a release.</p>
 - <em>Sending by hand, from a list of commands.</em> It would be done once
   and forgotten at the next release.</p>
 <h3 id="1527-winget-todays-form-and-a-pull-request-by-hand">15.27 winget: today's form, and a pull request by hand</h3>
-<p><strong>Decision.</strong> The three files are in the form 1.12.0, name the schema
+<p><strong>Decision.</strong> The three files are in the form 1.28.0, name the schema
 they are checked against, and have <code>ProductCode</code>: the id of the setup
 program with the <code>_is1</code> that Inno Setup adds, which is the name
 Windows keeps the installed Zeno under. Sending them to Microsoft's
@@ -8119,6 +8119,143 @@ number, and a program never has to know how large the canvas is
 shown. Before, the place also counted the border, one pixel off.
 Only a canvas is counted this way: for anything else there are no
 pixels of its own.</p>
+<h2 id="22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, <code>--release</code>, and a faster collector</h2>
+<p>The first benchmarks (bench/README.md, 2026-11-16) put Zeno next to C,
+Rust and Python on six programs. Arithmetic and arrays came out 1.2 to
+1.5 times slower than C. Anything that made many blocks of memory came
+out 10 to 26 times slower, and the cause was the collector. A build
+with no collector was faster than C on the same program, but it was
+made for a chip and had a fixed pool of 32 KB. This chapter is what
+was done about it. The aim, in Partha's words, is that a Zeno program
+"has to run faster ... as fast as C and or Rust", while each project
+chooses how it frees memory.</p>
+<h3 id="221-a-program-chooses-how-memory-is-freed-memory-owned-or-memory-collector">22.1 A program chooses how memory is freed: <code>memory owned</code> or <code>memory collector</code></h3>
+<pre><code>package server
+memory owned</code></pre>
+<p>A line in <code>zeno.package</code> says how the program frees memory when it is
+built. <code>memory collector</code>, which is what a program gets when nothing is
+said, is the garbage collector, and lists and objects can be shared
+freely. <code>memory owned</code> is one owner for every list and object, freed on
+the line where its owner ends, with no collector in the program: the
+rules of <code>--no-collector</code> (5.15), which are Rust's. <code>zeno build --owned</code>
+and <code>zeno build --collector</code> say the same for one build, over the file.</p>
+<p><code>zeno check</code> and <code>zeno run</code> of a program that says <code>memory owned</code> check
+it by the owned rules too, so that a program that runs also builds.</p>
+<p><strong>Why in <code>zeno.package</code>.</strong> How memory is freed is a property of the
+whole program, not of one build of it: an owned program is written
+differently (it says <code>take</code>, it does not share a list between two
+objects), so the choice belongs with the program, where the next person
+finds it. The command line can still say otherwise for one build.</p>
+<p><strong>Why two words and not a third for C.</strong> C's way, asking for memory and
+freeing it by hand, is already in the language: <code>unsafe { }</code> with
+<code>allocate</code> and <code>free</code> (5.18). It is a block, not a program, because it
+is the one way in which a mistake is not caught, and a mistake should be
+looked for in a few lines and not in the whole program.</p>
+<p><strong>Why not per line.</strong> A value is made on one line and used on many,
+and how it is freed has to go with the value, not with a line: a list
+made "with the collector" on line 3 and freed "by its owner" on line 9
+is a list nobody can say the rules of. So the choice is made where it
+can be kept: for the program here, and for one value with <code>owned</code>
+(5.8), which works in a collector program too.</p>
+<p><strong>Alternatives.</strong> A flag only (<code>--no-collector</code> as it was), which every
+build must remember. An attribute in the source file, which a program
+of several files would say several times, and could say differently.</p>
+<h3 id="222-memory-owned-on-a-computer-the-pool-and-the-text-room-grow">22.2 <code>memory owned</code> on a computer: the pool and the text room grow</h3>
+<p><code>--no-collector</code> is for a chip: one array of a fixed size for lists and
+objects, another for text, and the size is known when the program is
+built (5.9h, 5.9l). On a computer nobody knows in advance how much a
+program will need, so <code>memory owned</code> keeps the same blocks, sizes and
+lists of spare blocks, and when the piece of memory it is cutting from
+runs out it asks the system for another, twice as big as the last. The
+text room becomes a chain of rooms in the same way. <code>--firmware</code> with
+<code>memory owned</code>, and <code>--no-collector</code>, keep the fixed arrays.</p>
+<p><strong>Why doubling.</strong> A program that needs a gigabyte asks the system
+about twenty times, and what is left at the end of a piece is at most
+half of it, and usually far less.</p>
+<p><strong>Why a chain of rooms and not one room that moves.</strong> Text in the
+room is pointed at by the statement that is building it. A room that
+moved would leave those pointers behind. A chain never moves anything,
+and the compiled program does not change at all: it saves the top of
+the room and puts it back, and the top counts bytes across the chain.</p>
+<h3 id="223-release-whole-numbers-wrap-round-instead-of-being-checked">22.3 <code>--release</code>: whole numbers wrap round instead of being checked</h3>
+<p><code>zeno build --release</code> (and <code>--llvm --release</code>) compiles <code>+</code>, <code>-</code> and
+<code>*</code> of whole numbers to the processor's own instructions, which wrap
+round on overflow, in place of the checked ones that stop the program
+with an <code>OverflowError</code> (5.5c). Nothing else changes: <code>//</code> and <code>%</code> by
+zero, an index past the end, a key that is not there and <code>u8(300)</code>
+still stop the program, and <code>zeno run</code> checks everything as before.</p>
+<p><strong>Why.</strong> It is what Rust does: a debug build checks, a release build
+wraps. The check costs a test and a jump on every step of a tight loop,
+and on the benchmarks it was most of what was left between Zeno and C
+on integer code. A program that has been tested can drop it.</p>
+<p><strong>Why not drop the index checks too.</strong> An index past the end in C reads
+or writes memory that belongs to something else, and the program goes
+on, wrong, with no message. That is the mistake that safe languages
+exist to prevent; Rust keeps it in its release builds, and so does Zeno.
+A wrapped number is wrong too, but it is a number: nothing else in the
+program is broken by it.</p>
+<p><strong>The cost.</strong> A release build of a program that overflows prints
+something else than <code>zeno run</code> does. That is the one place where the
+engines are allowed to disagree, and it is only with the word written.</p>
+<h3 id="224-a-loop-walks-a-list-in-place-when-its-body-cannot-change-it">22.4 A loop walks a list in place when its body cannot change it</h3>
+<p><code>for item in items</code> walks the list as it was when the loop began
+(5.5c), so a compiled loop has always walked a copy, made for it. The
+copy is made on every loop: in bench/nbody.zeno, ten million copies of
+a list of five planets, a quarter of the run.</p>
+<p>Now the compilers look at the body first (<code>ast::walks_in_place</code>). If it
+never writes the name the list is reached from, calls nothing but the
+built-in functions that only look at their arguments, replaces no item
+of a list, and makes no function value, then nothing in it can change
+the list, the copy would be the list itself, and the loop walks the
+list where it is.</p>
+<p><strong>Why decide from the words and not from the types.</strong> It is a rule a
+reader can check by eye, with nothing to get wrong. A body that does
+more (calls a function of the program, say) still gets its copy, and
+behaves exactly as before; nothing is ever walked in place that could
+change.</p>
+<h3 id="225-the-collector-keeps-its-blocks-in-pages">22.5 The collector keeps its blocks in pages</h3>
+<p>The collector of 5.7 wrote every block in one table, sorted the table
+at each collection, and found the block a word points at by halving
+the table. On a program that keeps two million blocks and makes
+hundreds of millions (bench/trees.zeno), the sorting and the searching
+were most of the run.</p>
+<p>Blocks now live in pages of 64 KB, each at an address that is a
+multiple of 64 KB, and a page holds blocks of one size (16 sizes, from
+16 bytes to 2 KB; bigger blocks get pages of their own). The page keeps
+a bit for each block in use and a bit for each block reached. A hash
+table says which page covers each 64 KB of memory, so "is this word one
+of my blocks?" is one look and a division, and freeing a block is
+finding its page from its own address. A block has no header any more.
+This is the arrangement of most collectors that, like Zeno's, look at
+memory with no help from the compiler (the Boehm collector is one).</p>
+<p><strong>Results.</strong> bench/trees.zeno went from 57.8 to 12.0 seconds, and
+bench/strings.zeno from 24.5 to 3.4 (with 22.6). C takes 5.9 and 0.9.</p>
+<p><strong>What stayed.</strong> It is still mark and sweep, conservative, and
+collects when the memory in use passes twice what survived the last
+collection (the first limit is now 4 MB, up from 1 MB, since blocks
+are cheaper to keep). Every test that ran the old collector before
+each allocation (<code>ZENO_COLLECT_ALWAYS</code>) runs the new one the same way.</p>
+<p><strong>Left for later.</strong> A collector that looks at young blocks more often
+than old ones (a generational one) would make trees faster still: most
+of what is left is marking the same long-lived tree at every
+collection.</p>
+<h3 id="226-text-of-one-ascii-character-is-made-once">22.6 Text of one ASCII character is made once</h3>
+<p><code>for ch in text</code>, <code>split("")</code> and the like hand out a text for each
+character. Each was a block of its own; now a text of one ASCII
+character is taken from a table of all 128 that is part of the
+program, and no block is made. With no collector nothing frees them,
+which is right, since only text in the pool is ever freed.</p>
+<h3 id="227-left-for-later">22.7 Left for later</h3>
+<ul>
+<li>Choosing per file or per function, in one program. The checker
+  already applies the owned rules to a whole program; applying them to
+  some files and not others needs a rule for where the two meet (a
+  shared list lent to a function of an owned file, say), and that rule
+  is not written yet.</li>
+<li><code>for ch in text</code> still makes a list of the characters first. Walking
+  the text itself would save the list.</li>
+<li>A generational collector (22.5).</li>
+</ul>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
