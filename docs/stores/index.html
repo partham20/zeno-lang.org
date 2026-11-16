@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stores: where each package manager looks for Zeno · Zeno</title>
+<meta name="description" content="packages.md is about one half: a release has, among its files, a package for each of six managers, and each can install Zeno from that file.">
+<meta property="og:title" content="Stores: where each package manager looks for Zeno · Zeno">
+<meta property="og:description" content="packages.md is about one half: a release has, among its files, a package for each of six managers, and each can install Zeno from that file.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/stores/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/stores/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/stores/" aria-current="page">Stores: where each package manager looks for Zeno</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Stores: where each package manager looks for Zeno</h1>
+  <p><a href="/docs/packages/"><code>packages.md</code></a> is about one half: a release has, among
+its files, a package for each of six managers, and each can install
+Zeno from that file.</p>
+<p>This is the other half. <code>apt install zeno</code> with no file works only if
+Zeno is in the place apt looks in, and the same holds for the others.
+Each manager has such a place, and each place has somebody who decides
+what goes into it. So this half is less about files and more about
+accounts: most of what is left can only be done by Partha, signed in
+as himself.</p>
+<p>Everything that needs no account is done, and is tried by the workflow
+<code>stores</code>. For the rest, each part below ends with <strong>What is left</strong>:
+the steps, in order, with the page for each.</p>
+<table>
+<thead>
+<tr>
+<th>Manager</th>
+<th>Where it looks</th>
+<th>State</th>
+<th>The line, once it is there</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Homebrew</td>
+<td>a repository on GitHub, here this one</td>
+<td><strong>works now</strong></td>
+<td><code>brew install partham20/zeno-lang/zeno</code></td>
+</tr>
+<tr>
+<td>apt</td>
+<td>a signed list beside the <code>.deb</code> files, here in the release</td>
+<td>made and tried, waits for a key</td>
+<td><code>sudo apt install zeno</code></td>
+</tr>
+<tr>
+<td>pacman</td>
+<td>the AUR</td>
+<td>files ready, waits for an account</td>
+<td><code>yay -S zeno-lang-bin</code></td>
+</tr>
+<tr>
+<td>winget</td>
+<td>Microsoft's <code>winget-pkgs</code></td>
+<td>files ready, waits for a pull request</td>
+<td><code>winget install ZenoLang.Zeno</code></td>
+</tr>
+<tr>
+<td>snap</td>
+<td>the Snap Store</td>
+<td>upload ready, waits for an account and for leave to be <code>classic</code></td>
+<td><code>sudo snap install zeno --classic</code></td>
+</tr>
+<tr>
+<td>flatpak</td>
+<td>Flathub</td>
+<td><strong>will not be there</strong> (below)</td>
+<td>the file from the release</td>
+</tr>
+</tbody>
+</table>
+<p>The decisions are 15.22 to 15.28 of <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="homebrew">Homebrew</h2>
+<p>Homebrew reads a formula from any git repository, which it calls a
+tap. The formula is in this repository, in <code>Formula/zeno.rb</code>, and the
+repository is public, so there is nothing more to do:</p>
+<pre><code>brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
+brew install partham20/zeno-lang/zeno</code></pre>
+<p>The two lines were run as they stand on a Mac and on Linux, on 16
+November 2026, and Zeno 0.2.0 was installed, run and removed.</p>
+<p>Being in Homebrew's own collection, so that <code>brew install zeno</code> works
+with no tap, is another matter: it takes programs that many people
+already use, and asks for proof of that.</p>
+<p><strong>What is left:</strong> nothing.</p>
+<h2 id="apt">apt</h2>
+<p>apt takes a package from a place only when two things are there. One
+is a list, <code>Packages</code>, which says for each <code>.deb</code> what it is, how big
+it is and its checksum. The other is <code>InRelease</code>: the checksum of that
+list, signed with a key that the machine was told to trust. A <code>.deb</code>
+that was changed on the way does not match the list, and a list that
+was changed does not match its signature.</p>
+<p>The usual apt repository is a tree of folders on a web server. Zeno's
+is smaller: the list and its signature are files of the release, beside
+the <code>.deb</code> files. apt is given the address that the newest release's
+files are downloaded from, and finds everything there. apt calls this a
+flat repository. Nothing has to be hosted, and it cannot fall behind
+the release, because it is the release.</p>
+<p><a href="https://github.com/partham20/zeno-lang/blob/main/tools/apt-repo.sh"><code>tools/apt-repo.sh</code></a> writes the four files:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Packages</code>, <code>Packages.gz</code></td>
+<td>the list, plain and packed</td>
+</tr>
+<tr>
+<td><code>InRelease</code></td>
+<td>the checksums of the list, signed</td>
+</tr>
+<tr>
+<td><code>zeno-apt-key.asc</code></td>
+<td>the public half of the key</td>
+</tr>
+</tbody>
+</table>
+<p>What somebody types, once, and from then on apt updates Zeno with
+everything else:</p>
+<pre><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/zeno-apt-key.asc |
+    sudo tee /usr/share/keyrings/zeno.asc &gt; /dev/null
+echo "deb [signed-by=/usr/share/keyrings/zeno.asc] https://github.com/partham20/zeno-lang/releases/latest/download/ /" |
+    sudo tee /etc/apt/sources.list.d/zeno.list
+sudo apt update
+sudo apt install zeno</code></pre>
+<p>The first line gives the machine the key. The second names the place,
+and says that this key, and no other, may sign for it. The <code>/</code> at the
+end is what says "flat".</p>
+<p><strong>The key.</strong> A signature needs a key with two halves. The private half
+signs and must stay secret. The public half checks a signature and is
+given to everybody. The private half is kept as a secret of the
+repository, <code>APT_SIGNING_KEY</code>, where a workflow can use it and nobody
+can read it back.</p>
+<p>It was tried with a key made for the trial and thrown away: the lists
+were made from the four <code>.deb</code> files of 0.2.0, and apt read them,
+checked the signature, installed Zeno and removed it.</p>
+<p><strong>What is left</strong></p>
+<ol>
+<li>Make the key. In Git Bash on Windows, or any Linux or macOS shell:</li>
+</ol>
+<pre><code>gpg --batch --passphrase "" --quick-generate-key "Zeno packages" rsa4096 sign never
+gpg --armor --export-secret-keys "Zeno packages" &gt; zeno-apt-private.asc</code></pre>
+<ol start="2">
+<li>Open
+   <a href="https://github.com/partham20/zeno-lang/settings/secrets/actions/new">New secret</a>,
+   name it <code>APT_SIGNING_KEY</code>, and paste the whole of
+   <code>zeno-apt-private.asc</code> as its value.</li>
+<li>Keep <code>zeno-apt-private.asc</code> somewhere safe and nowhere public. If
+   it is lost, a new key has to be made, and everybody who added the
+   old one has to add the new one.</li>
+<li>Run the workflow <code>stores</code> with "send" ticked (below). It adds the
+   four files to the release and then installs Zeno with the lines
+   above, from the release itself.</li>
+</ol>
+<h2 id="pacman-the-aur">pacman: the AUR</h2>
+<p>Arch has a place where anybody can put a recipe, the AUR. What is put
+there is not a package but the <code>PKGBUILD</code> that makes one, and a helper
+such as <code>yay</code> downloads it and runs it. Each package of the AUR is a
+small git repository, and putting something there is a <code>git push</code>.</p>
+<p>The package is <code>zeno-lang-bin</code>. <code>-bin</code> is how Arch names a package of
+a program that is already built. It is not <code>zeno-bin</code>, because the AUR
+has a <code>zeno</code> already, which is another program, and <code>zeno-bin</code> would
+say "that one, already built".</p>
+<p>Three files go there, from <a href="https://github.com/partham20/zeno-lang/blob/main/packaging/arch"><code>packaging/arch</code></a>:</p>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PKGBUILD</code></td>
+<td>the recipe</td>
+</tr>
+<tr>
+<td><code>.SRCINFO</code></td>
+<td>the same as plain lines. The AUR reads this and does not run the recipe. <code>makepkg --printsrcinfo</code> writes it</td>
+</tr>
+<tr>
+<td><code>LICENSE</code></td>
+<td>the licence of the recipe itself, which the AUR asks for: 0BSD, "do as you like"</td>
+</tr>
+</tbody>
+</table>
+<p>It was tried in Arch, in a container: <code>makepkg</code> downloads the archive
+from the release, checks it, makes the package, and pacman installs
+it, and <code>.SRCINFO</code> says what the <code>PKGBUILD</code> says.</p>
+<p><strong>What is left</strong></p>
+<ol>
+<li><a href="https://aur.archlinux.org/register">Make an account on the AUR</a>.
+   The form asks for the answer of a command run on Arch, to keep
+   robots out. Anybody without Arch can run it in a container:
+   <code>docker run --rm archlinux sh -c '&lt;the command&gt;'</code>.</li>
+<li>Make a key for it:</li>
+</ol>
+<pre><code>ssh-keygen -t ed25519 -N "" -C "zeno-lang AUR" -f aur</code></pre>
+<p>That writes two files. <code>aur.pub</code> is the public half: paste it into
+   "SSH Public Key" on the AUR's
+   <a href="https://aur.archlinux.org/account">My Account</a> page.
+3. Open
+   <a href="https://github.com/partham20/zeno-lang/settings/secrets/actions/new">New secret</a>,
+   name it <code>AUR_SSH_KEY</code>, and paste the whole of the file <code>aur</code>, the
+   private half.
+4. Run the workflow <code>stores</code> with "send" ticked. The first push makes
+   the package.</p>
+<h2 id="winget">winget</h2>
+<p>winget's list is a repository of Microsoft's on GitHub,
+<a href="https://github.com/microsoft/winget-pkgs"><code>microsoft/winget-pkgs</code></a>,
+with three small files for each version of each program. A program
+gets in by a pull request that adds its files. Robots there download
+the setup program, scan it, install it without showing it, and a
+person approves.</p>
+<p>The files are in <a href="https://github.com/partham20/zeno-lang/blob/main/packaging/winget"><code>packaging/winget</code></a>, in the form
+the list takes today (1.12.0). They are checked against Microsoft's own
+schema, and that they name the setup program of the release and its
+checksum. They have still never been run by a winget: GitHub's Windows
+machines have none.</p>
+<p><strong>What is left</strong></p>
+<ol>
+<li>Try them once, on a Windows machine, in a terminal opened as
+   administrator, from a copy of this repository:</li>
+</ol>
+<pre><code>winget settings --enable LocalManifestFiles
+winget validate --manifest packaging\winget
+winget install --manifest packaging\winget
+zeno --version
+winget uninstall ZenoLang.Zeno</code></pre>
+<ol start="2">
+<li><a href="https://github.com/microsoft/winget-pkgs/fork">Fork <code>winget-pkgs</code></a>.</li>
+<li>Put the three files into the fork, in a folder named exactly
+   <code>manifests/z/ZenoLang/Zeno/0.2.0/</code>, on a branch of their own:</li>
+</ol>
+<pre><code>git clone --filter=blob:none --no-checkout https://github.com/partham20/winget-pkgs
+cd winget-pkgs
+git sparse-checkout set manifests/z/ZenoLang
+git checkout -b zeno-0.2.0
+mkdir -p manifests/z/ZenoLang/Zeno/0.2.0
+cp ../zeno-lang/packaging/winget/*.yaml manifests/z/ZenoLang/Zeno/0.2.0/
+git add manifests
+git commit -m "New package: ZenoLang.Zeno version 0.2.0"
+git push -u origin zeno-0.2.0</code></pre>
+<ol start="4">
+<li>Open the pull request that GitHub then offers. A robot there may
+   ask, once, for agreement to Microsoft's terms for contributors,
+   which is given by a comment that it spells out. If the pull request
+   is marked as needing an answer, there are ten days to give one.</li>
+</ol>
+<p>Each later version is the same with its own folder, or one line of
+Microsoft's <code>wingetcreate update</code>.</p>
+<p>The setup program is not signed, so Windows shows its warning to
+somebody who downloads it by hand. winget installs it all the same.</p>
+<h2 id="snap">snap</h2>
+<p>The Snap Store is one company's, Canonical's, and a snap gets there by
+an upload from an account. Two things stand before the upload.</p>
+<p><strong>The name.</strong> <code>zeno</code> has to be registered to the account. No snap of
+that name is published today. Somebody may still hold it, and then the
+store says so.</p>
+<p><strong><code>classic</code>.</strong> Zeno's snap is not shut in (<a href="/docs/packages/"><code>packages.md</code></a>
+says why), and the store gives that only when asked, after a person has
+read the reasons. Compilers and programming languages are in their list
+of what it is given for. The request is a post in their forum, and its
+text is written: <a href="/docs/classic-request/"><code>packaging/snap/classic-request.md</code></a>.</p>
+<p>The three snaps of a release are uploaded as they are. <code>snapcraft</code>,
+which most snaps are built with, is not used to build them, only to
+send them.</p>
+<p><strong>What is left</strong></p>
+<ol>
+<li><a href="https://snapcraft.io/account">Make an account</a> (it is an Ubuntu
+   One account).</li>
+<li><a href="https://snapcraft.io/register-snap">Register the name <code>zeno</code></a>.</li>
+<li>Post the request as a new topic in
+   <a href="https://forum.snapcraft.io/c/store-requests/19">store-requests</a>,
+   and wait for the answer. It can take days.</li>
+<li>Make a login for the workflow. This needs <code>snapcraft</code>, which runs
+   on Linux (or in WSL on Windows):</li>
+</ol>
+<pre><code>sudo snap install snapcraft --classic
+snapcraft export-login --snaps=zeno --acls=package_access,package_push,package_update,package_release login.txt</code></pre>
+<ol start="5">
+<li>Open
+   <a href="https://github.com/partham20/zeno-lang/settings/secrets/actions/new">New secret</a>,
+   name it <code>SNAPCRAFT_STORE_CREDENTIALS</code>, and paste the whole of
+   <code>login.txt</code>. Then delete the file.</li>
+<li>Once <code>classic</code> is given, run the workflow <code>stores</code> with "send"
+   ticked. Before that the store holds an upload back.</li>
+</ol>
+<h2 id="flatpak-not-on-flathub">flatpak: not on Flathub</h2>
+<p>Flathub is the place nearly every flatpak comes from, and it does not
+take programs that are run in a terminal. Its rules say so in as many
+words, with an exception only for tools that are about flatpak itself.
+It also wants every program built from its source on Flathub's own
+machines, where Zeno's flatpak holds the <code>zeno</code> of the release.</p>
+<p>So Zeno is not asked for there. The flatpak stays what it is: a file of
+each release, which <code>flatpak install</code> takes
+(<a href="/docs/packages/"><code>packages.md</code></a>).</p>
+<p><strong>What is left:</strong> nothing.</p>
+<h2 id="the-workflow-stores">The workflow <code>stores</code></h2>
+<p><a href="https://github.com/partham20/zeno-lang/blob/main/.github/workflows/stores.yml"><code>.github/workflows/stores.yml</code></a> is
+started by hand from the Actions page, saying the version. It has a
+job for each store, and each job first tries what can be tried with no
+login:</p>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>What it tries</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>apt</td>
+<td>makes the lists, signs them, and has apt install from them</td>
+</tr>
+<tr>
+<td>AUR</td>
+<td>makes the package from the <code>PKGBUILD</code> in Arch, downloading from the release, and compares <code>.SRCINFO</code></td>
+</tr>
+<tr>
+<td>snap</td>
+<td>asks the store whether a snap named <code>zeno</code> is published</td>
+</tr>
+<tr>
+<td>Homebrew</td>
+<td>the two lines above, against this repository (with "mac" ticked, on a Mac as well)</td>
+</tr>
+<tr>
+<td>winget</td>
+<td>the three files against Microsoft's schema, and the checksum</td>
+</tr>
+</tbody>
+</table>
+<p>With <strong>"send"</strong> ticked, a job then sends to its store, if the
+repository has the secret for it, and otherwise says that it has not
+and does nothing:</p>
+<table>
+<thead>
+<tr>
+<th>Secret</th>
+<th>What is sent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>APT_SIGNING_KEY</code></td>
+<td>the four files for apt are added to the release, and apt then installs from the release itself</td>
+</tr>
+<tr>
+<td><code>AUR_SSH_KEY</code></td>
+<td><code>PKGBUILD</code>, <code>.SRCINFO</code> and <code>LICENSE</code> are pushed to the AUR</td>
+</tr>
+<tr>
+<td><code>SNAPCRAFT_STORE_CREDENTIALS</code></td>
+<td>the three snaps are uploaded to <code>stable</code></td>
+</tr>
+</tbody>
+</table>
+<p>So a store is switched on by giving its secret, and one that has none
+is left alone.</p>
+<p>A release does this by itself. Its <code>Publish</code> step makes the files for
+apt with everything else, when there is a key, so that apt never finds
+a release without them. Its last step starts <code>stores</code> with "send"
+ticked, for the AUR and the Snap Store. winget is the one that stays a
+pull request by hand.</p>
+<h2 id="what-has-not-been-tried">What has not been tried</h2>
+<ul>
+<li><strong>The three sends.</strong> No workflow has ever pushed to the AUR, uploaded
+  to the Snap Store, or added lists signed with the real key, because
+  there is no account and no key yet. Each is a few lines, and the
+  first run with a secret is their trial.</li>
+<li><strong>The winget files</strong> have not been run by a winget.</li>
+<li><strong>apt from the release itself.</strong> apt was shown to follow GitHub's
+  way of answering a download, and to install from the same files
+  handed out by another server. The two together run for the first
+  time when the real key is there.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Run the workflow <code>stores</code> with nothing ticked, and read what each
+   job says.</li>
+<li>In <code>tools/apt-repo.sh</code>, find where the checksum of <code>Packages</code> is
+   written. Change one byte of <code>Packages</code> after it is signed, and see
+   what <code>apt update</code> says.</li>
+<li>Read <code>packaging/arch/.SRCINFO</code> beside <code>packaging/arch/PKGBUILD</code>, and
+   find each line of one in the other.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/stores.md">docs/stores.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/found-by-the-book/"><span>Previous</span>What writing the book found</a><span></span></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#homebrew">Homebrew</a></li><li><a href="#apt">apt</a></li><li><a href="#pacman-the-aur">pacman: the AUR</a></li><li><a href="#winget">winget</a></li><li><a href="#snap">snap</a></li><li><a href="#flatpak-not-on-flathub">flatpak: not on Flathub</a></li><li><a href="#the-workflow-stores">The workflow stores</a></li><li><a href="#what-has-not-been-tried">What has not been tried</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 415 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 422 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -7358,19 +7358,116 @@ winget would start inside the first. Somebody who installs with winget
 installs those two with winget.</p>
 <h3 id="1521-what-packages-do-not-do-yet">15.21 What packages do not do yet</h3>
 <ul>
-<li><strong>None is in the place its manager looks in.</strong> The repository is
-  public since 16 November 2026, which all of them needed first. What
-  each still needs is an account or somebody's say-so: a pull request to Microsoft's <code>winget-pkgs</code>, an account on
-  the AUR, an account on the Snap Store with the name <code>zeno</code> and leave
-  to be <code>classic</code>, a request to Flathub, and for apt a repository of
-  <code>.deb</code> files with a signed list. Each of those is done in Partha's
-  name, so each is his to do. <code>docs/packages.md</code> lists them.</li>
+<li><strong>Only Homebrew finds Zeno with no file.</strong> The others are ready up
+  to an account, a key or a pull request, each of which is in Partha's
+  name and so is his to do (15.22 to 15.28, and <code>docs/stores.md</code>).</li>
 <li>The winget files are written and not run: GitHub's Windows machines
   have no winget.</li>
 <li>The packages for processors other than x86-64 are made and not
   installed by a test.</li>
 <li>No <code>.rpm</code>, Nix, Scoop or Chocolatey.</li>
 </ul>
+<h3 id="1522-the-apt-repository-is-the-release-itself">15.22 The apt repository is the release itself</h3>
+<p><strong>Decision.</strong> What apt reads to find the <code>.deb</code> files, a list of them
+and the list signed, are four more files of each release
+(<code>tools/apt-repo.sh</code>). apt is given the address that the newest
+release's files are downloaded from, as a flat repository.</p>
+<p><strong>Why.</strong> apt needs only three things at one address: <code>InRelease</code>,
+<code>Packages</code> and the <code>.deb</code> files, and a release is an address that has
+its <code>.deb</code> files already. So nothing is hosted and nothing is copied,
+and the list cannot fall behind the release or point at a file that is
+gone. It was tried: apt reads it, checks the signature and installs.</p>
+<p><strong>What it costs.</strong> apt sees the newest version only, which is what
+<code>apt upgrade</code> wants. And once people have added the address, every
+release must have the four files, or their <code>apt update</code> complains. So
+the release workflow makes them in the same step that publishes.</p>
+<p><strong>Turned down.</strong>
+- <em>A tree of folders on zeno-lang.org</em> (<code>dists/stable/main/...</code>), the
+  usual shape. It is a second place that has to be built and deployed
+  for each release, by another repository, and it either copies the
+  <code>.deb</code> files or redirects each one back to the release.
+- <em>A PPA on Launchpad.</em> It builds from source on Launchpad's machines,
+  from a Debian source package that Zeno does not have, and serves
+  Ubuntu only: no Debian, no Raspberry Pi OS.
+- <em>A service that hosts apt repositories.</em> One more account, and a
+  company to depend on, for four small files.</p>
+<h3 id="1523-the-key-that-signs-for-apt-is-a-secret-of-the-repository">15.23 The key that signs for apt is a secret of the repository</h3>
+<p><strong>Decision.</strong> The private half of the key is the secret
+<code>APT_SIGNING_KEY</code>. It has no passphrase and does not expire. The
+public half is a file of the release, <code>zeno-apt-key.asc</code>, written from
+the private half each time.</p>
+<p><strong>Why.</strong> A workflow has to sign with no person there, and a secret is
+the one place a workflow can read and nobody can read back. A key that
+expired would stop every machine's <code>apt update</code> on a day nobody
+remembers. Partha makes the key, on his own machine, because whoever
+has it can sign for Zeno.</p>
+<p><strong>Turned down.</strong> A key made by a workflow: it would be gone when the
+run ends, or would have to be written somewhere to be kept. Asking
+people to trust the address with no key (<code>trusted=yes</code>): then anybody
+between the release and the machine could hand out another <code>zeno</code>.</p>
+<h3 id="1524-on-arch-the-package-is-zeno-lang-bin">15.24 On Arch the package is <code>zeno-lang-bin</code></h3>
+<p><strong>Decision.</strong> <code>pkgname=zeno-lang-bin</code>, from the next release on, and
+in the AUR from the start. It says <code>conflicts=('zeno-bin')</code>.</p>
+<p><strong>Why.</strong> The AUR has a package <code>zeno</code> already, a node system for
+simulation, which has nothing to do with this. On Arch <code>foo-bin</code> means
+"<code>foo</code>, already built", so <code>zeno-bin</code> would have claimed to be that
+program. <code>zeno-lang</code> is the name the repository and the website have.
+The package files of 0.1.0 and 0.2.0 are named <code>zeno-bin</code> and stay as
+they are (15.11). The new one takes the place of such a one.</p>
+<p><strong>Turned down.</strong> Keeping <code>zeno-bin</code> and seeing whether anybody minds:
+a name in the AUR is hard to change after people have installed it.</p>
+<h3 id="1525-the-recipe-for-the-aur-srcinfo-from-makepkg-and-a-licence-of-its-own">15.25 The recipe for the AUR: <code>.SRCINFO</code> from <code>makepkg</code>, and a licence of its own</h3>
+<p><strong>Decision.</strong> <code>tools/package.sh</code> has <code>makepkg --printsrcinfo</code> write
+<code>.SRCINFO</code> in the Arch container that makes the package, and it is
+kept beside the <code>PKGBUILD</code>. <code>packaging/arch/LICENSE</code> is 0BSD.</p>
+<p><strong>Why.</strong> The AUR reads <code>.SRCINFO</code> and does not run a <code>PKGBUILD</code>, so
+the two must say the same, and only <code>makepkg</code> knows for certain what
+a <code>PKGBUILD</code> says. The <code>stores</code> workflow compares them before it sends
+anything. The AUR asks that a recipe has a licence, apart from the
+licence of the program, and suggests 0BSD: the recipe is twenty lines
+that anybody may copy.</p>
+<h3 id="1526-a-store-is-switched-on-by-its-secret-in-a-workflow-of-its-own">15.26 A store is switched on by its secret, in a workflow of its own</h3>
+<p><strong>Decision.</strong> The workflow <code>stores</code> tries each store with no login,
+and with "send" ticked sends to each store that the repository has a
+secret for: <code>APT_SIGNING_KEY</code>, <code>AUR_SSH_KEY</code>,
+<code>SNAPCRAFT_STORE_CREDENTIALS</code>. A job with no secret says so and does
+nothing. A release starts it as its last step. The snaps are uploaded
+as <code>snap pack</code> made them.</p>
+<p><strong>Why.</strong> Each store needs an account that only Partha can make, and
+they will not all be made on one day. So each has to work alone, and
+giving the secret is the whole of switching one on. It is a workflow
+of its own because a version that is already released has to be sent
+too, 0.2.0 first of all, and because a store that is down must not
+stop a release.</p>
+<p><strong>Turned down.</strong>
+- <em>Steps in the release workflow only.</em> Then nothing could be sent
+  without a new release.
+- <em>A <code>snapcraft.yaml</code></em>, which is how most snaps are built. It would be
+  a second way of making the same file, and the one way there is has
+  been tried.
+- <em>Sending by hand, from a list of commands.</em> It would be done once
+  and forgotten at the next release.</p>
+<h3 id="1527-winget-todays-form-and-a-pull-request-by-hand">15.27 winget: today's form, and a pull request by hand</h3>
+<p><strong>Decision.</strong> The three files are in the form 1.12.0, name the schema
+they are checked against, and have <code>ProductCode</code>: the id of the setup
+program with the <code>_is1</code> that Inno Setup adds, which is the name
+Windows keeps the installed Zeno under. Sending them to Microsoft's
+list stays a pull request that Partha opens.</p>
+<p><strong>Why.</strong> The list wants the newest form, and its own schema says what
+that is, so the files are checked against it in the <code>stores</code> workflow.
+<code>ProductCode</code> is how winget knows that a Zeno installed by the setup
+program is the same one. The pull request is made from his account and
+signs Microsoft's terms for contributors in his name, which a secret
+in this repository should not do for him.</p>
+<h3 id="1528-zeno-is-not-asked-for-on-flathub">15.28 Zeno is not asked for on Flathub</h3>
+<p><strong>Decision.</strong> No request to Flathub. The <code>.flatpak</code> stays a file of
+each release.</p>
+<p><strong>Why.</strong> Flathub's rules say that programs run in a terminal are not
+taken, with an exception only for tools about flatpak itself, and that
+everything must be built from source on its own machines. Zeno is run
+in a terminal, and its flatpak holds the <code>zeno</code> of the release.</p>
+<p><strong>Turned down.</strong> Asking anyway. It would spend the time of the people
+who review there on a request their rules already answer.</p>
 <h2 id="16-a-page-that-does-more">16. A page that does more</h2>
 <p>Chapter 14 made the least that is a page. Its last section (14.14)
 listed what a real front end would miss: where the mouse is, the
