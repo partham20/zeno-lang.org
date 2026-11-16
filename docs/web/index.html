@@ -532,7 +532,7 @@ a browser does.</p>
 something calls while the program is in the middle of a function,
 <code>web.js</code> puts the call in a queue (<code>waiting</code>) and makes it when the
 function has returned.</p>
-<h3 id="two-things-a-page-cannot-do">Two things a page cannot do</h3>
+<h3 id="three-things-a-page-cannot-do">Three things a page cannot do</h3>
 <p><strong><code>sleep</code>.</strong> A browser has one thread for a page. A program that
 waits on it stops the page from drawing and the buttons from
 working. <code>time.sleep</code> in a page is an error that says to use
@@ -544,6 +544,16 @@ stack, which is small. Chromium gave out between 400 and 1000 nested
 calls, by how much each one holds. A program stopped by the browser
 cannot be told which line did it, so Zeno counts, and stops at 200
 with its own message (14.12). On a desk the limit is 1000.</p>
+<p><strong>Run for ever.</strong> While Zeno runs, the page does nothing else: it
+does not draw, scroll or let a button be pressed, so nothing on it
+could stop a loop that never ends. In a page, one turn of a program
+(its first run, or one click, key or timer) may go on for 5 seconds.
+Then it is stopped with the line it was on:</p>
+<pre class="out"><code>error: the program ran for 5 seconds without stopping, so it was stopped. A page can do nothing else while it runs. Is a loop going on forever?
+ --&gt; main.zeno:2:1</code></pre>
+<p>The clock is looked at once in 65536 loop rounds and calls, so it
+costs nothing that can be measured. On a desk a program runs for as
+long as it likes (20.1).</p>
 <h2 id="building-zenowasm-yourself">Building <code>zeno.wasm</code> yourself</h2>
 <p>A release of Zeno has <code>zeno.wasm</code> beside <code>zeno</code>. From the source:</p>
 <pre><code>rustup target add wasm32-unknown-unknown

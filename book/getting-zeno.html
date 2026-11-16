@@ -201,8 +201,43 @@ first, download it with <code>curl -fsSL -o install.sh</code> and the
 same address, and then run <code>sh install.sh</code>. Later,</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>sh install.sh --uninstall</code></pre>
 <p>takes all of it off again.</p>
+<h3 class="unnumbered" id="with-a-package-manager"><span
+class="number">1.2</span> With a package manager</h3>
+<p>Each release also has Zeno in the forms that the usual package
+managers install: a <code>.deb</code> for apt, a package for pacman, a
+snap, a flatpak, a formula for Homebrew, and the files winget reads.
+Each puts <code>zeno</code> and <code>zeno.wasm</code> where that system
+keeps programs, and each removes them again the usual way.</p>
+<p>Today each installs from its file, downloaded from the releases page
+(<code>V</code> is the version, as below):</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>sudo apt install ./zeno_V_amd64.deb                     # Debian, Ubuntu, Raspberry Pi OS
+sudo pacman -U zeno-bin-V-1-x86_64.pkg.tar.zst          # Arch
+sudo snap install --classic --dangerous zeno_V_amd64.snap
+flatpak install --user zeno-V-x86_64.flatpak</code></pre>
+<p>The <code>.deb</code> comes for <code>amd64</code>,
+<code>arm64</code>, <code>armhf</code> (any Raspberry Pi with a 32-bit
+system) and <code>i386</code>, and apt installs a C compiler and git
+beside it, because the package recommends them. pacman only names them,
+and installs them when asked. The snap is <code>classic</code>, so that
+<code>zeno build</code> can reach the C compiler the system already has.
+A flatpak runs in a box of its own, with its own compiler and git
+inside, and its command is long, so give it a short name:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>alias zeno=&#39;flatpak run org.zeno_lang.Zeno&#39;</code></pre>
+<p>Homebrew, on macOS or Linux, reads a formula from the Zeno
+repository:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
+brew install partham20/zeno-lang/zeno</code></pre>
+<p>On Windows, winget runs the same setup program as above, with its
+boxes for the compiler and git left unticked, since somebody who uses
+winget installs those with winget too.</p>
+<p>Installing with one word, as in <code>sudo apt install zeno</code> or
+<code>winget install ZenoLang.Zeno</code>, needs each manager’s own
+collection to list Zeno: the AUR, the Snap Store, Flathub, Microsoft’s
+list for winget, and an apt repository of Zeno’s own. Those are requests
+to the people who keep them, and are on their way. Zeno is free software
+under the MIT licence, which each of them asks about.</p>
 <h3 class="unnumbered" id="downloading-it-by-hand"><span
-class="number">1.2</span> Downloading it by hand</h3>
+class="number">1.3</span> Downloading it by hand</h3>
 <p>The installers fetch one of ten archives, one for each kind of
 machine a release is built for. To do by hand what they do, pick the
 file for your machine from the same releases page:</p>
@@ -326,7 +361,7 @@ zeno-0.1.0-linux-x86_64.tar.gz: OK</code></pre>
 PowerShell <code>Get-FileHash</code> prints a file’s fingerprint to
 compare by eye.</p>
 <h3 class="unnumbered" id="what-else-you-may-need"><span
-class="number">1.3</span> What else you may need</h3>
+class="number">1.4</span> What else you may need</h3>
 <p><code>zeno run</code>, <code>check</code>, <code>test</code>,
 <code>format</code> and the language server need nothing more. Three
 commands hand work to programs of other people:</p>
@@ -346,7 +381,7 @@ that live in other people’s repositories (<a
 href="packages.html#ch-packages">Packages</a>).</p></li>
 </ul>
 <h3 class="unnumbered" id="building-it-from-source"><span
-class="number">1.4</span> Building it from source</h3>
+class="number">1.5</span> Building it from source</h3>
 <p>To build Zeno yourself you need:</p>
 <ul>
 <li><p><strong>Rust</strong>, with its build tool <code>cargo</code>.
@@ -378,7 +413,7 @@ its own tests. There are several hundred of them, and each program in
 them is run by every engine and built every way Zeno can build it:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>cargo test --release</code></pre>
 <h3 class="unnumbered" id="your-first-project"><span
-class="number">1.5</span> Your first project</h3>
+class="number">1.6</span> Your first project</h3>
 <p><code>zeno new</code> makes a folder with a small program in it,
 ready to run:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno new greeter
@@ -403,7 +438,7 @@ in Several Files</a>, packages in <a
 href="packages.html#ch-packages">Packages</a>, and tests in <a
 href="testing.html#ch-testing">Testing</a>. For now, a program can
 be a single file with any name.</p>
-<h3 class="unnumbered" id="the-commands"><span class="number">1.6</span>
+<h3 class="unnumbered" id="the-commands"><span class="number">1.7</span>
 The commands</h3>
 <p>Everything Zeno does is a word after <code>zeno</code>. These are the
 ones you will use most; <a href="commands.html#app-commands">The
@@ -458,7 +493,7 @@ starts</td>
 </tbody>
 </table>
 </div>
-<h3 class="unnumbered" id="an-editor"><span class="number">1.7</span> An
+<h3 class="unnumbered" id="an-editor"><span class="number">1.8</span> An
 editor</h3>
 <p>Any editor that can save plain text will do. Zeno files end in
 <code>.zeno</code> and are UTF-8 text. The Zeno repository has colours

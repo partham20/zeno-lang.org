@@ -136,15 +136,20 @@ a mistake showed the checker's message; a program that prints
 <code>&lt;/script&gt;</code> and text in Tamil printed them; both page examples
 worked inside the frame (a thing was added to the list); and the
 link was opened in a new page, which ran the same program.</p>
+<p>Again before it went on zeno-lang.org (20): a mouse drew ten lines
+on the sketch, <code>while true { }</code> was stopped after 5 seconds with its
+line, an error after some output showed under the output, and the
+page was tried at the size of a phone (iPhone 13), where a thing was
+added to the list by tapping, and in the dark.</p>
 <h2 id="what-it-does-not-do">What it does not do</h2>
 <ul>
 <li>One file. No <code>import</code> of a file of your own.</li>
 <li>No colours in the program text, and nothing is underlined as you
   type. The box is a plain box. <code>zeno lsp</code> does that in an editor
   (<a href="/docs/lsp/"><code>lsp.md</code></a>).</li>
-<li>A program that never stops (<code>while true { }</code>) stops the page, and
-  the browser offers to close it. The link in the address is from
-  the run before, so the program is not lost.</li>
+<li>There is no Stop button. A program that never stops
+  (<code>while true { }</code>) holds the page for 5 seconds, and is then
+  stopped with the line it was on (20.1).</li>
 <li>A long program makes a long link.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
@@ -156,9 +161,10 @@ link was opened in a new page, which ran the same program.</p>
 <li>Choose "A page: things to do". Change the page (the second tab)
    so that the list is numbered. What did you change, and did the
    program need to know?</li>
-<li>Write <code>while true { }</code> and run it. What does the browser do? What
-   would the playground need for a Stop button that works? (Look up
-   what a Worker is, and ask what a program in one cannot reach.)</li>
+<li>Write <code>while true { }</code> and run it. It is stopped after 5 seconds:
+   find <code>tick</code> in <code>src/interpreter.rs</code>. What would the playground
+   need for a Stop button that works at once? (Look up what a Worker
+   is, and ask what a program in one cannot reach.)</li>
 <li>Find <code>run</code> in <code>src/playground.html</code>. It builds the frame's page
    as text. What would go wrong if the program were written into it
    without <code>quoted</code>? Try a program that prints <code>&lt;/script&gt;</code>.</li>

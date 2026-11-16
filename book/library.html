@@ -541,12 +541,41 @@ href="web.html#ch-web">34</a>)</td>
 <tr class="odd">
 <td style="text-align: left;"><code>after(t, f)</code></td>
 <td style="text-align: left;">call <code>f</code> once, <code>t</code>
-later</td>
+later; gives a <code>Timer</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>every(t, f)</code></td>
+<td style="text-align: left;">call <code>f</code> every <code>t</code>;
+gives a <code>Timer</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>timer.stop()</code></td>
+<td style="text-align: left;">call off what it was waiting to do</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>on_key(f)</code></td>
 <td style="text-align: left;">call <code>f</code> with the name of each
 key pressed</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>save(name, text)</code></td>
+<td style="text-align: left;">keep text for the next visit</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>load(name)</code>,
+<code>forget(name)</code></td>
+<td style="text-align: left;">the text kept, or <code>none</code>; keep
+it no more</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>fetch(address, f)</code></td>
+<td style="text-align: left;">ask the network;
+<code>f(status, body)</code> gets the answer</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>post(address, text, f)</code></td>
+<td style="text-align: left;">send text; <code>f(status, body)</code>
+gets the answer</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>e.text</code>,
@@ -556,36 +585,65 @@ key pressed</td>
 <tr class="even">
 <td style="text-align: left;"><code>e.on(event, f)</code></td>
 <td style="text-align: left;">call <code>f</code> when that happens to
-it</td>
+it; <code>f</code> may take an <code>Event</code></td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>e.fire(event)</code></td>
+<td style="text-align: left;">call what <code>on</code> was given,
+now</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>e.append(c)</code></td>
 <td style="text-align: left;">put <code>c</code> inside it, last</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.remove()</code>,
 <code>clear()</code></td>
 <td style="text-align: left;">take it, or what is in it, off the
 page</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.add_class(c)</code>,
 <code>remove_class(c)</code></td>
 <td style="text-align: left;">give it a class, or take one away</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.has_class(c)</code></td>
 <td style="text-align: left;">whether it has that class</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.show()</code>,
 <code>hide()</code></td>
 <td style="text-align: left;">whether it is shown</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.get(name)</code>,
 <code>set(name, v)</code></td>
 <td style="text-align: left;">an attribute</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.set_style(n, v)</code></td>
+<td style="text-align: left;">the style of this one element</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.get_style(n)</code></td>
+<td style="text-align: left;">a style that was set, or
+<code>none</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.draw_rect</code>,
+<code>draw_circle</code></td>
+<td style="text-align: left;">on a canvas: a filled rectangle or
+circle</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.draw_line</code>,
+<code>draw_text</code></td>
+<td style="text-align: left;">on a canvas: a line, or text</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.erase()</code></td>
+<td style="text-align: left;">the canvas is empty again</td>
 </tr>
 </tbody>
 </table>

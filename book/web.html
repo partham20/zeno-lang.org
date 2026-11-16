@@ -299,40 +299,46 @@ the page until it is appended to one that is</td>
 <tr class="even">
 <td style="text-align: left;"><code>web.after(time, f)</code></td>
 <td style="text-align: left;">call <code>f</code> once, that much later.
-The time has a unit: <code>web.after(500 ms, tick)</code></td>
+The time has a unit: <code>web.after(500 ms, tick)</code>. Gives a
+<code>Timer</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>web.every(time, f)</code></td>
-<td style="text-align: left;">call <code>f</code> that often, for as
-long as the page is open</td>
+<td style="text-align: left;">call <code>f</code> that often, until the
+timer is stopped or the page is closed. Gives a <code>Timer</code></td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><code>timer.stop()</code></td>
+<td style="text-align: left;">call off what the timer was waiting to
+do</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><code>web.on_key(f)</code></td>
 <td style="text-align: left;">call <code>f</code> with the name of each
 key that is pressed: <code>"a"</code>, <code>"Enter"</code>,
 <code>"ArrowLeft"</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>web.save(name, text)</code></td>
 <td style="text-align: left;">keep text under a name, for the next time
 the page is opened in this browser</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>web.load(name)</code></td>
 <td style="text-align: left;">the text kept under the name, or
 <code>none</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>web.forget(name)</code></td>
 <td style="text-align: left;">keep nothing under the name any more</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>web.fetch(address, f)</code></td>
 <td style="text-align: left;">ask the network for what is at the
 address, and call <code>f(status, body)</code> when the answer
 comes</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td
 style="text-align: left;"><code>web.post(address, text, f)</code></td>
 <td style="text-align: left;">send text to the address, and call
@@ -831,7 +837,9 @@ no change to the program. In a browser:</p>
 class="number">34.6</span> Time and the network</h3>
 <p><code>web.after</code> calls a function once, later, and
 <code>web.every</code> calls it again and again. Both want a time with a
-unit:</p>
+unit, and both give a <code>Timer</code>, whose <code>stop()</code>
+calls off what it was waiting to do. A clock that can be paused keeps
+its timer while it runs, and <code>none</code> while it does not:</p>
 <div class="zenofile">
 <p>clock.zeno</p>
 </div>
@@ -840,15 +848,44 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> clock = web.element(<span class="st">&quot;#clock&quot;</span>)</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> seconds = <span class="dv">0</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> tick() {</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    seconds += <span class="dv">1</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    clock.text = <span class="st">f&quot;open for {seconds} s&quot;</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>web.every(<span class="dv">1</span> s, tick)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>clock.text = <span class="st">&quot;just opened&quot;</span></span></code></pre></div>
-<pre class="Output" data-language="Output" style="outputstyle"><code>#clock text: just opened</code></pre>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> timer: Timer <span class="kw">or</span> <span class="cn">none</span> = <span class="cn">none</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> tick() {</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    seconds += <span class="dv">1</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    clock.text = <span class="st">f&quot;open for {seconds} s&quot;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> start() {</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> timer <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        timer = web.every(<span class="dv">1</span> s, tick)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> pause() {</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> timer <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>        timer.stop()</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        timer = <span class="cn">none</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>web.element(<span class="st">&quot;#start&quot;</span>).on(<span class="st">&quot;click&quot;</span>, start)</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>web.element(<span class="st">&quot;#pause&quot;</span>).on(<span class="st">&quot;click&quot;</span>, pause)</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>start()</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>clock.text = <span class="st">&quot;just opened&quot;</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;pause stops the clock&quot;</span> {</span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    pause()</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> timer <span class="kw">is</span> <span class="cn">none</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test clock.zeno
+clock.zeno
+#clock text: just opened
+  ok      pause stops the clock
+
+1 test: 1 passed, 0 failed.</code></pre>
+<p><code>start</code> asks first, so pressing Start twice does not start
+two timers. Stopping a timer that has stopped, or that has made its one
+call, does nothing.</p>
 <p><code>web.fetch</code> asks a web server for what is at an address.
 The answer comes later, so it takes a function, which is called with the
 status, such as 200 for found or 404 for not, and the text of the

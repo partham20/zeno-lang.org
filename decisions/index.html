@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 405 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 407 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -7811,6 +7811,55 @@ one.</p>
 <li>Asking a timer whether it is still waiting.</li>
 <li>Starting a stopped timer again. <code>web.every</code> makes a new one.</li>
 </ul>
+<h2 id="20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</h2>
+<p>The playground (16.12) goes on the website, at
+zeno-lang.org/playground, where anybody can open it. Two things had
+to change first.</p>
+<h3 id="201-in-a-page-one-turn-of-a-program-may-run-for-5-seconds">20.1 In a page, one turn of a program may run for 5 seconds</h3>
+<p>A program's first run, and each call from the page (a click, a key,
+a timer, an answer from the network), is a turn. In a browser a turn
+that has gone on for 5 seconds is stopped, with an error at the line
+it was on: a loop, or the call it was making. On a desk nothing
+changes: a program runs for as long as it likes.</p>
+<p><strong>Why.</strong> While Zeno runs, the page does nothing else. It does not
+draw, scroll or let a button be pressed, and the playground runs
+each program in a frame that shares its thread, so a loop that never
+ends held the whole playground, with nothing to press to stop it.
+That is the first thing somebody tries in a playground. A program
+that stops on its own, with its line and a question, is the answer
+<code>zeno run</code> would give if it could.</p>
+<p><strong>Why 5 seconds.</strong> A page that does not answer for longer than that
+looks broken, and browsers start offering to close it at about
+that point. Every program in <code>examples/</code> takes a small part of a
+second in a page, so the limit is far from anything that is meant.</p>
+<p><strong>Why it is not an error the program can catch.</strong> It is not about
+the program's data, and a <code>try</code> around the loop would only start the
+loop again. It is like going past the nesting of 200 calls (14.12).</p>
+<p><strong>How it costs nothing.</strong> The interpreter counts loop rounds and
+calls, and asks the clock once in 65536 of them, because asking it
+crosses into JavaScript. Counting is one addition.</p>
+<p><strong>Rejected.</strong> A Stop button that works at once: it needs Zeno in a
+Worker, where a program cannot reach the page (16.12). A count of
+steps instead of a clock: a step is fast on one machine and slow on
+another, and what matters to the person waiting is time. A frame
+from another origin, which some browsers run on another thread:
+not all do, phones least of all, and the program would no longer be
+able to share the Zeno the playground read in.</p>
+<h3 id="202-the-playgrounds-own-page-for-what-a-program-prints">20.2 The playground's own page for what a program prints</h3>
+<p>A program with no page of its own (most programs) is shown in a page
+the playground writes: what it prints, in the playground's type,
+and under the last line, the error that stopped it. It follows the
+dark setting of the browser. <code>zeno build --web</code> keeps its plain page
+and its error at the foot (14).</p>
+<p><strong>Why.</strong> In the plain page the error box is pinned to the bottom of
+the frame, which is right for a page somebody designed, where it
+must not be lost among the buttons. For a program that prints, the
+error belongs where the next line would have been, as in a terminal;
+at the foot of an empty frame it reads as a thing apart.</p>
+<p><strong>The rest is looks.</strong> The colours of zeno-lang.org, links to Learn,
+the Book and the Docs, and on a phone the boxes are in 16px type,
+because a phone zooms into a box with smaller letters and does not
+zoom out again.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
