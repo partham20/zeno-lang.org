@@ -105,13 +105,13 @@ is safe to free.</p>
 <p>The collector here is the oldest and simplest kind. It was invented for
 Lisp in 1960 and is still what MicroPython runs on microcontrollers.</p>
 <ol>
-<li><strong>Every block is written in a table</strong> as it is handed out
-   (<code>zeno_new_block</code>).</li>
+<li><strong>Every block is kept in a page</strong> as it is handed out
+   (<code>zeno_new_block</code>): see "Where blocks live", below.</li>
 <li><strong>Mark.</strong> Start from the variables, which are called the <em>roots</em>.
    Whatever a root points at is in use: mark it. Whatever a marked block
    points at is in use too: mark that. Carry on until nothing new turns up.</li>
-<li><strong>Sweep.</strong> Go through the table. A block with no mark cannot be reached:
-   free it. Take the marks off the rest, ready for next time.</li>
+<li><strong>Sweep.</strong> Go through the pages. A block with no mark cannot be
+   reached: free it.</li>
 </ol>
 <pre><code>roots            blocks
 -----            ------
@@ -162,12 +162,23 @@ variable it has lies between those two addresses.</p>
 <p>One more hiding place: a pointer may be in a processor register and nowhere
 in memory. <code>__builtin_unwind_init()</code> at the top of <code>zeno_collect</code> makes the
 C compiler copy the registers onto the stack first.</p>
+<h2 id="where-blocks-live">Where blocks live</h2>
+<p>Memory is asked of the system 64 KB at a time, at an address that is a
+multiple of 64 KB: a <strong>page</strong>. A page holds blocks of one size only (16,
+32, 48 ... up to 2048 bytes), and keeps at its start two bits for each
+block: one says it is in use, one that the collector reached it. A block
+bigger than 2 KB gets a run of pages of its own. Blocks have no header,
+so a 16-byte object costs 16 bytes.</p>
+<p>Pages come in three sorts, which never share a page: blocks that may hold
+pointers (objects, lists, function values), <strong>plain</strong> blocks that cannot
+(text and numbers, which the collector never reads), and the <strong>rows</strong> of
+items of lists (see below).</p>
 <h2 id="is-this-word-a-pointer">"Is this word a pointer?"</h2>
-<p><code>zeno_mark</code> answers it. The table is sorted by address at the start of each
-collection, so the answer is a binary search: find the last block that
-starts at or before the word, then see whether the word falls inside it.
-Most words are turned away sooner, by two comparisons against the lowest
-and highest addresses any block has.</p>
+<p><code>zeno_mark</code> answers it. Most words are turned away by two comparisons,
+against the lowest and highest addresses any page covers. For the rest,
+the word's top bits name a 64 KB unit of memory, and a hash table
+(<code>zeno_unit_find</code>) says which page covers that unit, if any. Then one
+division gives the block, and the page's bit says whether it is in use.</p>
 <p>The same question is asked of the words <em>inside</em> a marked block, which is
 how the collector gets from a list to its items and from an object to its
 fields. It still does not know which fields are pointers. It does not need
@@ -176,51 +187,75 @@ to.</p>
 be wrong in one direction only. An integer that happens to equal the
 address of a block keeps that block alive for nothing. It can never free
 something in use, as long as every pointer is somewhere it looks.</p>
-<p>Blocks of text are marked as <em>plain</em>: they cannot hold a pointer, so the
-collector does not read them. That is quicker, and a piece of text is the
-likeliest thing to contain bytes that look like an address by accident.</p>
+<p>A word that points <em>into</em> a block keeps the block, as much as one that
+points at its start: C code walks through a block with a pointer. One
+that points just past the end counts too, but only in a page of rows: a
+loop over a list may be left holding a pointer past its last item and
+nothing else. Anywhere else the same word is the start of the next block,
+and counting it for the one before would keep every neighbour of every
+block alive. (That was a bug, found by the benchmarks: the trees program
+held 2.3 GB at once where it needed 130 MB. Decision 22.10.)</p>
 <h2 id="following-pointers-without-recursion">Following pointers without recursion</h2>
 <p>The obvious way to mark is a function that marks a block and calls itself
 for everything inside. On a list of 300,000 nodes, each pointing to the
 next, that is 300,000 calls deep, and the collector crashes the program it
 is serving.</p>
 <p>Instead, a block that has been marked but not yet looked into is put on a
-waiting list, and one loop takes blocks off it until it is empty. The
-waiting list is threaded through the blocks themselves (<code>next_waiting</code>, a
-field in front of every block), so the collector needs no memory of its own
-at the one moment when there may be none to have.</p>
-<p>Between collections that field has nothing to do, so it holds something
-else: the block's position in the table (<code>place</code>). The two share one word,
-<code>link</code>. Knowing the position is what lets <code>zeno_free</code> take a single block
-out of the table without searching for it.</p>
+stack of its own (<code>zeno_marking</code>), and one loop takes blocks off it until
+it is empty.</p>
+<h2 id="generations">Generations</h2>
+<p>Most blocks are garbage soon after they are made, and a block that has
+lived through one collection usually lives through many. So most
+collections are <strong>small</strong>: they look only at the blocks made since the
+last one, the <em>young</em>, and take every block that lived through a
+collection, the <em>old</em>, to be still in use. Once the old have grown to
+twice what lived through the last full collection, the next one is
+<strong>full</strong> again and looks at everything.</p>
+<p>A block is old when its "reached" bit is still set from the collection it
+lived through: a small collection leaves those bits as they are, and
+stops at an old block instead of looking inside it again. On the trees
+benchmark, whose long-lived tree has two million nodes, that cut the time
+from 11 to 7 seconds.</p>
+<p>The danger is an old block that has since been given a pointer to a young
+one: nobody would look inside it, and the young block would be freed
+while still in use. So after each collection every full page of blocks
+with pointers is made read-only, with the system's <code>mprotect</code>. The first
+write to it stops the program for a moment; a handler for the signal
+makes the page writable again and notes that it is no longer <em>guarded</em>.
+A small collection looks inside the old blocks of every page that is not
+guarded, so nothing is missed. The processor keeps watch, and no line of
+compiled code has to remember to say that it wrote a pointer.</p>
+<p>Pages of text are never guarded: they hold no pointers, and a file read
+into one by the system must not find it read-only. On a chip
+(<code>--firmware</code>), and on systems without <code>mprotect</code> (Windows, for now),
+every collection is full. <code>-DZENO_ONE_GENERATION</code> asks for that anywhere.</p>
 <h2 id="when-it-runs">When it runs</h2>
-<p>Collecting takes time, in proportion to what is in use. So it is not done
-on every allocation. The runtime counts the bytes in use, and collects when
-they pass a limit. After each collection the limit becomes twice what
-survived. A program that keeps little is collected often and cheaply. A
-program that keeps a great deal is left alone for longer.</p>
-<p>The first limit is one megabyte (<code>ZENO_FIRST_COLLECTION</code>). There is a
-second trigger: if <code>malloc</code> itself says there is no more, the collector
-runs and the request is tried again. On a board with 64 KB of memory that
-second trigger is the one that matters.</p>
+<p>Collecting takes time, in proportion to what it looks at. So it is not
+done on every allocation. The runtime counts the bytes in use, and
+collects when they pass a limit. After each collection the limit becomes
+twice what survived.</p>
+<p>The first limit is four megabytes (<code>ZENO_FIRST_COLLECTION</code>). There is a
+second trigger: if the system has no more pages to give, the collector
+runs and the request is tried again.</p>
 <h2 id="what-it-costs">What it costs</h2>
 <ul>
-<li><strong>Pauses.</strong> While the collector runs, the program does not. The pause
-  grows with the amount of memory in use, not with the amount of garbage.
-  A control loop that must answer within microseconds should not make
-  blocks inside the loop. Numbers, bools and fixed text never do.</li>
-<li><strong>A few words per block</strong>: the header in front of it and its line in the
-  table.</li>
+<li><strong>Pauses.</strong> While the collector runs, the program does not. A small
+  collection's pause grows with what was made since the last one; a full
+  one's with everything in use. A control loop that must answer within
+  microseconds should not make blocks inside the loop. Numbers, bools and
+  fixed text never do.</li>
+<li><strong>Two bits per block</strong>, and a page header per 64 KB.</li>
 <li><strong>It leans on the C compiler.</strong> Reading the stack like this is not
   something the C standard describes. It works on every mainstream compiler
   and processor, and the Boehm collector, Ruby and MicroPython have relied
   on it for decades, but it is a habit, not a guarantee.</li>
 <li><strong>Now and then it keeps too much.</strong> A stale value in a stack slot that no
-  longer means anything can hold one block, and all that block leads to.</li>
+  longer means anything can hold one block, and all that block leads to.
+  An old block that has become garbage waits for the next full collection.</li>
 </ul>
 <p><a href="/decisions/"><code>docs/decisions.md</code></a>, 5.7, says why this was chosen over
 counting references and over Rust-style ownership, and what would make
-the choice change.</p>
+the choice change; 22.5 and 22.10 why it is built as it is now.</p>
 <p><code>--memory</code> works with <code>zeno build --llvm</code> as well, and prints the same
 line.</p>
 <h2 id="how-it-is-tested">How it is tested</h2>
@@ -229,7 +264,9 @@ The program then reads memory that belongs to something else, and fails
 much later, somewhere unrelated.</p>
 <p>So every test in <code>emit_c.rs</code> that compares a compiled program with the
 interpreter is now built with <code>-DZENO_COLLECT_ALWAYS</code>, which runs the
-collector before <strong>every single allocation</strong>. A block that is wrongly freed
+collector before <strong>every single allocation</strong> (63 small collections for
+each full one, since small ones are where a missed pointer would hide).
+A block that is wrongly freed
 is freed at the first chance, and the program prints something different
 from <code>zeno run</code>. Three more tests aim at the collector itself: one checks
 that a loop of garbage stays within a small amount of memory, one that a
@@ -260,7 +297,7 @@ collections intact, and one that an error in flight is not lost.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/memory.md">docs/memory.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/llvm/"><span>Previous</span>How the LLVM backend works</a><a class="next" href="/docs/ownership/"><span>Next</span>Owned values: memory freed at a line you can point to</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#what-needs-memory">What needs memory</a></li><li><a href="#the-question-nobody-can-answer-in-advance">The question nobody can answer in advance</a></li><li><a href="#mark-and-sweep">Mark and sweep</a></li><li><a href="#where-the-roots-are">Where the roots are</a></li><li><a href="#is-this-word-a-pointer">"Is this word a pointer?"</a></li><li><a href="#following-pointers-without-recursion">Following pointers without recursion</a></li><li><a href="#when-it-runs">When it runs</a></li><li><a href="#what-it-costs">What it costs</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#what-needs-memory">What needs memory</a></li><li><a href="#the-question-nobody-can-answer-in-advance">The question nobody can answer in advance</a></li><li><a href="#mark-and-sweep">Mark and sweep</a></li><li><a href="#where-the-roots-are">Where the roots are</a></li><li><a href="#where-blocks-live">Where blocks live</a></li><li><a href="#is-this-word-a-pointer">"Is this word a pointer?"</a></li><li><a href="#following-pointers-without-recursion">Following pointers without recursion</a></li><li><a href="#generations">Generations</a></li><li><a href="#when-it-runs">When it runs</a></li><li><a href="#what-it-costs">What it costs</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">

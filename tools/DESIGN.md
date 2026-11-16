@@ -46,12 +46,13 @@ itself) are the same drawing for browsers that do not take an SVG icon.
 | Ink | `#0f1729` | `#ededed` | text |
 | Slate | `#566176` | `#a1a1a1` | secondary text |
 | Rule | `#e3e7ef` | `#262626` | lines |
-| Cobalt | `#2f5bea` | `#7d9cff` | links, buttons, focus |
+| Accent (Windows blue) | `#0078d4` | `#0078d4` | buttons (white text), icons, bars, focus |
+| Accent text | `#0078d4` | `#4ca3ff` | links and small blue text, lighter in dark mode so it reads on black; soft tint `#e5f1fb` / `#101a24`, keywords `#0078d4` / `#6cb6ff` |
 | Signal | `#f26b2b` | `#ff8a52` | the LED, warnings, nothing else |
 
 In light mode the neutrals lean slightly toward navy, so the page reads as
 one colour family. Dark mode is a plain neutral black and grey, as most
-dark sites are (Partha's choice, 2026-11-15), with cobalt as the only colour. Cobalt comes from the blue of a schematic; Signal from
+dark sites are (Partha's choice, 2026-11-15), with the accent as the only colour. The accent is the Windows accent blue, chosen by Partha on 2026-11-16 (it replaced the earlier cobalt #2f5bea); the same blue in both modes, with white text on filled buttons; only small text and links use the lighter `--cobalt-text` in dark mode, for contrast on black. The CSS variable is still called `--cobalt`. Signal comes from
 the amber LED on a development board.
 
 ## Type

@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 433 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 434 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8333,9 +8333,45 @@ and per block (<code>unsafe { }</code>) are the finer choices.</p>
 <p><strong>Alternatives.</strong> <code>owned</code> written in front of every class (it still
 can be, one at a time). A list of files in <code>zeno.package</code>: far from the
 code it is about, and wrong as soon as a file is renamed.</p>
-<h3 id="2210-left-for-later">22.10 Left for later</h3>
+<h3 id="2210-two-generations-watched-with-mprotect-and-a-leak-found">22.10 Two generations, watched with <code>mprotect</code>; and a leak found</h3>
+<p><strong>The leak.</strong> A word that pointed just past the end of a block counted
+as pointing into it (22.5), so that a loop holding only the end of a
+list's items would keep them. But in a page of blocks laid end to end,
+that word is also the start of the next block, so every block reached
+kept the one before it alive, and that one the one before it. The trees
+benchmark held 2.3 GB at once where it needed 130 MB. Now the rows of
+items of lists have pages of their own, and only there does a word just
+past a block count for it.</p>
+<p><strong>Decision.</strong> The collector has two generations. A block that lived
+through a collection is old; most collections are small, look only at
+the young, and stop at an old block without looking inside it. Once the
+old have grown to twice what lived through the last full collection,
+the next collection is full. After each collection the full pages of
+blocks with pointers are made read-only with <code>mprotect</code>; the first write
+to one is caught by a signal handler, which opens the page and marks it
+as written. A small collection looks inside the old blocks of every page
+that is open. On a chip, and where there is no <code>mprotect</code> (Windows, for
+now), every collection is full.</p>
+<p><strong>Why.</strong> The trees benchmark keeps a tree of two million nodes for the
+whole run, and every collection marked all of it again: 140 times. With
+generations it is marked a few times, and the run went from 11 to 7
+seconds (C takes 6.2).</p>
+<p><strong>Why <code>mprotect</code>, not a write barrier in the compiled code.</strong> The usual
+way is for every store of a pointer to say so, in code the compiler adds.
+Here pointers are stored by compiled C, by compiled LLVM IR and by a few
+hundred places in the runtime; one place missed is a block freed while
+in use, found much later and far away. The processor's own protection of
+pages misses nothing, costs nothing on a page nobody writes, and needs no
+change to either compiler. Pages of text are never guarded, so a file
+read into memory by the system cannot meet a read-only page.</p>
+<p><strong>Rejected.</strong> Moving young blocks to another place (a copying nursery),
+which is faster still but needs to know exactly which words are
+pointers, and this collector does not (5.7). A bigger limit between
+collections, which trades memory for time without changing the work.</p>
+<h3 id="2211-left-for-later">22.11 Left for later</h3>
 <ul>
-<li>A generational collector (22.5).</li>
+<li>Generations on Windows, with <code>VirtualProtect</code> and a handler of its
+  own.</li>
 </ul>
 <h3 id="206-the-playground-shows-the-c-a-program-becomes">20.6 The playground shows the C a program becomes</h3>
 <p>The playground has a C tab: the program as <code>zeno build</code> writes it,
