@@ -515,3 +515,10 @@ main:not(.home) { padding-bottom: 4rem; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .js .hero [data-in] { opacity: 1; transform: none; }
 }
+@media (max-width: 75rem) { .nav nav { gap: 1.25rem; } }
+@media (max-width: 58rem) {
+  .nav { flex-wrap: wrap; height: auto; padding-top: 0.6rem; padding-bottom: 0.45rem; row-gap: 0.35rem; gap: 1rem; }
+  .nav nav { order: 3; width: 100%; overflow-x: auto; gap: 1.3rem; padding-bottom: 0.2rem; scrollbar-width: none; }
+  .nav nav::-webkit-scrollbar { display: none; }
+  .nav nav a { flex: none; }
+}

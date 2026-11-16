@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>G What Version 0.1 Leaves Out · The Zeno Book</title>
+  <title>G What Zeno Does Not Have Yet · The Zeno Book</title>
   <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,7 +31,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.1</span>
+  <span class="version">Zeno 0.2</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -116,13 +116,15 @@ class="number">31</span> Firmware</a></li>
 class="number">32</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
 class="number">33</span> Unsafe Code</a></li>
+<li><a href="web.html" id="toc-ch-web"><span
+class="number">34</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">34</span> Inside Zeno</a></li>
+class="number">35</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">35</span> Why Zeno Is as It Is</a></li>
+class="number">36</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -136,7 +138,7 @@ class="number">E</span> The zeno Command</a></li>
 <li><a href="error-kinds.html" id="toc-app-error-kinds"><span
 class="number">F</span> Kinds of Error</a></li>
 <li><a class="here" href="limits.html" id="toc-app-limits"><span
-class="number">G</span> What Version 0.1 Leaves Out</a></li>
+class="number">G</span> What Zeno Does Not Have Yet</a></li>
 </ul></li>
 </ul>
 </aside>
@@ -147,10 +149,11 @@ class="number">G</span> What Version 0.1 Leaves Out</a></li>
 </nav>
 <article>
 <h2 class="chapter unnumbered" id="app-limits"><span
-class="number">G</span> What Version 0.1 Leaves Out</h2>
+class="number">G</span> What Zeno Does Not Have Yet</h2>
 <p>Before version 0.1, every decision in <code>docs/decisions.md</code>
 was read again, and thirty were answered "a limit of 0.1": the thing is
 left out of this version, and a program that asks for it is told so.
+Version 0.2 added the web page and left every one of these as it was.
 Each can be added later without changing what any program written now
 means. The numbers are the decisions, for anyone who wants the
 argument.</p>
@@ -310,7 +313,26 @@ private (10.5).</p>
 <p>and an interface with type parameters of its own (10.10).</p>
 </dd>
 </dl>
-<h3 class="unnumbered" id="tools"><span class="number">G.8</span>
+<h3 class="unnumbered" id="the-web"><span class="number">G.8</span> The
+web</h3>
+<dl>
+<dt>Only what the module has.</dt>
+<dd>
+<p>No style of one element (use a class), no place of the mouse, no
+drawing, no network, and nothing kept between visits (14.14).</p>
+</dd>
+<dt>An interpreter in a page.</dt>
+<dd>
+<p>Every page carries <code>zeno.wasm</code> and runs at the speed of
+<code>zeno run</code>. A page compiled through C or LLVM, small and
+fast, is left for later (14.1).</p>
+</dd>
+<dt>A simulated page reads plain selectors only,</dt>
+<dd>
+<p>and has every element it is asked for (14.6).</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="tools"><span class="number">G.9</span>
 Tools</h3>
 <dl>
 <dt>Hover on a field.</dt>
@@ -325,7 +347,7 @@ cannot run one by name or test a compiled program. <code>assert</code>
 takes no message, and is only for tests (10.21).</p>
 </dd>
 </dl>
-<h3 class="unnumbered" id="not-limits"><span class="number">G.9</span>
+<h3 class="unnumbered" id="not-limits"><span class="number">G.10</span>
 Not limits</h3>
 <p>Three things are not on this list, because they are decided: Zeno has
 no inheritance, no second way to write a function, and no second name

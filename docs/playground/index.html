@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The playground: Zeno in a page, with nothing installed · Zeno</title>
+<meta name="description" content="playground.html is one file. On the left is a box to write a program in, on the right is what the program does, and Run (or Ctrl+Enter) runs it. Nothing is installed and nothing is sent anywhere: the program is checked and run in the browser, by the…">
+<meta property="og:title" content="The playground: Zeno in a page, with nothing installed · Zeno">
+<meta property="og:description" content="playground.html is one file. On the left is a box to write a program in, on the right is what the program does, and Run (or Ctrl+Enter) runs it. Nothing is installed and nothing is sent anywhere: the program is checked and run in the browser, by the…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/playground/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/playground/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/" aria-current="page">The playground: Zeno in a page, with nothing installed</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><h4>More</h4><a href="/docs/found-by-the-book/">What writing the book found</a><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>The playground: Zeno in a page, with nothing installed</h1>
+  <pre><code>zeno playground        # writes playground.html: open it in a browser</code></pre>
+<p><code>playground.html</code> is one file. On the left is a box to write a
+program in, on the right is what the program does, and Run (or
+Ctrl+Enter) runs it. Nothing is installed and nothing is sent
+anywhere: the program is checked and run in the browser, by the same
+Zeno that <code>zeno run</code> is.</p>
+<p>It is the page to send to somebody who asks what Zeno looks like.</p>
+<h2 id="what-is-in-it">What is in it</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Program</strong></td>
+<td>the program. Tab indents by four spaces, as <code>zeno format</code> does</td>
+</tr>
+<tr>
+<td><strong>Page (HTML)</strong></td>
+<td>the page the program is in, for a program that says <code>import web</code>. Left empty, the page is one that shows what the program prints</td>
+</tr>
+<tr>
+<td><strong>Example</strong></td>
+<td>a few of the programs in <code>examples/</code>, to start from. Two of them are pages: the list of things to do, and the sheet to draw on</td>
+</tr>
+<tr>
+<td><strong>Run</strong></td>
+<td>check the program and run it. A mistake the checker finds is shown where the output would be, with its line</td>
+</tr>
+<tr>
+<td><strong>Copy link</strong></td>
+<td>a link that opens the playground with this program in it</td>
+</tr>
+</tbody>
+</table>
+<p>The program is one file. A program in several files, and a package,
+need <code>zeno build --web</code> (<a href="/docs/web/"><code>web.md</code></a>).</p>
+<h2 id="how-it-works">How it works</h2>
+<p><a href="/docs/web/"><code>web.md</code></a> says how a program runs in a page: <code>zeno.wasm</code> is
+Zeno itself, built for a browser, and <code>src/web.js</code> starts it with the
+program's text. A page that <code>zeno build --web</code> writes does that once,
+for one program. The playground does it again for every press of Run.</p>
+<h3 id="each-run-gets-a-new-page">Each run gets a new page</h3>
+<p>A Zeno program in a page does not end. It runs to its last line, and
+then its functions are called when buttons are pressed and timers
+run out. So to run the next program, the last one has to be got rid
+of, with its timers, the functions it gave to buttons, and whatever
+it did to the page.</p>
+<p>The playground does not try to undo any of that. What the program
+does is shown in a <strong>frame</strong>: a page inside the page (<code>&lt;iframe&gt;</code>).
+Run throws the frame's page away and gives it a new one, written
+then and there (<code>srcdoc</code>):</p>
+<pre><code>the page you wrote (or the empty one)
++ &lt;script&gt; src/web.js &lt;/script&gt;
++ &lt;script&gt; Zeno.start(parent.zenoModule, {the program}) &lt;/script&gt;</code></pre>
+<p>That is what <code>zeno build --web</code> writes into a file, less <code>zeno.wasm</code>.
+The browser throws away the old page with everything that belonged
+to it, which is the one way to stop a program that is certain to
+have stopped it (16.12).</p>
+<h3 id="zeno-is-read-in-once">Zeno is read in once</h3>
+<p><code>zeno.wasm</code> is in the playground packed, as it is in a built page.
+Unpacking it and having the browser read it in takes a moment, and
+is done once, when the playground opens:</p>
+<pre><code>window.zenoModule = Zeno.unpacked(PACKED).then((bytes) =&gt; WebAssembly.compile(bytes));</code></pre>
+<p>What that gives is a <strong>module</strong>: Zeno, ready to be started. Starting
+it is quick, and each run starts it afresh, so no run can see what
+the one before left in memory. The frame finds the module in the
+page around it (<code>parent.zenoModule</code>).</p>
+<h3 id="a-link-holds-the-program">A link holds the program</h3>
+<p>Run writes the program into the address of the page, after the <code>#</code>:
+the program and its page as JSON, in base64. Opening that address
+opens the playground with that program. The part after <code>#</code> is never
+sent to a server, so a link is the whole program and nothing keeps
+a copy.</p>
+<h3 id="how-it-is-written">How it is written</h3>
+<p><code>zeno playground</code> is a few lines in <code>src/main.rs</code>
+(<code>playground_page</code>). The page is <code>src/playground.html</code>, with four
+places marked where it writes things in: <code>src/web.js</code>, <code>zeno.wasm</code>,
+the examples and the empty page. Each is written as JSON, with <code>&lt;</code>
+written as <code>\u003c</code>, for the reason a built page does it: a browser
+reads the end of a script wherever it finds one, even in the middle
+of a str.</p>
+<p><code>zeno playground</code> looks for <code>zeno.wasm</code> where <code>zeno build --web</code>
+does.</p>
+<h2 id="how-it-was-tried">How it was tried</h2>
+<p>In Chromium, driven by a script: the first example ran when the page
+opened; a program was typed and run with Ctrl+Enter; a program with
+a mistake showed the checker's message; a program that prints
+<code>&lt;/script&gt;</code> and text in Tamil printed them; both page examples
+worked inside the frame (a thing was added to the list); and the
+link was opened in a new page, which ran the same program.</p>
+<h2 id="what-it-does-not-do">What it does not do</h2>
+<ul>
+<li>One file. No <code>import</code> of a file of your own.</li>
+<li>No colours in the program text, and nothing is underlined as you
+  type. The box is a plain box. <code>zeno lsp</code> does that in an editor
+  (<a href="/docs/lsp/"><code>lsp.md</code></a>).</li>
+<li>A program that never stops (<code>while true { }</code>) stops the page, and
+  the browser offers to close it. The link in the address is from
+  the run before, so the program is not lost.</li>
+<li>A long program makes a long link.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Run <code>zeno playground</code>, open the page, and write a program that
+   prints the first ten squares. Then copy the link, open it in a
+   new window, and change the program there. Which window has which
+   program, and why?</li>
+<li>Choose "A page: things to do". Change the page (the second tab)
+   so that the list is numbered. What did you change, and did the
+   program need to know?</li>
+<li>Write <code>while true { }</code> and run it. What does the browser do? What
+   would the playground need for a Stop button that works? (Look up
+   what a Worker is, and ask what a program in one cannot reach.)</li>
+<li>Find <code>run</code> in <code>src/playground.html</code>. It builds the frame's page
+   as text. What would go wrong if the program were written into it
+   without <code>quoted</code>? Try a program that prints <code>&lt;/script&gt;</code>.</li>
+<li>Add an example to the list in <code>playground_page</code> (<code>src/main.rs</code>).
+   Which test tells you that the page is still one script?</li>
+<li>The box has no colours. <code>src/lexer.rs</code> already knows which words
+   are keywords. How could the playground ask <code>zeno.wasm</code> for the
+   tokens of the program, and what would it draw them on?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/playground.md">docs/playground.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/web/"><span>Previous</span>How a Zeno program runs in a web page</a><a class="next" href="/docs/new/"><span>Next</span>Starting a program: zeno new</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-is-in-it">What is in it</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#how-it-was-tried">How it was tried</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

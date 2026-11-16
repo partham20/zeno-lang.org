@@ -28,7 +28,7 @@
 <div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
 <header class="nav">
   <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
-  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 356 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 379 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -7113,6 +7113,366 @@ third number is for a mend, and nothing here mends anything.</p>
 <p><strong>Why not 1.0.</strong> Nothing that ran under 0.1 changes, so nothing was
 learnt about whether the language holds up. 1.0 should mean that
 programs written by somebody else have been through it.</p>
+<hr />
+<h2 id="15-installing">15. Installing</h2>
+<p>A release is ten archives (chapter 12). This chapter is about not
+having to know which one is yours. <a href="/docs/install/"><code>install.md</code></a> is the
+walkthrough.</p>
+<h3 id="151-two-installers-a-setup-program-on-windows-a-line-elsewhere">15.1 Two installers: a setup program on Windows, a line elsewhere</h3>
+<p>Windows gets <code>zeno-X.Y.Z-windows-setup.exe</code>. macOS and Linux get a
+script, <code>install.sh</code>, that one line downloads and runs.</p>
+<p><strong>Why two.</strong> Each is what its system's users already do. On Windows a
+program arrives as a setup <code>.exe</code> with Next buttons, and a line to
+paste into a terminal is foreign. On macOS and Linux the people who
+would install a compiler have a terminal open, and the line is how
+Rust, Homebrew and Deno arrive.</p>
+<p><strong>Turned down.</strong>
+- <em>A setup program for macOS too</em> (<code>.pkg</code>). macOS refuses an unsigned
+  one more firmly than it refuses a script, and signing wants a paid
+  Apple account.
+- <em>A script for Windows too</em> (PowerShell). The setup program does more
+  (an uninstaller in Windows' own list, a Start menu entry), and two
+  ways to install on one system is one too many.
+- <em>Packages</em> for Homebrew, apt, winget and the rest. They are the best
+  answer in the end, and each has a place where it must be published
+  and kept current. Not yet (15.7).</p>
+<h3 id="152-for-one-user-with-no-administrator">15.2 For one user, with no administrator</h3>
+<p>The setup program installs into <code>%LOCALAPPDATA%\Programs\Zeno</code>, the
+script into <code>~/.zeno</code>, and each changes that user's PATH only.</p>
+<p><strong>Why.</strong> Nothing about Zeno needs the whole machine, and a password
+prompt is a reason to stop. It also means a student on a machine that
+is not theirs can install it.</p>
+<p><strong>Turned down.</strong> <code>C:\Program Files</code> and <code>/usr/local/bin</code>: an
+administrator for no gain. A choice between the two on a page of the
+setup program: a question most people cannot answer.</p>
+<h3 id="153-the-path-is-added-and-the-box-is-ticked">15.3 The PATH is added, and the box is ticked</h3>
+<p>Both installers put Zeno's folder on the PATH. In the setup program it
+is a box, already ticked. The script just does it, and says which file
+it changed.</p>
+<p><strong>Why.</strong> A <code>zeno</code> that the terminal cannot find is not installed in
+any sense a beginner means. Python's installer leaves its box
+unticked, and the result is the best-known first error in Python.</p>
+<p>The script adds one line to one startup file, the one for the shell
+in <code>SHELL</code>, and ends the line with a comment that names the
+installer. That comment is how it knows not to add the line twice and
+how <code>--uninstall</code> finds it again.</p>
+<h3 id="154-the-tools-zeno-hands-work-to-are-offered-never-assumed">15.4 The tools Zeno hands work to are offered, never assumed</h3>
+<p>If there is no C compiler, or no git, the installer says which command
+needs it and offers to install it: with winget on Windows, with the
+system's package manager on Linux, with Apple's command line tools on
+macOS. On Windows the box is ticked, and can be unticked. In the
+script it is a question, and with nobody to ask (no terminal), the
+answer is no and the command is printed.</p>
+<p><strong>Why offer.</strong> Partha asked for an installer "which installs whatever
+needed", and without a C compiler <code>zeno build</code>, which is what Zeno is
+for, does not work.</p>
+<p><strong>Why not just install.</strong> A compiler is hundreds of megabytes, and
+on Linux it is installed as root. Doing that unasked, from a script
+piped out of curl, is the thing people are right to fear about such
+scripts. And everything but <code>build</code> and <code>fetch</code> works without.</p>
+<p><strong>Why not carry a compiler inside the installer.</strong> A small one exists
+(TinyCC), and Zeno's C has not been tried with it. gcc is too large to
+carry and has to be kept current. The system's package manager
+already does both.</p>
+<h3 id="155-zeno-build-looks-for-cc-then-gcc-then-clang">15.5 <code>zeno build</code> looks for <code>cc</code>, then <code>gcc</code>, then <code>clang</code></h3>
+<p>With no <code>CC</code>, the first of the three that is installed compiles the C.</p>
+<p><strong>Why.</strong> Windows has no <code>cc</code>, so every Windows user had to learn <code>set
+CC=gcc</code> before the first build. An installer that installs gcc and
+then needs a setting to use it has not finished its job. The order
+puts the system's own choice first.</p>
+<h3 id="156-not-signed">15.6 Not signed</h3>
+<p>Neither the setup program nor <code>zeno</code> is signed. Windows shows a
+warning the first time, and the walkthrough says what it is.</p>
+<p><strong>Why.</strong> A certificate for Windows costs a few hundred dollars a
+year, and Apple's needs a paid developer account. The goal of Zeno is
+to learn by building it. If strangers start to install it, this is
+the first thing to change.</p>
+<h3 id="157-one-setup-program-for-three-processors">15.7 One setup program for three processors</h3>
+<p>The setup program holds the x86-64, the x86 and the ARM64 <code>zeno.exe</code>
+and installs the one for the machine.</p>
+<p><strong>Why.</strong> Three setup programs would bring back the question the
+installer exists to remove. The cost is a file a few megabytes
+larger.</p>
+<h3 id="158-the-script-carries-its-version-and-the-release-checks-it">15.8 The script carries its version, and the release checks it</h3>
+<p><code>install.sh</code> has <code>version=0.2.0</code> written in it, and is a file of the
+release of that version. <code>tools/release-check.sh</code> refuses a release in
+which that line and <code>Cargo.toml</code> differ.</p>
+<p><strong>Why.</strong> The script has to know which files to ask for, and their
+names have the version in them. Asking GitHub which release is the
+newest needs a second request and a way to read its answer, in a
+script that should need nothing but <code>curl</code> and <code>tar</code>. A plain line
+that a check keeps true is less to go wrong.</p>
+<h3 id="159-the-download-is-checked-before-it-is-unpacked">15.9 The download is checked before it is unpacked</h3>
+<p>The script compares the archive's SHA-256 with the line for it in
+<code>SHA256SUMS.txt</code>, and stops if they differ or if there is no way to
+compute one.</p>
+<p><strong>Why.</strong> A download that was cut short unpacks into a <code>zeno</code> that
+fails in some way nobody can explain. The check does not protect
+against somebody who can change the release itself, since they would
+change both files. It protects against everything less than that.</p>
+<h3 id="1510-left-for-later">15.10 Left for later</h3>
+<ul>
+<li>Signing (15.6), and packages for package managers (15.1).</li>
+<li>The winget step of the setup program is not run by any test:
+  GitHub's Windows machines have no winget.</li>
+<li><code>zeno</code> does not update itself. The installer, run again, does.</li>
+</ul>
+<h2 id="16-a-page-that-does-more">16. A page that does more</h2>
+<p>Chapter 14 made the least that is a page. Its last section (14.14)
+listed what a real front end would miss: where the mouse is, the
+style of one element, drawing, the network, something kept between
+visits, a simulated page that knows the page, and a smaller file.
+This chapter is those, and a playground.
+<a href="/docs/web/"><code>web.md</code></a> and <a href="/docs/playground/"><code>playground.md</code></a> are the
+walkthroughs.</p>
+<h3 id="161-a-function-given-to-on-may-ask-for-the-event">16.1 A function given to <code>on</code> may ask for the <code>Event</code></h3>
+<p><code>button.on("click", function() { ... })</code> is called with nothing, as
+before. <code>paper.on("click", function(event: Event) { ... })</code> is
+called with what happened. The checker allows those two shapes and
+says so if it is given a third.</p>
+<p><strong>Why.</strong> 14.5 held that a function knows its element already, and
+that stays true for most of a page. It is not true of where the
+mouse was, and not of which item of a list was clicked when one
+function is given to the whole list. Those can be known no other
+way, so there has to be a way to be told.</p>
+<p>Letting the function ask keeps 14.5 for everybody who needs
+nothing: no program that ran under 14.5 changes, and the first
+example anyone reads still has <code>function()</code>.</p>
+<p><strong>Why by the number of parameters.</strong> The function's first line
+already says what it wants. A second method (<code>on_event</code>) would be
+two names for one thing, and a flag would say twice what the
+parameter says once.</p>
+<p><strong>Turned down.</strong> <code>web.mouse()</code>, a question the function can ask: it
+answers for "now", and a function called a moment after the click,
+from the queue (14, <code>waiting</code>), would be told where the mouse went
+since. Two parameters <code>(x, y)</code>: right for the mouse and wrong for
+every other event, and no room for the target.</p>
+<h3 id="162-an-event-has-five-fields-and-they-are-read-only">16.2 An <code>Event</code> has five fields, and they are read only</h3>
+<p><code>kind</code>, <code>target</code>, <code>x</code>, <code>y</code>, <code>key</code>. <code>x</code> and <code>y</code> are floats, in pixels
+from the top left corner of the element that <code>on</code> was given to. For
+an event with no mouse they are 0, and <code>key</code> is <code>""</code> for an event
+with no key.</p>
+<p><strong>Why these five.</strong> Each is something a program cannot find out any
+other way, and each was needed by an example: the sketch needs <code>x</code>
+and <code>y</code>, one function for a whole list needs <code>target</code>, a function
+given to two events needs <code>kind</code>, and <code>key</code> is what <code>on_key</code> hands
+over, for an element that wants its own keys.</p>
+<p><strong>Why from the element's corner.</strong> A program draws on the element
+it listens to, and a canvas counts from its own corner. From the
+corner of the window, every program would first have to take away
+where the element is, which it has no way to ask.</p>
+<p><strong>Why 0 and <code>""</code> and not <code>none</code>.</strong> 14.5 turned down an event object
+because most of its fields mean nothing for most events. <code>none</code>
+would make every use of <code>event.x</code> begin with a test that a click
+never fails. A program that asks for <code>x</code> of a <code>"submit"</code> has made a
+mistake that 0 shows as well as anything.</p>
+<p><strong>Why read only.</strong> It says what happened. Changing it would change
+nothing on the page, and a field that can be written and does
+nothing is a trap.</p>
+<p><strong>Left out for now.</strong> Which button of the mouse, Shift and Ctrl,
+the wheel, touches. Each is a field, three files away.</p>
+<h3 id="163-fire-calls-the-programs-functions-at-once">16.3 <code>fire</code> calls the program's functions, at once</h3>
+<p><code>button.fire("click")</code> calls every function that <code>on</code> was given for
+<code>"click"</code> on that element, in the order given, before it returns.
+One that asks for the <code>Event</code> gets one with the element as <code>target</code>
+and 0 for <code>x</code> and <code>y</code>. It does the same in a browser and on the
+simulated page.</p>
+<p><strong>Why.</strong> 14.6 left a test one way to press a button: call the
+function by name. A function written in place
+(<code>item.on("click", function() { ... })</code>) has no name, so the most
+natural way to write a page could not be tested. <code>fire</code> is the
+press.</p>
+<p><strong>Why it does not send the browser an event.</strong> In a browser an
+event that is sent is handled later, after the function that sent
+it has returned (the queue, 14). On a desk it would have to be
+handled at once, because there is no later. A test that passes on a
+desk and means something else in the browser is worse than no test.
+So <code>fire</code> is the same everywhere: it is a call. It does not tick a
+checkbox or send a form, and docs/web.md says so.</p>
+<p><strong>Turned down.</strong> <code>button.click()</code>: one method for each event, and
+the browser has hundreds.</p>
+<h3 id="164-the-style-of-one-element-set_style-and-get_style">16.4 The style of one element: <code>set_style</code> and <code>get_style</code></h3>
+<p><code>e.set_style("color", "red")</code>, with the name CSS uses.
+<code>e.get_style("color")</code> gives what was set on the element itself, or
+<code>none</code>.</p>
+<p><strong>Why at all.</strong> 14 said "use a class", and that is still the right
+answer for a look that is known when the page is written. It cannot
+do a look that is worked out: a bar as wide as a reading, a colour
+the person chose.</p>
+<p><strong>Why CSS's names.</strong> <code>background-color</code>, and not <code>backgroundColor</code>
+or <code>background_color</code>. The page beside the program is written in
+CSS, and one thing should have one name in both files.</p>
+<p><strong>Why a wrong name is an error.</strong> A browser ignores a style it does
+not know, and the program goes on with nothing changed and nothing
+said. Zeno stops with a <code>ValueError</code>. (The simulated page does not
+know CSS and cannot do this. It is found when the page is opened.)</p>
+<p><strong>Why <code>get_style</code> is only what was set.</strong> What an element finally
+looks like comes from every rule of the page, in units the browser
+chooses (<code>rgb(255, 0, 0)</code> for <code>red</code>). Handing that back would be a
+second, bigger thing with the same name.</p>
+<h3 id="165-drawing-is-five-methods-of-an-element">16.5 Drawing is five methods of an element</h3>
+<p><code>draw_rect</code>, <code>draw_circle</code>, <code>draw_line</code>, <code>draw_text</code>, <code>erase</code>.
+Places and sizes are numbers (int or float), in pixels from the top
+left corner. The colour is last, and is whatever CSS calls a
+colour. On an element that is not a <code>&lt;canvas&gt;</code> they raise a
+<code>ValueError</code>.</p>
+<p><strong>Why so few.</strong> A browser's canvas has a pen with a state: a
+colour, a width, a path that is begun and ended. Every call depends
+on the calls before it, which is exactly what makes drawing code
+hard to read and to test. Here each call says everything it needs
+and leaves nothing behind, so a line printed by the simulated page
+(<code>#paper draw_rect 10 10 50 20 red</code>) is the whole of what happened.</p>
+<p><strong>Why the colour is last and not left out.</strong> A default colour is a
+state by another name: the reader has to know what it is.</p>
+<p><strong>Why <code>draw_text</code> counts from the top left.</strong> A browser counts text
+from its baseline, so text drawn at <code>0, 0</code> is off the top of the
+canvas. Every other shape here starts at its corner.</p>
+<p><strong>Why methods of <code>Element</code>, and no <code>Canvas</code> type.</strong> A canvas is an
+element: it has a class, can be hidden, hears clicks. A second type
+would need a way to get from one to the other, for no gain but a
+check the page cannot make anyway (the checker does not read the
+page).</p>
+<p><strong>Left out for now.</strong> Curves, images, line width, drawing that is
+not filled. Games that redraw everything sixty times a second are
+too slow for an interpreter in any case (14.1).</p>
+<h3 id="166-webevery-beside-webafter">16.6 <code>web.every</code>, beside <code>web.after</code></h3>
+<p><code>web.every(1 s, tick)</code> calls <code>tick</code> that often until the page is
+closed. Less than 1 ms is a <code>ValueError</code>.</p>
+<p><strong>Why.</strong> A clock, a poll, anything that moves. With <code>after</code> alone
+it is written as a function that asks for itself again, and every
+program that does it gets it slightly wrong (the time drifts by
+however long the function takes).</p>
+<p><strong>Why it cannot be stopped.</strong> Stopping needs a value to stop
+(<code>let timer = web.every(...)</code>, <code>timer.stop()</code>), which is a new
+type. A function that has nothing to do can return at once, and
+that has been enough. It is the first thing to add when it is not.</p>
+<h3 id="167-what-is-kept-between-visits-save-load-forget">16.7 What is kept between visits: <code>save</code>, <code>load</code>, <code>forget</code></h3>
+<p><code>web.save("name", text)</code>, <code>web.load("name")</code> (a str, or <code>none</code>),
+<code>web.forget("name")</code>. Names and values are text.</p>
+<p><strong>Why text only.</strong> The browser keeps text. A number is <code>str(n)</code> on
+the way in and <code>int(text)</code> on the way out, where the program can
+see it and where a wrong value raises the error it should.</p>
+<p><strong>Why <code>load</code> gives <code>none</code>.</strong> Nothing kept is the ordinary case, on
+every first visit, and the checker then makes the program say what
+happens.</p>
+<p><strong>Why a browser that refuses keeps nothing, silently.</strong> A private
+window may refuse. The program already has to work on a first
+visit, when nothing is kept, so "nothing is ever kept" is a case it
+handles already.</p>
+<p><strong>On a desk</strong> what is saved is kept until the run ends, so a test
+can save and load. It is not written to the disk: a test should not
+depend on the run before it.</p>
+<h3 id="168-the-network-fetch-and-post-with-a-function-for-the-answer">16.8 The network: <code>fetch</code> and <code>post</code>, with a function for the answer</h3>
+<p><code>web.fetch(address, done)</code> and <code>web.post(address, text, done)</code>.
+<code>done</code> is called later with two things: the status (an int: 200,
+404) and the body (a str). An address that could not be reached at
+all gives status 0 and <code>""</code>.</p>
+<p><strong>Why a function for the answer.</strong> The answer comes later, and a
+page must not wait (14.11 is the same rule for <code>sleep</code>). Zeno has
+one way to say "later": hand over a function, as <code>on</code> and <code>after</code>
+do. A second way (a value that stands for an answer to come) is a
+feature of a language, with rules of its own, and this is one
+module.</p>
+<p><strong>Why two parameters and no <code>Reply</code> type.</strong> There are two things to
+know. A type with two fields is longer at every use and adds a name
+to learn.</p>
+<p><strong>Why status 0 and no error.</strong> An error raised later, inside
+nothing the program called, has nowhere to be caught. And "could
+not be reached" has to be handled beside 404 and 500 anyway, in the
+same <code>if</code>.</p>
+<p><strong>Why the body is text.</strong> There is no JSON in the library yet.
+When there is, it reads a str.</p>
+<p><strong>On a desk</strong> nothing is fetched and <code>done</code> is not called, as a
+timer is not (14.6). A test calls <code>done</code> itself with the answer it
+wants to try, which is the test worth writing: what the page does
+with a 404.</p>
+<h3 id="169-the-simulated-page-reads-the-page-that-was-written">16.9 The simulated page reads the page that was written</h3>
+<p>If <code>todo.html</code> is beside <code>todo.zeno</code>, <code>zeno run</code> and <code>zeno test</code>
+read it, and the simulated page has those elements and no others.
+With no such file it has every element that is asked for, as in
+14.6.</p>
+<p><strong>Why.</strong> 14.6 said that the simulated page "cannot say whether the
+page has the elements the program asks for", and a misspelt id is
+the commonest mistake there is in a page. It was found only in a
+browser, by hand.</p>
+<p><strong>Why by the file's name.</strong> It is the file <code>zeno build --web</code>
+already takes as the page (14.8), so the page that is tested is the
+page that is built, and there is nothing to configure.</p>
+<p><strong>Why not in the checker.</strong> The checker could look up
+<code>web.element("#list")</code> when the selector is written out. It would
+then need the page, which the language server and <code>zeno check</code> do
+not have in hand, and it would still miss a selector that is built
+(<code>"#row" + str(n)</code>). On the first run, the same message comes with
+the same line.</p>
+<p><strong>Why a reader of our own (<code>src/html.rs</code>).</strong> Zeno has no
+dependencies (5.1). The reader is 200 lines, because it reads pages
+that are written right and does not mend the others as a browser
+must. Text that is only the spaces a page is laid out with counts
+as none.</p>
+<h3 id="1610-zenowasm-is-built-for-size-where-that-costs-no-speed">16.10 <code>zeno.wasm</code> is built for size, where that costs no speed</h3>
+<p><code>.cargo/config.toml</code> builds it with <code>opt-level=s</code>, one code
+generation unit and whole-program <code>lto</code>. 1.1 MB became 800 KB.</p>
+<p><strong>Why <code>s</code> and not <code>z</code>.</strong> Measured, on a loop of 300,000 steps and a
+recursion: as built before, 173 ms; <code>s</code> with the rest, 167 ms; <code>z</code>,
+262 ms, for 650 KB. A page that is 150 KB smaller and half again as
+slow is a bad trade once the page is packed (16.11), when the
+difference is 40 KB.</p>
+<p><strong>Why in <code>.cargo/config.toml</code>.</strong> It holds for this one target, and
+<code>cargo build --release --target wasm32-unknown-unknown</code> stays the
+command, in the docs and in the release workflow. <code>zeno</code> for a desk
+is built as before.</p>
+<h3 id="1611-zenowasm-is-packed-in-the-page-by-a-packer-of-our-own">16.11 <code>zeno.wasm</code> is packed in the page, by a packer of our own</h3>
+<p>A built page holds <code>zeno.wasm</code> as DEFLATE in base64, and the
+browser unpacks it with <code>DecompressionStream("deflate-raw")</code>.
+<code>src/deflate.rs</code> is the packer. A built page went from 1.5 MB to
+0.4 MB.</p>
+<p><strong>Why pack.</strong> Base64 makes bytes a third longer, and <code>zeno.wasm</code> is
+most of every page. A web server can pack a page as it sends it,
+but 14.7 promised one file that works from the disk and from a
+mail, where no server is.</p>
+<p><strong>Why DEFLATE.</strong> It is the one format every browser unpacks by
+itself, so nothing is added to the page to undo it. A better
+format would need its unpacker in every page, in JavaScript.</p>
+<p><strong>Why write it.</strong> No dependencies (5.1), and a release must not need
+<code>gzip</code> on the machine that builds a page, least of all on Windows.
+It is 300 lines, and it comes within two parts in a hundred of
+<code>gzip -9</code> on <code>zeno.wasm</code> (292 KB against 288 KB) in a tenth of a
+second. The test unpacks what it packs with Python's zlib, where
+there is a Python.</p>
+<p><strong>The cost.</strong> The page needs a browser from 2023 or later. An older
+one is told so, in the box where errors go.</p>
+<h3 id="1612-a-playground-written-by-zeno-playground">16.12 A playground, written by <code>zeno playground</code></h3>
+<p><code>zeno playground</code> writes <code>playground.html</code>: a box for a program, a
+box for its page, Run, a few examples, and a link that holds the
+program. Each run is a new frame.</p>
+<p><strong>Why.</strong> "What does Zeno look like?" should have an answer that is
+a link. Everything else needs an install first.</p>
+<p><strong>Why a command, and not a file in the repository.</strong> The page holds
+<code>zeno.wasm</code>, which is built, and the examples, which change. A file
+that is checked in is out of date the day after. The command writes
+it from the Zeno that is running, so it cannot disagree with it.</p>
+<p><strong>Why a new frame for each run.</strong> A program in a page does not end
+(14). Its timers and the functions it gave away are the browser's
+to hold, and there is no list of them to go through. Throwing the
+frame's page away is the one thing that is certain to stop it all,
+and it is what the browser does best.</p>
+<p><strong>Why the program is in the link, after <code>#</code>.</strong> Sharing then needs
+no server and no account, and what follows <code>#</code> is never sent
+anywhere. The price is a long link for a long program.</p>
+<p><strong>Left out.</strong> Colours in the program text, several files, a Stop
+button for a program that never returns (it needs a Worker, and a
+program in a Worker cannot reach the page).</p>
+<h3 id="1613-left-for-later">16.13 Left for later</h3>
+<ul>
+<li>JSON read into values, which <code>fetch</code> wants.</li>
+<li>A timer that can be stopped, and an event with the keys held
+  down and the button of the mouse (16.6, 16.2).</li>
+<li>Images and curves on a canvas.</li>
+<li>The address bar: a page with several views that the back button
+  walks through.</li>
+<li>Other browsers. Only Chromium has run any of this.</li>
+<li>A compiled page, small and fast (14.1). It is still the big one.</li>
+</ul>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

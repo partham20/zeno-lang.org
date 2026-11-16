@@ -165,3 +165,6 @@ footer { margin-top: 30px; color: var(--soft); font-size: 13.5px; font-style: it
 
 /* Code and output are shown as typed: no ligature turns --> into an arrow. */
 pre, code { font-variant-ligatures: none; font-feature-settings: "liga" 0, "calt" 0; }
+
+/* A picture of a page, framed as the printed book frames it. */
+main img { display: block; max-width: 100%; width: 32rem; margin: 1.5rem auto; border: 1px solid var(--rule, #d8dce4); }

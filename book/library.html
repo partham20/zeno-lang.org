@@ -31,7 +31,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.1</span>
+  <span class="version">Zeno 0.2</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -116,13 +116,15 @@ class="number">31</span> Firmware</a></li>
 class="number">32</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
 class="number">33</span> Unsafe Code</a></li>
+<li><a href="web.html" id="toc-ch-web"><span
+class="number">34</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">34</span> Inside Zeno</a></li>
+class="number">35</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">35</span> Why Zeno Is as It Is</a></li>
+class="number">36</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -136,7 +138,7 @@ class="number">E</span> The zeno Command</a></li>
 <li><a href="error-kinds.html" id="toc-app-error-kinds"><span
 class="number">F</span> Kinds of Error</a></li>
 <li><a href="limits.html" id="toc-app-limits"><span
-class="number">G</span> What Version 0.1 Leaves Out</a></li>
+class="number">G</span> What Zeno Does Not Have Yet</a></li>
 </ul></li>
 </ul>
 </aside>
@@ -505,6 +507,71 @@ href="reading-writing.html#ch-reading-writing">23</a>)</td>
 <tr class="odd">
 <td style="text-align: left;"><code>arguments()</code></td>
 <td style="text-align: left;">the words after the file</td>
+</tr>
+<tr class="even">
+<td colspan="2" style="text-align: left;"><code>import web</code> (<a
+href="web.html#ch-web">34</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>element(selector)</code></td>
+<td style="text-align: left;">the first element that answers to it</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>elements(selector)</code></td>
+<td style="text-align: left;">every one, as a list</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>create(tag, text)</code></td>
+<td style="text-align: left;">a new element, not yet on the page</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>after(t, f)</code></td>
+<td style="text-align: left;">call <code>f</code> once, <code>t</code>
+later</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>on_key(f)</code></td>
+<td style="text-align: left;">call <code>f</code> with the name of each
+key pressed</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.text</code>,
+<code>e.value</code></td>
+<td style="text-align: left;">what it shows; what was typed into it</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.on(event, f)</code></td>
+<td style="text-align: left;">call <code>f</code> when that happens to
+it</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.append(c)</code></td>
+<td style="text-align: left;">put <code>c</code> inside it, last</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.remove()</code>,
+<code>clear()</code></td>
+<td style="text-align: left;">take it, or what is in it, off the
+page</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.add_class(c)</code>,
+<code>remove_class(c)</code></td>
+<td style="text-align: left;">give it a class, or take one away</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.has_class(c)</code></td>
+<td style="text-align: left;">whether it has that class</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.show()</code>,
+<code>hide()</code></td>
+<td style="text-align: left;">whether it is shown</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.get(name)</code>,
+<code>set(name, v)</code></td>
+<td style="text-align: left;">an attribute</td>
 </tr>
 </tbody>
 </table>

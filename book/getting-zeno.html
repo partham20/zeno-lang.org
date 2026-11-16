@@ -31,7 +31,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.1</span>
+  <span class="version">Zeno 0.2</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -116,13 +116,15 @@ class="number">31</span> Firmware</a></li>
 class="number">32</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
 class="number">33</span> Unsafe Code</a></li>
+<li><a href="web.html" id="toc-ch-web"><span
+class="number">34</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">34</span> Inside Zeno</a></li>
+class="number">35</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">35</span> Why Zeno Is as It Is</a></li>
+class="number">36</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -136,7 +138,7 @@ class="number">E</span> The zeno Command</a></li>
 <li><a href="error-kinds.html" id="toc-app-error-kinds"><span
 class="number">F</span> Kinds of Error</a></li>
 <li><a href="limits.html" id="toc-app-limits"><span
-class="number">G</span> What Version 0.1 Leaves Out</a></li>
+class="number">G</span> What Zeno Does Not Have Yet</a></li>
 </ul></li>
 </ul>
 </aside>
@@ -151,33 +153,170 @@ class="number">1</span> Getting Zeno</h2>
 <p>Zeno is one program, called <code>zeno</code>. It checks your
 programs, runs them, compiles them, tests them, lays them out, and talks
 to your editor. This chapter puts it on your machine.</p>
-<h3 class="unnumbered" id="what-you-need"><span
-class="number">1.1</span> What you need</h3>
-<p>Zeno is written in Rust, and you build it from its source. You
-need:</p>
+<p>There are two ways to get it: download a <code>zeno</code> that is
+already built, or build it yourself from its source. The first takes a
+minute and needs nothing installed. The second needs Rust, and gives you
+the compiler’s source to read beside <a
+href="inside.html#ch-inside">Inside Zeno</a>.</p>
+<h3 class="unnumbered" id="downloading-it"><span
+class="number">1.1</span> Downloading it</h3>
+<p>Every release of Zeno is built for ten kinds of machine, and put on
+the releases page of the repository:</p>
+<div class="center">
+<p><a href="https://github.com/partham20/zeno-lang/releases"
+class="uri">https://github.com/partham20/zeno-lang/releases</a></p>
+</div>
+<p>Pick the file for your machine. The number after <code>zeno-</code>
+is the version; here it is written <code>V</code>.</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Machine</th>
+<th style="text-align: left;">File</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Linux on most PCs and servers
+(x86-64)</td>
+<td
+style="text-align: left;"><code>zeno-V-linux-x86_64.tar.gz</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Linux on 32-bit x86</td>
+<td style="text-align: left;"><code>zeno-V-linux-x86.tar.gz</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Raspberry Pi 3, 4 or 5 with a 64-bit
+system, and ARM servers</td>
+<td
+style="text-align: left;"><code>zeno-V-linux-arm64.tar.gz</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Raspberry Pi 2 or later with a 32-bit
+system (ARMv7)</td>
+<td
+style="text-align: left;"><code>zeno-V-linux-armv7.tar.gz</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Raspberry Pi 1 or Zero (ARMv6)</td>
+<td
+style="text-align: left;"><code>zeno-V-linux-armv6.tar.gz</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mac with Apple silicon (M1 and later)</td>
+<td
+style="text-align: left;"><code>zeno-V-macos-arm64.tar.gz</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Mac with an Intel processor</td>
+<td
+style="text-align: left;"><code>zeno-V-macos-x86_64.tar.gz</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Windows on most PCs (x86-64)</td>
+<td
+style="text-align: left;"><code>zeno-V-windows-x86_64.zip</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Windows on 32-bit x86</td>
+<td style="text-align: left;"><code>zeno-V-windows-x86.zip</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Windows on ARM</td>
+<td style="text-align: left;"><code>zeno-V-windows-arm64.zip</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Inside is one folder with <code>zeno</code> in it
+(<code>zeno.exe</code> on Windows), and, from version 0.2,
+<code>zeno.wasm</code> beside it, which <a href="web.html#ch-web">A
+Program in a Web Page</a> needs. <code>zeno</code> is one file that
+needs nothing else installed: no Rust, no libraries.</p>
+<h4 class="unnumbered" id="on-linux-and-the-raspberry-pi">On Linux and
+the Raspberry Pi</h4>
+<p>Unpack the file, and copy <code>zeno</code> into a folder that is on
+your <code>PATH</code>. <code>~/.local/bin</code> is one on most
+systems, and needs no <code>sudo</code>:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ tar -xzf zeno-0.1.0-linux-x86_64.tar.gz
+$ mkdir -p ~/.local/bin
+$ cp zeno-0.1.0-linux-x86_64/zeno* ~/.local/bin/
+$ zeno --version
+zeno 0.1.0</code></pre>
+<p>If the shell says <code>zeno: command not found</code>, that folder
+is not on your <code>PATH</code> yet. Add the line
+<code>export PATH="$HOME/.local/bin:$PATH"</code> to
+<code>~/.bashrc</code>, and open a new terminal.</p>
+<p>The Linux builds are linked with everything they need inside them, so
+the same file runs on Debian, Ubuntu, Fedora, Alpine or Raspberry Pi OS,
+old or new.</p>
+<h4 class="unnumbered" id="on-macos">On macOS</h4>
+<p>The same steps work in the Terminal, with <code>/usr/local/bin</code>
+as the folder:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ tar -xzf zeno-0.1.0-macos-arm64.tar.gz
+$ sudo cp zeno-0.1.0-macos-arm64/zeno* /usr/local/bin/
+$ xattr -d com.apple.quarantine /usr/local/bin/zeno
+$ zeno --version</code></pre>
+<p>The <code>xattr</code> line is needed once. A program downloaded with
+a browser is held back by macOS until Apple has signed it, and Zeno is
+not signed; the line tells macOS that you trust this one.</p>
+<h4 class="unnumbered" id="on-windows">On Windows</h4>
+<p>Unzip the file: right-click it in Explorer and choose <em>Extract
+All</em>. Make a folder for programs of your own, such as
+<code>C:\Tools</code>, and move <code>zeno.exe</code> (and
+<code>zeno.wasm</code>) into it. Then put that folder on the
+<code>PATH</code>: open the Start menu, type <em>environment
+variables</em>, choose <em>Edit environment variables for your
+account</em>, select <code>Path</code>, press <em>Edit</em> and
+<em>New</em>, and type the folder. A new Command Prompt or PowerShell
+window then finds it:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>&gt; zeno --version
+zeno 0.1.0</code></pre>
+<p>Windows may warn that the program is from an unknown publisher, for
+the same reason as on macOS. <em>More info</em>, then <em>Run
+anyway</em>, lets it start.</p>
+<h4 class="unnumbered" id="checking-the-download">Checking the
+download</h4>
+<p>Beside the files on the releases page is <code>SHA256SUMS.txt</code>,
+with the fingerprint of each one. To be sure that the file you have is
+the one that was built:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ sha256sum --check --ignore-missing SHA256SUMS.txt
+zeno-0.1.0-linux-x86_64.tar.gz: OK</code></pre>
+<p>On macOS the command is <code>shasum -a 256 -c</code>, and in
+PowerShell <code>Get-FileHash</code> prints a file’s fingerprint to
+compare by eye.</p>
+<h3 class="unnumbered" id="what-else-you-may-need"><span
+class="number">1.2</span> What else you may need</h3>
+<p><code>zeno run</code>, <code>check</code>, <code>test</code>,
+<code>format</code> and the language server need nothing more. Three
+commands hand work to programs of other people:</p>
+<ul>
+<li><p><code>zeno build</code> writes C and gives it to a C compiler:
+<code>cc</code>, or the one the variable <code>CC</code> names. On
+Linux, install <code>gcc</code> or <code>clang</code> from the system’s
+packages; on macOS, <code>xcode-select --install</code>; on Windows,
+MinGW’s <code>gcc</code>, with <code>set CC=gcc</code> (<a
+href="compiling.html#ch-compiling">Compiling</a>).</p></li>
+<li><p><code>zeno build --llvm</code> needs <code>clang</code>.</p></li>
+<li><p><code>zeno fetch</code> needs <code>git</code>, to get packages
+that live in other people’s repositories (<a
+href="packages.html#ch-packages">Packages</a>).</p></li>
+</ul>
+<h3 class="unnumbered" id="building-it-from-source"><span
+class="number">1.3</span> Building it from source</h3>
+<p>To build Zeno yourself you need:</p>
 <ul>
 <li><p><strong>Rust</strong>, with its build tool <code>cargo</code>.
 The usual way to get both is <code>rustup</code>, from <a
 href="https://rustup.rs" class="uri">https://rustup.rs</a>. Zeno uses no
 libraries beyond Rust itself, so nothing else is downloaded when it is
 built.</p></li>
-<li><p><strong>git</strong>, to get the source, and later to fetch
-packages that live in other people’s repositories.</p></li>
-<li><p><strong>A C compiler</strong>, <code>cc</code>, <code>gcc</code>
-or <code>clang</code>, if you want to compile Zeno programs into
-programs that run on their own (<a
-href="compiling.html#ch-compiling">Compiling</a>).
-<code>zeno run</code> needs none.</p></li>
-<li><p><strong>clang</strong>, only if you want the second compiler,
-which goes through LLVM.</p></li>
+<li><p><strong>git</strong>, to get the source.</p></li>
 </ul>
 <p>Zeno is built and tested on Linux, macOS and Windows, with the same
-steps on each. On Windows, every path Zeno writes uses <code>/</code>,
-as it does elsewhere, so a package or a message reads the same on every
-machine.</p>
-<h3 class="unnumbered" id="building-it"><span class="number">1.2</span>
-Building it</h3>
-<p>Get the source and build it:</p>
+steps on each. Get the source and build it:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>git clone https://github.com/partham20/zeno-lang
 cd zeno-lang
 cargo build --release</code></pre>
@@ -186,15 +325,19 @@ from any folder, either put that folder on your <code>PATH</code>, or
 let cargo copy the program into its own folder of programs, which
 <code>rustup</code> has already put on your <code>PATH</code>:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>cargo install --path .</code></pre>
+<p>For web pages, build <code>zeno.wasm</code> as well. It is the same
+compiler, built for a browser:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>rustup target add wasm32-unknown-unknown
+cargo build --release --target wasm32-unknown-unknown</code></pre>
 <p>Check that it works:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno --version
-zeno 0.1.0</code></pre>
+zeno 0.2.0</code></pre>
 <p>If you want to be sure that the compiler you built is a good one, run
 its own tests. There are several hundred of them, and each program in
 them is run by every engine and built every way Zeno can build it:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>cargo test --release</code></pre>
 <h3 class="unnumbered" id="your-first-project"><span
-class="number">1.3</span> Your first project</h3>
+class="number">1.4</span> Your first project</h3>
 <p><code>zeno new</code> makes a folder with a small program in it,
 ready to run:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno new greeter
@@ -219,7 +362,7 @@ in Several Files</a>, packages in <a
 href="packages.html#ch-packages">Packages</a>, and tests in <a
 href="testing.html#ch-testing">Testing</a>. For now, a program can
 be a single file with any name.</p>
-<h3 class="unnumbered" id="the-commands"><span class="number">1.4</span>
+<h3 class="unnumbered" id="the-commands"><span class="number">1.5</span>
 The commands</h3>
 <p>Everything Zeno does is a word after <code>zeno</code>. These are the
 ones you will use most; <a href="commands.html#app-commands">The
@@ -274,7 +417,7 @@ starts</td>
 </tbody>
 </table>
 </div>
-<h3 class="unnumbered" id="an-editor"><span class="number">1.5</span> An
+<h3 class="unnumbered" id="an-editor"><span class="number">1.6</span> An
 editor</h3>
 <p>Any editor that can save plain text will do. Zeno files end in
 <code>.zeno</code> and are UTF-8 text. The Zeno repository has colours

@@ -31,7 +31,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.1</span>
+  <span class="version">Zeno 0.2</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -116,13 +116,15 @@ class="number">31</span> Firmware</a></li>
 class="number">32</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
 class="number">33</span> Unsafe Code</a></li>
+<li><a href="web.html" id="toc-ch-web"><span
+class="number">34</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">34</span> Inside Zeno</a></li>
+class="number">35</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">35</span> Why Zeno Is as It Is</a></li>
+class="number">36</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -136,7 +138,7 @@ class="number">E</span> The zeno Command</a></li>
 <li><a href="error-kinds.html" id="toc-app-error-kinds"><span
 class="number">F</span> Kinds of Error</a></li>
 <li><a href="limits.html" id="toc-app-limits"><span
-class="number">G</span> What Version 0.1 Leaves Out</a></li>
+class="number">G</span> What Zeno Does Not Have Yet</a></li>
 </ul></li>
 </ul>
 </aside>
@@ -302,23 +304,31 @@ Collector</a>). Turns <code>--firmware</code> on</td>
 <code>clang</code>. Goes with the three options around it</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>--web</code></td>
+<td style="text-align: left;"><code>build</code></td>
+<td style="text-align: left;">write a web page that runs the program:
+<code>name.html</code> beside it, or a plain page, with the program
+inside, as <code>name.web.html</code> (<a href="web.html#ch-web">A
+Program in a Web Page</a>). Goes with no other build option</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>--memory</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">the program reports, as it ends, how much
 memory it used (<a href="memory.html#ch-memory">Memory</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--check</code></td>
 <td style="text-align: left;"><code>format</code></td>
 <td style="text-align: left;">change nothing; name the files that are
 not laid out, and fail if there are any</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>--package</code></td>
 <td style="text-align: left;"><code>new</code></td>
 <td style="text-align: left;">make a package, not a program</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--update</code></td>
 <td style="text-align: left;"><code>fetch</code></td>
 <td style="text-align: left;">look every version up again, and not at

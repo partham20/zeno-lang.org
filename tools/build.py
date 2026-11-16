@@ -82,7 +82,7 @@ def sample(name, title=None):
 
 # --- Layout ------------------------------------------------------------------
 
-NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Book", "/book/"), ("Docs", "/docs/"),
+NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Book", "/book/"), ("Playground", "/playground/"), ("Docs", "/docs/"),
        ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
 
 # The wordmark, "Almost": the name in lowercase strokes, and an o whose ring
@@ -271,7 +271,7 @@ DOC_GROUPS = [
     ("Programs in many files", "Modules, imports, folders and packages.",
      ["modules", "packages"]),
     ("The web", "A program in a web page, built to WebAssembly.",
-     ["web"]),
+     ["web", "playground"]),
     ("Tools", "Starting a program, tests, the formatter and the language server.",
      ["new", "testing", "format", "lsp"]),
     ("The audit and 0.1", "Every feature checked, the gaps real programs found, and what 0.1 holds.",
@@ -622,6 +622,7 @@ DONE = [
     ("The gaps programs found", "<code>+=</code> and a format on a quantity.", "gaps"),
     ("Version 0.1", "Every provisional decision read again. The list is done.", "version-0.1"),
     ("A program in a web page", "<code>import web</code> and <code>zeno build --web</code>. Coming in 0.2.", "web"),
+    ("A playground", "Write and run Zeno in the browser, with nothing installed.", "playground"),
 ]
 NEXT = [
     ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
@@ -708,6 +709,21 @@ def build_home():
            source, home=True)
 
 
+def build_playground():
+    """/playground/: the page `zeno playground` writes, to try Zeno with nothing installed."""
+    wasm = Path(ARGS.zeno) / "target" / "wasm32-unknown-unknown" / "release" / "zeno.wasm"
+    if not wasm.exists():
+        sys.exit("build the WebAssembly compiler first: cargo build --release --target wasm32-unknown-unknown")
+    zeno = Path(ARGS.zeno) / "target" / "release" / "zeno"
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run([str(zeno), "playground"], cwd=tmp, check=True,
+                       env={**os.environ, "ZENO_WASM": str(wasm)}, capture_output=True)
+        dest = SITE / "playground"
+        dest.mkdir(exist_ok=True)
+        shutil.copy(Path(tmp) / "playground.html", dest / "index.html")
+    PAGES.append("/playground/")
+
+
 def build_book():
     """Copy The Zeno Book, built in the language repository, to /book/."""
     src = Path(ARGS.zeno) / "book" / "dist" / "html"
@@ -743,6 +759,7 @@ def main():
     build_roadmap()
     build_about()
     build_book()
+    build_playground()
     build_404()
     build_sitemap()
     print(f"wrote {len(PAGES)} pages")

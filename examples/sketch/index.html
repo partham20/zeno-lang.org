@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>sketch.zeno · Zeno</title>
+<meta name="description" content="A sheet to draw on with the mouse, in a page. A Zeno example, with its output.">
+<meta property="og:title" content="sketch.zeno · Zeno">
+<meta property="og:description" content="A sheet to draw on with the mouse, in a page. A Zeno example, with its output.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/examples/sketch/">
+<meta property="og:image" content="https://zeno-lang.org/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/examples/sketch/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/" aria-current="page">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/docs/">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+  </div>
+</header>
+<main id="content">
+<div class="narrow">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><a href="/examples/">Examples</a></p>
+  <h1 class="example-title">A sheet to draw on with the mouse, in a page</h1>
+  <p class="lede small">The whole of <code>examples/sketch.zeno</code>, and what <code>zeno run</code> prints for it.</p>
+  <div class="example-files"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">sketch.zeno</span></figcaption><pre><code class="zeno"># A sheet to draw on with the mouse, in a page.
+#
+# The page is `sketch.html`, beside this file: four buttons that are
+# colours, a button that wipes the sheet, and a `&lt;canvas&gt;`, which is an
+# element a program can draw on.
+#
+#     zeno build --web examples/sketch.zeno    writes sketch.web.html: open it
+#     zeno run examples/sketch.zeno            runs it here, on a simulated page
+#     zeno test examples/sketch.zeno           runs its tests
+#
+# It shows what `todo.zeno` does not: a function that asks for the
+# `Event` to learn where the mouse is, drawing, the style of one
+# element, and something that is kept from one visit to the next.
+import web
+
+let paper = web.element("#paper")
+let lines = web.element("#lines")
+
+# The colour that is drawn in. The one chosen on the last visit, if
+# there was a visit.
+var colour = "black"
+let kept = web.load("sketch colour")
+if kept is not none {
+    colour = kept
+}
+
+# Is the button of the mouse down, and where the mouse was last.
+var drawing = false
+var last_x = 0.0
+var last_y = 0.0
+var drawn = 0
+
+function show_drawn() {
+    lines.text = f"{drawn} lines drawn"
+    lines.set_style("color", colour)
+}
+
+# Each colour button says which colour it is in the page itself, as
+# `data-colour`. The one that is chosen gets a black edge, which is a
+# class, and the look of the class is CSS.
+function choose(wanted: str) {
+    colour = wanted
+    web.save("sketch colour", colour)
+    for button in web.elements(".colour") {
+        if button.get("data-colour") == colour {
+            button.add_class("chosen")
+        } else {
+            button.remove_class("chosen")
+        }
+    }
+    show_drawn()
+}
+
+for button in web.elements(".colour") {
+    let its = button.get("data-colour")
+    if its is not none {
+        button.set_style("background-color", its)
+        button.on("click", function() { choose(its) })
+    }
+}
+
+# The mouse went down on the sheet: a line starts here.
+function pen_down(event: Event) {
+    drawing = true
+    last_x = event.x
+    last_y = event.y
+}
+
+# The mouse moved. With the button down, that is a line from where it
+# was to where it is.
+function pen_moved(event: Event) {
+    if drawing {
+        paper.draw_line(last_x, last_y, event.x, event.y, colour)
+        last_x = event.x
+        last_y = event.y
+        drawn += 1
+        show_drawn()
+    }
+}
+
+function pen_up() {
+    drawing = false
+}
+
+function wipe() {
+    paper.erase()
+    drawn = 0
+    show_drawn()
+    paper.draw_text(10, 10, "Draw here", "silver")
+}
+
+paper.on("mousedown", pen_down)
+paper.on("mousemove", pen_moved)
+paper.on("mouseup", pen_up)
+paper.on("mouseleave", pen_up)
+web.element("#wipe").on("click", wipe)
+
+choose(colour)
+wipe()
+
+test "the mouse draws only while its button is down" {
+    let before = drawn
+    paper.fire("mousemove")
+    assert drawn == before
+    paper.fire("mousedown")
+    paper.fire("mousemove")
+    paper.fire("mousemove")
+    assert drawn == before + 2
+    paper.fire("mouseup")
+    paper.fire("mousemove")
+    assert drawn == before + 2
+}
+
+test "a colour that is chosen is kept" {
+    choose("crimson")
+    assert web.load("sketch colour") == "crimson"
+    assert lines.get_style("color") == "crimson"
+}
+
+test "wiping starts the count again" {
+    paper.fire("mousedown")
+    paper.fire("mousemove")
+    web.element("#wipe").fire("click")
+    assert drawn == 0
+}</code></pre><div class="out-label">zeno run examples/sketch.zeno</div><pre class="out"><code>&lt;button&gt; style background-color: black
+&lt;button&gt; style background-color: crimson
+&lt;button&gt; style background-color: royalblue
+&lt;button&gt; style background-color: seagreen
+&lt;button&gt; class +chosen
+#lines text: 0 lines drawn
+#lines style color: black
+#paper erase
+#paper draw_text 10 10 Draw here silver</code></pre></figure></div>
+  <p class="note-small">This program runs in a web page. <a href="/examples/sketch/live.html">Try it live</a>: <code>zeno build --web examples/sketch.zeno</code> built it from <code>examples/sketch.html</code>, with Zeno compiled to WebAssembly.</p>
+  <p class="source">See it on GitHub: <a href="https://github.com/partham20/zeno-lang/blob/main/examples/sketch.zeno">examples/sketch.zeno</a>.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/examples/driver/"><span>Previous</span>driver.zeno</a><a class="next" href="/examples/todo/"><span>Next</span>todo.zeno</a></nav>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

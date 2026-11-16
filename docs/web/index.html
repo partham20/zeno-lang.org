@@ -28,7 +28,7 @@
 <div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
 <header class="nav">
   <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
-  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
@@ -38,7 +38,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>The web</h4><a href="/docs/web/" aria-current="page">How a Zeno program runs in a web page</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><h4>More</h4><a href="/docs/found-by-the-book/">What writing the book found</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/">Packages</a><h4>The web</h4><a href="/docs/web/" aria-current="page">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Tools</h4><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><h4>More</h4><a href="/docs/found-by-the-book/">What writing the book found</a><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>How a Zeno program runs in a web page</h1>
@@ -92,6 +92,11 @@ server.</p>
 <p>This page is about what the program can ask of the page, and then
 about how a language written in Rust comes to be running in a
 browser.</p>
+<p>A second example, <code>examples/sketch.zeno</code>, is a sheet to draw on with
+the mouse: it asks where the mouse is, draws, sets the style of one
+element and keeps the chosen colour for the next visit. And
+<a href="/docs/playground/"><code>playground.md</code></a> is about a page in which Zeno
+programs are written and run with nothing installed.</p>
 <h2 id="the-web-module">The <code>web</code> module</h2>
 <table>
 <thead>
@@ -118,8 +123,32 @@ browser.</p>
 <td>call <code>tick</code> once, that much later. The time must have a unit</td>
 </tr>
 <tr>
+<td><code>web.every(1 s, tick)</code></td>
+<td>call <code>tick</code> that often, for as long as the page is open</td>
+</tr>
+<tr>
 <td><code>web.on_key(pressed)</code></td>
 <td>call <code>pressed</code> with the name of each key that is pressed: <code>"a"</code>, <code>"Enter"</code>, <code>"ArrowLeft"</code></td>
+</tr>
+<tr>
+<td><code>web.save("name", "Partha")</code></td>
+<td>keep text under a name. It is there the next time the page is opened in the same browser</td>
+</tr>
+<tr>
+<td><code>web.load("name")</code></td>
+<td>the text kept under the name, or <code>none</code></td>
+</tr>
+<tr>
+<td><code>web.forget("name")</code></td>
+<td>nothing is kept under the name any more</td>
+</tr>
+<tr>
+<td><code>web.fetch("/prices.txt", done)</code></td>
+<td>ask the network for what is at that address, and call <code>done(status, body)</code> when the answer comes</td>
+</tr>
+<tr>
+<td><code>web.post("/orders", text, done)</code></td>
+<td>send <code>text</code> to that address, and call <code>done(status, body)</code> with what comes back</td>
 </tr>
 </tbody>
 </table>
@@ -148,6 +177,10 @@ id, <code>.done</code> every element of that class, <code>li</code> every list i
 <td>call <code>pressed</code> whenever that happens to it: <code>"click"</code>, <code>"input"</code>, <code>"submit"</code>, any event of the browser</td>
 </tr>
 <tr>
+<td><code>e.fire("click")</code></td>
+<td>call, now, what <code>on</code> was given for that event. It is how a test presses a button</td>
+</tr>
+<tr>
 <td><code>e.append(child)</code></td>
 <td><code>child</code> becomes the last thing inside it</td>
 </tr>
@@ -171,6 +204,30 @@ id, <code>.done</code> every element of that class, <code>li</code> every list i
 <td><code>e.get("href")</code>, <code>e.set("href", "/about")</code></td>
 <td>an attribute. <code>get</code> gives <code>none</code> for one it does not have</td>
 </tr>
+<tr>
+<td><code>e.set_style("color", "red")</code>, <code>e.get_style("color")</code></td>
+<td>the style of this one element, named as CSS names it. <code>get_style</code> gives <code>none</code> for one that was not set</td>
+</tr>
+<tr>
+<td><code>e.draw_rect(x, y, width, height, "red")</code></td>
+<td>on a <code>&lt;canvas&gt;</code>: a filled rectangle</td>
+</tr>
+<tr>
+<td><code>e.draw_circle(x, y, radius, "red")</code></td>
+<td>a filled circle, with its middle at <code>x</code>, <code>y</code></td>
+</tr>
+<tr>
+<td><code>e.draw_line(x1, y1, x2, y2, "red")</code></td>
+<td>a line from one place to another</td>
+</tr>
+<tr>
+<td><code>e.draw_text(x, y, "Hello", "red")</code></td>
+<td>text, with its top left corner at <code>x</code>, <code>y</code>, in the font CSS gave the canvas</td>
+</tr>
+<tr>
+<td><code>e.erase()</code></td>
+<td>the canvas is empty again</td>
+</tr>
 </tbody>
 </table>
 <p><code>Element</code> is a type, so a function can ask for one, and a list can
@@ -190,12 +247,48 @@ give <code>none</code>, because nearly every program would then write
 <code>if count is not none</code> around everything, to guard against a spelling
 mistake that the first run finds anyway. <code>web.elements</code> is the one to
 ask when there may be none (14.3).</p>
-<p><strong>A function that the page calls takes nothing.</strong> There is no event
-object. The function already knows which element it is for, because
+<p><strong>A function that the page calls takes nothing, unless it asks.</strong>
+Most functions given to <code>on</code> need to know nothing about what
+happened. The function already knows which element it is for, because
 it was written where that element was in reach: <code>item</code> in the
 example above belongs to the function that was given to <code>item.on</code>.
-The one thing an event carries that a program cannot get another
-way is which key was pressed, so <code>on_key</code> hands that over (14.5).</p>
+So <code>function() { ... }</code> is enough (14.5).</p>
+<p>Some need more: where the mouse was, or which of the things inside
+the element was clicked. A function that takes one parameter, an
+<code>Event</code>, is handed that (16.1):</p>
+<pre><code class="zeno">let paper = web.element("#paper")
+
+paper.on("click", function(event: Event) {
+    paper.draw_circle(event.x, event.y, 4, "crimson")
+})</code></pre>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>event.kind</code></td>
+<td>the name of the event: <code>"click"</code></td>
+</tr>
+<tr>
+<td><code>event.target</code></td>
+<td>the element it happened to. For a click on an <code>&lt;li&gt;</code> inside the <code>&lt;ul&gt;</code> that <code>on</code> was given to, the <code>&lt;li&gt;</code></td>
+</tr>
+<tr>
+<td><code>event.x</code>, <code>event.y</code></td>
+<td>where the mouse was, in pixels from the top left corner of the element <code>on</code> was given to. 0 for an event of no mouse</td>
+</tr>
+<tr>
+<td><code>event.key</code></td>
+<td>the key, for <code>"keydown"</code> and <code>"keyup"</code>. <code>""</code> for any other event</td>
+</tr>
+</tbody>
+</table>
+<p>An <code>Event</code> says what happened, so its fields are read and never given
+a new value.</p>
 <p><strong><code>text</code> and <code>value</code> are fields, and the rest are methods.</strong> They
 are the two things a program both reads and writes, and <code>count.text
 = "3"</code> says that as a variable does (14.4).</p>
@@ -237,22 +330,56 @@ if the program made it. A change to an element that is not on the
 page yet prints nothing, and neither does writing what is already
 there.</p>
 <p>Nobody presses a button on a simulated page, and no time passes, so
-it calls no function it was given. The tests do that:</p>
+it calls no function it was given. The tests do that. They call the
+function themselves, or they say <code>fire</code>, which calls whatever <code>on</code>
+was given for that event, in the order it was given:</p>
 <pre><code class="zeno">test "an empty box adds nothing" {
     let before = remaining
     box.value = "   "
     sent()
     assert remaining == before
+}
+
+test "the mouse draws only while its button is down" {
+    paper.fire("mousemove")
+    assert drawn == 0
+    paper.fire("mousedown")
+    paper.fire("mousemove")
+    assert drawn == 1
 }</code></pre>
+<p><code>fire</code> does the same in a browser: it calls the program's own
+functions, at once, and does not send the browser an event. An
+<code>Event</code> that <code>fire</code> makes has the element as its <code>target</code>, and 0 for
+<code>x</code> and <code>y</code> (16.3).</p>
+<p>Drawing prints a line each (<code>#paper draw_line 0 0 10 10 black</code>), and
+so does a style (<code>#lines style color: red</code>). What <code>web.save</code> keeps is
+kept until the run ends. <code>web.fetch</code> and <code>web.post</code> reach no network
+and call nothing, as a timer calls nothing.</p>
 <p>This is what the simulated page is for. What a page does can be
 tested without a browser, in the same run as every other test, and
 the two engines (<code>zeno run</code> and <code>zeno run --vm</code>) are held to the same
 lines.</p>
-<p>There are two things it cannot tell you.</p>
-<p>It cannot say whether the page has the elements the program asks
-for. It has no HTML to look in, so it has them all.
-<code>web.element("#cuont")</code> works on a desk and stops the program in the
-browser.</p>
+<h3 id="the-page-that-was-written">The page that was written</h3>
+<p>If <code>todo.html</code> is beside <code>todo.zeno</code>, <code>zeno run</code> and <code>zeno test</code> read
+it, and the simulated page has the elements it has: their ids,
+classes, attributes and text, what a box holds, and which is inside
+which. So a name that is spelt wrong is found on a desk, with the
+same words as in the browser:</p>
+<pre><code>$ zeno run todo.zeno
+error: uncaught ValueError: the page has no element that answers to `#lsit`. `web.elements` gives a list, which may be empty
+  --&gt; todo.zeno:14:12
+   |
+14 | let list = web.element("#lsit")
+   |            ^</code></pre>
+<p>A program with no page beside it gets a page that has every element
+it asks for, as before, because there is nothing to hold it to
+(16.9).</p>
+<p><code>src/html.rs</code> is the reader. It is not a browser's: it reads a page
+that is written right, and makes the best of one that is not.</p>
+<p>There are two things the simulated page cannot tell you.</p>
+<p>It does not know CSS. It cannot say what a class looks like, or that
+<code>set_style("colour", "red")</code> names no style, which the browser says
+when the page is opened.</p>
 <p>And it reads only plain selectors: a tag, <code>.class</code> and <code>#id</code>,
 together (<code>li.done</code>) and one inside another (<code>#list li</code>). For
 <code>web.elements("ul &gt; li")</code> it stops the program and says that a
@@ -272,10 +399,26 @@ the same.</p>
 <p>The built page holds three things:</p>
 <ol>
 <li><strong>The program</strong>, as the text you wrote, one entry for each file.</li>
-<li><strong><code>zeno.wasm</code></strong>, written out in base64, because a page is text.</li>
-<li><strong><code>src/web.js</code></strong>, two hundred lines of JavaScript that start the
+<li><strong><code>zeno.wasm</code></strong>, packed the way a <code>.zip</code> file is packed, and then
+   written out in base64, because a page is text.</li>
+<li><strong><code>src/web.js</code></strong>, three hundred lines of JavaScript that start the
    one with the other.</li>
 </ol>
+<h3 id="how-big-the-page-is">How big the page is</h3>
+<p><code>zeno.wasm</code> was 1.1 MB when this stage began, and base64 made that
+1.5 MB in every page. Two things brought a built page down to 0.4 MB.</p>
+<p>It is built for size where that costs no speed, as one piece, with
+what nothing calls left out of the whole (<code>.cargo/config.toml</code> has
+the four settings and what each does). That made it 800 KB, and a
+loop and a recursion ran as fast as before. One more step, the
+smallest setting there is, made it 650 KB and half again as slow,
+and was not taken (16.10).</p>
+<p>And it is packed. <code>src/deflate.rs</code> is the packer: it finds what the
+bytes repeat, and gives the common things short codes, which is
+DEFLATE, the format of <code>.zip</code> and <code>.gz</code>. 800 KB becomes 290 KB, within
+two parts in a hundred of what <code>gzip -9</code> makes of it. A browser
+unpacks DEFLATE by itself (<code>DecompressionStream</code>, in every browser
+since 2023), so nothing is added to the page to undo it (16.11).</p>
 <h3 id="the-line-between-them">The line between them</h3>
 <p>WebAssembly can do arithmetic and call functions, and nothing else.
 It cannot print, read a clock or touch a page. Whatever it needs of
@@ -302,11 +445,11 @@ the only file that is built for the browser alone.</p>
 </tr>
 <tr>
 <td><code>zeno_call(handler)</code></td>
-<td>call a function the program gave to <code>on</code> or <code>after</code></td>
+<td>call a function the program gave to <code>after</code> or <code>every</code></td>
 </tr>
 <tr>
 <td><code>zeno_call_with(handler, place, length)</code></td>
-<td>the same, with one str: the key</td>
+<td>the same, with what the page hands over, as JSON: <code>{"key": "Enter"}</code>, <code>{"event": {...}}</code> for <code>on</code>, <code>{"reply": [200, "..."]}</code> for <code>fetch</code></td>
 </tr>
 </tbody>
 </table>
@@ -357,7 +500,16 @@ anything of the browser's.</p>
 <p>One function, <code>zeno_host_page</code>, carries them all. That keeps the
 line between the two at five functions however many things the <code>web</code>
 module learns to do: a new one is a new name in <code>ops</code> in <code>web.js</code>
-and a few lines in <code>src/page.rs</code>, and nothing else moves.</p>
+and a few lines in <code>src/page.rs</code>, and nothing else moves. Styles,
+drawing, what is kept between visits and the network were all added
+that way, and the line did not move.</p>
+<p><strong>An event</strong> crosses as JSON too, the other way. The page always
+sends it. Zeno hands it to the function only if the function asked,
+which it knows from when <code>on</code> was called (<code>Handler::takes_event</code>).</p>
+<p><strong>The network</strong> answers later, so <code>fetch</code> is a request with the
+number of a function in it, like <code>on</code>. When the answer comes, the
+page calls that function with the status and the text. An address
+that cannot be reached at all answers with status 0.</p>
 <p><strong>A function</strong> crosses as a number too. <code>button.on("click", pressed)</code>
 keeps <code>pressed</code> in a list in Zeno and tells the page its place in
 that list. When the button is pressed, the page calls
@@ -409,24 +561,36 @@ a program in several files with a package
 (<code>examples/thermostat</code>, which prints the same in the browser as
 under <code>zeno run</code>), an error in a function called by a timer, and
 recursion past the limit.</p>
+<p>The second stage was tried the same way: <code>examples/sketch.zeno</code>
+(lines drawn with the mouse held down, a colour chosen, the page
+opened again to see that the colour was kept), and a page served from
+a web server that fetched a file that was there (200), one that was
+not (404), an address nothing answers at (0), posted text, counted
+with <code>every</code>, asked which <code>&lt;li&gt;</code> of a list was clicked, and was
+refused a style and a drawing that cannot be.</p>
 <h2 id="what-it-does-not-do-yet">What it does not do yet</h2>
 <ul>
-<li><strong>Only what is in the table.</strong> No style of one element (use a
-  class), no place of the mouse, no drawing, no network, nothing
-  kept between visits. Each is a name in <code>ops</code> and a few lines in
-  <code>page.rs</code> away.</li>
-<li><strong>It is an interpreter in a page.</strong> <code>zeno.wasm</code> is 1.1 MB, and
-  every built page carries it (1.5 MB as base64). A program runs at
-  the speed of <code>zeno run</code>, which is plenty for a page that waits for
-  clicks and not for a game that draws sixty times a second.</li>
+<li><strong>Only what is in the tables.</strong> No images drawn on a canvas, no
+  curves, no touch with more than one finger, no JSON read into
+  values (the text of an answer is a str), no address bar (a page
+  with several views shows and hides them).</li>
+<li><strong>It is an interpreter in a page.</strong> Every built page carries
+  <code>zeno.wasm</code> (0.4 MB of the page). A program runs at the speed of
+  <code>zeno run</code>, which is plenty for a page that waits for clicks and
+  for a sketch, and not for a game that draws a thousand things
+  sixty times a second.</li>
 <li><strong>The program is in the page as you wrote it</strong>, comments and all.
   Anyone who opens the page can read it.</li>
-<li><strong>One browser was tried</strong>: Chromium. Nothing in <code>web.js</code> is new to
-  any browser of the last five years, and that is not the same as
-  having run it.</li>
+<li><strong>One browser was tried</strong>: Chromium. The page needs a browser from
+  2023 or later, for <code>DecompressionStream</code>. Firefox and Safari have
+  it, and that is not the same as having run them.</li>
 <li><strong><code>input</code> uses the browser's own question box</strong>, which is ugly
   and stops the page while it is open. A page should have a box of
   its own and read its <code>value</code>.</li>
+<li><strong><code>web.fetch</code> is held to what the browser allows.</strong> A page opened
+  from the disk can fetch almost nothing, and a page on a web server
+  can fetch from another server only if that server permits it. The
+  program is told status 0, and the browser's console says why.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
 <ol>
@@ -452,18 +616,27 @@ recursion past the limit.</p>
 <li><code>print</code> adds to <code>#zeno-output</code> each time. Write a program that
    prints a thousand lines and watch the page. Then change <code>print</code>
    in <code>web.js</code> so that the element is found once.</li>
-<li>A big one: an event that carries something. <code>canvas.on("click",
-   ...)</code> is no use without knowing where the click was. How should
-   the function get it: two parameters, an object, or a question it
-   can ask (<code>web.mouse()</code>)? What does each do to the rule that a
-   function the page calls takes nothing?</li>
+<li><code>examples/sketch.zeno</code> draws a line for every move of the mouse.
+   Make it draw dots (<code>draw_circle</code>) while Shift is held. An <code>Event</code>
+   has no field for that. Where would you add one: which three files
+   move?</li>
+<li><code>list.on("click", ...)</code> with <code>event.target</code> is one function for a
+   whole list, where <code>todo.zeno</code> gives every item its own. Rewrite
+   <code>todo.zeno</code> that way. Which is easier to test with <code>fire</code>?</li>
+<li>Write a page that fetches a file and shows it, and a test for the
+    function that is given the answer. The test cannot fetch. What
+    does it call?</li>
+<li>Pack a file of a million zeros with <code>deflate::pack</code> (the ignored
+    test <code>how_small</code> takes a file name in <code>PACK_FILE</code>). Then find
+    <code>TRIES</code> in <code>src/deflate.rs</code>, set it to 1, and pack <code>zeno.wasm</code>.
+    How much bigger is it, and how much faster?</li>
 <li>A bigger one: the built page carries the whole checker, and the
    program was checked before the page was built. What could
    <code>zeno.wasm</code> leave out, and what would have to travel in place of
    the program's text?</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/web.md">docs/web.md</a> in the language repository.</p>
-  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/packages/"><span>Previous</span>Packages</a><a class="next" href="/docs/new/"><span>Next</span>Starting a program: zeno new</a></nav>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/packages/"><span>Previous</span>Packages</a><a class="next" href="/docs/playground/"><span>Next</span>The playground: Zeno in a page, with nothing installed</a></nav>
 </article>
 <aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-web-module">The web module</a></li><li><a href="#the-page-you-write-and-the-page-that-is-built">The page you write, and the page that is built</a></li><li><a href="#on-a-desk-the-simulated-page">On a desk: the simulated page</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#building-zenowasm-yourself">Building zeno.wasm yourself</a></li><li><a href="#how-it-was-tried">How it was tried</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
