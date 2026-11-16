@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>sketch.zeno · Zeno</title>
-<meta name="description" content="A sheet to draw on with the mouse, in a page. A Zeno example, with its output.">
+<meta name="description" content="A sheet to draw on with the mouse, a finger or a pen, in a page. A Zeno example, with its output.">
 <meta property="og:title" content="sketch.zeno · Zeno">
-<meta property="og:description" content="A sheet to draw on with the mouse, in a page. A Zeno example, with its output.">
+<meta property="og:description" content="A sheet to draw on with the mouse, a finger or a pen, in a page. A Zeno example, with its output.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/examples/sketch/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
@@ -39,9 +39,9 @@
 <main id="content">
 <div class="narrow">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><a href="/examples/">Examples</a></p>
-  <h1 class="example-title">A sheet to draw on with the mouse, in a page</h1>
+  <h1 class="example-title">A sheet to draw on with the mouse, a finger or a pen, in a page</h1>
   <p class="lede small">The whole of <code>examples/sketch.zeno</code>, and what <code>zeno run</code> prints for it.</p>
-  <div class="example-files"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">sketch.zeno</span></figcaption><pre><code class="zeno"># A sheet to draw on with the mouse, in a page.
+  <div class="example-files"><figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">sketch.zeno</span></figcaption><pre><code class="zeno"># A sheet to draw on with the mouse, a finger or a pen, in a page.
 #
 # The page is `sketch.html`, beside this file: four buttons that are
 # colours, a button that wipes the sheet, and a `&lt;canvas&gt;`, which is an
@@ -132,10 +132,12 @@ function wipe() {
     paper.draw_text(10, 10, "Draw here", "silver")
 }
 
-paper.on("mousedown", pen_down)
-paper.on("mousemove", pen_moved)
-paper.on("mouseup", pen_up)
-paper.on("mouseleave", pen_up)
+# "pointer" events come from a mouse, a finger and a pen alike, so the
+# same four lines draw on a desk and on a phone.
+paper.on("pointerdown", pen_down)
+paper.on("pointermove", pen_moved)
+paper.on("pointerup", pen_up)
+paper.on("pointerleave", pen_up)
 web.element("#wipe").on("click", wipe)
 
 choose(colour)
@@ -143,14 +145,14 @@ wipe()
 
 test "the mouse draws only while its button is down" {
     let before = drawn
-    paper.fire("mousemove")
+    paper.fire("pointermove")
     assert drawn == before
-    paper.fire("mousedown")
-    paper.fire("mousemove")
-    paper.fire("mousemove")
+    paper.fire("pointerdown")
+    paper.fire("pointermove")
+    paper.fire("pointermove")
     assert drawn == before + 2
-    paper.fire("mouseup")
-    paper.fire("mousemove")
+    paper.fire("pointerup")
+    paper.fire("pointermove")
     assert drawn == before + 2
 }
 
@@ -161,8 +163,8 @@ test "a colour that is chosen is kept" {
 }
 
 test "wiping starts the count again" {
-    paper.fire("mousedown")
-    paper.fire("mousemove")
+    paper.fire("pointerdown")
+    paper.fire("pointermove")
     web.element("#wipe").fire("click")
     assert drawn == 0
 }</code></pre><div class="out-label">zeno run examples/sketch.zeno</div><pre class="out"><code>&lt;button&gt; style background-color: black

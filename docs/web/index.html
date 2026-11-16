@@ -178,7 +178,7 @@ id, <code>.done</code> every element of that class, <code>li</code> every list i
 </tr>
 <tr>
 <td><code>e.on("click", pressed)</code></td>
-<td>call <code>pressed</code> whenever that happens to it: <code>"click"</code>, <code>"input"</code>, <code>"submit"</code>, any event of the browser</td>
+<td>call <code>pressed</code> whenever that happens to it: <code>"click"</code>, <code>"input"</code>, <code>"submit"</code>, any event of the browser. For drawing, <code>"pointerdown"</code>, <code>"pointermove"</code> and <code>"pointerup"</code> come from a mouse, a finger and a pen alike</td>
 </tr>
 <tr>
 <td><code>e.fire("click")</code></td>
@@ -283,7 +283,7 @@ paper.on("click", function(event: Event) {
 </tr>
 <tr>
 <td><code>event.x</code>, <code>event.y</code></td>
-<td>where the mouse was, in pixels from the top left corner of the element <code>on</code> was given to. 0 for an event of no mouse</td>
+<td>where the mouse (or finger, or pen) was, in pixels from the top left corner of the element <code>on</code> was given to; on a <code>&lt;canvas&gt;</code>, in the canvas's own pixels, inside its border, however large the page shows it. 0 for an event of no mouse</td>
 </tr>
 <tr>
 <td><code>event.key</code></td>
@@ -345,10 +345,10 @@ was given for that event, in the order it was given:</p>
 }
 
 test "the mouse draws only while its button is down" {
-    paper.fire("mousemove")
+    paper.fire("pointermove")
     assert drawn == 0
-    paper.fire("mousedown")
-    paper.fire("mousemove")
+    paper.fire("pointerdown")
+    paper.fire("pointermove")
     assert drawn == 1
 }</code></pre>
 <p><code>fire</code> does the same in a browser: it calls the program's own

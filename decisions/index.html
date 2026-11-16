@@ -45,7 +45,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 414 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 415 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8003,6 +8003,24 @@ only for problems), the same logo and the same light or dark choice,
 which the two share. Panels with a thin rule instead of shadows,
 icons drawn as single lines, and the labels of Format and Share
 dropped to icons on a phone.</p>
+<h3 id="205-drawing-with-a-finger-pointer-events-and-a-canvas-counted-in-its-own-pixels">20.5 Drawing with a finger: pointer events, and a canvas counted in its own pixels</h3>
+<p>The sketch listens for <code>"pointerdown"</code>, <code>"pointermove"</code> and
+<code>"pointerup"</code> instead of the mouse's events, and on a <code>&lt;canvas&gt;</code>
+<code>event.x</code> and <code>event.y</code> are counted inside its border, in the
+canvas's own pixels, however large the page shows it.</p>
+<p><strong>Why pointer events.</strong> A browser sends them for a mouse, a finger
+and a pen alike, with the same place in them, so one program draws
+on a desk and on a phone. Nothing in Zeno had to change for that:
+<code>on</code> already takes any event of the browser (14). The canvas says
+<code>touch-action: none</code>, so a finger draws instead of scrolling.</p>
+<p><strong>Why the canvas's own pixels.</strong> On a phone the canvas is shown
+narrower than it is (<code>max-width: 100%</code>), and a place counted in the
+page's pixels would draw a line away from the finger. <code>draw_line</code>
+takes the canvas's pixels, so the event gives the same kind of
+number, and a program never has to know how large the canvas is
+shown. Before, the place also counted the border, one pixel off.
+Only a canvas is counted this way: for anything else there are no
+pixels of its own.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

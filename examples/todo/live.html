@@ -156,18 +156,27 @@
     return element.id ? "#" + element.id : "<" + element.tagName.toLowerCase() + ">";
   }
 
-  // What the program is told of an event. The place of the mouse is
-  // counted from the top left corner of the element `on` was given to.
+  // What the program is told of an event. The place of the mouse (or
+  // finger, or pen) is counted from the top left corner of the element
+  // `on` was given to. On a <canvas> it is counted in the canvas's own
+  // pixels, the ones `draw_line` takes, even when the page shows the
+  // canvas smaller or larger than it is, as a phone does (decisions 20.5).
   function told(happened, kind, element) {
     const box = element.getBoundingClientRect();
     const mouse = typeof happened.clientX === "number";
     const target = happened.target instanceof Element ? happened.target : element;
+    // Inside the border of a canvas, and in its pixels.
+    const canvas = element instanceof HTMLCanvasElement && element.clientWidth > 0 && element.clientHeight > 0;
+    const left = box.left + (canvas ? element.clientLeft : 0);
+    const top = box.top + (canvas ? element.clientTop : 0);
+    const across = canvas ? element.width / element.clientWidth : 1;
+    const down = canvas ? element.height / element.clientHeight : 1;
     return {
       kind: kind,
       target: numberOf(target),
       name: nameOf(target),
-      x: mouse ? happened.clientX - box.left : 0,
-      y: mouse ? happened.clientY - box.top : 0,
+      x: mouse ? (happened.clientX - left) * across : 0,
+      y: mouse ? (happened.clientY - top) * down : 0,
       key: typeof happened.key === "string" ? happened.key : "",
     };
   }
