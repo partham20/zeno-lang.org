@@ -206,7 +206,7 @@ href="math.html#ch-math">24</a>)</td>
 <td style="text-align: left;"><code>min(...)</code>,
 <code>max(...)</code></td>
 <td style="text-align: left;">the smallest or largest, of numbers or of
-a list</td>
+a list; quantities in one unit too</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>sum(xs)</code></td>
@@ -509,66 +509,80 @@ href="reading-writing.html#ch-reading-writing">23</a>)</td>
 <td style="text-align: left;">the words after the file</td>
 </tr>
 <tr class="even">
+<td colspan="2" style="text-align: left;"><code>import json</code> (<a
+href="reading-writing.html#ch-reading-writing">23</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>parse(text)</code></td>
+<td style="text-align: left;">the value JSON text describes;
+<code>ValueError</code> if it is not JSON</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>write(value)</code></td>
+<td style="text-align: left;">a value, or an object field by field, as
+JSON on one line</td>
+</tr>
+<tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import web</code> (<a
 href="web.html#ch-web">34</a>)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>element(selector)</code></td>
 <td style="text-align: left;">the first element that answers to it</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>elements(selector)</code></td>
 <td style="text-align: left;">every one, as a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>create(tag, text)</code></td>
 <td style="text-align: left;">a new element, not yet on the page</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>after(t, f)</code></td>
 <td style="text-align: left;">call <code>f</code> once, <code>t</code>
 later</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>on_key(f)</code></td>
 <td style="text-align: left;">call <code>f</code> with the name of each
 key pressed</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.text</code>,
 <code>e.value</code></td>
 <td style="text-align: left;">what it shows; what was typed into it</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.on(event, f)</code></td>
 <td style="text-align: left;">call <code>f</code> when that happens to
 it</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.append(c)</code></td>
 <td style="text-align: left;">put <code>c</code> inside it, last</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.remove()</code>,
 <code>clear()</code></td>
 <td style="text-align: left;">take it, or what is in it, off the
 page</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.add_class(c)</code>,
 <code>remove_class(c)</code></td>
 <td style="text-align: left;">give it a class, or take one away</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.has_class(c)</code></td>
 <td style="text-align: left;">whether it has that class</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.show()</code>,
 <code>hide()</code></td>
 <td style="text-align: left;">whether it is shown</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.get(name)</code>,
 <code>set(name, v)</code></td>
 <td style="text-align: left;">an attribute</td>

@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 390 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 405 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -7213,7 +7213,8 @@ against somebody who can change the release itself, since they would
 change both files. It protects against everything less than that.</p>
 <h3 id="1510-left-for-later">15.10 Left for later</h3>
 <ul>
-<li>Signing (15.6), and packages for package managers (15.1).</li>
+<li>Signing (15.6).</li>
+<li>Packages for package managers came next: 15.12.</li>
 <li>The winget step of the setup program is not run by any test:
   GitHub's Windows machines have no winget.</li>
 <li><code>zeno</code> does not update itself. The installer, run again, does.</li>
@@ -7239,6 +7240,120 @@ is published.</p>
 no <code>zeno.wasm</code>, and a <code>zeno build</code> that knows only <code>cc</code> (15.5). The
 setup program leaves the first out and says the second in the box that
 offers a compiler.</p>
+<h3 id="1512-packages-for-six-package-managers-made-from-the-files-of-a-release">15.12 Packages for six package managers, made from the files of a release</h3>
+<p><code>tools/package.sh</code> makes a package of Zeno for apt (a <code>.deb</code>), pacman,
+snap and flatpak, and writes the recipe that Homebrew and winget read.
+Each holds the <code>zeno</code> of a release's archive. Nothing is built for a
+package.</p>
+<p><strong>Why.</strong> People who use a package manager want to use it for
+everything: it knows what is installed, updates it and removes it
+cleanly. And each of these is the usual way to install a program on
+some system that Zeno runs on. Making them from the released files,
+as the installers are (15.11), means one <code>zeno</code> for each processor and
+not seven that should be the same. It also means the script can be
+tried on a release that exists, which is how it was tried.</p>
+<p><strong>Turned down.</strong> <em>Building in each manager's own way</em> (a Debian source
+package, <code>cargo build</code> in the PKGBUILD and the formula, snapcraft, a
+flatpak manifest): each would compile Zeno again, in a way that
+nothing else here checks, and four of the six would need Rust on the
+machine that installs. <em>Only the two or three most used</em>: all six were
+asked for, and after the first, each was an afternoon and not a week.</p>
+<p><code>docs/packages.md</code> walks through it.</p>
+<h3 id="1513-the-deb-recommends-a-c-compiler-and-git">15.13 The <code>.deb</code> recommends a C compiler and git</h3>
+<p>Its <code>Recommends</code> line is <code>gcc | c-compiler, libc6-dev | libc-dev,
+git</code>, and <code>clang</code> is in <code>Suggests</code>.</p>
+<p><strong>Why.</strong> apt installs what a package recommends unless it is told not
+to, and that is 15.4 in apt's own words: what Zeno hands work to is
+offered, and somebody who does not want it says so. <code>Depends</code> would
+force a compiler on a machine that only runs <code>zeno run</code>. <code>gcc |
+c-compiler</code> leaves a machine that has clang alone.</p>
+<p>pacman has only <code>optdepends</code>, which it shows and does not install.
+Nearly every Arch machine that builds anything has both programs.</p>
+<h3 id="1514-the-deb-for-armhf-holds-the-build-for-armv6">15.14 The <code>.deb</code> for <code>armhf</code> holds the build for ARMv6</h3>
+<p><strong>Why.</strong> Debian's <code>armhf</code> is ARMv7, and Raspberry Pi OS gives the same
+name to a Pi 1 and a Pi Zero, which are ARMv6. A package cannot ask
+which. The ARMv6 build runs on both. The ARMv7 build would stop on a
+Pi Zero with "Illegal instruction", which says nothing to anybody.
+What is lost is a little speed on ARMv7, in an interpreter that was
+never the fast way to run a program.</p>
+<p>The snap for <code>armhf</code> holds the ARMv7 build: Ubuntu, where snaps are at
+home, has no ARMv6.</p>
+<h3 id="1515-where-a-package-puts-zeno">15.15 Where a package puts Zeno</h3>
+<p><code>/usr/lib/zeno/zeno</code> and <code>zeno.wasm</code> beside it, a link at
+<code>/usr/bin/zeno</code>, the examples and the editor setup in
+<code>/usr/share/zeno</code>, the README and the docs in <code>/usr/share/doc/zeno</code>.</p>
+<p><strong>Why.</strong> <code>zeno build --web</code> looks for <code>zeno.wasm</code> beside the program
+(<code>docs/web.md</code>), and <code>/usr/bin</code> is for programs only. A link keeps both rules:
+Linux tells a program where it really is, so Zeno finds its
+neighbour. The examples are apart from the docs because small systems,
+containers above all, are often set up to leave <code>/usr/share/doc</code> out,
+and the first thing anybody is told to do is run an example. The first
+trial of the <code>.deb</code>, in a container, found exactly that.</p>
+<h3 id="1516-the-snap-is-classic">15.16 The snap is <code>classic</code></h3>
+<p><strong>Why.</strong> A snap is otherwise shut in, and a compiler cannot work shut
+in. It reads a program from wherever it is kept, and runs the C
+compiler of the machine. The strict kind can be given the home folder
+and nothing more. <code>classic</code> has a price, which is that the Snap Store
+gives it only on request (15.21).</p>
+<h3 id="1517-the-flatpak-runs-on-the-sdk">15.17 The flatpak runs on the Sdk</h3>
+<p>Its runtime is <code>org.freedesktop.Sdk</code>, and it is given the home folder
+and the network.</p>
+<p><strong>Why.</strong> A flatpak has no <code>classic</code>: it cannot see the machine's
+compiler at all. So either <code>zeno build</code> does not work in it, or the
+compiler is in the box. The Sdk is the runtime that programs are built
+on, and it has gcc and git. With it, everything Zeno does works in the
+box with nothing else to install, which is the whole point of the
+installers (15.4).</p>
+<p><strong>Turned down.</strong> <em>The Platform runtime</em>, which is a third of the size:
+then <code>zeno build</code> says there is no C compiler, to somebody who can see
+one on their machine. <em>Running the machine's compiler from inside the
+box</em> (<code>flatpak-spawn --host</code>): it needs the box opened so far that it
+is not a box.</p>
+<p>Flatpak is made for programs with a window, and is the poorest fit of
+the six. It is here because it was asked for and because it works.</p>
+<h3 id="1518-the-recipes-are-kept-in-this-repository-and-written-after-a-release">15.18 The recipes are kept in this repository, and written after a release</h3>
+<p><code>Formula/zeno.rb</code>, <code>packaging/arch/PKGBUILD</code> and <code>packaging/winget</code>
+are written by <code>tools/package.sh</code> and pushed to <code>main</code> by the last
+step of a release (<code>tools/keep-recipes.sh</code>).</p>
+<p><strong>Why here.</strong> Homebrew reads a formula from a git repository and from
+nowhere else. Keeping it in this one means there is nothing more to
+make: <code>brew tap</code> is told the address. A repository of its own, named
+<code>homebrew-zeno</code>, would make the command shorter, and is one of the
+steps left for later.</p>
+<p><strong>Why after.</strong> A recipe holds the checksums of the files it downloads,
+so it cannot be written before they exist. The alternative, writing it
+by hand after each release, is the kind of step that is forgotten.</p>
+<p>The commit is made in Partha's name, as every commit here is.</p>
+<h3 id="1519-no-licence-yet-and-the-recipes-say-so">15.19 No licence yet, and the recipes say so</h3>
+<p>The <code>PKGBUILD</code> says <code>license=('custom')</code> and the winget file says
+<code>License: All rights reserved</code>, each with a comment that none has been
+chosen.</p>
+<p><strong>Why.</strong> Both forms demand the line. Zeno has no licence file, and
+with none, "all rights reserved" is what the law says. Writing "MIT"
+because it is the likely choice would be a claim nobody has made.
+Choosing one is Partha's, and the stores of 15.21 will each ask.</p>
+<h3 id="1520-run-by-winget-the-setup-program-installs-zeno-and-nothing-else">15.20 Run by winget, the setup program installs Zeno and nothing else</h3>
+<p>The winget files pass <code>/MERGETASKS="!compiler,!git"</code>.</p>
+<p><strong>Why.</strong> The setup program's two boxes install a compiler and Git by
+running winget (15.4). winget runs the setup program without showing
+it, so the boxes would be ticked with nobody asked, and a second
+winget would start inside the first. Somebody who installs with winget
+installs those two with winget.</p>
+<h3 id="1521-what-packages-do-not-do-yet">15.21 What packages do not do yet</h3>
+<ul>
+<li><strong>None is in the place its manager looks in.</strong> That needs the
+  repository to be public, and then for each an account or somebody's
+  say-so: a pull request to Microsoft's <code>winget-pkgs</code>, an account on
+  the AUR, an account on the Snap Store with the name <code>zeno</code> and leave
+  to be <code>classic</code>, a request to Flathub, and for apt a repository of
+  <code>.deb</code> files with a signed list. Each of those is done in Partha's
+  name, so each is his to do. <code>docs/packages.md</code> lists them.</li>
+<li>The winget files are written and not run: GitHub's Windows machines
+  have no winget.</li>
+<li>The packages for processors other than x86-64 are made and not
+  installed by a test.</li>
+<li>No <code>.rpm</code>, Nix, Scoop or Chocolatey.</li>
+</ul>
 <h2 id="16-a-page-that-does-more">16. A page that does more</h2>
 <p>Chapter 14 made the least that is a page. Its last section (14.14)
 listed what a real front end would miss: where the mouse is, the
@@ -7367,7 +7482,8 @@ however long the function takes).</p>
 <p><strong>Why it cannot be stopped.</strong> Stopping needs a value to stop
 (<code>let timer = web.every(...)</code>, <code>timer.stop()</code>), which is a new
 type. A function that has nothing to do can return at once, and
-that has been enough. It is the first thing to add when it is not.</p>
+that has been enough. It is the first thing to add when it is not.
+(It was: chapter 19.)</p>
 <h3 id="167-what-is-kept-between-visits-save-load-forget">16.7 What is kept between visits: <code>save</code>, <code>load</code>, <code>forget</code></h3>
 <p><code>web.save("name", text)</code>, <code>web.load("name")</code> (a str, or <code>none</code>),
 <code>web.forget("name")</code>. Names and values are text.</p>
@@ -7487,8 +7603,9 @@ program in a Worker cannot reach the page).</p>
 <h3 id="1613-left-for-later">16.13 Left for later</h3>
 <ul>
 <li>JSON read into values, which <code>fetch</code> wants (done since: chapter 18).</li>
-<li>A timer that can be stopped, and an event with the keys held
-  down and the button of the mouse (16.6, 16.2).</li>
+<li>A timer that can be stopped (done since: chapter 19), and an
+  event with the keys held down and the button of the mouse (16.6,
+  16.2).</li>
 <li>Images and curves on a canvas.</li>
 <li>The address bar: a page with several views that the back button
   walks through.</li>
@@ -7644,6 +7761,55 @@ member left out, <code>data.get("note")</code> is <code>none</code> either way, 
   compiled programs.</li>
 <li>The place of a mistake in the text.</li>
 <li>JSON laid out over several lines.</li>
+</ul>
+<h2 id="19-a-timer-that-can-be-stopped">19. A timer that can be stopped</h2>
+<p>16.6 gave <code>web.every</code> and said why what it starts could not be
+stopped: stopping needs a value to stop. This chapter is that value.</p>
+<h3 id="191-webafter-and-webevery-give-a-timer-and-it-has-stop">19.1 <code>web.after</code> and <code>web.every</code> give a <code>Timer</code>, and it has <code>stop()</code></h3>
+<pre><code class="zeno">let ticking = web.every(1 s, tick)
+stop_button.on("click", function() { ticking.stop() })</code></pre>
+<p><strong>Why.</strong> A stopwatch, a poll that ends when the answer has come, a
+message that should not appear because the user has moved on. With
+no way to stop, each is written as a <code>var running</code> that the
+function reads first, and a timer that goes on calling for as long
+as the page is open to be told no.</p>
+<p><strong>Why a value with a method, and not <code>web.stop(number)</code>.</strong> A number
+is something a program can add to, print and get wrong, and
+<code>web.stop(3)</code> says nothing a reader can check. <code>ticking.stop()</code>
+reads as what it does, and the checker knows a <code>Timer</code> from an
+<code>int</code>. It is the shape <code>Element</code> has already: a value the page
+knows, with methods.</p>
+<p><strong>Why one type for both.</strong> What is stopped is a call that waits,
+whether it waits once or again and again. Two types would be two
+names for one method.</p>
+<p><strong>The alternatives.</strong> The function could return <code>false</code> to say
+"no more": it is short, and it makes every function given to
+<code>every</code> return something, and the stop can then only come from
+inside. A <code>stop</code> word inside the function has the same limit.</p>
+<h3 id="192-stopping-what-has-stopped-is-nothing">19.2 Stopping what has stopped is nothing</h3>
+<p><code>stop()</code> on a timer that was stopped before, or on an <code>after</code> that
+has made its call, does nothing and is not an error.</p>
+<p><strong>Why.</strong> "Make sure this is not running" is what the program means,
+and it is true afterwards either way. An error would make every
+caller keep a <code>var stopped</code> beside the timer, which is the
+bookkeeping the timer was added to take away. A browser treats its
+own timers the same way.</p>
+<h3 id="193-a-program-that-does-not-keep-the-timer-is-as-it-was">19.3 A program that does not keep the timer is as it was</h3>
+<p><code>web.after(500 ms, tick)</code> on a line by itself still means what it
+did. What it gives is dropped, as the answer of <code>list.pop()</code> on a
+line by itself is.</p>
+<p><strong>Why.</strong> Most timers are never stopped, and every program written
+for 0.2 before this has such lines.</p>
+<h3 id="194-on-a-desk">19.4 On a desk</h3>
+<p>Under <code>zeno run</code> and <code>zeno test</code> the page calls nothing (14.6), so
+<code>stop()</code> has nothing to call off, and prints nothing: a line is
+printed for a change that could be seen (14.7), and this is not
+one. A <code>Timer</code> prints as <code>Timer</code>, and two are equal when they are
+one.</p>
+<h3 id="195-left-for-later">19.5 Left for later</h3>
+<ul>
+<li>Asking a timer whether it is still waiting.</li>
+<li>Starting a stopped timer again. <code>web.every</code> makes a new one.</li>
 </ul>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>

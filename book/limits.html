@@ -318,8 +318,8 @@ web</h3>
 <dl>
 <dt>Only what the module has.</dt>
 <dd>
-<p>No style of one element (use a class), no place of the mouse, no
-drawing, no network, and nothing kept between visits (14.14).</p>
+<p>No images drawn on a canvas, no curves, no touch with more than one
+finger, and no address bar of its own (16.13).</p>
 </dd>
 <dt>An interpreter in a page.</dt>
 <dd>
@@ -329,22 +329,31 @@ fast, is left for later (14.1).</p>
 </dd>
 <dt>A simulated page reads plain selectors only,</dt>
 <dd>
-<p>and has every element it is asked for (14.6).</p>
+<p>and knows no CSS (16.9).</p>
+</dd>
+<dt>The playground</dt>
+<dd>
+<p>runs one file, and has no colours in its box and no Stop button
+(16.12).</p>
+</dd>
+<dt>JSON</dt>
+<dd>
+<p>is read into dicts and lists, not straight into a class, and is not
+in compiled programs (18.5).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="tools"><span class="number">G.9</span>
 Tools</h3>
 <dl>
-<dt>Hover on a field.</dt>
+<dt>Going to a field.</dt>
 <dd>
-<p>The language server shows the type of a name, but not yet of a field
-(9.11).</p>
+<p>The language server shows the type of a field, but cannot yet jump to
+where it was declared (17.4).</p>
 </dd>
-<dt>Choosing tests.</dt>
+<dt>Tests of a compiled program.</dt>
 <dd>
-<p><code>zeno test</code> runs every test in the files it is given, and
-cannot run one by name or test a compiled program. <code>assert</code>
-takes no message, and is only for tests (10.21).</p>
+<p><code>zeno test</code> runs tests under the interpreter only.
+<code>assert</code> takes no message, and is only for tests (10.21).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="not-limits"><span class="number">G.10</span>

@@ -217,7 +217,8 @@ class="number">23</span> Reading and Writing</h2>
 <p>A program is more useful when it can take something in and leave
 something behind: lines typed at a keyboard or sent down a serial line,
 words on the command line, files on a disk. This chapter covers all
-three. <code>print</code> has been with us since the first page.</p>
+three, and JSON, the text that programs hand each other.
+<code>print</code> has been with us since the first page.</p>
 <div class="center">
 <table>
 <thead>
@@ -494,6 +495,77 @@ average 21.75
 $ zeno run logbook.zeno 23.5
 3 readings: [21.5, 22.0, 23.5]
 average 22.33</code></pre>
+<h3 class="unnumbered" id="json"><span class="number">23.6</span>
+JSON</h3>
+<p>Programs hand each other text in one format more than any other:
+<em>JSON</em>. A server answers in it, and a program keeps its settings
+in it. The <code>json</code> module reads it and writes it, with two
+functions: <code>json.parse(text)</code> gives the value the text
+describes, and <code>json.write(value)</code> gives a value as JSON, on
+one line.</p>
+<div class="zenofile">
+<p>settings.zeno</p>
+</div>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = <span class="st">&quot;{\&quot;name\&quot;: \&quot;pump 2\&quot;, \&quot;limit\&quot;: 80, \&quot;alarms\&quot;: [\&quot;high\&quot;, \&quot;dry\&quot;]}&quot;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> settings = json.parse(text)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name: <span class="dt">str</span> = settings[<span class="st">&quot;name&quot;</span>]</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> limit: <span class="dt">int</span> = settings[<span class="st">&quot;limit&quot;</span>]</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>print(name, limit + <span class="dv">5</span>)</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> alarm <span class="kw">in</span> settings[<span class="st">&quot;alarms&quot;</span>] {</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    print(alarm.upper())</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>pump 2 85
+HIGH
+DRY</code></pre>
+<p>Each kind of JSON value becomes a value Zeno has: an object a dict,
+an array a list, text a <code>str</code>, <code>true</code> and
+<code>false</code> a <code>bool</code>, and <code>null</code>
+<code>none</code>. A number with nothing after its point is an
+<code>int</code>, even written <code>12.0</code>, because many programs
+write a whole number either way and mean nothing by it; write
+<code>float(x)</code> where a <code>float</code> is wanted whatever
+came. A member that is <code>null</code> is left out of the dict, since
+a dict holds no <code>none</code>: <code>settings.get("note")</code> is
+then <code>none</code>, as for a member that was never written.</p>
+<p>The checker cannot know what a text that arrives later will hold, so
+what <code>json.parse</code> gives has no type it knows. Everything can
+be asked of it, and a mistake is found when the line runs. Say the type
+where a value leaves the JSON, as <code>let limit: int</code> does
+above, and the rest of the program is checked as usual. For the same
+reason <code>json.parse</code> is refused in strict mode and in a build:
+JSON is for <code>zeno run</code> and for a web page.</p>
+<p><code>json.write</code> takes the same values, and objects, which it
+writes field by field in the order the class declares them. That is how
+a program writes JSON with text in one member and a number in the next:
+a class says which, and the checker holds every object to it.</p>
+<div class="zenofile">
+<p>order.zeno</p>
+</div>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Line {</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    item: <span class="dt">str</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    count: <span class="dt">int</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Order {</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    who: <span class="dt">str</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    lines: <span class="dt">list</span>[Line]</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    note: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>print(json.write(Order(<span class="st">&quot;Ada&quot;</span>, [Line(<span class="st">&quot;tea&quot;</span>, <span class="dv">2</span>), Line(<span class="st">&quot;milk&quot;</span>, <span class="dv">1</span>)], <span class="cn">none</span>)))</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>print(json.write([<span class="st">&quot;volts&quot;</span>: <span class="dv">3.3</span>, <span class="st">&quot;amps&quot;</span>: <span class="dv">0.5</span>]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>{&quot;who&quot;:&quot;Ada&quot;,&quot;lines&quot;:[{&quot;item&quot;:&quot;tea&quot;,&quot;count&quot;:2},{&quot;item&quot;:&quot;milk&quot;,&quot;count&quot;:1}],&quot;note&quot;:null}
+{&quot;volts&quot;:3.3,&quot;amps&quot;:0.5}</code></pre>
+<p>A quantity is refused, because JSON has no units and a reader could
+not tell that <code>3.3</code> was volts: write the number, and put the
+unit in the name, as above. Text that is not JSON raises a
+<code>ValueError</code>.</p>
 <div class="summary">
 <p><code>print</code> writes a line. <code>input()</code> reads one, and
 gives <code>none</code> when there are no more.
@@ -501,7 +573,9 @@ gives <code>none</code> when there are no more.
 <code>files.read</code>, <code>write</code>, <code>append</code>,
 <code>exists</code> and <code>remove</code> work on whole files of text,
 and every one but <code>exists</code> may raise a
-<code>FileError</code>, which can always be caught.</p>
+<code>FileError</code>, which can always be caught.
+<code>json.parse</code> and <code>json.write</code> read and write
+JSON.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -514,6 +588,8 @@ wrong when it is given the wrong number of words.</p></li>
 back, and prints it. What should the first run do?</p></li>
 <li><p>Try to read a picture with <code>files.read</code> and read the
 message.</p></li>
+<li><p>Keep the counter as JSON instead, <code>{"runs": 3}</code>, with
+<code>json.parse</code> and <code>json.write</code>.</p></li>
 </ol>
 </div>
 </article>

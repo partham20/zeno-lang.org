@@ -763,7 +763,7 @@ def main():
     build_roadmap()
     build_about()
     build_book()
-    build_playground()
+    # build_playground(): /playground/ is looked after on its own for now; run it by hand to refresh.
     build_404()
     build_sitemap()
     print(f"wrote {len(PAGES)} pages")

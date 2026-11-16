@@ -471,7 +471,10 @@ Your editor</h3>
 an editor starts and talks to in a fixed way, the Language Server
 Protocol. With it, the editor underlines mistakes as you type, lays the
 file out when you save, jumps to where a name was declared, and shows a
-name’s type when you rest on it. What it underlines is exactly what
+name’s type when you rest on it. Resting on a field or a method says
+what it is too: on the <code>x</code> of <code>p.x</code>,
+<code>x: int</code>, and on <code>queue.put</code>, what
+<code>put</code> takes and gives. What it underlines is exactly what
 <code>zeno check</code> would print, because it runs the same checker.
 VS Code, Neovim, Helix, Zed and Emacs all speak the protocol.</p>
 <p>The <code>editors</code> folder of the Zeno repository has what each

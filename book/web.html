@@ -257,10 +257,11 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 each time it is pressed, and <code>count.text = ...</code> changes what
 a paragraph shows.</p>
 <p>The program was run here by <code>zeno run</code>, which has no
-browser. It runs the program on a <em>simulated page</em>, which prints
-a line for each change that somebody looking at the page would see.
-Nobody presses a button on a simulated page, so it shows only what the
-program did as it started. To see it in a browser, build it:</p>
+browser. It runs the program on a <em>simulated page</em>, built from
+<code>count.html</code>, which prints a line for each change that
+somebody looking at the page would see. Nobody presses a button on a
+simulated page, so it shows only what the program did as it started. To
+see it in a browser, build it:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --web count.zeno
 Built count.web.html from count.html and count.zeno. Open it in a browser</code></pre>
 <p><code>zeno build --web count.zeno</code> looked for
@@ -271,8 +272,7 @@ file and needs nothing else, so it can also be mailed, or put on any web
 server as it is.</p>
 <h3 class="unnumbered" id="the-web-module"><span
 class="number">34.2</span> The web module</h3>
-<p><code>import web</code> brings in five functions:</p>
-<div class="center">
+<p><code>import web</code> brings in these functions:</p>
 <table>
 <thead>
 <tr class="header">
@@ -302,22 +302,50 @@ the page until it is appended to one that is</td>
 The time has a unit: <code>web.after(500 ms, tick)</code></td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>web.every(time, f)</code></td>
+<td style="text-align: left;">call <code>f</code> that often, for as
+long as the page is open</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>web.on_key(f)</code></td>
 <td style="text-align: left;">call <code>f</code> with the name of each
 key that is pressed: <code>"a"</code>, <code>"Enter"</code>,
 <code>"ArrowLeft"</code></td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;"><code>web.save(name, text)</code></td>
+<td style="text-align: left;">keep text under a name, for the next time
+the page is opened in this browser</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>web.load(name)</code></td>
+<td style="text-align: left;">the text kept under the name, or
+<code>none</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>web.forget(name)</code></td>
+<td style="text-align: left;">keep nothing under the name any more</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>web.fetch(address, f)</code></td>
+<td style="text-align: left;">ask the network for what is at the
+address, and call <code>f(status, body)</code> when the answer
+comes</td>
+</tr>
+<tr class="odd">
+<td
+style="text-align: left;"><code>web.post(address, text, f)</code></td>
+<td style="text-align: left;">send text to the address, and call
+<code>f(status, body)</code> with what comes back</td>
+</tr>
 </tbody>
 </table>
-</div>
 <p>A <em>selector</em> is what CSS calls one. <code>#count</code> is the
 element with that <code>id</code>, <code>.done</code> every element of
 that class, <code>li</code> every list item, and
 <code>#list li.done</code> every done item inside the list.</p>
 <p>What these give is an <code>Element</code>, a type like any other: a
-function can ask for one and a list can hold them. It has two fields and
-eleven methods:</p>
-<div class="center">
+function can ask for one and a list can hold them.</p>
 <table>
 <thead>
 <tr class="header">
@@ -340,67 +368,163 @@ box</td>
 <td style="text-align: left;"><code>e.on(event, f)</code></td>
 <td style="text-align: left;">call <code>f</code> whenever that happens
 to it: <code>"click"</code>, <code>"input"</code>,
-<code>"submit"</code>, or any event a browser has</td>
+<code>"submit"</code>, <code>"mousemove"</code>, or any event a browser
+has</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><code>e.fire(event)</code></td>
+<td style="text-align: left;">call, now, what <code>on</code> was given
+for that event; how a test presses a button</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><code>e.append(child)</code></td>
 <td style="text-align: left;"><code>child</code> becomes the last thing
 inside it</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.remove()</code></td>
 <td style="text-align: left;">it leaves the page</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.clear()</code></td>
 <td style="text-align: left;">everything inside it leaves the page</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.add_class(c)</code>,
 <code>e.remove_class(c)</code></td>
 <td style="text-align: left;">give it a class, or take one away</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.has_class(c)</code></td>
 <td style="text-align: left;">whether it has that class</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.show()</code>,
 <code>e.hide()</code></td>
 <td style="text-align: left;">whether it is shown at all</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.get(name)</code>,
 <code>e.set(name, v)</code></td>
 <td style="text-align: left;">an attribute, such as <code>href</code>.
 <code>get</code> gives <code>none</code> for one it does not have</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;"><code>e.set_style(name, v)</code></td>
+<td style="text-align: left;">the style of this one element, named as
+CSS names it: <code>e.set_style("color", "red")</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.get_style(name)</code></td>
+<td style="text-align: left;">a style that was set, or
+<code>none</code></td>
+</tr>
+</tbody>
+</table>
+<p>And on a <code>&lt;canvas&gt;</code>, an element made to be drawn on,
+five more:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">On a canvas</th>
+<th style="text-align: left;">Draws</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td
+style="text-align: left;"><code>e.draw_rect(x, y, width, height, colour)</code></td>
+<td style="text-align: left;">a filled rectangle</td>
+</tr>
+<tr class="even">
+<td
+style="text-align: left;"><code>e.draw_circle(x, y, radius, colour)</code></td>
+<td style="text-align: left;">a filled circle, its middle at
+<code>x</code>, <code>y</code></td>
+</tr>
+<tr class="odd">
+<td
+style="text-align: left;"><code>e.draw_line(x1, y1, x2, y2, colour)</code></td>
+<td style="text-align: left;">a line</td>
+</tr>
+<tr class="even">
+<td
+style="text-align: left;"><code>e.draw_text(x, y, text, colour)</code></td>
+<td style="text-align: left;">text, its top left corner at
+<code>x</code>, <code>y</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>e.erase()</code></td>
+<td style="text-align: left;">nothing: the canvas is empty again</td>
+</tr>
 </tbody>
 </table>
 </div>
-<p>How a thing looks is the page’s business, written in CSS. A program
-changes the look by giving an element a class, and the CSS says what
-that class looks like.</p>
+<p>Places are in pixels from the top left corner, and a colour is any
+colour CSS knows: <code>"crimson"</code>, <code>"#2f5bea"</code>.</p>
+<p>Most of how a page looks belongs in its CSS. A program changes the
+look of many things at once by giving them a class, and the CSS says
+what the class looks like; <code>set_style</code> is for the one element
+whose look depends on something only the program knows, such as the
+colour somebody chose.</p>
 <div class="sourceCode" id="cb5" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> web</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> note = web.element(<span class="st">&quot;#note&quot;</span>)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> link = web.element(<span class="st">&quot;#help&quot;</span>)</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>note.add_class(<span class="st">&quot;warning&quot;</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>note.hide()</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>note.set_style(<span class="st">&quot;color&quot;</span>, <span class="st">&quot;crimson&quot;</span>)</span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>link.set(<span class="st">&quot;href&quot;</span>, <span class="st">&quot;/help&quot;</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>print(link.get(<span class="st">&quot;href&quot;</span>), link.get(<span class="st">&quot;title&quot;</span>))</span></code></pre></div>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>print(link.get(<span class="st">&quot;href&quot;</span>), link.get(<span class="st">&quot;title&quot;</span>), note.get_style(<span class="st">&quot;color&quot;</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>#note class +warning
-#note hidden
+#note style color: crimson
 #help href: /help
-/help none</code></pre>
-<h3 class="unnumbered"
-id="a-function-the-page-calls-takes-nothing"><span
-class="number">34.3</span> A function the page calls takes nothing</h3>
-<p>A function given to <code>on</code> or <code>after</code> is called
-by the page, later, with nothing. There is no event object to unpack.
-The function already knows which element it is for, because it was
-written where that element was in reach:</p>
+/help none crimson</code></pre>
+<h3 class="unnumbered" id="what-happened-the-event"><span
+class="number">34.3</span> What happened: the Event</h3>
+<p>A function given to <code>on</code> is called by the page, later.
+Most need to know nothing about what happened, because they already know
+which element they are for: they were written where that element was in
+reach. So <code>function() { ... }</code> is enough, as in
+<code>count.zeno</code>.</p>
+<p>A function that needs more asks for it, by taking one parameter of
+the type <code>Event</code>:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>event.kind</code></td>
+<td style="text-align: left;">the name of the event, such as
+<code>"click"</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>event.target</code></td>
+<td style="text-align: left;">the element it happened to. For a click on
+an <code>&lt;li&gt;</code> inside the <code>&lt;ul&gt;</code> that
+<code>on</code> was given to, the <code>&lt;li&gt;</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>event.x</code>,
+<code>event.y</code></td>
+<td style="text-align: left;">where the mouse was, in pixels from the
+top left corner of the element; 0 for an event of no mouse</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>event.key</code></td>
+<td style="text-align: left;">the key, for <code>"keydown"</code> and
+<code>"keyup"</code>; <code>""</code> for any other event</td>
+</tr>
+</tbody>
+</table>
+<p>An <code>Event</code> says what happened, so its fields are read and
+never given a new value. Any other parameter is refused, with both forms
+that are allowed:</p>
 <div class="sourceCode" id="cb7" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> web</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -408,24 +532,22 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>button.on(<span class="st">&quot;click&quot;</span>, <span class="kw">function</span>(event: <span class="dt">int</span>) {</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    print(event)</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>})</span></code></pre></div>
-<pre class="Output" data-language="Output" style="outputstyle"><code>error: `on` will call this function with nothing, so it takes no parameters: `function() { ... }`
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `on` will call this function with nothing, or with what happened if it asks: `function() { ... }` or `function(event: Event) { ... }`
  --&gt; main.zeno:4:20
   |
 4 | button.on(&quot;click&quot;, function(event: int) {
   |                    ^
 
 1 error found. Nothing was run.</code></pre>
-<p>The one thing an event carries that a program cannot find out another
-way is which key was pressed, so <code>web.on_key</code> is the one
-function that hands something over: the key’s name, as a
-<code>str</code>.</p>
 <div class="why">
 <p>An event object in a browser has dozens of fields, and nearly every
 handler reads none of them. A function that takes nothing has one way to
-be written, and needs no type that a beginner must look up. The element
+be written, and needs no type that a beginner must look up; the element
 is in reach by the closure, as <a
 href="function-values.html#ch-function-values">Functions as
-Values</a> showed. (Decision 14.5.)</p>
+Values</a> showed. The few that need the mouse or the target ask for an
+<code>Event</code>, which has only the fields a program cannot find out
+another way. (Decisions 14.5 and 16.1.)</p>
 </div>
 <h3 class="unnumbered" id="a-list-of-things-to-do"><span
 class="number">34.4</span> A list of things to do</h3>
@@ -561,43 +683,287 @@ browser, after typing two more things and clicking one:</p>
 <div class="center">
 <p><img src="images/todo.png" style="width:70.0%" alt="image" /></p>
 </div>
-<h3 class="unnumbered" id="testing-a-page"><span
-class="number">34.5</span> Testing a page</h3>
-<p>The simulated page is not only for running. Because no button is ever
-pressed on it, the tests press them, by calling the functions the page
-would call. The two tests at the end of <code>todo.zeno</code> do
-exactly that: one adds a thing, and one sends the form with only spaces
-in the box. <code>zeno test</code> runs them with no browser:</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test todo.zeno
-todo.zeno
-#list + &lt;li&gt; Read docs/web.md
-#left text: 1 thing left
-#list + &lt;li&gt; Build this page
-#left text: 2 things left
-#list + &lt;li&gt; Water the plants
-#left text: 3 things left
-  ok      a thing that is added is left to do
-#what value:    
-  ok      an empty box adds nothing
-
-2 tests: 2 passed, 0 failed.</code></pre>
-<p>So what a page does can be tested in the same run as every other
-test, by the same engines, as <a
-href="testing.html#ch-testing">Testing</a> showed.</p>
-<p>There are two things the simulated page cannot tell you. It has no
-HTML to look in, so it has every element that is asked for: a misspelled
-<code>web.element("#cuont")</code> works on a desk and stops the program
-in the browser, with a message naming the selector. And it reads only
-plain selectors: a tag, <code>.class</code> and <code>#id</code>,
-together (<code>li.done</code>) and one inside another
-(<code>#list li</code>). For any other it stops, rather than pretend the
-page has nothing:</p>
+<h3 class="unnumbered" id="drawing-and-what-is-kept"><span
+class="number">34.5</span> Drawing, and what is kept</h3>
+<p>The second example is a sheet to draw on with the mouse. The page has
+four buttons that are colours, a button that wipes the sheet, and a
+canvas. It shows what the list of things to do does not: a function that
+asks for the <code>Event</code> to learn where the mouse is, drawing,
+the style of one element, and a colour that is kept for the next visit
+with <code>web.save</code> and <code>web.load</code>:</p>
+<div class="zenofile">
+<p>sketch.zeno</p>
+</div>
+<div class="sourceCode" id="cb12" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A sheet to draw on with the mouse, in a page.</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># The page is `sketch.html`, beside this file: four buttons that are</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># colours, a button that wipes the sheet, and a `&lt;canvas&gt;`, which is an</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># element a program can draw on.</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     zeno build --web examples/sketch.zeno    writes sketch.web.html: open it</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     zeno run examples/sketch.zeno            runs it here, on a simulated page</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#     zeno test examples/sketch.zeno           runs its tests</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co"># It shows what `todo.zeno` does not: a function that asks for the</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="co"># `Event` to learn where the mouse is, drawing, the style of one</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># element, and something that is kept from one visit to the next.</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> web</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> paper = web.element(<span class="st">&quot;#paper&quot;</span>)</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> lines = web.element(<span class="st">&quot;#lines&quot;</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># The colour that is drawn in. The one chosen on the last visit, if</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co"># there was a visit.</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> colour = <span class="st">&quot;black&quot;</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> kept = web.load(<span class="st">&quot;sketch colour&quot;</span>)</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> kept <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    colour = kept</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Is the button of the mouse down, and where the mouse was last.</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> drawing = <span class="cn">false</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> last_x = <span class="dv">0.0</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> last_y = <span class="dv">0.0</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> drawn = <span class="dv">0</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> show_drawn() {</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    lines.text = <span class="st">f&quot;{drawn} lines drawn&quot;</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>    lines.set_style(<span class="st">&quot;color&quot;</span>, colour)</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Each colour button says which colour it is in the page itself, as</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co"># `data-colour`. The one that is chosen gets a black edge, which is a</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a><span class="co"># class, and the look of the class is CSS.</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> choose(wanted: <span class="dt">str</span>) {</span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    colour = wanted</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>    web.save(<span class="st">&quot;sketch colour&quot;</span>, colour)</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> button <span class="kw">in</span> web.elements(<span class="st">&quot;.colour&quot;</span>) {</span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> button.get(<span class="st">&quot;data-colour&quot;</span>) == colour {</span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>            button.add_class(<span class="st">&quot;chosen&quot;</span>)</span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>        } <span class="kw">else</span> {</span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>            button.remove_class(<span class="st">&quot;chosen&quot;</span>)</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>    show_drawn()</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> button <span class="kw">in</span> web.elements(<span class="st">&quot;.colour&quot;</span>) {</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> its = button.get(<span class="st">&quot;data-colour&quot;</span>)</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> its <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>        button.set_style(<span class="st">&quot;background-color&quot;</span>, its)</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>        button.on(<span class="st">&quot;click&quot;</span>, <span class="kw">function</span>() { choose(its) })</span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a><span class="co"># The mouse went down on the sheet: a line starts here.</span></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> pen_down(event: Event) {</span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>    drawing = <span class="cn">true</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>    last_x = event.x</span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>    last_y = event.y</span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a><span class="co"># The mouse moved. With the button down, that is a line from where it</span></span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a><span class="co"># was to where it is.</span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> pen_moved(event: Event) {</span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> drawing {</span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a>        paper.draw_line(last_x, last_y, event.x, event.y, colour)</span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>        last_x = event.x</span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>        last_y = event.y</span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>        drawn += <span class="dv">1</span></span>
+<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a>        show_drawn()</span>
+<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> pen_up() {</span>
+<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>    drawing = <span class="cn">false</span></span>
+<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> wipe() {</span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a>    paper.erase()</span>
+<span id="cb12-87"><a href="#cb12-87" aria-hidden="true" tabindex="-1"></a>    drawn = <span class="dv">0</span></span>
+<span id="cb12-88"><a href="#cb12-88" aria-hidden="true" tabindex="-1"></a>    show_drawn()</span>
+<span id="cb12-89"><a href="#cb12-89" aria-hidden="true" tabindex="-1"></a>    paper.draw_text(<span class="dv">10</span>, <span class="dv">10</span>, <span class="st">&quot;Draw here&quot;</span>, <span class="st">&quot;silver&quot;</span>)</span>
+<span id="cb12-90"><a href="#cb12-90" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-91"><a href="#cb12-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-92"><a href="#cb12-92" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mousedown&quot;</span>, pen_down)</span>
+<span id="cb12-93"><a href="#cb12-93" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mousemove&quot;</span>, pen_moved)</span>
+<span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mouseup&quot;</span>, pen_up)</span>
+<span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a>paper.on(<span class="st">&quot;mouseleave&quot;</span>, pen_up)</span>
+<span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a>web.element(<span class="st">&quot;#wipe&quot;</span>).on(<span class="st">&quot;click&quot;</span>, wipe)</span>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-98"><a href="#cb12-98" aria-hidden="true" tabindex="-1"></a>choose(colour)</span>
+<span id="cb12-99"><a href="#cb12-99" aria-hidden="true" tabindex="-1"></a>wipe()</span>
+<span id="cb12-100"><a href="#cb12-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-101"><a href="#cb12-101" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;the mouse draws only while its button is down&quot;</span> {</span>
+<span id="cb12-102"><a href="#cb12-102" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> before = drawn</span>
+<span id="cb12-103"><a href="#cb12-103" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
+<span id="cb12-104"><a href="#cb12-104" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before</span>
+<span id="cb12-105"><a href="#cb12-105" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousedown&quot;</span>)</span>
+<span id="cb12-106"><a href="#cb12-106" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
+<span id="cb12-107"><a href="#cb12-107" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
+<span id="cb12-108"><a href="#cb12-108" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before + <span class="dv">2</span></span>
+<span id="cb12-109"><a href="#cb12-109" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mouseup&quot;</span>)</span>
+<span id="cb12-110"><a href="#cb12-110" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
+<span id="cb12-111"><a href="#cb12-111" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == before + <span class="dv">2</span></span>
+<span id="cb12-112"><a href="#cb12-112" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-113"><a href="#cb12-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-114"><a href="#cb12-114" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;a colour that is chosen is kept&quot;</span> {</span>
+<span id="cb12-115"><a href="#cb12-115" aria-hidden="true" tabindex="-1"></a>    choose(<span class="st">&quot;crimson&quot;</span>)</span>
+<span id="cb12-116"><a href="#cb12-116" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> web.load(<span class="st">&quot;sketch colour&quot;</span>) == <span class="st">&quot;crimson&quot;</span></span>
+<span id="cb12-117"><a href="#cb12-117" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> lines.get_style(<span class="st">&quot;color&quot;</span>) == <span class="st">&quot;crimson&quot;</span></span>
+<span id="cb12-118"><a href="#cb12-118" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-119"><a href="#cb12-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-120"><a href="#cb12-120" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;wiping starts the count again&quot;</span> {</span>
+<span id="cb12-121"><a href="#cb12-121" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousedown&quot;</span>)</span>
+<span id="cb12-122"><a href="#cb12-122" aria-hidden="true" tabindex="-1"></a>    paper.fire(<span class="st">&quot;mousemove&quot;</span>)</span>
+<span id="cb12-123"><a href="#cb12-123" aria-hidden="true" tabindex="-1"></a>    web.element(<span class="st">&quot;#wipe&quot;</span>).fire(<span class="st">&quot;click&quot;</span>)</span>
+<span id="cb12-124"><a href="#cb12-124" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> drawn == <span class="dv">0</span></span>
+<span id="cb12-125"><a href="#cb12-125" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>Each colour button says in the page itself which colour it is, with
+an attribute such as <code>data-colour="crimson"</code>, and the program
+reads it with <code>get</code>. So a fifth colour is a line of HTML, and
+no change to the program. In a browser:</p>
+<div class="center">
+<p><img src="images/sketch.png" style="width:70.0%" alt="image" /></p>
+</div>
+<h3 class="unnumbered" id="time-and-the-network"><span
+class="number">34.6</span> Time and the network</h3>
+<p><code>web.after</code> calls a function once, later, and
+<code>web.every</code> calls it again and again. Both want a time with a
+unit:</p>
+<div class="zenofile">
+<p>clock.zeno</p>
+</div>
 <div class="sourceCode" id="cb13" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> web</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> item <span class="kw">in</span> web.elements(<span class="st">&quot;ul &gt; li&quot;</span>) {</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    print(item.text)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> clock = web.element(<span class="st">&quot;#clock&quot;</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> seconds = <span class="dv">0</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> tick() {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    seconds += <span class="dv">1</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    clock.text = <span class="st">f&quot;open for {seconds} s&quot;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>web.every(<span class="dv">1</span> s, tick)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>clock.text = <span class="st">&quot;just opened&quot;</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>#clock text: just opened</code></pre>
+<p><code>web.fetch</code> asks a web server for what is at an address.
+The answer comes later, so it takes a function, which is called with the
+status, such as 200 for found or 404 for not, and the text of the
+answer. An address that cannot be reached at all answers with status 0.
+The text is often JSON, which <code>json.parse</code> reads (<a
+href="reading-writing.html#ch-reading-writing">Reading and
+Writing</a>):</p>
+<div class="zenofile">
+<p>prices.zeno</p>
+</div>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> web</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> <span class="dt">list</span> = web.element(<span class="st">&quot;#prices&quot;</span>)</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> show(status: <span class="dt">int</span>, body: <span class="dt">str</span>) {</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> status != <span class="dv">200</span> {</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">list</span>.text = <span class="st">f&quot;could not get the prices ({status})&quot;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> name, price <span class="kw">in</span> json.parse(body)[<span class="st">&quot;prices&quot;</span>] {</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">list</span>.append(web.create(<span class="st">&quot;li&quot;</span>, <span class="st">f&quot;{name}: {price}&quot;</span>))</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>web.fetch(<span class="st">&quot;prices.json&quot;</span>, show)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;a 404 says so&quot;</span> {</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    show(<span class="dv">404</span>, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> <span class="dt">list</span>.text == <span class="st">&quot;could not get the prices (404)&quot;</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;prices are listed&quot;</span> {</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    show(<span class="dv">200</span>, <span class="st">&quot;{\&quot;prices\&quot;: {\&quot;tea\&quot;: 2, \&quot;milk\&quot;: 1}}&quot;</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> len(web.elements(<span class="st">&quot;#prices li&quot;</span>)) == <span class="dv">2</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test prices.zeno
+prices.zeno
+#prices text: could not get the prices (404)
+  ok      a 404 says so
+#prices + &lt;li&gt; tea: 2
+#prices + &lt;li&gt; milk: 1
+  ok      prices are listed
+
+2 tests: 2 passed, 0 failed.</code></pre>
+<p><code>web.post(address, json.write(order), done)</code> sends the
+other way. A page can fetch only what the browser allows it to: a page
+opened from the disk can fetch almost nothing, and a page on a web
+server can fetch from another server only if that server permits it. The
+program is then told status 0, and the browser’s console says why.</p>
+<h3 class="unnumbered" id="testing-a-page"><span
+class="number">34.7</span> Testing a page</h3>
+<p>The simulated page is not only for running. No button is ever pressed
+on it, no time passes and no network answers, so it calls none of the
+functions it was given; the tests do that. A test can call the function
+itself, as the tests of <code>prices.zeno</code> call <code>show</code>
+with an answer of their own. Or it can say <code>fire</code>, which
+calls whatever <code>on</code> was given for that event, in the order it
+was given:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test sketch.zeno
+sketch.zeno
+#lines text: 0 lines drawn
+#lines style color: black
+#paper erase
+#paper draw_text 10 10 Draw here silver
+#paper draw_line 0 0 0 0 black
+#lines text: 1 lines drawn
+#paper draw_line 0 0 0 0 black
+#lines text: 2 lines drawn
+  ok      the mouse draws only while its button is down
+#lines style color: crimson
+  ok      a colour that is chosen is kept
+#paper draw_line 0 0 0 0 crimson
+#lines text: 3 lines drawn
+#paper erase
+#lines text: 0 lines drawn
+#paper draw_text 10 10 Draw here silver
+  ok      wiping starts the count again
+
+3 tests: 3 passed, 0 failed.</code></pre>
+<p>An <code>Event</code> that <code>fire</code> makes has the element as
+its <code>target</code>, and 0 for <code>x</code> and <code>y</code>.
+<code>fire</code> does the same in a browser: it calls the program’s own
+functions at once, and sends the browser no event. So what a page does
+can be tested in the same run as every other test, by the same engines,
+with no browser, as <a href="testing.html#ch-testing">Testing</a>
+showed.</p>
+<p>When the HTML of the page is beside the program, as
+<code>todo.html</code> is beside <code>todo.zeno</code>, the simulated
+page is built from it: its ids, classes, attributes and text, and which
+element is inside which. So a name spelled wrong is found on a desk,
+with the same words as in the browser:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ sed &quot;s/#list/#lsit/&quot; todo.zeno &gt; typo.zeno
+$ cp todo.html typo.html
+$ zeno run typo.zeno
+error: uncaught ValueError: the page has no element that answers to `#lsit`. `web.elements` gives a list, which may be empty
+  --&gt; typo.zeno:14:12
+   |
+14 | let list = web.element(&quot;#lsit&quot;)
+   |            ^</code></pre>
+<p>A program with no page beside it gets a simulated page that has every
+element it asks for, because there is nothing to hold it to. And the
+simulated page knows no CSS: it cannot say that
+<code>set_style("colour", "red")</code> names no style, which the
+browser says when the page is opened. It also reads only plain
+selectors: a tag, <code>.class</code> and <code>#id</code>, together
+(<code>li.done</code>) and one inside another (<code>#list li</code>).
+For any other it stops, rather than pretend the page has nothing:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> web</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> item <span class="kw">in</span> web.elements(<span class="st">&quot;ul &gt; li&quot;</span>) {</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    print(item.text)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught ValueError: the simulated page cannot read `ul &gt; li`. It reads a tag, `.class` and `#id`, together (`li.done`) and one inside another (`#list li`). A browser reads the rest, so the page that is built can use it
  --&gt; main.zeno:3:13
   |
@@ -605,7 +971,7 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
   |             ^</code></pre>
 <p>The page that is built can use any selector a browser reads.</p>
 <h3 class="unnumbered" id="a-program-with-no-page"><span
-class="number">34.6</span> A program with no page</h3>
+class="number">34.8</span> A program with no page</h3>
 <p><code>zeno build --web</code> needs no HTML of yours. With no page
 beside the program, it writes one that shows what the program prints, so
 any program that runs under <code>zeno run</code> and reads no file can
@@ -613,10 +979,10 @@ be put in a page:</p>
 <div class="zenofile">
 <p>hello.zeno</p>
 </div>
-<div class="sourceCode" id="cb15" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> n <span class="kw">in</span> range(<span class="dv">1</span>, <span class="dv">4</span>) {</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;{n} squared is {n * n}&quot;</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> n <span class="kw">in</span> range(<span class="dv">1</span>, <span class="dv">4</span>) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;{n} squared is {n * n}&quot;</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --web hello.zeno
 Built hello.web.html. Open it in a browser</code></pre>
 <p>In a page of your own, <code>print</code> goes to the browser’s
@@ -629,8 +995,36 @@ it.</p>
 with its line and column. After that the page calls nothing more,
 because a program that went wrong halfway through a function has
 variables that are half changed.</p>
+<h3 class="unnumbered" id="the-playground"><span
+class="number">34.9</span> The playground</h3>
+<p><code>zeno playground</code> writes one more page,
+<code>playground.html</code>, in which Zeno programs are written and run
+with nothing installed:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno playground
+Wrote playground.html. Open it in a browser, or put it on a web server</code></pre>
+<p>On the left is a box for the program, and a second tab for the HTML
+of its page; on the right is what the program does. <em>Run</em>, or
+Ctrl+Enter, checks the program and runs it, in the browser, by the same
+Zeno that <code>zeno run</code> is. A mistake the checker finds is shown
+where the output would be. A list of examples starts you off, among them
+the list of things to do and the sheet to draw on. And <em>Copy
+link</em> gives an address that opens the playground with this program
+in it: the program travels in the part of the address after the
+<code>#</code>, which a browser never sends to a server, so nothing
+keeps a copy. It is the page to send to somebody who asks what Zeno
+looks like.</p>
+<div class="center">
+<p><img src="images/playground.png" style="width:92.0%"
+alt="image" /></p>
+</div>
+<p>Each run gets a new page. A program in a page never ends, since its
+functions are called whenever a button is pressed, so the playground
+does not try to stop one: it shows each run in a frame, a page inside
+the page, and throws the whole frame away for the next. The program is
+one file; a program in several files, or one that needs a package, needs
+<code>zeno build --web</code>.</p>
 <h3 class="unnumbered" id="how-it-works-1"><span
-class="number">34.7</span> How it works</h3>
+class="number">34.10</span> How it works</h3>
 <p>A browser runs two kinds of program: JavaScript, and
 <em>WebAssembly</em>, a small instruction set that a compiler can aim at
 as it aims at a processor. Rust is one such compiler. So
@@ -640,29 +1034,32 @@ of a desk. Nothing of Zeno was written again for it, and that is why a
 program means the same in a page as under <code>zeno run</code>: the
 same checker checks it, and the same interpreter runs it.</p>
 <p>A built page holds three things: the program as you wrote it,
-<code>zeno.wasm</code> written out as text, and a short piece of
-JavaScript that starts the one with the other. WebAssembly can only do
-arithmetic and call functions, and only numbers cross between it and the
-page. So text crosses as a place in memory and a length, an element as a
-number that the JavaScript looks up in a table, and every request to the
-page, such as "set the text of element 4", as one line of JSON through a
-single function. However many things the <code>web</code> module learns
-to do, the line between Zeno and the browser stays five functions
-wide.</p>
-<p><code>zeno build --web</code> finds <code>zeno.wasm</code> where the
-variable <code>ZENO_WASM</code> says, or else beside <code>zeno</code>
-itself, which is where a release puts it (<a
+<code>zeno.wasm</code>, and three hundred lines of JavaScript that start
+the one with the other. <code>zeno.wasm</code> is built for size, and
+packed the way a <code>.zip</code> file is packed, by a packer written
+for Zeno, then written out as text; a built page is about 0.4 megabytes,
+and the browser unpacks it by itself. WebAssembly can only do arithmetic
+and call functions, and only numbers cross between it and the page. So
+text crosses as a place in memory and a length, an element as a number
+that the JavaScript looks up in a table, and every request to the page,
+such as "set the text of element 4", as one line of JSON through a
+single function. Events and the answers of the network come back the
+same way. Styles, drawing, saving and the network were all added without
+the line between Zeno and the browser growing past five functions.</p>
+<p><code>zeno build --web</code> and <code>zeno playground</code> find
+<code>zeno.wasm</code> where the variable <code>ZENO_WASM</code> says,
+or else beside <code>zeno</code> itself, which is where the installers
+and the archives put it (<a
 href="getting-zeno.html#ch-getting-zeno">Getting Zeno</a>).</p>
 <h3 class="unnumbered" id="what-a-page-cannot-do"><span
-class="number">34.8</span> What a page cannot do</h3>
+class="number">34.11</span> What a page cannot do</h3>
 <dl>
 <dt>Wait.</dt>
 <dd>
 <p>A browser has one thread for a page, and a program that sleeps on it
 stops the page drawing and the buttons working. In a page,
 <code>time.sleep</code> is an error that says to use
-<code>web.after(500 ms, ...)</code>, which lets the page go on in
-between.</p>
+<code>web.after</code>, which lets the page go on in between.</p>
 </dd>
 <dt>Go very deep.</dt>
 <dd>
@@ -679,14 +1076,15 @@ program, and are refused with <code>--web</code>. A page runs the
 interpreter.</p>
 </dd>
 </dl>
-<p>And some things the <code>web</code> module does not have yet: the
-style of one element (use a class), where the mouse is, drawing, the
-network, and anything kept between visits. Every built page carries the
-whole of <code>zeno.wasm</code>, about one and a half megabytes as text,
-and runs at the speed of <code>zeno run</code>: plenty for a page that
-waits for clicks, and not enough for a game that draws sixty times a
-second. The program is in the page as it was written, comments and all,
-for anyone who opens the page to read.</p>
+<p>And some things the <code>web</code> module does not have yet: images
+drawn on a canvas, curves, touch with more than one finger, and an
+address bar of its own (a page with several views shows and hides them).
+A page runs at the speed of <code>zeno run</code>: plenty for a page
+that waits for clicks, and for a sketch, and not enough for a game that
+draws a thousand things sixty times a second. The program is in the page
+as it was written, comments and all, for anyone who opens the page to
+read. Only Chromium has been tried, and the page needs a browser from
+2023 or later.</p>
 <div class="why">
 <p>A page could have been made by compiling Zeno to JavaScript, or
 through C or LLVM to WebAssembly. Each of those is one more engine to
@@ -701,29 +1099,41 @@ change for it. (Decision 14.1.)</p>
 <div class="summary">
 <p><code>import web</code> finds elements with <code>web.element</code>
 and <code>web.elements</code>, makes them with <code>web.create</code>,
-and calls a function later with <code>web.after</code> or on a key with
-<code>web.on_key</code>. An <code>Element</code> has <code>text</code>
-and <code>value</code>, and methods to listen, append, remove, and
-change classes and attributes. A function the page calls takes nothing.
-<code>zeno build --web</code> joins <code>name.html</code> and
-<code>name.zeno</code> into one <code>name.web.html</code>. Under
-<code>zeno run</code> and <code>zeno test</code> the page is simulated,
-so a page can be tested without a browser.</p>
+calls a function later with <code>web.after</code> and
+<code>web.every</code> or on a key with <code>web.on_key</code>, keeps
+text between visits with <code>save</code> and <code>load</code>, and
+reaches the network with <code>fetch</code> and <code>post</code>. An
+<code>Element</code> has <code>text</code> and <code>value</code>, and
+methods to listen, fire, append, remove, change classes, styles and
+attributes, and draw. A function the page calls takes nothing, or an
+<code>Event</code>. <code>zeno build --web</code> joins
+<code>name.html</code> and <code>name.zeno</code> into one
+<code>name.web.html</code>, and <code>zeno playground</code> writes a
+page to try programs in. Under <code>zeno run</code> and
+<code>zeno test</code> the page is simulated, from the HTML when it is
+there, so a page can be tested without a browser.</p>
 </div>
 <div class="tryit">
 <ol>
 <li><p>Build <code>count.zeno</code> and open it. Then add a second
-button that sets the count back to zero.</p></li>
-<li><p>Spell <code>#list</code> wrong in <code>todo.zeno</code>. What
-does <code>zeno run</code> say, and what does the page say?</p></li>
+button that sets the count back to zero, and a test that uses
+<code>fire</code>.</p></li>
 <li><p>Add a button to <code>todo.html</code> that removes every thing
 that is done. You need <code>web.elements(".done")</code>. Write the
 test first.</p></li>
-<li><p>Make a clock: a paragraph that shows how many seconds the page
-has been open, with a function that sets the text and then asks
-<code>web.after(1 s, ...)</code> to call itself again.</p></li>
-<li><p>Use <code>web.on_key</code> to move a mark left and right along a
-line of text with the arrow keys.</p></li>
+<li><p>Rewrite <code>todo.zeno</code> with one function for the whole
+list, given to <code>list.on("click", ...)</code>, that asks for the
+<code>Event</code> and uses <code>event.target</code>. Which version is
+easier to test?</p></li>
+<li><p>Make <code>sketch.zeno</code> draw dots with
+<code>draw_circle</code> on a click, and lines only while the button is
+held.</p></li>
+<li><p>Keep the list of things to do between visits:
+<code>json.write</code> a list of the texts into <code>web.save</code>,
+and read it back with <code>web.load</code> and <code>json.parse</code>
+when the page opens.</p></li>
+<li><p>Open <code>zeno playground</code>, write a program, copy its
+link, and open the link in a new window.</p></li>
 </ol>
 </div>
 </article>

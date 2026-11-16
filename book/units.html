@@ -469,9 +469,31 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> power = (volts / <span class="dv">1</span> V) * (amps / <span class="dv">1</span> A) * <span class="dv">1</span> W</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>print(power)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>24 W</code></pre>
-<p>There are no units of a program’s own either, and <code>sum</code>,
-<code>min</code> and <code>max</code> take plain numbers. Both are on
-the list in <a href="limits.html#app-limits">Appendix G</a>.</p>
+<p>There are no units of a program’s own either; that is on the list in
+<a href="limits.html#app-limits">Appendix G</a>.</p>
+<p><code>min</code> and <code>max</code> take quantities, as long as all
+of them are in one unit, because the answer is one of the values as it
+was given. <code>sum</code> takes plain numbers only; add quantities
+with <code>+</code>:</p>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">3.1</span> V, <span class="dv">2.9</span> V, <span class="dv">3.4</span> V]</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>print(min(readings), max(readings))</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> total = <span class="dv">0.0</span> V</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> r <span class="kw">in</span> readings {</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    total += r</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>print(total)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2.9 V 3.4 V
+9.4 V</code></pre>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>print(min(<span class="dv">1</span> V, <span class="dv">200</span> mV))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `min` needs quantities in one unit, but these are in V and in mV. Turn one into the other first, as in `x.V`
+ --&gt; main.zeno:1:7
+  |
+1 | print(min(1 V, 200 mV))
+  |       ^
+
+1 error found. Nothing was run.</code></pre>
 <div class="summary">
 <p>A number followed by a unit from Zeno’s list is a quantity.
 Quantities of one kind combine, in the finer unit, and never mix with

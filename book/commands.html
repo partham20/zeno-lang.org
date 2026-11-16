@@ -187,8 +187,9 @@ beside it</td>
 <td style="text-align: left;"><code>zeno test</code></td>
 <td style="text-align: left;">run the <code>test "name" { }</code>
 blocks of a file, of every file in a folder, or of this folder when
-nothing is named (<a
-href="testing.html#ch-testing">Testing</a>)</td>
+nothing is named (<a href="testing.html#ch-testing">Testing</a>).
+<code>--only words</code> runs only the tests with those words in their
+names</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>zeno format f.zeno</code></td>
@@ -235,15 +236,22 @@ every file it imports are joined into</td>
 <code>zeno run --vm</code> runs</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>zeno playground</code></td>
+<td style="text-align: left;">write <code>playground.html</code>, a page
+in which Zeno programs are written and run in a browser, with nothing
+installed (<a href="web.html#ch-web">A Program in a Web
+Page</a>)</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>zeno lsp</code></td>
 <td style="text-align: left;">the language server. An editor starts it,
 to show mistakes as you type; you do not run it yourself</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>zeno --version</code></td>
 <td style="text-align: left;">print the version</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>zeno --help</code></td>
 <td style="text-align: left;">print the list of commands and
 options</td>

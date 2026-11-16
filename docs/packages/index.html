@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Packages · Zeno</title>
-<meta name="description" content="modules.md put a program into several files. This page lets a program use files that are not its own: a package is a folder of modules that lives somewhere else, beside the program or in somebody else&#x27;s git repository.">
-<meta property="og:title" content="Packages · Zeno">
-<meta property="og:description" content="modules.md put a program into several files. This page lets a program use files that are not its own: a package is a folder of modules that lives somewhere else, beside the program or in somebody else&#x27;s git repository.">
+<title>Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget · Zeno</title>
+<meta name="description" content="The installers of install.md are Zeno&#x27;s own: a setup program and a script. But most systems already have a program whose job is to install programs, and people who use one would rather use it for everything. It knows what is installed, it updates…">
+<meta property="og:title" content="Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget · Zeno">
+<meta property="og:description" content="The installers of install.md are Zeno&#x27;s own: a setup program and a script. But most systems already have a program whose job is to install programs, and people who use one would rather use it for everything. It knows what is installed, it updates…">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/docs/packages/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
@@ -38,308 +38,327 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/" aria-current="page">Packages</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><h4>More</h4><a href="/docs/found-by-the-book/">What writing the book found</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/packages/" aria-current="page">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><h4>More</h4><a href="/docs/found-by-the-book/">What writing the book found</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
-  <h1>Packages</h1>
-  <p><a href="/docs/modules/"><code>modules.md</code></a> put a program into several files. This page
-lets a program use files that are not its own: a <strong>package</strong> is a
-folder of modules that lives somewhere else, beside the program or in
-somebody else's git repository.</p>
-<pre><code>cargo run -- run examples/thermostat/main.zeno</code></pre>
-<pre><code>read  18.2  smoothed  18.2  heater On
-read  18.9  smoothed  18.5  heater On
-...
-read  23.1  smoothed  22.2  heater Off
-mean 20.44, heater on for 7 of 10 minutes</code></pre>
-<p>Two folders in <code>examples/</code> make this program:</p>
-<pre><code>examples/thermostat/         the program
-    zeno.package             its name, and what it needs
-    main.zeno                the file the program starts in
-    control.zeno             the module `control`, a file of the program
-examples/filters/            a package
-    zeno.package             its name
-    filters.zeno             the module `filters`
-    lowpass.zeno             the module `filters.lowpass`
-    main.zeno                a small program that tries the package</code></pre>
-<p>The decisions are 8.1 to 8.11 in <a href="/decisions/"><code>decisions.md</code></a>.</p>
-<h2 id="the-project-file">The project file</h2>
-<p>A folder is a package when it has a file called <code>zeno.package</code> in it.
-This is the thermostat's:</p>
-<pre><code># What this program is called, and the packages it needs.
-package thermostat
-
-needs filters in "../filters"</code></pre>
-<p>There are two kinds of line, and that is all the file can say:</p>
+  <h1>Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</h1>
+  <p>The installers of <a href="/docs/install/"><code>install.md</code></a> are Zeno's own: a setup
+program and a script. But most systems already have a program whose
+job is to install programs, and people who use one would rather use
+it for everything. It knows what is installed, it updates it, and it
+takes it off cleanly.</p>
+<p>There are many of them. This stage makes Zeno something that six of
+them can install:</p>
 <table>
 <thead>
 <tr>
-<th>Line</th>
-<th>Means</th>
+<th>Its program</th>
+<th>On</th>
+<th>What is made for it</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>package thermostat</code></td>
-<td>the name of this package. The first line that is not a comment</td>
+<td><strong>apt</strong></td>
+<td>Debian, Ubuntu, Raspberry Pi OS</td>
+<td><code>zeno_0.2.0_amd64.deb</code>, and <code>arm64</code>, <code>armhf</code>, <code>i386</code></td>
 </tr>
 <tr>
-<td><code>needs filters in "../filters"</code></td>
-<td>it needs the package in that folder. The folder is counted from this file's folder. Nothing is copied</td>
+<td><strong>pacman</strong></td>
+<td>Arch, Manjaro</td>
+<td><code>zeno-bin-0.2.0-1-x86_64.pkg.tar.zst</code>, and a <code>PKGBUILD</code></td>
 </tr>
 <tr>
-<td><code>needs units from "address" at "v1.2.0"</code></td>
-<td>it needs the package in that git repository, at that tag, branch or commit. <code>zeno fetch</code> gets it</td>
+<td><strong>snap</strong></td>
+<td>Ubuntu, and others</td>
+<td><code>zeno_0.2.0_amd64.snap</code>, and <code>arm64</code>, <code>armhf</code></td>
+</tr>
+<tr>
+<td><strong>flatpak</strong></td>
+<td>most Linux desktops</td>
+<td><code>zeno-0.2.0-x86_64.flatpak</code>, and <code>aarch64</code></td>
+</tr>
+<tr>
+<td><strong>Homebrew</strong></td>
+<td>macOS, and Linux</td>
+<td>a formula, <code>Formula/zeno.rb</code></td>
+</tr>
+<tr>
+<td><strong>winget</strong></td>
+<td>Windows 10 and 11</td>
+<td>three small files, in <code>packaging/winget</code></td>
 </tr>
 </tbody>
 </table>
-<p>A program with no <code>zeno.package</code> is still a program: <code>examples/station</code>
-has none. The file is there from the day the program needs a package.</p>
-<h2 id="importing-from-a-package">Importing from a package</h2>
-<pre><code class="zeno">import filters              # filters.zeno in the package's folder
-import filters.lowpass      # lowpass.zeno in the package's folder
-import control              # control.zeno, a file of the thermostat
-
-let smooth = filters.lowpass.start(0.4, readings[0])
-print(filters.mean(readings))</code></pre>
-<p>The rule has one step more than the rule for modules:</p>
-<ol>
-<li><strong>If the first word of the import is a package this file's
-   <code>zeno.package</code> needs</strong>, the rest is a file in that package's
-   folder. <code>import filters.lowpass</code> is <code>lowpass.zeno</code> there. <code>import
-   filters</code> with nothing after it is the file with the package's own
-   name, <code>filters.zeno</code>.</li>
-<li><strong>Otherwise</strong> it is a file of the package the importing file is
-   in. For <code>main.zeno</code> that is the thermostat's own folder.</li>
-</ol>
-<p>Everything else is as it was. What is written at the import is
-written at the use. <code>from filters.lowpass import Lowpass</code> brings in
-one name. A type is <code>filters.lowpass.Lowpass</code>.</p>
-<p><strong>Inside the package the same rule holds, from the package's own
-side.</strong> <code>lowpass.zeno</code> wants <code>clamp</code> from its neighbour, and writes:</p>
-<pre><code class="zeno">from filters import clamp       # filters.zeno, in this package's folder</code></pre>
-<p>It does not matter which program is using the package. A package sees
-its own files and the packages its own <code>zeno.package</code> needs, and
-nothing of the program that needs it. So a package can also be run on
-its own:</p>
-<pre><code>cargo run -- run examples/filters/main.zeno</code></pre>
-<h2 id="other-peoples-packages-zeno-fetch">Other people's packages: <code>zeno fetch</code></h2>
-<p>A package that somebody else keeps is named by where its git
-repository is, and by a version of it:</p>
-<pre><code>package logger
-
-needs units from "https://github.com/someone/zeno-units" at "v1.2.0"</code></pre>
-<p><code>at</code> is a tag, a branch or a commit. It is one exact thing: there are
-no ranges such as <code>^1.2</code> (decision 8.4). Then, in the program's
-folder:</p>
-<pre><code>$ zeno run main.zeno
-error: the package `units` has not been fetched: there is no file
-`packages/units/zeno.package`. Run `zeno fetch` in the folder of the program
- --&gt; zeno.package:3:1
-
-$ zeno fetch
-Fetched units v1.2.0 (1c4e326) into packages/units
-Fetched prefix main (d4461d9) into packages/prefix
-Wrote zeno.lock
-
-$ zeno run main.zeno
-42.0</code></pre>
-<p>Three things to see:</p>
+<p>None of them holds a <code>zeno</code> of its own. Each is the <code>zeno</code> of a
+release's archive, laid out the way that system wants it. The
+decisions are 15.12 to 15.21 of <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="two-halves-and-which-one-this-is">Two halves, and which one this is</h2>
+<p>Installing with a package manager has two halves.</p>
+<p>The first is <strong>a package</strong>: a file in that manager's own form. All six
+are made here, by one script, and five of them are tried on a real
+system before each release.</p>
+<p>The second is <strong>a place the manager looks in</strong>: when somebody types
+<code>apt install zeno</code>, apt asks the places it knows about, and Zeno is in
+none of them. Each manager has such a place, each place has a door,
+and each door wants an account or a person's say-so. That half is at
+the end of this page, as a list.</p>
+<p>Until then, each package installs from its file:</p>
+<pre><code>sudo apt install ./zeno_0.2.0_amd64.deb
+sudo pacman -U zeno-bin-0.2.0-1-x86_64.pkg.tar.zst
+sudo snap install --classic --dangerous zeno_0.2.0_amd64.snap
+flatpak install --user zeno-0.2.0-x86_64.flatpak</code></pre>
+<p>and Homebrew, which reads formulas from a repository, reads this one:</p>
+<pre><code>brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
+brew install partham20/zeno-lang/zeno</code></pre>
+<h2 id="apt-a-deb">apt: a .deb</h2>
+<p>A <code>.deb</code> is an archive of files with the paths they are to have, and a
+folder, <code>DEBIAN</code>, with one file that says what the package is:</p>
+<pre><code>Package: zeno
+Version: 0.2.0
+Architecture: amd64
+Recommends: gcc | c-compiler, libc6-dev | libc-dev, git
+Suggests: clang</code></pre>
+<p><code>dpkg-deb --build</code> turns the folder into the file. What is in it:</p>
+<pre><code>/usr/lib/zeno/zeno          the program
+/usr/lib/zeno/zeno.wasm     Zeno for a browser, beside it
+/usr/bin/zeno               a link to the program, where the PATH looks
+/usr/share/zeno/examples    and /editors
+/usr/share/doc/zeno         the README and the docs</code></pre>
+<p><strong><code>Recommends</code> is how apt installs whatever is needed.</strong> apt installs
+what a package recommends along with it, unless it is told
+<code>--no-install-recommends</code>. So <code>apt install ./zeno_0.2.0_amd64.deb</code> on
+a machine with no compiler brings gcc and git too, which is what the
+setup program's two boxes do on Windows. <code>gcc | c-compiler</code> means gcc,
+or anything that calls itself a C compiler: a machine that has clang
+is left alone.</p>
+<p><strong>The one for <code>armhf</code> holds the build for ARMv6.</strong> Debian's <code>armhf</code> is
+ARMv7, and Raspberry Pi OS calls a Pi Zero, which is ARMv6, <code>armhf</code>
+too. The ARMv6 build runs on both, and the ARMv7 build would not start
+on the Pi Zero.</p>
+<h2 id="pacman-a-pkgbuild-and-the-package-it-makes">pacman: a PKGBUILD, and the package it makes</h2>
+<p>Arch does not pass packages around as much as recipes for them. A
+<code>PKGBUILD</code> is a shell script that says where the files come from, what
+their checksums are, and, in a function called <code>package</code>, where each
+goes. <code>makepkg</code> runs it and makes the package, and <code>makepkg -si</code>
+installs it too.</p>
+<p>The package is called <code>zeno-bin</code>: on Arch, <code>-bin</code> says "this packs a
+program that was already built", and plain <code>zeno</code> is left for a
+package that would build it from source.</p>
+<p>pacman has nothing like <code>Recommends</code>. The compiler and git are named
+as <code>optdepends</code>, which pacman shows after installing and does not
+install. Nearly every Arch machine that builds anything has both.</p>
+<p><code>makepkg</code> exists only on Arch, so <code>package.sh</code> runs Arch in a
+container to make the package for x86-64.</p>
+<h2 id="snap">snap</h2>
+<p>A snap is one file that holds a folder (it is a squashfs, a read-only
+disk in a file), with <code>meta/snap.yaml</code> in it to say what it is. <code>snap
+pack</code> makes the file from the folder.</p>
+<pre><code>name: zeno
+confinement: classic
+apps:
+  zeno:
+    command: bin/zeno</code></pre>
+<p><strong><code>classic</code></strong> is the line that matters. A snap is normally shut in: it
+sees its own files and little of the machine. A compiler cannot work
+like that. It has to read a program wherever somebody keeps it, and
+run the C compiler that is installed. <code>classic</code> says the snap is not
+shut in at all, and installing one says so too: <code>--classic</code>.</p>
+<p><code>--dangerous</code> only means "this file did not come from the store, so
+nobody has signed it".</p>
+<h2 id="flatpak">flatpak</h2>
+<p>A flatpak is shut in as well, and has no <code>classic</code>. It runs in a box,
+on top of a <strong>runtime</strong>: a set of files that stands in for the system,
+the same on every Linux. So the question is what to do about the
+compiler, which is outside the box.</p>
+<p>The answer here is to pick a runtime that has one. There are two for
+each version: the Platform, which programs run on, and the Sdk, which
+they are built on. The Sdk has gcc and git. Zeno names the <strong>Sdk</strong> as
+its runtime, so <code>zeno build</code> and <code>zeno fetch</code> work inside the box with
+nothing else installed. The price is the download: the Sdk is several
+hundred megabytes, once.</p>
+<p>The box is given two things from outside: the home folder, where
+programs are kept, and the network, for <code>zeno fetch</code>.</p>
+<p>Its name is <code>org.zeno_lang.Zeno</code>. A flatpak is named after a web
+address its maker owns, turned round, and <code>zeno-lang.org</code> turned round
+is <code>org.zeno-lang</code>, with <code>_</code> because <code>-</code> is not allowed. It is run as</p>
+<pre><code>flatpak run org.zeno_lang.Zeno run hello.zeno</code></pre>
+<p>which is long, so: <code>alias zeno='flatpak run org.zeno_lang.Zeno'</code>.</p>
+<p>Of the six this is the poorest fit. Flatpak was made for programs with
+a window. It is here because it was asked for and because it works.</p>
+<h2 id="homebrew-a-formula">Homebrew: a formula</h2>
+<p>A formula is a small Ruby file. For each kind of machine it says where
+the archive is and what its checksum must be, and then what to do with
+what is in it:</p>
+<pre><code>def install
+  bin.install "zeno"
+  bin.install "zeno.wasm" if File.exist?("zeno.wasm")
+  doc.install "README.md", "docs"
+  pkgshare.install "examples", "editors"
+end</code></pre>
+<p>Homebrew reads formulas from a git repository, which it calls a
+<strong>tap</strong>. The formula is kept in this repository, in <code>Formula</code>, so this
+repository is the tap. That is why the first of the two lines above
+names it in full: a tap that is called <code>homebrew-something</code> can be
+named in short, and this one is not.</p>
+<p>On macOS the compiler and git come with Apple's command line tools,
+which Homebrew itself needs, so there is nothing to recommend.</p>
+<h2 id="winget">winget</h2>
+<p>winget does not have packages of its own. It runs a program's setup
+program without showing it, and what it needs to know is in three
+small files: which version this is, where the setup program is and its
+checksum, and what to show somebody who searches. The setup program is
+the one from <a href="/docs/install/"><code>install.md</code></a>. It is one file for three
+processors, so the files name it three times.</p>
+<p>One line in them is there for a reason:</p>
+<pre><code>InstallerSwitches:
+  Custom: /MERGETASKS="!compiler,!git"</code></pre>
+<p>The setup program's two boxes install the compiler and Git <strong>with
+winget</strong>. Run by winget, without being shown, it would start a second
+winget inside the first, and nobody would have been asked. The line
+unticks the two boxes. Somebody who uses winget installs those two the
+same way: <code>winget install BrechtSanders.WinLibs.POSIX.UCRT.LLVM
+Git.Git</code>.</p>
+<h2 id="how-they-are-made">How they are made</h2>
+<pre><code>tools/package.sh 0.2.0 files out</code></pre>
+<p><code>files</code> is a folder with the files of a release. The script unpacks
+the archive for each processor, lays the files out, and calls the tool
+that makes that kind of package: <code>dpkg-deb</code>, <code>snap pack</code>, <code>flatpak
+build-export</code> and <code>build-bundle</code>, and <code>makepkg</code> in a container. The
+three recipes are text, and are written with <code>cat</code>. A kind whose tool
+is missing is left out, with a line that says so.</p>
+<p>Nothing is compiled. The script works on any release, including one
+that was made before the script was: that is how it was tried, on
+0.1.0.</p>
+<p>The recipes go into <code>out/recipes</code>, laid out as this repository is:</p>
+<pre><code>out/recipes/Formula/zeno.rb
+out/recipes/packaging/arch/PKGBUILD
+out/recipes/packaging/winget/ZenoLang.Zeno.yaml   and two more</code></pre>
+<p>They hold the checksums of a release's files, so they can only be
+written when those files exist. <code>tools/keep-recipes.sh</code> copies them
+into the repository and pushes, as the last step of a release.</p>
+<h2 id="how-they-are-tried">How they are tried</h2>
+<pre><code>tools/try-packages.sh deb 0.2.0 out</code></pre>
+<p>and the same with <code>snap</code>, <code>flatpak</code>, <code>pacman</code> and <code>brew</code>. Each
+installs the package the way somebody would, checks that <code>zeno
+--version</code> is the version, runs the first example, builds a page (from
+0.2.0), removes the package and checks that nothing is left. The
+flatpak is also made to compile a program, since its compiler is the
+one thing about it that is unusual.</p>
+<p>Homebrew downloads what its formula names, and before a release there
+is nothing there to download. So the formula is tried with the address
+of a folder in place of the address of the release, and nothing else
+changed.</p>
+<h2 id="in-the-release">In the release</h2>
+<p><a href="https://github.com/partham20/zeno-lang/blob/main/.github/workflows/release.yml"><code>release.yml</code></a> has a job,
+<code>packages</code>, after the ten builds and the setup program. It makes the
+packages from what was just built and tries them, and a second job
+tries the formula on macOS. If either fails, there is no release.</p>
+<p>A release then has its archives, the two installers, and nine
+packages: four <code>.deb</code>, three <code>.snap</code>, two <code>.flatpak</code> and the pacman
+package. Then the recipes are pushed to <code>main</code>.</p>
+<p><a href="https://github.com/partham20/zeno-lang/blob/main/.github/workflows/packages.yml"><code>packages.yml</code></a> does the same for
+a version that is already released, started by hand.</p>
+<h2 id="the-other-half-where-each-manager-looks">The other half: where each manager looks</h2>
+<p>For <code>apt install zeno</code> and the rest to work with one word, Zeno has to
+be in the place that manager looks in. Every one of them first needs
+<strong>the repository to be public</strong>: they all download from the release.
+After that:</p>
+<table>
+<thead>
+<tr>
+<th>For</th>
+<th>What has to happen</th>
+<th>Then it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Homebrew</td>
+<td>Nothing more. Better: a repository named <code>homebrew-zeno</code> to hold the formula</td>
+<td><code>brew install partham20/zeno/zeno</code></td>
+</tr>
+<tr>
+<td>winget</td>
+<td>The three files are sent to Microsoft's <code>winget-pkgs</code> repository as a pull request, which people there check</td>
+<td><code>winget install ZenoLang.Zeno</code></td>
+</tr>
+<tr>
+<td>pacman</td>
+<td>An account on the AUR, and the <code>PKGBUILD</code> pushed there</td>
+<td><code>yay -S zeno-bin</code></td>
+</tr>
+<tr>
+<td>snap</td>
+<td>An account on the Snap Store, the name <code>zeno</code> registered, and a request for <code>classic</code>, which people there decide</td>
+<td><code>sudo snap install zeno --classic</code></td>
+</tr>
+<tr>
+<td>flatpak</td>
+<td>A request to Flathub, which people there check</td>
+<td><code>flatpak install flathub org.zeno_lang.Zeno</code></td>
+</tr>
+<tr>
+<td>apt</td>
+<td>An apt repository: the <code>.deb</code> files and a signed list of them, kept somewhere such as zeno-lang.org</td>
+<td>one line to add it, then <code>sudo apt install zeno</code></td>
+</tr>
+</tbody>
+</table>
+<p>Being in Debian's or Arch's own collection, or in Homebrew's main one,
+is a different matter: each takes programs that are already widely
+used, and Zeno is days old.</p>
+<p>winget, the Snap Store and Flathub each ask what licence a program has.
+Zeno has none yet (15.19).</p>
+<h2 id="what-it-does-not-do-yet">What it does not do yet</h2>
 <ul>
-<li><strong>Running never fetches.</strong> <code>zeno run</code>, <code>check</code> and <code>build</code> read
-  files and nothing else. Only <code>zeno fetch</code> uses the network, and it
-  does so with the <code>git</code> that is on the machine (8.9).</li>
-<li><strong><code>units</code> needed <code>prefix</code>, and that came too.</strong> A fetched package
-  has its own <code>zeno.package</code>, and what it needs is fetched as well.
-  All of them go into one folder, <code>packages/</code>, beside the program's
-  <code>zeno.package</code>. There is one package of each name in a program
-  (8.7).</li>
-<li><strong><code>zeno.lock</code> was written.</strong> It holds the commit each package was
-  at:</li>
-</ul>
-<pre><code>prefix from "https://.../zeno-prefix" at "main" commit "d4461d9976d7..."
-units from "https://.../zeno-units" at "v1.2.0" commit "1c4e3266dcc4..."</code></pre>
-<p><code>prefix</code> follows the branch <code>main</code>, and a branch moves. The next
-  <code>zeno fetch</code>, here or on another machine, still gets <code>d4461d9</code>,
-  because the lock says so. <code>zeno fetch --update</code> looks every <code>at</code> up
-  again and writes the lock afresh (8.10). Keep <code>zeno.lock</code> with the
-  program. The folder <code>packages/</code> can be made again from it at any
-  time.</p>
-<h2 id="what-can-go-wrong-and-what-zeno-says">What can go wrong, and what Zeno says</h2>
-<pre class="out"><code>error: this does not say which version of `units` is needed. Add `at` and a tag,
-a branch or a commit of that repository, as in `needs units from "..." at "v1.0.0"`
-
-error: the package in `lib` is called `filters`, not `filter`. Write `needs filters ...`
-
-error: two packages called `b` are needed: the one in `a/b` and the one in `b`.
-A program has one package of each name. Make the `needs` lines agree
-
-error: the package `filters` has no module `lowpas`. `import filters.lowpas` reads
-the file `../filters/lowpas.zeno`, and there is no such file
-
-error: `import filters` has two readings here: the file `filters.zeno`, and the file
-`../filters/filters.zeno` of the package `filters` that `zeno.package` needs.
-Give the first another name</code></pre>
-<p>A mistake in a <code>zeno.package</code> is shown as a mistake in any file is:
-the file, the line, and the line itself with a mark under it.</p>
-<h2 id="how-it-works">How it works</h2>
-<p>Two files do the work. <code>src/package.rs</code> reads <code>zeno.package</code> and
-<code>zeno.lock</code>, and is <code>zeno fetch</code>. <code>src/modules.rs</code>, the loader from
-the last stage, learned which file an import names when there are
-packages.</p>
-<h3 id="reading-zenopackage">Reading <code>zeno.package</code></h3>
-<p>The file is split into words by Zeno's own lexer, the one that reads
-programs. That is why a comment starts with <code>#</code> and a string is
-written as in a program, and it is why this reader is short:</p>
-<pre><code>for line in tokens.split(|token| matches!(token.kind, TokenKind::Newline | TokenKind::Eof)) {
-    ...
-    match words.as_slice() {
-        [_, TokenKind::Ident(package)] if word(0, "package") =&gt; { ... }
-        [_, TokenKind::Ident(need), rest @ ..] if word(0, "needs") =&gt; {
-            let source = match rest {
-                [TokenKind::In, TokenKind::Str { value, .. }] =&gt; Source::Folder(value.clone()),
-                [TokenKind::From, TokenKind::Str { value: url, .. }, _, TokenKind::Str { value: at, .. }]
-                    if word(4, "at") =&gt; Source::Git { url: url.clone(), at: at.clone() },
-                ...</code></pre>
-<p>A line is a list of tokens, and each kind of line is one pattern over
-that list. <code>in</code> and <code>from</code> are already keywords of Zeno, so they
-arrive as <code>TokenKind::In</code> and <code>TokenKind::From</code>. <code>package</code>, <code>needs</code>
-and <code>at</code> are ordinary words, matched by their text. What comes out is
-a <code>Manifest</code>: a name, and a list of <code>Need</code>.</p>
-<h3 id="finding-the-packages">Finding the packages</h3>
-<p><code>Loader</code> in <code>src/modules.rs</code> got a list of packages. The first is the
-program itself:</p>
-<pre><code>struct Package {
-    name: String,                    // empty for a program with no zeno.package
-    folder: PathBuf,
-    needs: HashMap&lt;String, usize&gt;,   // name -&gt; which package in the list
-}</code></pre>
-<p>Before the first import is followed, <code>packages_needed</code> reads the
-program's <code>zeno.package</code>, and <code>need</code> follows each <code>needs</code> line to the
-<code>zeno.package</code> it points at, and so on down. A <code>needs ... in</code> folder
-is counted from the folder of the file that says it. A <code>needs ...
-from</code> package is always in <code>packages/&lt;name&gt;</code> of the <em>program</em>,
-whichever package asked for it. If a name is met a second time it
-must be the same folder, or the program would have two packages of
-one name.</p>
-<p>Each <code>zeno.package</code> that is read becomes one of the program's files,
-with a number like any other (see "One number says the file and the
-line" in <code>modules.md</code>). That is all it takes for a mistake in one to
-be shown with its file and line.</p>
-<h3 id="which-file-an-import-names">Which file an import names</h3>
-<p><code>find</code> is the two-step rule from above, in code:</p>
-<pre><code>let own = file(&amp;self.packages[from].folder, &amp;parts);
-let Some(&amp;needed) = self.packages[from].needs.get(parts[0]) else {
-    return Some(Found { module: self.full(from, written), package: from, path: own });
-};
-...
-let inside = if parts.len() == 1 { &amp;parts[..] } else { &amp;parts[1..] };
-let path = file(&amp;self.packages[needed].folder, inside);</code></pre>
-<p><code>from</code> is the package the importing file is in. If the first word is
-not one of its needs, the import is a file of that same package.
-Otherwise the words after the first are a file of the needed package.</p>
-<h3 id="one-name-in-the-whole-program">One name in the whole program</h3>
-<p>Inside <code>filters</code>, the file writes <code>import lowpass</code>. In the thermostat,
-the same file is <code>import filters.lowpass</code>. The joined program needs
-one name for it, and <code>full</code> gives it: a module of the program keeps
-its name, and a module of another package gets the package's name in
-front.</p>
-<pre><code>lowpass.start           written in examples/filters/main.zeno ...
-filters.lowpass.start   ... and in examples/thermostat/main.zeno
-filters.lowpass.start   is what both are in the thermostat's joined program</code></pre>
-<p>So the renamer of the last stage now keeps two names for each
-imported module: the one the file wrote, which is what it looks for
-in the source, and the one the program uses, which is what it writes
-into the tree. See it with <code>join</code>:</p>
-<pre><code>cargo run -- join examples/thermostat/main.zeno</code></pre>
-<pre><code class="zeno">function filters.clamp(value: float, low: float, high: float) -&gt; float
-...
-class filters.lowpass.Lowpass
-...
-function filters.lowpass.start(weight: float, first: float) -&gt; filters.lowpass.Lowpass
-    return filters.lowpass.Lowpass(filters.clamp(weight, 0.0, 1.0), first)</code></pre>
-<p>In <code>lowpass.zeno</code> that last line is <code>Lowpass(clamp(weight, 0.0, 1.0),
-first)</code>. After this point nothing knows there were packages: the type
-checker, the interpreter, the VM and both compilers got one ordinary
-program, as they did with modules.</p>
-<h3 id="zeno-fetch"><code>zeno fetch</code></h3>
-<p><code>fetch</code> in <code>src/package.rs</code> walks the same <code>needs</code> lines, and for each
-one with <code>from</code> runs git:</p>
-<pre><code>git clone &lt;address&gt; packages/&lt;name&gt;         if it is not there yet
-git fetch --tags origin                     if it is
-git rev-parse refs/tags/&lt;at&gt;                is `at` a tag? else a branch? else a commit?
-git checkout --detach &lt;commit&gt;</code></pre>
-<p>If <code>zeno.lock</code> has a line for the same package, address and <code>at</code>, the
-commit in that line is used and <code>at</code> is not looked up. Then the
-fetched package's own <code>zeno.package</code> is read, its needs join the
-queue, and at the end the lock is written, sorted by name so that it
-is the same file whichever order things were fetched in.</p>
-<p>The test for all this (<code>fetch_gets_what_is_needed_and_pins_it</code>) makes
-two small git repositories in a temporary folder and fetches from
-them by <code>file://</code> address, so it needs no network.</p>
-<h2 id="what-is-left-out">What is left out</h2>
-<ul>
-<li><strong>No registry and no short names.</strong> A package is a folder or a git
-  address (8.3).</li>
-<li><strong>No version ranges.</strong> <code>at</code> names one tag, branch or commit, and two
-  packages that need the same package must name the same one (8.4,
-  8.7).</li>
-<li><strong>No <code>zeno add</code>.</strong> The project file is two kinds of line, written
-  by hand (8.9). <code>zeno new</code> writes the first one, and shows the
-  others in a comment (<a href="/docs/new/"><code>new.md</code></a>).</li>
-<li><strong>A package is a whole repository.</strong> One that sits in a subfolder
-  of a repository cannot be fetched yet.</li>
-<li><strong><code>packages/</code> is not tidied.</strong> A package that is no longer needed
-  stays in the folder until you remove it. It is not read.</li>
-<li><strong>An edit inside <code>packages/</code> is not noticed.</strong> <code>zeno fetch</code> compares
-  commits, not files. To change a fetched package, make it a folder
-  package (<code>needs ... in</code>) while you work on it.</li>
-<li><strong>Everything is still compiled together</strong>, packages included.</li>
+<li><strong>None of the six works with one word</strong> (above).</li>
+<li><strong>The winget files have not been run.</strong> GitHub's Windows machines
+  have no winget. The other five are installed and removed before
+  each release.</li>
+<li><strong>The packages for other processors are made and not run</strong>: the
+  <code>.deb</code> for arm64, armhf and i386, the snap for arm64 and armhf, and
+  the flatpak for aarch64. The <code>zeno</code> inside each was run, by the
+  build that made it.</li>
+<li><strong>No apt repository</strong>, so apt does not update Zeno by itself.</li>
+<li><strong>No package for pacman on ARM</strong>, only the <code>PKGBUILD</code>, which makes
+  one there.</li>
+<li><strong>No <code>.rpm</code></strong> for Fedora and openSUSE, no Nix, no Scoop or
+  Chocolatey. <code>install.sh</code> works on all the Linux ones.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
 <ol>
-<li>Run <code>cargo run -- join examples/thermostat/main.zeno</code>. Find a name
-   that starts with <code>filters.lowpass.</code>, then open
-   <code>examples/filters/lowpass.zeno</code> and see how the file itself
-   wrote it.</li>
-<li>Run <code>cargo run -- run examples/filters/main.zeno</code>, then <code>join</code> it.
-   The same <code>start</code> has another name now. Which, and why? (Read
-   <code>Loader::full</code>.)</li>
-<li>In <code>examples/thermostat/main.zeno</code>, change <code>import filters.lowpass</code>
-   to <code>import lowpass</code>. Read the message: which file did Zeno look
-   for, and in which folder?</li>
-<li>In <code>examples/thermostat/zeno.package</code>, change the folder to
-   <code>"../filter"</code>. Which file and line does the message point at? Put
-   it back.</li>
-<li>In the same file, call the package <code>filter</code> in the <code>needs</code> line
-   (and leave the folder right). Read the message.</li>
-<li>Add the line <code>import control</code> to the top of
-   <code>examples/filters/lowpass.zeno</code> and run the thermostat. The
-   thermostat has a <code>control.zeno</code>. Why is it not found? (Decision
-   8.6.) Take the line out again.</li>
-<li>Add a function <code>lowpass()</code> to <code>examples/filters/filters.zeno</code> and
-   run the thermostat. Read the message, then read decision 8.11.
-   Take it out again.</li>
-<li>Make a package of your own. In an empty folder make <code>zeno.package</code>
-   with <code>package greet</code> and a file <code>greet.zeno</code> with a function
-   <code>hello(name: str) -&gt; str</code>. In a second folder beside it write a
-   program that needs it and prints <code>greet.hello("Zeno")</code>.</li>
-<li>Now fetch it. In the <code>greet</code> folder run <code>git init</code>, <code>git add .</code>,
-   <code>git commit -m first</code> and <code>git tag v1</code>. In the program's
-   <code>zeno.package</code> write
-   <code>needs greet from "file:///full/path/to/greet" at "v1"</code>, run
-   <code>zeno fetch</code>, and look at <code>packages/</code> and <code>zeno.lock</code>.</li>
-<li>Change <code>hello</code> in the <code>greet</code> folder, commit, and run <code>zeno fetch</code>
-    again. Nothing moves: why? Tag the new commit <code>v2</code>, change <code>at</code> to
-    <code>"v2"</code>, and fetch once more. What changed in <code>zeno.lock</code>?</li>
-<li>Build the thermostat with no collector:
-    <code>cargo run -- build --no-collector --memory examples/thermostat/main.zeno</code>
-    and run <code>./main</code>. How many blocks are left at the end?</li>
+<li><code>dpkg-deb --info zeno_0.2.0_amd64.deb</code> and <code>dpkg-deb --contents</code>
+   of the same. Find each line of the first in <code>tools/package.sh</code>.</li>
+<li>Install the <code>.deb</code> with <code>--no-install-recommends</code> in a container
+   that has no compiler (<code>docker run -it debian</code>). What does <code>zeno
+   build</code> say? Now without that option.</li>
+<li>A snap is a squashfs: <code>unsquashfs -l zeno_0.2.0_amd64.snap</code> lists
+   what is in it. Find <code>meta/snap.yaml</code>.</li>
+<li>In <code>package.sh</code>, make the flatpak's runtime the Platform and not
+   the Sdk, and run <code>try-packages.sh flatpak</code>. Which check fails, and
+   what does it say? How much smaller is the download?</li>
+<li>Read the <code>PKGBUILD</code>. <code>package()</code> begins with <code>cd
+   "$srcdir"/zeno-$pkgver-linux-*/</code>. Why a <code>*</code>? Take the <code>/</code> off the
+   end and run <code>makepkg</code>: it says <code>cd: too many arguments</code>, which is
+   what it said the first time this was tried. What are the two
+   things the <code>*</code> matched?</li>
+<li>The formula has <code>on_macos</code> and <code>on_linux</code>, each with <code>on_arm</code> and
+   <code>on_intel</code>. Homebrew on Linux does not run on 32-bit ARM. What
+   does somebody on a Raspberry Pi with a 32-bit system see, and what
+   should they use?</li>
+<li>A big one: an apt repository is a folder with the <code>.deb</code> files, a
+   file <code>Packages</code> that lists them (<code>dpkg-scanpackages</code> writes it) and
+   a file <code>Release</code> with the checksum of that list, signed. Make one
+   in a folder, serve it with <code>python3 -m http.server</code>, and add it to
+   a container's <code>/etc/apt/sources.list.d</code>. What goes wrong without
+   the signature, and what is the option that gets past it? Why is
+   that option a bad idea on a real machine?</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/packages.md">docs/packages.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/modules/"><span>Previous</span>Programs in several files</a><a class="next" href="/docs/web/"><span>Next</span>How a Zeno program runs in a web page</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-project-file">The project file</a></li><li><a href="#importing-from-a-package">Importing from a package</a></li><li><a href="#other-peoples-packages-zeno-fetch">Other people's packages: zeno fetch</a></li><li><a href="#what-can-go-wrong-and-what-zeno-says">What can go wrong, and what Zeno says</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#two-halves-and-which-one-this-is">Two halves, and which one this is</a></li><li><a href="#apt-a-deb">apt: a .deb</a></li><li><a href="#pacman-a-pkgbuild-and-the-package-it-makes">pacman: a PKGBUILD, and the package it makes</a></li><li><a href="#snap">snap</a></li><li><a href="#flatpak">flatpak</a></li><li><a href="#homebrew-a-formula">Homebrew: a formula</a></li><li><a href="#winget">winget</a></li><li><a href="#how-they-are-made">How they are made</a></li><li><a href="#how-they-are-tried">How they are tried</a></li><li><a href="#in-the-release">In the release</a></li><li><a href="#the-other-half-where-each-manager-looks">The other half: where each manager looks</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">
