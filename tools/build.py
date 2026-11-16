@@ -474,25 +474,25 @@ def build_examples():
 
 GUIDE = [
     ("install", "Install", None, """
-<p>Zeno 0.2 is out, open source under the MIT licence. Install it with one line on macOS and Linux, or a setup program on Windows. Both put <code>zeno</code> on your <code>PATH</code>, and offer a C compiler and git if the machine has none: <code>zeno build</code> needs the first, <code>zeno fetch</code> the second, and nothing else needs either.</p>
+<p>Zeno 0.3 is out, open source under the MIT licence. Install it with one line on macOS and Linux, or a setup program on Windows. Both put <code>zeno</code> on your <code>PATH</code>, and offer a C compiler and git if the machine has none: <code>zeno build</code> needs the first, <code>zeno fetch</code> the second, and nothing else needs either.</p>
 <h3>macOS and Linux</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="install-cmd"><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh
 zeno new hello
 zeno run hello/main.zeno</code></pre></figure>
 <h3>Windows</h3>
-<p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.2.0/zeno-0.2.0-windows-setup.exe">zeno-0.2.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
+<p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.3.0/zeno-0.3.0-windows-setup.exe">zeno-0.3.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
 <h3>With a package manager</h3>
-<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.2.0">release page</a>, and a Homebrew tap:</p>
+<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.3.0">release page</a>, and a Homebrew tap:</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="pkg-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
-<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.2.0_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
-sudo pacman -U zeno-bin-0.2.0-1-x86_64.pkg.tar.zst       # Arch, Manjaro
-sudo snap install --classic --dangerous zeno_0.2.0_amd64.snap
-flatpak install --user zeno-0.2.0-x86_64.flatpak
+<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.3.0_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
+sudo pacman -U zeno-lang-bin-0.3.0-1-x86_64.pkg.tar.zst  # Arch, Manjaro
+sudo snap install --classic --dangerous zeno_0.3.0_amd64.snap
+flatpak install --user zeno-0.3.0-x86_64.flatpak
 
 brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
 brew install partham20/zeno-lang/zeno                   # macOS and Linux</code></pre></figure>
-<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.2.0">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
+<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.3.0">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
 <h3>From source</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="src-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="src-cmd"><code>git clone https://github.com/partham20/zeno-lang
@@ -664,7 +664,7 @@ def build_roadmap():
         f'<li class="{s.split()[0].lower()}">{icon("clock" if s in ("In progress", "Next") else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
         for s, t, d in NEXT)
     body = page_head("Roadmap", "Where Zeno stands",
-                     "Zeno 0.2 is out: installers for every desktop, and a program can be a web page. "
+                     "Zeno 0.3 is out: compiled programs run close to C, and a program can choose how its memory is freed. "
                      "The goal is one language for every job you would reach for C, C++, Python, JavaScript, Java or Rust to do. "
                      "Each use case arrives with a piece of the compiler. This is the order they have come in, and the order the rest will.", "map") + f"""
 <div class="roadmap">
@@ -694,7 +694,7 @@ def build_about():
 <h2>The name</h2>
 <p>Zeno of Elea argued that Achilles can never catch a tortoise: before he reaches it he must cover half the distance, then half of what is left, forever. The quantum Zeno effect says a system watched closely enough never changes. Both suit a compiler that will always be almost finished. The bar at the top of every page closes half the distance that is left as you scroll, and never arrives.</p>
 <h2>Status</h2>
-<p>Zeno 0.2 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM and to a web page, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
+<p>Zeno 0.3 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM and to a web page, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
 <p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>, under the MIT licence. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 </div>"""
@@ -746,7 +746,7 @@ def classify(name):
     if m: return ("linux", m[2], ARCH.get(m[1], m[1]))
     m = re.fullmatch(r"zeno-[\d.]+-(\w+)\.flatpak", name)
     if m: return ("linux", "flatpak", ARCH.get(m[1], m[1]))
-    m = re.fullmatch(r"zeno-bin-[\d.]+-\d+-(\w+)\.pkg\.tar\.zst", name)
+    m = re.fullmatch(r"zeno(?:-lang)?-bin-[\d.]+-\d+-(\w+)\.pkg\.tar\.zst", name)
     if m: return ("linux", "pacman", ARCH.get(m[1], m[1]))
     if name == "install.sh": return ("any", "install.sh", "")
     if name == "SHA256SUMS.txt": return ("any", "sums", "")
