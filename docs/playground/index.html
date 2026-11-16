@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The playground: Zeno in a page, with nothing installed · Zeno</title>
-<meta name="description" content="playground.html is one file. On the left is a box to write a program in, on the right is what the program does, and Run (or Ctrl+Enter) runs it. Nothing is installed and nothing is sent anywhere: the program is checked and run in the browser, by the…">
+<meta name="description" content="playground.html is one file. On the left is the program, on the right is what it does, and Run (or Ctrl+Enter, ⌘+Enter on a Mac) runs it. Nothing is installed and nothing is sent anywhere: the program is checked, formatted and run in the browser, by…">
 <meta property="og:title" content="The playground: Zeno in a page, with nothing installed · Zeno">
-<meta property="og:description" content="playground.html is one file. On the left is a box to write a program in, on the right is what the program does, and Run (or Ctrl+Enter) runs it. Nothing is installed and nothing is sent anywhere: the program is checked and run in the browser, by the…">
+<meta property="og:description" content="playground.html is one file. On the left is the program, on the right is what it does, and Run (or Ctrl+Enter, ⌘+Enter on a Mac) runs it. Nothing is installed and nothing is sent anywhere: the program is checked, formatted and run in the browser, by…">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/docs/playground/">
 <meta property="og:image" content="https://zeno-lang.org/og.png">
@@ -43,12 +43,13 @@
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>The playground: Zeno in a page, with nothing installed</h1>
   <pre><code>zeno playground        # writes playground.html: open it in a browser</code></pre>
-<p><code>playground.html</code> is one file. On the left is a box to write a
-program in, on the right is what the program does, and Run (or
-Ctrl+Enter) runs it. Nothing is installed and nothing is sent
-anywhere: the program is checked and run in the browser, by the same
-Zeno that <code>zeno run</code> is.</p>
-<p>It is the page to send to somebody who asks what Zeno looks like.</p>
+<p><code>playground.html</code> is one file. On the left is the program, on the
+right is what it does, and Run (or Ctrl+Enter, ⌘+Enter on a Mac) runs
+it. Nothing is installed and nothing is sent anywhere: the program is
+checked, formatted and run in the browser, by the same Zeno that
+<code>zeno run</code> is.</p>
+<p>It is the page to send to somebody who asks what Zeno looks like. It
+is on the website at zeno-lang.org/playground.</p>
 <h2 id="what-is-in-it">What is in it</h2>
 <table>
 <thead>
@@ -59,27 +60,48 @@ Zeno that <code>zeno run</code> is.</p>
 </thead>
 <tbody>
 <tr>
-<td><strong>Program</strong></td>
-<td>the program. Tab indents by four spaces, as <code>zeno format</code> does</td>
+<td><strong>main.zeno</strong></td>
+<td>the program, in colour, with line numbers. Tab and Shift+Tab indent and outdent by four spaces, Enter keeps the indent and steps in after <code>{</code>, <code>}</code> steps out, Ctrl+/ turns lines into comments and back</td>
 </tr>
 <tr>
-<td><strong>Page (HTML)</strong></td>
-<td>the page the program is in, for a program that says <code>import web</code>. Left empty, the page is one that shows what the program prints</td>
+<td><strong>page.html</strong></td>
+<td>the page the program is in, for a program that says <code>import web</code>. Left empty, or for a program without <code>import web</code>, the page is one that shows what the program prints</td>
 </tr>
 <tr>
-<td><strong>Example</strong></td>
-<td>a few of the programs in <code>examples/</code>, to start from. Two of them are pages: the list of things to do, and the sheet to draw on</td>
+<td><strong>Checking as you write</strong></td>
+<td>the program is checked a moment after each change, as <code>zeno check</code> would. A line with a problem is marked, and the foot of the editor says how many there are</td>
+</tr>
+<tr>
+<td><strong>Problems</strong></td>
+<td>each problem, with its message. Clicking one puts the cursor on its line</td>
+</tr>
+<tr>
+<td><strong>Examples</strong></td>
+<td>fifteen programs from <code>examples/</code>, in four groups: Start here, The language, Firmware, Pages</td>
 </tr>
 <tr>
 <td><strong>Run</strong></td>
-<td>check the program and run it. A mistake the checker finds is shown where the output would be, with its line</td>
+<td>run the program in a fresh frame. What it prints is shown, with the error that stopped it under the last line; the line of that error is marked too</td>
 </tr>
 <tr>
-<td><strong>Copy link</strong></td>
-<td>a link that opens the playground with this program in it</td>
+<td><strong>Format</strong></td>
+<td>lay the program out as <code>zeno format</code> does (Shift+Alt+F). Undo takes it back</td>
+</tr>
+<tr>
+<td><strong>Share</strong></td>
+<td>copy a link that opens the playground with this program in it (also Ctrl+S)</td>
+</tr>
+<tr>
+<td><strong>Light or dark</strong></td>
+<td>the same choice as on the website, which it shares</td>
 </tr>
 </tbody>
 </table>
+<p>What was written is kept in the browser, and is there on the next
+visit. A shared link wins over what was kept.</p>
+<p>On a phone one half is shown at a time, with a switch between Code
+and Result, and Run shows the result. The halves can be dragged wider
+or narrower on a larger screen.</p>
 <p>The program is one file. A program in several files, and a package,
 need <code>zeno build --web</code> (<a href="/docs/web/"><code>web.md</code></a>).</p>
 <h2 id="how-it-works">How it works</h2>
@@ -114,16 +136,32 @@ it is quick, and each run starts it afresh, so no run can see what
 the one before left in memory. The frame finds the module in the
 page around it (<code>parent.zenoModule</code>).</p>
 <h3 id="a-link-holds-the-program">A link holds the program</h3>
-<p>Run writes the program into the address of the page, after the <code>#</code>:
+<p>Share writes the program into the address of the page, after the <code>#</code>:
 the program and its page as JSON, in base64. Opening that address
 opens the playground with that program. The part after <code>#</code> is never
 sent to a server, so a link is the whole program and nothing keeps
 a copy.</p>
+<h3 id="a-second-zeno-checks-and-formats">A second Zeno checks and formats</h3>
+<p>Checking as you write, and Format, need no frame and no page. The
+playground starts the same module once more, as its own helper, with
+a page that answers nothing, and calls two things <code>zeno.wasm</code> has for
+it (<code>src/web_host.rs</code>):</p>
+<ul>
+<li><code>zeno_check(text)</code>: load and check the program as <code>main.zeno</code>.
+  Each mistake comes back as an error, in the same words as on a
+  desk, and the playground reads the line out of <code>--&gt; main.zeno:2:7</code>.</li>
+<li><code>zeno_format(text)</code>: the program as <code>zeno format</code> lays it out, or
+  its mistakes.</li>
+</ul>
+<p>Checking never runs the program, so it cannot loop, and it takes a
+few milliseconds. The colours are not Zeno's: they come from a short
+list of words in the page, because colouring has to keep up with
+every key, and a word that is coloured wrongly harms nothing.</p>
 <h3 id="how-it-is-written">How it is written</h3>
 <p><code>zeno playground</code> is a few lines in <code>src/main.rs</code>
-(<code>playground_page</code>). The page is <code>src/playground.html</code>, with four
-places marked where it writes things in: <code>src/web.js</code>, <code>zeno.wasm</code>,
-the examples and the empty page. Each is written as JSON, with <code>&lt;</code>
+(<code>playground_page</code>). The page is <code>src/playground.html</code>, with three
+places marked where it writes things in: <code>src/web.js</code>, <code>zeno.wasm</code>
+and the examples. Each is written as JSON, with <code>&lt;</code>
 written as <code>\u003c</code>, for the reason a built page does it: a browser
 reads the end of a script wherever it finds one, even in the middle
 of a str.</p>
@@ -141,12 +179,21 @@ on the sketch, <code>while true { }</code> was stopped after 5 seconds with its
 line, an error after some output showed under the output, and the
 page was tried at the size of a phone (iPhone 13), where a thing was
 added to the list by tapping, and in the dark.</p>
+<p>And the redesign (20.4): each of the fifteen examples was opened from
+the menu and ran with no problem and no error; a program was typed
+key by key, and the indent after <code>{</code> came by itself; a line with a
+problem was marked while typing, and clicking the problem put the
+cursor on it; Format laid out a program and Undo took it back; a
+runtime error marked its line; a shared link and a reload each
+brought the program back; the page of the list of things to do was
+changed in its tab and ran; and the halves were dragged. On a phone
+(iPhone 13): the menu, Run showing the result, and boxes in 16px type.</p>
 <h2 id="what-it-does-not-do">What it does not do</h2>
 <ul>
 <li>One file. No <code>import</code> of a file of your own.</li>
-<li>No colours in the program text, and nothing is underlined as you
-  type. The box is a plain box. <code>zeno lsp</code> does that in an editor
+<li>No completion and no hover. <code>zeno lsp</code> does that in an editor
   (<a href="/docs/lsp/"><code>lsp.md</code></a>).</li>
+<li>Drawing on the sketch needs a mouse: a finger on a phone scrolls.</li>
 <li>There is no Stop button. A program that never stops
   (<code>while true { }</code>) holds the page for 5 seconds, and is then
   stopped with the line it was on (20.1).</li>
@@ -170,9 +217,10 @@ added to the list by tapping, and in the dark.</p>
    without <code>quoted</code>? Try a program that prints <code>&lt;/script&gt;</code>.</li>
 <li>Add an example to the list in <code>playground_page</code> (<code>src/main.rs</code>).
    Which test tells you that the page is still one script?</li>
-<li>The box has no colours. <code>src/lexer.rs</code> already knows which words
-   are keywords. How could the playground ask <code>zeno.wasm</code> for the
-   tokens of the program, and what would it draw them on?</li>
+<li>The colours come from a list of words in the page, not from
+   <code>src/lexer.rs</code>. Write a program that the page colours wrongly.
+   What would it take to ask <code>zeno.wasm</code> for the tokens instead,
+   and why might that be too slow to do on every key?</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/playground.md">docs/playground.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/web/"><span>Previous</span>How a Zeno program runs in a web page</a><a class="next" href="/docs/install/"><span>Next</span>Installing Zeno: a setup program, and one line</a></nav>

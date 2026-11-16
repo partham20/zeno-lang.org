@@ -134,6 +134,10 @@ with 0 blocks left.</p>
 <td>smallest first, where it is. Numbers or text</td>
 </tr>
 <tr>
+<td><code>xs.sort(by)</code></td>
+<td>in the order of what the function <code>by</code> gives for each item, smallest first. Any items</td>
+</tr>
+<tr>
 <td><code>xs.clear()</code></td>
 <td>empties the list</td>
 </tr>
@@ -281,6 +285,45 @@ because a compiled program must print what <code>zeno run</code> prints (decisio
 values nobody can tell. For <code>0.0</code> and <code>-0.0</code> they can: the two are
 equal, and print differently. With the same steps on both sides, every
 engine gives <code>[-1.0, -0.0, 0.0, 0.5, 2.5]</code> for the list in the test.</p>
+<h2 id="sort-with-a-function"><code>sort</code> with a function</h2>
+<p>A list of objects has no order of its own. A program says which one
+it wants by giving <code>sort</code> a function that takes one item and returns
+what the item is ordered by, a number or text:</p>
+<pre><code class="zeno">class Person {
+    name: str
+    age: int
+}
+
+let people = [Person("Ada", 36), Person("Bo", 20), Person("Cy", 36)]
+people.sort(function(person: Person) -&gt; int { return person.age })
+for person in people {
+    print(person.name, person.age)
+}</code></pre>
+<pre><code>Bo 20
+Ada 36
+Cy 36</code></pre>
+<p>Three things about it.</p>
+<p><strong>The function is called once for each item</strong>, before anything is
+moved. What it returned is the item's <em>key</em>.</p>
+<p><strong>Items with the same key stay as they were.</strong> Ada was before Cy, both
+are 36, and Ada is still before Cy. So sorting by name and then by
+age gives people in order of age, and by name within an age.</p>
+<p><strong>Biggest first is the key with a minus</strong>: <code>return 0 - person.age</code>.</p>
+<p>The function is not asked which of two items comes first, as <code>sort</code>
+is in C or JavaScript. One that takes two items is refused, with the
+reason (decision 21.1).</p>
+<p>How it is built: the keys go into a list of their own, as <code>map</code> would
+make it. Then the same heapsort runs on the keys, and every swap of
+two keys swaps the two items too. Heapsort alone would not keep equal
+items in their order, so there is a third list, of where each item
+was, and two equal keys are settled by it. In C that is
+<code>zeno_before_by</code>, <code>zeno_sift_by</code> and <code>zeno_list_sort_by</code> in
+<code>runtime.c</code>, and in Rust <code>sort_by</code> in <code>builtins.rs</code>. The two lists
+are gone when <code>sort</code> is done: with <code>--no-collector --memory</code>, 0
+blocks are left.</p>
+<p>If the function changes how many items the list has, <code>sort</code> raises a
+<code>ValueError</code>: there is a key for each item that was there, and no
+right place for one that was not.</p>
 <h2 id="join-code-and-char"><code>join</code>, <code>code</code> and <code>char</code></h2>
 <pre><code class="zeno">print(["pear", "fig"].join(", "))    # pear, fig
 print("A".code(), char(66))          # 65 B
@@ -423,8 +466,9 @@ place (see <a href="/docs/firmware/"><code>firmware.md</code></a>). The test run
 every build and compares.</p>
 <h2 id="what-it-does-not-do">What it does not do</h2>
 <ul>
-<li><code>sort</code> takes no function, so a list of objects cannot be sorted by a
-  field yet (decision 6.6, a limit of version 0.1).</li>
+<li><code>sort</code> with a function orders by a number or text. A key that is
+  a quantity (<code>20 C</code>), or two keys at once, is not there yet
+  (decision 21.5).</li>
 <li><code>slice</code> of a list of objects is refused where each has one owner.</li>
 <li>Text methods still know only plain letters for <code>upper</code> and <code>lower</code>
   (decision 3.14).</li>
@@ -481,11 +525,18 @@ every build and compares.</p>
 <li><code>char(0)</code> is refused. Take the test out of <code>zeno_char</code> and out of
    <code>char_of</code>, and print <code>"a" + char(0) + "b"</code> with <code>zeno run</code> and with a
    built program. What does each print?</li>
+<li>Sort a list of words by length, biggest first, and words of one
+   length by the alphabet. (Two sorts, and the order they are done in
+   matters. Why?)</li>
+<li><code>people.sort(function(a: Person, b: Person) -&gt; bool { return a.age
+   &lt; b.age })</code> is refused. Read the message. Then say what <code>sort</code>
+   should do with a function that answers <code>true</code> both ways round,
+   which is the question decision 21.1 did not want to have.</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/library.md">docs/library.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/unsafe/"><span>Previous</span>Memory by hand: unsafe { }, pointers and registers</a><a class="next" href="/docs/reading-and-writing/"><span>Next</span>The standard library, part 2: reading and writing</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-was-added">What was added</a></li><li><a href="#the-files">The files</a></li><li><a href="#find-gives-a-position-or-none">find gives a position, or none</a></li><li><a href="#slice-takes-a-part">slice takes a part</a></li><li><a href="#insert-popat-clear-reverse">insert, pop(at), clear, reverse</a></li><li><a href="#sort">sort</a></li><li><a href="#join-code-and-char">join, code and char</a></li><li><a href="#one-method-through-five-engines">One method, through five engines</a></li><li><a href="#with-no-collector">With no collector</a></li><li><a href="#in-a-firmware-build">In a firmware build</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-was-added">What was added</a></li><li><a href="#the-files">The files</a></li><li><a href="#find-gives-a-position-or-none">find gives a position, or none</a></li><li><a href="#slice-takes-a-part">slice takes a part</a></li><li><a href="#insert-popat-clear-reverse">insert, pop(at), clear, reverse</a></li><li><a href="#sort">sort</a></li><li><a href="#sort-with-a-function">sort with a function</a></li><li><a href="#join-code-and-char">join, code and char</a></li><li><a href="#one-method-through-five-engines">One method, through five engines</a></li><li><a href="#with-no-collector">With no collector</a></li><li><a href="#in-a-firmware-build">In a firmware build</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">

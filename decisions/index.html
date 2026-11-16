@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 407 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 414 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -3734,7 +3734,8 @@ list its object holds (5.19k).</p>
 <p>Only a list of ints, floats, sized numbers or text can be sorted.
 Anything else is refused: "<code>sort</code> puts numbers or text in order,
 smallest first, and this is list[bool]. There is no one order for
-those items, so write the loop that puts them in yours".</p>
+those items, so write the loop that puts them in yours". (Since chapter 21 it
+says to give <code>sort</code> a function, which is that chapter.)</p>
 <p><strong>Why only those.</strong> They are what <code>&lt;</code> compares, and each has one order
 that nobody has to be told. Tasks could be ordered by name or by
 priority, and a <code>sort()</code> that picked one would be a guess. Sorting by
@@ -7875,6 +7876,133 @@ at the foot of an empty frame it reads as a thing apart.</p>
 the Book and the Docs, and on a phone the boxes are in 16px type,
 because a phone zooms into a box with smaller letters and does not
 zoom out again.</p>
+<h2 id="21-sort-with-a-function">21. <code>sort</code> with a function</h2>
+<p><code>sort</code> put numbers and text in order and refused everything else,
+and told the reader to "write the loop that puts them in yours"
+(6.6). That loop is a sorting algorithm, which is the thing a
+library is for. This chapter is <code>sort</code> for every list.</p>
+<h3 id="211-the-function-gives-a-key-and-is-not-asked-to-compare">21.1 The function gives a key, and is not asked to compare</h3>
+<pre><code class="zeno">people.sort(function(person: Person) -&gt; int { return person.age })</code></pre>
+<p>The function takes one item and returns what it is ordered by: an
+int, a float, a sized number or text. Smallest key first.</p>
+<p><strong>Why.</strong> There are two shapes in the big languages. C, JavaScript
+and Java ask for a function of two items that says which comes
+first. Python and Rust's <code>sort_by_key</code> ask for a key. The first
+can say anything, and can also be wrong in ways nobody sees: one
+that answers "before" both ways round, or is not the same from one
+call to the next, gives an order that depends on how the sorting
+was written, and in C it can read past the end of the list. A key
+cannot be wrong like that. Whatever the function returns, numbers
+and text have one order.</p>
+<p>It is also what people mean. "By age" is a key. <code>a.age &lt; b.age</code>
+is the same thought written twice, with a chance to write <code>a</code> both
+times.</p>
+<p><strong>The cost.</strong> An order that is not "by something" needs a key
+built for it, and biggest first is a minus (or two sorts for
+text). A function of two items is refused with the reason, since
+it is what someone coming from JavaScript will write first.</p>
+<p><strong>The alternative</strong> of taking both shapes, by how many parameters
+the function has, is two things under one name. It was not taken.</p>
+<h3 id="212-the-same-name-sort-and-sortby">21.2 The same name: <code>sort()</code> and <code>sort(by)</code></h3>
+<p><strong>Why.</strong> It is the same act, on the same list, in place. A second
+name (<code>sort_by</code>) would be a second thing to learn for it, and
+<code>sort()</code> is then <code>sort</code> by the item itself. <code>pop()</code> and <code>pop(at)</code>
+are one name the same way.</p>
+<h3 id="213-items-with-the-same-key-stay-as-they-were">21.3 Items with the same key stay as they were</h3>
+<p><strong>Why.</strong> It is what a person expects of "sort the table by this
+column", and it is what makes two sorts add up: by name, then by
+age, is by age and by name within an age. Without it the order of
+equal items is whatever the algorithm did, which is nothing the
+program said.</p>
+<p><strong>How, with heapsort.</strong> Heapsort does not keep equal items in
+order. The library has it because it needs no second list and no
+deep stack (library.md), and a compiled program must print what
+<code>zeno run</code> prints (5.5d), so both sides have the same steps. So
+each item's place is kept beside its key, and two keys that are
+neither before the other are settled by place. No two items are
+equal any more, and any correct way of sorting gives one answer.</p>
+<p><strong>The cost.</strong> Two lists while it sorts, of keys and of places.
+<code>sort()</code> with no function still needs none.</p>
+<p><strong><code>sort()</code> with no function is left as it is.</strong> Two equal ints
+cannot be told apart, so nobody can see their order. The one case
+that can be seen, <code>0.0</code> and <code>-0.0</code>, is the same in every engine and
+is written down (library.md).</p>
+<h3 id="214-the-function-is-called-once-for-each-item-first">21.4 The function is called once for each item, first</h3>
+<p>All the keys are worked out, and then the list is put in order.</p>
+<p><strong>Why.</strong> n calls, where asking during the sorting would be about
+n log n and would call the function with the list half sorted. A
+function that prints, or counts, does it once for each item, in
+the order the list was in.</p>
+<p><strong>If the function changes the list.</strong> It may, as one given to
+<code>map</code> may. If the list then has more or fewer items than there are
+keys, <code>sort</code> raises a <code>ValueError</code> and the list is as the function
+left it. There is no right place for an item with no key.</p>
+<p><strong>Found on the way.</strong> A function given to <code>map</code>, <code>filter</code> or
+<code>reduce</code> that changed the list it was walking crashed <code>zeno run</code>
+(the built programs were right). The interpreter held the list
+while it called the function. It lets go first now, and there is a
+test.</p>
+<h3 id="215-left-for-later">21.5 Left for later</h3>
+<ul>
+<li>A key that is a quantity: <code>readings.sort(function(r) { return
+  r.temperature })</code> where that is <code>20 C</code>. <code>sort()</code> does not take
+  quantities either (17.3 is about <code>sum</code>, and the same care is
+  needed).</li>
+<li>Two keys at once, where two sorts are written now.</li>
+<li><code>sorted</code>, which gives a new list and leaves the first. <code>slice(0)</code>
+  and <code>sort</code> do it in two lines.</li>
+</ul>
+<h3 id="203-a-program-without-import-web-gets-the-page-that-shows-what-it-prints">20.3 A program without <code>import web</code> gets the page that shows what it prints</h3>
+<p>In the playground, the page in <code>page.html</code> is used only when the
+program says <code>import web</code>. Any other program is shown in the page
+that shows what it prints, whatever <code>page.html</code> holds.</p>
+<p><strong>Why.</strong> A program that does not import <code>web</code> cannot reach a page,
+so the page can only get in the way: after opening the list of
+things to do and writing a program of one's own over it, the old
+page stayed, and what the new program printed went nowhere. Asking
+the program is the one rule that is right both ways, and there is
+nothing to remember: the tab is still there for a program that
+wants it.</p>
+<h3 id="204-the-playground-is-an-editor-and-checks-as-you-write">20.4 The playground is an editor, and checks as you write</h3>
+<p>The playground was a box and a frame. It is now an editor with
+colours and line numbers, indentation that follows the braces, a
+problem list that is kept up to date as the program is written,
+Format, Share, fifteen examples in four groups, halves that can be
+dragged, and a phone layout with one half at a time. Partha asked
+for "more features" and a "modern minimal and elegant" look
+(2026-11-16); this is what was chosen, and why.</p>
+<p><strong>Checking as you write, by Zeno itself.</strong> <code>zeno.wasm</code> gained two
+calls, <code>zeno_check</code> and <code>zeno_format</code>, and the playground starts a
+second copy of the module to make them. Every message is the one
+<code>zeno check</code> would print, so the playground can never disagree with
+the compiler. A problem found while typing is worth more than one
+found by pressing Run, which is why the error line is marked in the
+gutter at once.</p>
+<p><strong>Colours from a list of words, not from the lexer.</strong> Colouring runs
+on every key and has to keep up; a short pattern in the page does,
+and a word coloured wrongly does no harm. The checker, which must be
+right, is Zeno's own.</p>
+<p><strong>No editor library.</strong> A text box with the coloured text drawn under
+it is a few hundred lines, keeps the page one file that works with
+nothing fetched, and leaves the browser's own typing, selection,
+spelling-off, Undo and phone keyboard alone. A full editor library
+would be several times the size of Zeno's own page for things a
+playground of one file does not need (completion, folding, many
+cursors).</p>
+<p><strong>Kept in the browser.</strong> What was written is kept in the browser's
+storage and comes back on the next visit, because losing a program
+to a closed tab is the worst thing a playground can do. A shared
+link wins over it, because somebody who opens a link wants what is
+in the link.</p>
+<p><strong>One half at a time on a phone.</strong> Two halves of a phone screen are
+each too small to write or read in. A switch between Code and Result,
+with Run going to Result, is how phone apps with two views work.</p>
+<p><strong>The look is the website's.</strong> The same type (Hanken Grotesk and
+JetBrains Mono), the same colours (cobalt as the one colour, red
+only for problems), the same logo and the same light or dark choice,
+which the two share. Panels with a thin rule instead of shadows,
+icons drawn as single lines, and the labels of Format and Share
+dropped to icons on a phone.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

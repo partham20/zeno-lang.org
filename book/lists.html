@@ -433,13 +433,46 @@ reason:</p>
 <div class="sourceCode" id="cb15" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> flags = [<span class="cn">true</span>, <span class="cn">false</span>]</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>flags.sort()</span></code></pre></div>
-<pre class="Output" data-language="Output" style="outputstyle"><code>error: `sort` puts numbers or text in order, smallest first, and this is list[bool]. There is no one order for those items, so write the loop that puts them in yours
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `sort` puts numbers or text in order, smallest first, and this is list[bool]. There is no one order for those items, so give `sort` a function that says what each is ordered by, as in `people.sort(age_of)`
  --&gt; main.zeno:2:1
   |
 2 | flags.sort()
   | ^
 
 1 error found. Nothing was run.</code></pre>
+<h4 class="unnumbered" id="sort-with-a-function-new-in-0.3">sort with a
+function (new in 0.3)</h4>
+<p><em>This is in Zeno 0.3, which is on its way and not yet released. In
+0.2.0, <code>sort</code> takes no function.</em></p>
+<p>A list of objects has no order of its own. A program says which order
+it wants by giving <code>sort</code> a function that takes one item and
+gives what the item is ordered by, a number or text: its <em>key</em>.
+The function comes in <a
+href="function-values.html#ch-function-values">Functions as
+Values</a>; here it is written in place:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Person {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    name: <span class="dt">str</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    age: <span class="dt">int</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> people = [Person(<span class="st">&quot;Ada&quot;</span>, <span class="dv">36</span>), Person(<span class="st">&quot;Bo&quot;</span>, <span class="dv">20</span>), Person(<span class="st">&quot;Cy&quot;</span>, <span class="dv">36</span>)]</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>people.sort(<span class="kw">function</span>(person: Person) -&gt; <span class="dt">int</span> { <span class="kw">return</span> person.age })</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> person <span class="kw">in</span> people {</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    print(person.name, person.age)</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Bo 20
+Ada 36
+Cy 36</code></pre>
+<p>The function is called once for each item, before anything moves.
+Items with the same key stay in the order they were: Ada was before Cy,
+both are 36, and Ada is still first. So sorting by name and then by age
+gives people in order of age, and by name within an age. For biggest
+first, give the key with a minus,
+<code>return 0 - person.age</code>.</p>
+<p>The function is not asked which of two items comes first, as a sort
+is in C or JavaScript. A function that takes two items is refused, with
+the reason. (Decision 21.1.)</p>
 <div class="why">
 <p>A new list is new memory, which a program on a small board may not
 want to spend, and a method that gives the list back invites
@@ -453,27 +486,27 @@ taking out by value</h4>
 <p><code>find</code> gives a position or <code>none</code>. To take out
 an item by its value, find it first, and say what happens when it is not
 there:</p>
-<div class="sourceCode" id="cb17" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = [<span class="st">&quot;Ada&quot;</span>, <span class="st">&quot;Grace&quot;</span>, <span class="st">&quot;Alan&quot;</span>]</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> at = names.find(<span class="st">&quot;Grace&quot;</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> at <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    names.pop(at)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>print(names)</span></code></pre></div>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = [<span class="st">&quot;Ada&quot;</span>, <span class="st">&quot;Grace&quot;</span>, <span class="st">&quot;Alan&quot;</span>]</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> at = names.find(<span class="st">&quot;Grace&quot;</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> at <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    names.pop(at)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>print(names)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;Ada&quot;, &quot;Alan&quot;]</code></pre>
 <h3 class="unnumbered" id="joining-lists"><span
 class="number">9.4</span> Joining lists</h3>
 <p><code>+</code> makes a new list from two, and <code>+=</code> adds a
 list to the end of a list variable. Both lists must hold the same kind
 of thing:</p>
-<div class="sourceCode" id="cb19" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> log: <span class="dt">list</span>[<span class="dt">str</span>] = [<span class="st">&quot;start&quot;</span>]</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>log += [<span class="st">&quot;read&quot;</span>, <span class="st">&quot;write&quot;</span>]</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>print(log + [<span class="st">&quot;stop&quot;</span>])</span></code></pre></div>
-<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;start&quot;, &quot;read&quot;, &quot;write&quot;, &quot;stop&quot;]</code></pre>
 <div class="sourceCode" id="cb21" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xs = [<span class="dv">1</span>, <span class="dv">2</span>]</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>print(xs + [<span class="st">&quot;a&quot;</span>])</span></code></pre></div>
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> log: <span class="dt">list</span>[<span class="dt">str</span>] = [<span class="st">&quot;start&quot;</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>log += [<span class="st">&quot;read&quot;</span>, <span class="st">&quot;write&quot;</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>print(log + [<span class="st">&quot;stop&quot;</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;start&quot;, &quot;read&quot;, &quot;write&quot;, &quot;stop&quot;]</code></pre>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xs = [<span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>print(xs + [<span class="st">&quot;a&quot;</span>])</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `+` joins two lists that hold the same kind of thing, and these are list[int] and list[str]
  --&gt; main.zeno:2:7
   |
@@ -486,11 +519,11 @@ class="number">9.5</span> Comprehensions</h3>
 <p>A <em>comprehension</em> builds a new list from another in one line:
 an expression for each item, a <code>for</code>, and if you like an
 <code>if</code> that keeps only some items:</p>
-<div class="sourceCode" id="cb23" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = range(<span class="dv">1</span>, <span class="dv">11</span>)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>print([n * n <span class="kw">for</span> n <span class="kw">in</span> numbers])</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>print([n <span class="kw">for</span> n <span class="kw">in</span> numbers <span class="kw">if</span> n % <span class="dv">3</span> == <span class="dv">0</span>])</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>print([word.upper() <span class="kw">for</span> word <span class="kw">in</span> [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]])</span></code></pre></div>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = range(<span class="dv">1</span>, <span class="dv">11</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>print([n * n <span class="kw">for</span> n <span class="kw">in</span> numbers])</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>print([n <span class="kw">for</span> n <span class="kw">in</span> numbers <span class="kw">if</span> n % <span class="dv">3</span> == <span class="dv">0</span>])</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>print([word.upper() <span class="kw">for</span> word <span class="kw">in</span> [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]])</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 [3, 6, 9]
 [&quot;A&quot;, &quot;B&quot;]</code></pre>
@@ -502,22 +535,22 @@ class="number">9.6</span> map, filter and reduce</h3>
 <code>map</code> applies it to each item, <code>filter</code> keeps the
 items it says <code>true</code> for, and <code>reduce</code> folds the
 list into one value:</p>
-<div class="sourceCode" id="cb25" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> square(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * n</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> is_even(n: <span class="dt">int</span>) -&gt; <span class="dt">bool</span> {</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n % <span class="dv">2</span> == <span class="dv">0</span></span>
-<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add(total: <span class="dt">int</span>, n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
-<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> total + n</span>
-<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]</span>
-<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>print(numbers.map(square))</span>
-<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even))</span>
-<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>print(numbers.reduce(add, <span class="dv">0</span>))</span>
-<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even).map(square).reduce(add, <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> square(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * n</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> is_even(n: <span class="dt">int</span>) -&gt; <span class="dt">bool</span> {</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n % <span class="dv">2</span> == <span class="dv">0</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add(total: <span class="dt">int</span>, n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> total + n</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>print(numbers.map(square))</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even))</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>print(numbers.reduce(add, <span class="dv">0</span>))</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even).map(square).reduce(add, <span class="dv">0</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[1, 4, 9, 16, 25, 36]
 [2, 4, 6]
 21
@@ -538,15 +571,15 @@ Values</a> covers that.</p>
 class="number">9.7</span> Two names, one list</h3>
 <p>A list is not copied when it is given another name, passed to a
 function or put in another list. Every name sees the one list:</p>
-<div class="sourceCode" id="cb27" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add_reading(readings: <span class="dt">list</span>[<span class="dt">float</span>], r: <span class="dt">float</span>) {</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    readings.append(r)</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mine = [<span class="dv">20.5</span>]</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> also_mine = mine</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>add_reading(also_mine, <span class="dv">21.0</span>)</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>print(mine)</span></code></pre></div>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add_reading(readings: <span class="dt">list</span>[<span class="dt">float</span>], r: <span class="dt">float</span>) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    readings.append(r)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mine = [<span class="dv">20.5</span>]</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> also_mine = mine</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>add_reading(also_mine, <span class="dv">21.0</span>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>print(mine)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[20.5, 21.0]</code></pre>
 <p>When you want a separate list, make one: <code>xs.slice(0)</code>
 copies the whole list.</p>
@@ -560,8 +593,8 @@ with No Collector</a> explains how. (Decision 3.10.)</p>
 <h3 class="unnumbered" id="equal-lists"><span class="number">9.8</span>
 Equal lists</h3>
 <p>Two lists are equal when they have equal items in the same order:</p>
-<div class="sourceCode" id="cb29" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>print([<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">2</span>, <span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>print([<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">2</span>, <span class="dv">1</span>])</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>true false</code></pre>
 <div class="summary">
 <p>A list holds values of one type, in order, from position 0. It grows
