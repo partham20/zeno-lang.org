@@ -85,6 +85,10 @@ is on the website at zeno-lang.org/playground.</p>
 <td>run the program in a fresh frame. What it prints is shown, with the error that stopped it under the last line; the line of that error is marked too</td>
 </tr>
 <tr>
+<td><strong>C</strong></td>
+<td>the program as <code>zeno build</code> writes it in C, made again as you write. Choose the build (<code>zeno build</code>, <code>--firmware</code>, <code>--no-collector</code>) to see how each one changes the C. The runtime, the 2,700 or so lines every program starts with, is hidden unless asked for; Copy takes the whole file, which a C compiler builds as it is</td>
+</tr>
+<tr>
 <td><strong>Format</strong></td>
 <td>lay the program out as <code>zeno format</code> does (Shift+Alt+F). Undo takes it back</td>
 </tr>
@@ -153,6 +157,10 @@ it (<code>src/web_host.rs</code>):</p>
   desk, and the playground reads the line out of <code>--&gt; main.zeno:2:7</code>.</li>
 <li><code>zeno_format(text)</code>: the program as <code>zeno format</code> lays it out, or
   its mistakes.</li>
+<li><code>zeno_c(text, build)</code>: the program in C, as <code>zeno build</code> writes it
+  (0), with <code>--firmware</code> (1) or with <code>--no-collector</code> (2), and how
+  many of its first lines are the runtime. A program that cannot be
+  built gives its mistakes instead, as <code>zeno build</code> would.</li>
 </ul>
 <p>Checking never runs the program, so it cannot loop, and it takes a
 few milliseconds. The colours are not Zeno's: they come from a short

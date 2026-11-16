@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 432 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 433 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8337,6 +8337,25 @@ code it is about, and wrong as soon as a file is renamed.</p>
 <ul>
 <li>A generational collector (22.5).</li>
 </ul>
+<h3 id="206-the-playground-shows-the-c-a-program-becomes">20.6 The playground shows the C a program becomes</h3>
+<p>The playground has a C tab: the program as <code>zeno build</code> writes it,
+by the same compiler, with a choice of the three builds and the
+runtime hidden unless asked for. Partha asked for it (2026-11-16).</p>
+<p><strong>Why.</strong> Zeno compiles to C, and the C is the plainest answer to
+"what does this line cost?". A class is a C struct, <code>match</code> is a
+chain of <code>if</code>s on a tag, a firmware build passes errors as values
+instead of jumping. Seeing that next to the program, changing as the
+program changes, teaches it faster than any page of docs. The three
+builds are side by side because the difference between them is the
+point of Zeno on a chip.</p>
+<p><strong>Why the runtime is hidden.</strong> It is the same 2,700 or so lines for
+every program, and the program's own C comes after it. Shown, it
+pushes the part worth reading off the screen. The line numbers keep
+counting from the true top of the file, so they match <code>hello.c</code> on a
+desk, and Copy copies the whole file, which builds as it is.</p>
+<p><strong>Why by the compiler itself.</strong> <code>zeno.wasm</code> already holds the C
+emitter (<code>main.rs</code> is compiled for the browser too), so the C in the
+page is exactly the C <code>zeno build</code> writes, and cannot drift from it.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
