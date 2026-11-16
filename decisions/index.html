@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 434 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 436 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8096,7 +8096,7 @@ in the link.</p>
 each too small to write or read in. A switch between Code and Result,
 with Run going to Result, is how phone apps with two views work.</p>
 <p><strong>The look is the website's.</strong> The same type (Hanken Grotesk and
-JetBrains Mono), the same colours (cobalt as the one colour, red
+JetBrains Mono), the same colours (Windows accent blue, #0078d4, as the one colour since 2026-11-16, red
 only for problems), the same logo and the same light or dark choice,
 which the two share. Panels with a thin rule instead of shadows,
 icons drawn as single lines, and the labels of Format and Share
@@ -8373,6 +8373,46 @@ collections, which trades memory for time without changing the work.</p>
 <li>Generations on Windows, with <code>VirtualProtect</code> and a handler of its
   own.</li>
 </ul>
+<h3 id="2212-each-release-keeps-its-benchmark-times">22.12 Each release keeps its benchmark times</h3>
+<p><code>bench/record.py --version X</code> times the benchmarks with every engine
+that version has and writes <code>bench/results/versions/X.json</code>; the
+release steps (docs/release.md) say to run it after a tag. 0.1.0 and
+0.2.0 were recorded afterwards from their tags. Partha asked for a
+history (2026-11-16).</p>
+<p><strong>Why a script and not a step of the release workflow.</strong> GitHub's
+machines are shared; the same program's time moves by a quarter
+between runs there, which hides most changes worth seeing. One
+machine, run by hand, gives numbers that can be compared.</p>
+<p><strong>Why each time is shown against C's.</strong> C, Rust and Python run in the
+same record. A version's time divided by C's time on the same machine
+stays meaningful when the machine is a new one, so records made a
+year apart still line up.</p>
+<p><strong>Why a missing engine is left out.</strong> 0.1.0 has no <code>--release</code>; a
+build that fails because the flag does not exist is not a slow build,
+and a "failed" in the history would read as a bug.</p>
+<h3 id="2213-the-vm-gets-superinstructions-quick-arithmetic-and-fields-by-place">22.13 The VM gets superinstructions, quick arithmetic and fields by place</h3>
+<p>Three small changes to the VM, and one shared with the interpreter.
+<code>bytecode::fuse</code> puts superinstructions over the commonest runs of
+instructions (local and local or constant into an operator, then a
+<code>SetLocal</code> or a <code>JumpIfFalse</code>; a local's field). <code>fast_binary</code> answers
+two ints or two floats in the VM itself. An object keeps its fields in
+a list in class order (<code>Instance.fields: Vec&lt;Value&gt;</code>), found by
+<code>ClassDef::slot</code>. A method call given every argument becomes a frame
+straight away. At the small sizes <code>zeno run --vm</code> went from 15.5 to
+7.5 s on <code>loop</code> (Python: 11.3), 1.04 to 0.70 on <code>fib</code>, 18.0 to 9.3 on
+<code>trees</code>, 23.2 to 15.4 on <code>nbody</code>.</p>
+<p><strong>Why superinstructions are put over the code and not in place of
+it.</strong> Fusing in place would shorten the code and move every jump
+target; the compiler would have to work out the jumps again. Laid over
+the first instruction of a run, with the rest left under it, nothing
+moves, a jump into the middle still works, and <code>zeno bytecode</code> still
+prints what the compiler wrote, which is what docs/vm.md teaches from.</p>
+<p><strong>Why the quick arithmetic gives up on every error.</strong> An overflow, a
+division by zero or a mixed pair goes to <code>ops::binary</code>, which is where
+every message is written. One meaning stays in one place (5.10).</p>
+<p><strong>Rejected for 0.3.</strong> A register machine and 16-byte values, which
+would be the next big step; Partha chose to finish 0.3 first and decide
+after seeing its benchmarks (2026-11-16).</p>
 <h3 id="206-the-playground-shows-the-c-a-program-becomes">20.6 The playground shows the C a program becomes</h3>
 <p>The playground has a C tab: the program as <code>zeno build</code> writes it,
 by the same compiler, with a choice of the three builds and the

@@ -415,13 +415,14 @@ cannot:</p>
 </ul>
 <h2 id="what-it-does-not-do">What it does not do</h2>
 <ul>
-<li><strong>It is not fast for a VM.</strong> On this machine, in a release build,
-  <code>fib(27)</code> takes 0.26 s in the interpreter and 0.09 s in the VM, and a
-  loop of two million additions 0.70 s and 0.39 s. Three times and twice.
-  A tuned VM would be ten times quicker again. Values are the
-  interpreter's 32-byte <code>Value</code>, every <code>+</code> goes through the general
-  <code>ops::binary</code>, and a method call makes a small object for the method
-  first. Each was left alone because it keeps one meaning in one place.</li>
+<li><strong>It is not fast for a VM.</strong> Values are the interpreter's 32-byte
+  <code>Value</code>, and anything but two ints or two floats goes through the
+  general <code>ops::binary</code>. Since 0.3 it has the cheap speed-ups of the
+  next section, and is level with Python on plain arithmetic but two to
+  four times slower on objects, calls and text (bench/README.md). A
+  register machine with smaller values would be several times quicker
+  again; it was left alone because it would be a second meaning to keep
+  in step with the interpreter.</li>
 <li><strong>It does not optimise.</strong> <code>2 * 3</code> is compiled as two constants and a
   multiply. <code>Pop 1</code> twice in a row stays two instructions.</li>
 <li><strong>The bytecode is not bytes.</strong> An <code>Op</code> is a Rust enum, 12 bytes wide.
@@ -429,6 +430,30 @@ cannot:</p>
 <li><strong>It is not the default.</strong> <code>zeno run</code> without <code>--vm</code> still uses the
   interpreter, which is the simpler statement of what Zeno means
   (decision 5.10g).</li>
+</ul>
+<h2 id="superinstructions-and-other-shortcuts">Superinstructions and other shortcuts</h2>
+<p>Three changes in 0.3 halved the time of most programs (decision 22.13):</p>
+<ul>
+<li><strong>Superinstructions.</strong> <code>bytecode::fuse</code> looks for runs of
+  instructions that come together all the time, such as <code>GetLocal a,
+  GetLocal b, Binary &lt;, JumpIfFalse to</code> at the top of every <code>while</code>, and
+  puts one instruction over the first of them that does the work of all
+  and skips the rest. The rest stay where they were, so the code keeps
+  its length and a jump into the middle of a run still lands on the
+  instruction it wanted. <code>fuse</code> writes a second copy of the code
+  (<code>Proto.fast</code>) that only the VM reads: <code>zeno bytecode</code> shows what the
+  compiler wrote, not the shortcuts.</li>
+<li><strong>Two ints, two floats.</strong> <code>fast_binary</code> in vm.rs answers <code>+ - * %</code>
+  and the comparisons for two ints or two floats without calling
+  <code>ops::binary</code>. It answers only when the answer is a number or a
+  boolean; an overflow, a division by zero or anything else goes the
+  long way, so every message comes from one place.</li>
+<li><strong>Fields by place.</strong> An object keeps its fields in a list in the
+  order the class gives them, not in a table by name. Both engines
+  find a field by its place in the class. And a method call given all
+  its arguments puts the object under them as <code>self</code> and starts the
+  method, as a function call does, instead of making a bound method
+  first.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
 <ol>
@@ -443,9 +468,10 @@ cannot:</p>
    four instructions as <code>x = x + 1</code>. Check it with <code>zeno bytecode</code>.
    Then write <code>x += f()</code> where <code>f</code> changes <code>x</code>, and work out on paper
    what <code>x</code> is afterwards. Decision 10.25 says why <code>x</code> is read first.</li>
-<li>Add an instruction <code>AddInt(n)</code> for "add the small number n to the
-   top", and use it for <code>i + 1</code>. Time <code>fib(27)</code> before and after. Where
-   must it give up and call <code>ops::binary</code>?</li>
+<li><code>fuse</code> knows eight runs. Count which pairs of instructions come
+   together most in <code>bench/nbody.zeno</code> (print them from <code>fuse</code>), add a
+   superinstruction for the commonest one that is not there yet, and
+   time <code>zeno run --vm bench/nbody.zeno</code> before and after.</li>
 <li><code>items.append(x)</code> makes a <code>Value::Method</code> and then calls it. Add
    <code>CallMethod(name, count)</code>, which looks at the receiver and calls
    <code>builtins::call_method</code> or the class's method directly. <code>invoke</code> has
@@ -472,7 +498,7 @@ cannot:</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/vm.md">docs/vm.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/interpreter/"><span>Previous</span>How the interpreter works</a><a class="next" href="/docs/compiler/"><span>Next</span>How compiling to C works</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why">Why</a></li><li><a href="#the-files">The files</a></li><li><a href="#a-stack-and-instructions-that-push-and-pop">A stack, and instructions that push and pop</a></li><li><a href="#the-compiler-counts">The compiler counts</a></li><li><a href="#jumps">Jumps</a></li><li><a href="#calls-and-frames">Calls and frames</a></li><li><a href="#variables-that-outlive-their-function">Variables that outlive their function</a></li><li><a href="#functions-above-where-they-are-written">Functions above where they are written</a></li><li><a href="#match">match</a></li><li><a href="#errors">Errors</a></li><li><a href="#a-built-in-that-calls-back">A built-in that calls back</a></li><li><a href="#a-mistake-the-compiler-can-see">A mistake the compiler can see</a></li><li><a href="#one-meaning-two-engines">One meaning, two engines</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#why">Why</a></li><li><a href="#the-files">The files</a></li><li><a href="#a-stack-and-instructions-that-push-and-pop">A stack, and instructions that push and pop</a></li><li><a href="#the-compiler-counts">The compiler counts</a></li><li><a href="#jumps">Jumps</a></li><li><a href="#calls-and-frames">Calls and frames</a></li><li><a href="#variables-that-outlive-their-function">Variables that outlive their function</a></li><li><a href="#functions-above-where-they-are-written">Functions above where they are written</a></li><li><a href="#match">match</a></li><li><a href="#errors">Errors</a></li><li><a href="#a-built-in-that-calls-back">A built-in that calls back</a></li><li><a href="#a-mistake-the-compiler-can-see">A mistake the compiler can see</a></li><li><a href="#one-meaning-two-engines">One meaning, two engines</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#superinstructions-and-other-shortcuts">Superinstructions and other shortcuts</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">

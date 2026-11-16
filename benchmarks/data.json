@@ -108,58 +108,58 @@
    ],
    "times": {
     "fib": {
-     "c": 0.153,
-     "rust": 0.248,
-     "zeno": 0.463,
-     "zeno-llvm": 0.448,
-     "zeno-release": 0.143,
-     "zeno-owned": 0.116,
-     "zeno-owned-checked": 0.405
+     "c": 0.156,
+     "rust": 0.249,
+     "zeno": 0.48,
+     "zeno-llvm": 0.525,
+     "zeno-release": 0.121,
+     "zeno-owned": 0.138,
+     "zeno-owned-checked": 0.46
     },
     "loop": {
-     "c": 0.84,
-     "rust": 0.885,
-     "zeno": 1.181,
-     "zeno-llvm": 1.025,
-     "zeno-release": 0.894,
-     "zeno-owned": 1.044,
-     "zeno-owned-checked": 1.285
+     "c": 0.92,
+     "rust": 0.88,
+     "zeno": 1.258,
+     "zeno-llvm": 1.215,
+     "zeno-release": 1.01,
+     "zeno-owned": 0.947,
+     "zeno-owned-checked": 1.335
     },
     "sort": {
-     "c": 1.032,
-     "rust": 1.07,
-     "zeno": 1.386,
-     "zeno-llvm": 1.941,
-     "zeno-release": 1.233,
-     "zeno-owned": 1.296,
-     "zeno-owned-checked": 1.327
+     "c": 1.092,
+     "rust": 1.137,
+     "zeno": 1.43,
+     "zeno-llvm": 2.151,
+     "zeno-release": 1.442,
+     "zeno-owned": 1.35,
+     "zeno-owned-checked": 1.324
     },
     "strings": {
-     "c": 0.872,
-     "rust": 0.684,
-     "zeno": 1.088,
-     "zeno-llvm": 1.338,
-     "zeno-release": 1.097,
-     "zeno-owned": 1.259,
-     "zeno-owned-checked": 1.239
+     "c": 0.919,
+     "rust": 0.704,
+     "zeno": 1.157,
+     "zeno-llvm": 1.385,
+     "zeno-release": 1.337,
+     "zeno-owned": 1.285,
+     "zeno-owned-checked": 1.18
     },
     "trees": {
-     "c": 6.156,
-     "rust": 7.076,
-     "zeno": 11.058,
-     "zeno-llvm": 11.517,
-     "zeno-release": 11.538,
-     "zeno-owned": 4.091,
-     "zeno-owned-checked": 4.475
+     "c": 6.136,
+     "rust": 7.49,
+     "zeno": 7.7,
+     "zeno-llvm": 7.863,
+     "zeno-release": 6.661,
+     "zeno-owned": 3.979,
+     "zeno-owned-checked": 4.55
     },
     "nbody": {
-     "c": 0.515,
-     "rust": 0.389,
-     "zeno": 0.416,
-     "zeno-llvm": 0.516,
-     "zeno-release": 0.508,
-     "zeno-owned": 0.49,
-     "zeno-owned-checked": 0.52
+     "c": 0.488,
+     "rust": 0.368,
+     "zeno": 0.511,
+     "zeno-llvm": 0.568,
+     "zeno-release": 0.479,
+     "zeno-owned": 0.515,
+     "zeno-owned-checked": 0.502
     }
    },
    "sizes": {
@@ -189,58 +189,58 @@
    ],
    "times": {
     "fib": {
-     "c": 0.004,
+     "c": 0.005,
      "rust": 0.008,
-     "zeno": 0.011,
+     "zeno": 0.012,
      "zeno-owned": 0.004,
-     "vm": 0.983,
-     "run": 2.843,
-     "python": 0.221
+     "vm": 1.038,
+     "run": 2.841,
+     "python": 0.249
     },
     "loop": {
-     "c": 0.07,
-     "rust": 0.085,
-     "zeno": 0.124,
-     "zeno-owned": 0.115,
-     "vm": 14.862,
-     "run": 30.83,
-     "python": 11.049
+     "c": 0.094,
+     "rust": 0.084,
+     "zeno": 0.132,
+     "zeno-owned": 0.097,
+     "vm": 15.559,
+     "run": 32.598,
+     "python": 11.938
     },
     "sort": {
-     "c": 0.093,
-     "rust": 0.098,
-     "zeno": 0.111,
-     "zeno-owned": 0.12,
-     "vm": 4.629,
-     "run": 13.002,
-     "python": 1.982
+     "c": 0.089,
+     "rust": 0.104,
+     "zeno": 0.11,
+     "zeno-owned": 0.118,
+     "vm": 4.665,
+     "run": 13.155,
+     "python": 2.13
     },
     "strings": {
-     "c": 0.084,
-     "rust": 0.073,
-     "zeno": 0.089,
-     "zeno-owned": 0.102,
-     "vm": 1.82,
-     "run": 2.913,
-     "python": 0.41
+     "c": 0.088,
+     "rust": 0.068,
+     "zeno": 0.102,
+     "zeno-owned": 0.111,
+     "vm": 1.832,
+     "run": 2.943,
+     "python": 0.388
     },
     "trees": {
-     "c": 0.209,
-     "rust": 0.287,
-     "zeno": 0.459,
-     "zeno-owned": 0.163,
-     "vm": 19.215,
-     "run": 29.829,
-     "python": 3.594
+     "c": 0.223,
+     "rust": 0.258,
+     "zeno": 0.254,
+     "zeno-owned": 0.177,
+     "vm": 18.021,
+     "run": 29.353,
+     "python": 3.878
     },
     "nbody": {
-     "c": 0.049,
+     "c": 0.045,
      "rust": 0.039,
-     "zeno": 0.05,
-     "zeno-owned": 0.052,
-     "vm": 23.215,
-     "run": 52.275,
-     "python": 4.068
+     "zeno": 0.049,
+     "zeno-owned": 0.053,
+     "vm": 23.212,
+     "run": 52.958,
+     "python": 3.642
     }
    },
    "sizes": {

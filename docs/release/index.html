@@ -152,6 +152,23 @@ without releasing it.</p>
 step 6 as well, and makes the tag itself, named after the version in
 <code>Cargo.toml</code>. That is a release from a web page, with no <code>git</code> at
 hand: tick the box, press the button, and wait about six minutes.</p>
+<h2 id="keeping-its-benchmark-times">Keeping its benchmark times</h2>
+<p>Each release keeps a record of how fast it is, so that the history can
+be seen later (the benchmarks page on zeno-lang.org draws it). After
+the tag is pushed, on the machine the earlier versions were timed on:</p>
+<pre><code>cargo build --release
+python3 bench/record.py --version 0.3.0
+git add bench/results/versions/0.3.0.json</code></pre>
+<p><a href="https://github.com/partham20/zeno-lang/blob/main/bench/record.py"><code>bench/record.py</code></a> times every program with every
+engine the version has, beside C, Rust and Python, and writes
+<code>bench/results/versions/&lt;version&gt;.json</code>. The page shows each time as a
+number of times C's time, taken in the same run, so a record made on a
+different machine still lines up with the others. An older version can
+be recorded at any time by building it from its tag in a <code>git
+worktree</code> and passing <code>--zeno</code> to that build.</p>
+<p>It is not a step of the release workflow: GitHub's machines are shared
+and their times move by a quarter from one run to the next, more than
+most of the changes the record is there to show (decisions 22.12).</p>
 <h2 id="where-each-one-is-built">Where each one is built</h2>
 <p>GitHub lends three kinds of machine: Linux on x86-64, macOS on Apple
 silicon, and Windows on x86-64. Ten builds come out of those three
@@ -291,7 +308,7 @@ release workflow does, or less.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/release.md">docs/release.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/packages/"><span>Previous</span>Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a class="next" href="/docs/new/"><span>Next</span>Starting a program: zeno new</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-release-is">What a release is</a></li><li><a href="#making-one">Making one</a></li><li><a href="#where-each-one-is-built">Where each one is built</a></li><li><a href="#checking-a-build-before-it-goes-out">Checking a build before it goes out</a></li><li><a href="#what-a-released-zeno-needs">What a released zeno needs</a></li><li><a href="#line-ends">Line ends</a></li><li><a href="#what-the-first-release-found">What the first release found</a></li><li><a href="#what-windows-found">What Windows found</a></li><li><a href="#a-trial-on-one-machine">A trial on one machine</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-release-is">What a release is</a></li><li><a href="#making-one">Making one</a></li><li><a href="#keeping-its-benchmark-times">Keeping its benchmark times</a></li><li><a href="#where-each-one-is-built">Where each one is built</a></li><li><a href="#checking-a-build-before-it-goes-out">Checking a build before it goes out</a></li><li><a href="#what-a-released-zeno-needs">What a released zeno needs</a></li><li><a href="#line-ends">Line ends</a></li><li><a href="#what-the-first-release-found">What the first release found</a></li><li><a href="#what-windows-found">What Windows found</a></li><li><a href="#a-trial-on-one-machine">A trial on one machine</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">
