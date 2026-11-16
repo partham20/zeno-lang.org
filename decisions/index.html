@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 445 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 446 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8650,6 +8650,92 @@ in thousands that grows.</p>
 separate file, so every runtime function is a call there. Writing
 append in IR, as <code>zeno.mod</code> is, is the way, and it waits until
 something measures the need.</p>
+<h3 id="239-the-assumption-of-236-stays-and-what-it-would-cost-to-drop-it">23.9 The assumption of 23.6 stays, and what it would cost to drop it</h3>
+<p>Partha asked (2026-11-16) whether the trade of 23.6 can be overcome:
+C's speed, and a defined result when a whole number overflows. It
+cannot, and this is the measuring behind that answer. He chose to keep
+23.6 as it is.</p>
+<p><strong>Why it cannot be had for nothing.</strong> C's loop is fast because the
+compiler uses a fact it cannot check: <code>i * i</code> does not overflow, so it
+is not below zero. A build that keeps a defined result when the fact
+is false must either test the fact or not use it. Testing costs
+instructions and not using it costs instructions; there is no third
+way to be right when it is false.</p>
+<p><strong>What each way costs</strong> (the loop benchmark, millions of instructions,
+<code>--fast --owned</code> with only the overflow rule changed):</p>
+<table>
+<thead>
+<tr>
+<th>What an overflow does</th>
+<th>gcc</th>
+<th>clang</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C itself</td>
+<td>300.3</td>
+<td>220.3</td>
+</tr>
+<tr>
+<td>assumed not to happen (23.6)</td>
+<td>300.3</td>
+<td>220.3</td>
+</tr>
+<tr>
+<td>wraps round</td>
+<td>340.3</td>
+<td>330.3</td>
+</tr>
+<tr>
+<td>stops the program (<code>-fsanitize=signed-integer-overflow</code>, trapping)</td>
+<td>420.3</td>
+<td>400.3</td>
+</tr>
+<tr>
+<td><code>-ftrapv</code></td>
+<td>740.3</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OverflowError</code> (<code>zeno build</code>)</td>
+<td>460.3</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Five ways of writing <code>% 7</code> with no jump, so that a wrapped number
+needs no mending afterwards, were tried under the wrap: 400 to 440
+million, all worse than the jump of 23.5.</p>
+<p><strong>What wrapping would cost on all six</strong> (instructions against C, gcc):
+fib 0.98, loop 1.13, sort 1.13, strings 0.57, trees 0.41, nbody 1.03.
+A model of the processor (llvm-mca) puts loop's 13% at 4% of the time
+on the machine the benchmarks run on and 12% on an older one. With
+clang, which is the C compiler on a Mac, loop is 50% more.</p>
+<p><strong>Found on the way.</strong> Under the wrap, sort comes back from 82.8 to 74.9
+million (C 73.3) if the unchecked <code>zeno_list_at</code> tells the C compiler
+that the index is in range (<code>__builtin_unreachable()</code> when it is not),
+which <code>--fast</code> promises already. With 23.6 it changes nothing, so it is
+not in; it is the first thing to do if <code>--fast</code> ever wraps.</p>
+<p><strong>Why 23.6 stays.</strong></p>
+<ul>
+<li><code>--fast</code> already trusts every index of every list, which is the
+  greater promise: a wrong index reads or writes memory that is not
+  the list's. Taking back the lesser promise would not make the build
+  a safe one.</li>
+<li>An <code>int</code> is 64 bits. A count that goes up a thousand million times a
+  second overflows after 292 years. An overflow that can happen in
+  testing is caught, with its line, by <code>zeno run</code> and by every build
+  that is not <code>--fast</code> or <code>--release</code>.</li>
+<li>There is a build for speed with a defined result already:
+  <code>--release</code>. Zig (<code>ReleaseFast</code> beside <code>ReleaseSafe</code>) and Swift
+  (<code>-Ounchecked</code> beside <code>-O</code>) divide their builds the same way, for
+  the same reason.</li>
+</ul>
+<p><strong>Rejected.</strong> <code>--fast</code> wrapping, with a second option to assume: to
+match C would then take two words, and the word <code>fast</code> would mean
+"nearly". Checking only the multiplications whose result goes into a
+<code>%</code>: one rule for one benchmark.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
