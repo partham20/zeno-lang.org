@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 431 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 432 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8159,7 +8159,8 @@ can be kept: for the program here, and for one value with <code>owned</code>
 (5.8), which works in a collector program too.</p>
 <p><strong>Alternatives.</strong> A flag only (<code>--no-collector</code> as it was), which every
 build must remember. An attribute in the source file, which a program
-of several files would say several times, and could say differently.</p>
+of several files would say several times, and could say differently.
+(22.9 later gave a file a line of its own, for the classes it declares.)</p>
 <h3 id="222-memory-owned-on-a-computer-the-pool-and-the-text-room-grow">22.2 <code>memory owned</code> on a computer: the pool and the text room grow</h3>
 <p><code>--no-collector</code> is for a chip: one array of a fixed size for lists and
 objects, another for text, and the size is known when the program is
@@ -8288,13 +8289,52 @@ while the function runs, so the first value is the only value. A field
 that is written anywhere in the function, through any object, is read
 each time; so is every field in a function that calls one of the
 program's own functions or a method.</p>
-<h3 id="229-left-for-later">22.9 Left for later</h3>
+<h3 id="229-one-file-can-say-memory-owned">22.9 One file can say <code>memory owned</code></h3>
+<pre><code>memory owned
+
+class Node {
+    left: Node or none
+    right: Node or none
+}</code></pre>
+<p><strong>Decision.</strong> A file may begin with the line <code>memory owned</code> (or <code>memory
+collector</code>), alone or beside <code>strict</code>, in either order. In a file that
+says <code>memory owned</code>, every class is an owned class, as if it were
+written <code>owned class</code> (5.8): each object has one owner and is freed on
+the line its owner ends, also in a program that has a collector. When
+every file of a program says <code>memory owned</code> and its <code>zeno.package</code> says
+nothing, the whole program is owned: it is built with no collector, as
+22.1. A file that says <code>memory collector</code> in a program built with no
+collector is a mistake, and the message says so.</p>
+<p><strong>Why the file, and why its classes.</strong> Partha asked for the choice to be
+finer than the program: "very modular", "more power to the user". The
+file is the finest place that has a clear meaning, for the reason 22.1
+gives against one line: how a value is freed has to go with the value,
+and a value's kind is declared in one file. A class declared in a
+<code>memory owned</code> file is owned wherever its objects go, and the rule for
+where the two ways meet is the one owned values already have in a
+collector program (5.8): a parameter that looks can be given any
+object, a value with one owner cannot be kept in a shared place. So
+nothing new has to be learned at the boundary, and nothing about the
+boundary is left unsaid. The trees benchmark with its file saying
+<code>memory owned</code> runs in 4.5 seconds in a collector program, against 11
+with the collector and 4.1 with no collector at all.</p>
+<p><strong>Why not lists too.</strong> A list is made by a line, not declared, and is
+passed between files more than any other value; making every list of a
+file owned would mean that half of a program's lists follow one set of
+rules and half the other, with the line between them invisible. A list
+that should have one owner says so where it is made: <code>owned list[int]</code>.
+In a program where every file says <code>memory owned</code>, every list is owned
+anyway (22.1).</p>
+<p><strong>Why not per function.</strong> A function's values are made from the
+classes of its file, and go back to its callers; a function that freed
+by different rules from the file around it would be a second boundary
+inside one file, for a gain the file already gives. Per value (<code>owned</code>)
+and per block (<code>unsafe { }</code>) are the finer choices.</p>
+<p><strong>Alternatives.</strong> <code>owned</code> written in front of every class (it still
+can be, one at a time). A list of files in <code>zeno.package</code>: far from the
+code it is about, and wrong as soon as a file is renamed.</p>
+<h3 id="2210-left-for-later">22.10 Left for later</h3>
 <ul>
-<li>Choosing per file or per function, in one program. The checker
-  already applies the owned rules to a whole program; applying them to
-  some files and not others needs a rule for where the two meet (a
-  shared list lent to a function of an owned file, say), and that rule
-  is not written yet.</li>
 <li>A generational collector (22.5).</li>
 </ul>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>

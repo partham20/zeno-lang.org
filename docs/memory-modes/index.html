@@ -82,6 +82,10 @@ Zeno, and a program chooses:</p>
   collector</code>. This is the one most programs set.</li>
 <li><strong>One build</strong>, on the command line: <code>--owned</code> or <code>--collector</code>, over
   what the file says.</li>
+<li><strong>One file</strong>, with the line <code>memory owned</code> at its top: every class the
+  file declares is owned, as if written <code>owned class</code>, and its objects
+  are freed where their owner ends even in a program with a collector.
+  When every file of a program says it, the program is owned.</li>
 <li><strong>One value</strong>, in a collector program: <code>owned class Packet</code> or <code>owned
   list[int]</code> (docs/ownership.md). That value has one owner and is freed
   where its owner ends, and everything else is the collector's.</li>
@@ -107,6 +111,35 @@ memory owned</code></pre>
 <li><code>zeno build --collector main.zeno</code> builds it with the collector after
   all, for one build.</li>
 </ul>
+<h2 id="one-file-that-says-memory-owned">One file that says <code>memory owned</code></h2>
+<p>A program can keep the collector for most of its code and free the
+objects of one file exactly. Put the line at the top of that file:</p>
+<pre><code class="zeno">memory owned
+
+class Node {
+    left: Node or none
+    right: Node or none
+}
+
+function make(depth: int) -&gt; Node {
+    if depth == 0 {
+        return Node(none, none)
+    }
+    return Node(make(depth - 1), make(depth - 1))
+}</code></pre>
+<p>and import it from a file that says nothing:</p>
+<pre><code class="zeno">import shapes
+
+let tree = shapes.make(10)
+print(tree.left is none)</code></pre>
+<p><code>zeno build --memory main.zeno</code> shows the objects of <code>Node</code> freed
+"without the collector", and nothing else changes. Where the two ways
+meet, the rules are those of owned values in a collector program
+(docs/ownership.md): a function that only looks can be given any
+object, and an object with one owner cannot be kept in a shared list.
+A list that should have one owner says so where it is made: <code>owned
+list[int]</code>. Decision 22.9 has the reasons, and why it is the file and
+not the function.</p>
 <h2 id="for-a-chip">For a chip</h2>
 <p><code>--no-collector</code> is the same rules with a pool and a text room of a
 fixed size, set when the program is built (docs/pool.md), so the
@@ -177,11 +210,14 @@ times slower than C.</p>
 <li>Put <code>memory owned</code> in a <code>zeno.package</code> beside a program that shares
    a list between two variables. What does <code>zeno run</code> say now?</li>
 <li>Time <code>bench/trees.zeno</code> built the three ways in the table above.</li>
+<li>Move <code>Node</code>, <code>make</code> and <code>check</code> of <code>bench/trees.zeno</code> into a file
+   of their own that says <code>memory owned</code>, import it, and build with
+   <code>--memory</code>. How many collections are left?</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/memory-modes.md">docs/memory-modes.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/found-by-the-book/"><span>Previous</span>What writing the book found</a><a class="next" href="/docs/stores/"><span>Next</span>Stores: where each package manager looks for Zeno</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#a-program-that-says-memory-owned">A program that says memory owned</a></li><li><a href="#for-a-chip">For a chip</a></li><li><a href="#-release">--release</a></li><li><a href="#what-it-buys">What it buys</a></li><li><a href="#the-files">The files</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#a-program-that-says-memory-owned">A program that says memory owned</a></li><li><a href="#one-file-that-says-memory-owned">One file that says memory owned</a></li><li><a href="#for-a-chip">For a chip</a></li><li><a href="#-release">--release</a></li><li><a href="#what-it-buys">What it buys</a></li><li><a href="#the-files">The files</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">
