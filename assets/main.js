@@ -2,7 +2,11 @@
 // the simulated board, the compiler diagram, the theme switch, and the two
 // places where Zeno's paradox shows: the top bar and the runner in the footer.
 
-const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+// The animations here are small (a line of code changing, an LED, dots on a
+// diagram, a runner in the footer), so they play even when the system asks
+// for reduced motion, as Partha asked (2026-11-16). Only smooth scrolling and
+// the slide-in of the hero are turned off then.
+const still = false;
 
 // --- Highlighting -----------------------------------------------------------
 

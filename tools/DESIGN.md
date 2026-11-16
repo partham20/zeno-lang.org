@@ -82,3 +82,13 @@ for reduced motion.
 Gradient text, a coloured word inside a headline, all-caps labels above
 headings, monospace for small labels, an arrow after every link, identical
 icon cards, big-number stat rows, glass panels, and the cream-and-serif look.
+
+## Reduced motion
+
+The site's animations are small: the hero line losing its punctuation, the
+LED on the simulated board, dots moving along the compiler diagram, the
+runner in the footer, bars growing on the benchmarks page. They play even
+when the system asks for reduced motion (Windows' "Animation effects" off),
+because with that setting the whole site looked stuck (Partha, 2026-11-16).
+Only smooth scrolling and the hero's slide-in are dropped then. Nothing on
+the site moves the page itself, zooms, or uses parallax.

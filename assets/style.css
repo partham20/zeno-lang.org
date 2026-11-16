@@ -513,7 +513,6 @@ main:not(.home) { padding-bottom: 4rem; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  *, *::before, *::after { animation: none !important; transition: none !important; }
   .js .hero [data-in] { opacity: 1; transform: none; }
 }
 @media (max-width: 75rem) { .nav nav { gap: 1.25rem; } }

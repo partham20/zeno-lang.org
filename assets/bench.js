@@ -2,7 +2,7 @@
 (() => {
   const data = JSON.parse(document.getElementById("b-data").textContent);
   const $ = (s, r = document) => r.querySelector(s);
-  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const still = false; // see main.js: the small animations always play
   const state = { set: "compiled", view: "ratio", on: {} };
   for (const [k, s] of Object.entries(data.sets)) state.on[k] = new Set(s.on);
 
