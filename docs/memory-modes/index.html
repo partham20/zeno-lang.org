@@ -186,8 +186,8 @@ always did. It is what Rust's release builds do, for the same reason:
 the check costs a little on every step of a tight loop. Decision 22.3.</p>
 <h2 id="-fast"><code>--fast</code></h2>
 <pre><code>zeno build --fast --owned main.zeno</code></pre>
-<p><code>--fast</code> is <code>--release</code>, and it leaves out the other checks that a
-correct program never fails, as C and Rust leave them out:</p>
+<p><code>--fast</code> leaves out every check that a correct program never fails, as
+C leaves them out:</p>
 <table>
 <thead>
 <tr>
@@ -219,8 +219,8 @@ correct program never fails, as C and Rust leave them out:</p>
 </tr>
 <tr>
 <td>overflow of <code>+ - *</code></td>
-<td><code>OverflowError</code></td>
-<td>wraps round (as <code>--release</code>)</td>
+<td><code>OverflowError</code> (<code>--release</code>: wraps round)</td>
+<td>no defined result: the C compiler is told it does not happen</td>
 </tr>
 </tbody>
 </table>
@@ -230,10 +230,21 @@ instruction. The C says <code>#define ZENO_UNCHECKED 1</code> on its first line,
 so the file builds the same way by hand. It goes with <code>--llvm</code>, where
 an item is read with a <code>getelementptr</code> and <code>/</code> is <code>fdiv</code>, and with any
 way of freeing memory. <code>zeno run</code> checks everything, as always.</p>
+<p>The last row is where <code>--fast</code> and <code>--release</code> part. With <code>--release</code>
+a sum that overflows wraps round: a wrong number, but a known one.
+With <code>--fast</code> the <code>+</code>, <code>-</code> and <code>*</code> are C's own (<code>add nsw</code> in LLVM IR),
+and the C compiler builds on their not overflowing, as it does for a
+program written in C: a count that starts at 0 and goes up is never
+below zero, so <code>count % 7</code> needs no care for a number below zero. That
+knowledge is what made the loop benchmark the same instructions as C's
+(decision 23.6). A program that does overflow may then print a wrong
+number or never leave a loop. An overflow is an error in Zeno, so a
+program that runs clean under <code>zeno run</code> and <code>zeno build</code> has none.</p>
 <p>Build it the ordinary way while a program is being written and tested,
 and with <code>--fast</code> when its tests pass and the last bit of speed
 matters. A wrong index in a <code>--fast</code> build is a wrong answer or a crash
-far from the line that caused it, exactly as in C. Decision 23.1.</p>
+far from the line that caused it, exactly as in C. Decisions 23.1 and
+23.6.</p>
 <h2 id="what-it-buys">What it buys</h2>
 <p>On the benchmarks in <code>bench/</code> (<code>python3 bench/run.py --size big</code>; the
 numbers and how they were taken are in bench/README.md), a program
@@ -265,6 +276,10 @@ times slower than C.</p>
 <li>Build <code>let xs = [1, 2, 3]</code> / <code>print(xs[5])</code> with <code>--release</code> and with
    <code>--fast</code>, and run both. Then look for <code>ZENO_UNCHECKED</code> in the two <code>.c</code>
    files.</li>
+<li>Write a loop that adds <code>(i * i) % 7</code> for a thousand million <code>i</code>,
+   build it with <code>--release</code> and with <code>--fast</code>, and time the two. Then
+   find the loop in each <code>.c</code> file: which one could a C compiler know
+   more about?</li>
 <li>Move <code>Node</code>, <code>make</code> and <code>check</code> of <code>bench/trees.zeno</code> into a file
    of their own that says <code>memory owned</code>, import it, and build with
    <code>--memory</code>. How many collections are left?</li>

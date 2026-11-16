@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 441 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 445 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8461,9 +8461,10 @@ page is exactly the C <code>zeno build</code> writes, and cannot drift from it.<
 benchmarks, with a new option to build that way, so that the builds
 there are keep every check they have.</p>
 <h3 id="231-zeno-build-fast">23.1 <code>zeno build --fast</code></h3>
-<p><code>--fast</code> is <code>--release</code> (overflow wraps round) and leaves out the checks
-a correct program never fails: a list index out of range, a float
-divided by zero, the square root of a number below zero. The C compiler
+<p><code>--fast</code> leaves out the checks a correct program never fails: a list
+index out of range, a float divided by zero, the square root of a
+number below zero, and the overflow of a whole number (as <code>--release</code>
+does; 23.6 says how the two differ). The C compiler
 gets <code>-O3 -fno-math-errno</code>, and so does clang for <code>--llvm</code>. The C file
 starts with <code>#define ZENO_UNCHECKED 1</code>; the runtime's checks sit behind
 <code>#ifndef ZENO_UNCHECKED</code>. In LLVM IR an item is found with a
@@ -8514,13 +8515,141 @@ each piece while copying it.</p>
 <p><strong>Why only big lists, and only with a pool that grows.</strong> A small list
 from the pool is cheaper than a call to the system. A build for a chip
 has no system to ask: its pool is all the memory there is.</p>
-<h3 id="234-where-rust-is-still-ahead">23.4 Where Rust is still ahead</h3>
-<p>On nbody Rust takes 0.36 s where Zeno <code>--fast</code> and C take about 0.46.
-Rust knows that <code>bi</code> and <code>c</code> in its inner loop are different bodies, so
-it keeps <code>bi</code>'s speeds in registers for the whole loop; C and Zeno must
-write them back after every step, in case the two are one. Getting that
-in Zeno needs the language to know that two values lent at once are
-different (as <code>owned</code> values already are), which is left for later.</p>
+<h3 id="234-where-rust-is-ahead-on-nbody-and-why-nothing-is-done-about-it">23.4 Where Rust is ahead on nbody, and why nothing is done about it</h3>
+<p>This section first said that Rust wins nbody because its borrow rules
+prove the two bodies apart. That was a guess, and measuring it showed
+it wrong (2026-11-16). It is kept here, corrected, because the wrong
+guess would have led to the wrong work.</p>
+<p>Counted in instructions for 200,000 steps (<code>bench/run.py --count</code>,
+23.7): C 120.5 million, Zeno <code>--fast</code> 119.5 million, Rust 82.8 million.</p>
+<p><strong>Where Rust's lead comes from.</strong> In <code>bench/nbody.rs</code> the bodies are a
+<code>vec!</code> of five, written in <code>main</code>. LLVM sees through to it: it knows
+there are exactly five, opens both loops out for five, and does the
+arithmetic of two pairs at a time with the instructions that work on
+two numbers at once (<code>sqrtpd</code>, <code>divpd</code>). With the list hidden behind
+<code>std::hint::black_box</code>, so that its length is a number met while
+running (as the length of a Zeno list is), the same Rust runs 125.8
+million instructions and takes 0.51 s: behind C (0.46 s) and behind
+Zeno <code>--fast</code> (0.38 to 0.44 s). C does not get the lead either, though
+its bodies are a fixed array of five: gcc and clang both leave it at
+about 120 million.</p>
+<p><strong>What was tried, and measured.</strong> <code>restrict</code> on both parameters of
+<code>pull</code>: 119.1 million instructions against 123.9 million, and no
+difference in time over eleven runs. Reading <code>bodies[i]</code> once, outside
+the inner loop: gcc already does. So telling the C compiler that the
+two bodies are different, which is what this section used to ask for,
+buys nothing here, and 23.1 was right to reject it for another reason.</p>
+<p><strong>Why nothing is done.</strong> To get what Rust gets, Zeno would have to
+know the length of a list while compiling and open the program out
+for that length. That is a compiler made faster for one benchmark with
+five bodies, not for programs. A fixed-size array of values is a
+feature the language may want for its own sake (a table of readings on
+a chip), and it is to be weighed for that, not for this.</p>
+<h3 id="235-and-cost-no-more-than-they-must">23.5 <code>//</code> and <code>%</code> cost no more than they must</h3>
+<p>Zeno's <code>//</code> rounds down and <code>%</code> takes the sign of the right side
+(decision 2.1, as Python's). C's round toward zero. Two changes, in
+every build, that change no result:</p>
+<ul>
+<li><strong>By 2, 4, 8 and so on, written as a number.</strong> <code>x // 8</code> is the bits
+  of <code>x</code> moved three places down, keeping the sign (<code>zeno_halved</code>,
+  <code>ashr</code> in IR), and <code>x % 8</code> is its low three bits (<code>x &amp; 7</code>). Both are
+  exact for a number below zero, and here Zeno's rule is the cheap one:
+  C needs three instructions to divide by two toward zero and Zeno
+  needs one to divide by two downward. Neither can fail, so neither is
+  checked. Only a number written in the expression counts
+  (<code>emit_c::power_of_two</code>); a variable, or <code>-8</code>, goes the usual way.</li>
+<li><strong>The signs first.</strong> <code>zeno_mod</code> mended its result <code>if (r != 0 &amp;&amp;
+  signs differ)</code>. The C compiler tested <code>r != 0</code> with a jump (taken one
+  time in seven for <code>% 7</code>) and, past it, worked the mended number out
+  every time, to choose between the two afterwards. It is now <code>if
+  (signs differ &amp;&amp; r != 0)</code>: for a right side above zero that is one
+  test of the sign of <code>r</code>, a jump never taken while the numbers are
+  above zero, and nothing after it.
+  <code>zeno_floordiv</code> has the same order. On the loop benchmark built with
+  <code>--release</code>: 391.7 million instructions before, 340.3 million after.</li>
+</ul>
+<p><strong>Rejected.</strong> Mending without a jump (<code>r += b &amp; mask</code>): measured
+slower, more instructions on the path every number takes. Having
+Zeno's compiler prove that the left side is not below zero and write
+C's <code>%</code>: the C compiler already does this, once it is told the truth
+about overflow (23.6), and it does it for every shape of loop, where a
+rule here would know one or two.</p>
+<h3 id="236-in-a-fast-build-a-whole-number-that-overflows-has-no-defined-result">23.6 In a <code>--fast</code> build, a whole number that overflows has no defined result</h3>
+<p><strong>What was found.</strong> After 23.1, <code>--fast</code> still ran 13% more
+instructions than C on loop and 17% more on sort. The cause was one
+thing in both. <code>--fast</code> did its <code>+</code>, <code>-</code> and <code>*</code> as <code>--release</code> does:
+on unsigned numbers, which wrap round. A C compiler must then allow
+for the wrap. It cannot know that <code>i</code>, which starts at 0 and only goes
+up by one, is never below zero, so it kept the mending of <code>(i * i) %
+7</code> for a number below zero; and in the scans of quicksort it carried
+the index and the address side by side, one more copy on every step.
+A program written in C does not pay for this, because in C a signed
+number that overflows has no defined result, and the compiler takes it
+that none does.</p>
+<p><strong>The decision.</strong> <code>--fast</code> writes C's signed <code>+</code>, <code>-</code> and <code>*</code> as they
+stand (<code>(z_i + 1)</code>), and <code>add nsw</code>, <code>sub nsw</code>, <code>mul nsw</code> in LLVM IR,
+which is what clang writes for a C program. <code>--release</code> is unchanged:
+there a sum wraps, and the answer is defined.</p>
+<p><strong>What it gave</strong> (instructions, <code>--fast --owned</code>): loop 300.27 million
+against C's 300.26 million, the same instructions as C's loop; sort
+78.7 million (C 73.3, Rust 78.7; it was 87.6); nbody 119.5 million (C
+120.5).</p>
+<p><strong>Why this is right for <code>--fast</code>.</strong> An overflow is an error in Zeno:
+<code>zeno run</code> and every checked build stop with <code>OverflowError</code>. So a
+correct program has none, and <code>--fast</code> is by its own rule (23.1) the
+build that leaves out what only a wrong program meets. It already
+reads memory that is not the list's when an index is wrong; an
+overflow with no defined result is the same kind of promise and a
+smaller one. It is also the honest meaning of "as fast as C": C is
+that fast because it makes this assumption, and nothing else gives
+the C compiler the same knowledge.</p>
+<p><strong>What it costs.</strong> A program that overflows, built with <code>--fast</code>, may
+print a wrong number or go round a loop for ever, and not the same way
+on two compilers. The table in docs/memory-modes.md says so. Someone
+who wants speed and a defined answer builds with <code>--release</code>.</p>
+<p><strong>Rejected.</strong> Keeping the wrap and working out ranges in Zeno's own
+compiler: it could not show <code>i * i</code> to be above zero either, since a
+product that wraps may be below zero; the knowledge that is missing is
+"this does not overflow", and no analysis can supply what the build
+does not promise. A third option between <code>--release</code> and <code>--fast</code>:
+two words for speed are enough to choose from. Making <code>%</code> round as C's
+does: that changes what programs print.</p>
+<h3 id="237-a-speed-is-counted-as-well-as-timed">23.7 A speed is counted as well as timed</h3>
+<p>On the machine the benchmarks run on, the time of one program moves by
+a tenth and more between runs. The loop of C and the loop of <code>--fast</code>
+after 23.6 are the same instructions, and one session timed them at
+0.74 s and 0.89 s. The first table of 23.1 showed nbody a fifth
+behind C; counted, it was level. The guess in 23.4 was made from such
+a table.</p>
+<p>So <code>bench/run.py --count</code> runs each program once under valgrind and
+writes how many instructions it ran (<code>bench/results/now-count.json</code>).
+The count is the same on every run to five figures. It is not a time:
+a move between registers costs nothing and a square root costs twenty
+times an addition. The README shows both, and a speed claim in this
+file is made from the two together. Timed runs now go in rounds, every
+engine once per round, so a slow minute of the machine falls on every
+engine and not on one.</p>
+<h3 id="238-appending-to-a-list-is-done-where-the-program-appends">23.8 Appending to a list is done where the program appends</h3>
+<p>After 23.6 the quicksort of the sort benchmark ran fewer instructions
+than C's (65.9 million against 66.3 million), and the program as a
+whole still ran 7% more. The rest was in building the list: each
+<code>xs.append(seed)</code> was a call to <code>zeno_list_append</code>, 24 instructions and
+a call, where the C program writes <code>if (len == cap) grow; xs[len++] =
+seed</code> in the loop itself.</p>
+<p>The growing is now a function of its own, <code>zeno_list_grow</code>, marked
+<code>noinline</code>. What is left of <code>zeno_list_append</code> is a compare, a store
+and a count, and the C compiler puts those in the loop. In every build
+that goes through C. Sort with <code>--fast --owned</code>: 72.7 million
+instructions, C 73.3 million. Strings: 174.7 million from 180.4
+million (Rust 173.5, C 304.2).</p>
+<p><strong>Why <code>noinline</code> on the part that grows.</strong> Left to itself the C
+compiler folded the growing into <code>zeno_list_append</code>, which made it too
+big to put in a loop, so every append paid for a call to reach the one
+in thousands that grows.</p>
+<p><strong>Not done.</strong> The same for a build through LLVM: its runtime is a
+separate file, so every runtime function is a call there. Writing
+append in IR, as <code>zeno.mod</code> is, is the way, and it waits until
+something measures the need.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

@@ -387,7 +387,9 @@ divide:
 <p><code>srem</code> is the processor's remainder. <code>select</code> is "this value or that
 one, depending on an <code>i1</code>": an <code>if</code> with no jump. The program calls
 <code>@zeno.mod</code>, and because it is in the same file LLVM inlines it. In
-<code>n % 2</code> it then sees that <code>%b</code> is 2 and throws nearly all of it away.
+<code>n % 7</code> it then sees that <code>%b</code> is 7 and throws the two checks away.
+(<code>n % 8</code> never gets here: by a power of two written as a number, <code>%</code>
+is one <code>and</code> and <code>//</code> is one <code>ashr</code>, decision 23.5.)
 A name with a dot in it (<code>zeno.mod</code>) cannot be a Zeno name or a C name,
 so it can meet neither (decision 5.11c).</p>
 <p><code>**</code> and the float forms of <code>//</code> and <code>%</code> still call the runtime. Floats
@@ -847,7 +849,7 @@ for "it raised". Its real answer goes out through one more parameter,
 a pointer the caller supplies:</p>
 <pre><code>define internal zeroext i1 @z_halve(i64 %arg.n, ptr %result) {
 entry:
-  %t1 = call i64 @zeno.mod(i64 %arg.n, i64 2, i32 2, i32 8)
+  %t1 = and i64 %arg.n, 1                          ; n % 2: the low bit
   %t2 = icmp ne i64 %t1, 0
   br i1 %t2, label %then1, label %end1
 
@@ -859,7 +861,7 @@ then1:
   ret i1 false                                     ; ...and say "it failed"
 
 end1:
-  %t6 = call i64 @zeno.floordiv(i64 %arg.n, i64 2, i32 5, i32 12)
+  %t6 = ashr i64 %arg.n, 1                         ; n // 2: one shift
   store i64 %t6, ptr %result                       ; return: the answer...
   ret i1 true                                      ; ...and "it worked"
 }</code></pre>
