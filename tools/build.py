@@ -975,6 +975,26 @@ BENCH_ENGINES = {
 }
 
 
+def bench_versions(now_big, now_small):
+    """Each released version's record (bench/results/versions), oldest
+    first, then main as it is now. Times only; the page divides each by
+    the C (or Python) time of the same record."""
+    import json
+    folder = Path(ARGS.zeno) / "bench" / "results" / "versions"
+    def key(path):
+        return tuple(int(x) for x in path.stem.split("."))
+    out = []
+    for path in sorted(folder.glob("*.json"), key=key) if folder.exists() else []:
+        r = json.loads(path.read_text())
+        out.append({"version": r["version"], "date": r["machine"]["date"], "released": True,
+                    "big": r["big"]["times"], "small": r["small"]["times"]})
+    current = now_big["machine"]["zeno"].split()[-1]
+    if not any(v["version"] == current for v in out):
+        out.append({"version": current, "date": now_big["machine"]["date"], "released": False,
+                    "big": now_big["times"], "small": now_small["times"]})
+    return out
+
+
 def build_benchmarks():
     import json, math
     now_big, now_small = bench_results("now-big"), bench_results("now-small")
@@ -999,6 +1019,7 @@ def build_benchmarks():
                  for name, s in sets.items()},
         "before": before_big["times"],
         "machine": m,
+        "versions": bench_versions(now_big, now_small),
     }
     (SITE / "benchmarks").mkdir(exist_ok=True)
     (SITE / "benchmarks" / "data.json").write_text(json.dumps(data, indent=1) + "\n")
@@ -1061,6 +1082,21 @@ def build_benchmarks():
     <label class="b-slider"><span>Before</span><input type="range" min="0" max="100" value="100" id="b-slide" aria-label="Before or now"><span>Now</span></label>
   </div>
   <div class="b-ba" id="b-ba"></div>
+</section>
+
+<section class="b-section" id="versions">
+  <h2>Version by version</h2>
+  <p class="b-sub">Each release keeps a record of its times, made with <a href="{GITHUB}/blob/main/bench/record.py"><code>bench/record.py</code></a>. Every cell is a time divided by the time of C (or of Python, for the ways that interpret) in the same run, so records made on different days still line up. Smaller is faster.</p>
+  <div class="b-controls">
+    <div class="segmented" role="tablist" aria-label="Which way to run" id="b-ver-set">
+      <button role="tab" aria-selected="true" data-ver="zeno" aria-controls="b-vers" id="b-v-zeno">zeno build</button>
+      <button role="tab" aria-selected="false" data-ver="best" aria-controls="b-vers" id="b-v-best" tabindex="-1">Fastest build</button>
+      <button role="tab" aria-selected="false" data-ver="vm" aria-controls="b-vers" id="b-v-vm" tabindex="-1">zeno run --vm</button>
+      <button role="tab" aria-selected="false" data-ver="run" aria-controls="b-vers" id="b-v-run" tabindex="-1">zeno run</button>
+    </div>
+  </div>
+  <div class="b-vers" id="b-vers" role="tabpanel"></div>
+  <p class="b-note" id="b-vers-note"></p>
 </section>
 
 <section class="b-section">

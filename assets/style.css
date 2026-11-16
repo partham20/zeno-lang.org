@@ -692,3 +692,18 @@ main:not(.home) { padding-bottom: 4rem; }
   .b-cline { left: calc(6.05rem + (100% - 6.05rem - 4.35rem) * var(--x) / 100%); }
   .b-prog { padding: 1.1rem 1rem 1rem; }
 }
+
+/* Version by version */
+.b-vers { margin-top: 1.2rem; overflow-x: auto; border: 1px solid var(--rule); border-radius: 16px; background: var(--sheet); }
+.b-v-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 0.92rem; }
+.b-v-table th, .b-v-table td { padding: 0.7rem 0.8rem; text-align: right; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.b-v-table tbody tr:last-child > * { border-bottom: 0; }
+.b-v-table thead th { font-size: 0.75rem; font-weight: 600; color: var(--slate); text-transform: uppercase; letter-spacing: 0.04em; }
+.b-v-table th:first-child { text-align: left; }
+.b-v-table tbody th b { display: block; font-family: var(--mono, ui-monospace, monospace); }
+.b-v-table tbody th small { color: var(--faint); font-weight: 400; font-size: 0.75rem; }
+.b-v-table td { background: color-mix(in srgb, var(--cobalt) calc(var(--h, 0) * 28%), transparent); }
+.b-v-table td i { display: block; font-style: normal; font-size: 0.72rem; }
+.b-v-up { color: var(--good); }
+.b-v-down { color: var(--bad); }
+.b-v-miss { color: var(--faint); }

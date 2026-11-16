@@ -123,6 +123,55 @@
   }
   $("#b-slide").addEventListener("input", ba);
 
+  // --- Version by version
+  // Each cell: a version's time over C's time in the same record (or
+  // Python's, for the ways that interpret). "Fastest build" takes the
+  // quickest compiled engine that version had.
+  const BUILDS = ["zeno", "zeno-llvm", "zeno-nc", "zeno-release", "zeno-owned"];
+  const VER = {
+    zeno: { size: "big", base: "c", baseName: "C", pick: (t) => t.zeno },
+    best: { size: "big", base: "c", baseName: "C", pick: (t) => Math.min(...BUILDS.map((e) => t[e]).filter((x) => typeof x === "number")) },
+    vm: { size: "small", base: "python", baseName: "Python", pick: (t) => t.vm },
+    run: { size: "small", base: "python", baseName: "Python", pick: (t) => t.run },
+  };
+  let verMode = "zeno";
+  function versions() {
+    const el = $("#b-vers");
+    if (!el || !data.versions?.length) return;
+    const m = VER[verMode];
+    const cell = (v, p) => {
+      const t = v[m.size]?.[p.key];
+      if (!t || !t[m.base]) return null;
+      const x = m.pick(t);
+      return typeof x === "number" && isFinite(x) ? x / t[m.base] : null;
+    };
+    const rows = data.versions.map((v) => {
+      const rs = data.programs.map((p) => cell(v, p));
+      const have = rs.filter((r) => r !== null);
+      return { v, rs, mean: have.length ? geo(have) : null };
+    });
+    const all = rows.flatMap((r) => [...r.rs, r.mean]).filter((r) => r !== null);
+    const hi = Math.max(2, ...all);
+    const fmt = (r) => (r < 10 ? r.toFixed(2) : Math.round(r)) + "×";
+    const shade = (r) => Math.min(1, Math.log(Math.max(r, 0.25) / 0.25) / Math.log(hi / 0.25));
+    const td = (r, prev, label) => {
+      if (r === null) return `<td class="b-v-miss" title="This version could not run it this way">–</td>`;
+      const d = prev ? r / prev : 1;
+      const move = prev && d < 0.87 ? `<i class="b-v-up">${(1 / d).toFixed(1)}× faster</i>` : prev && d > 1.15 ? `<i class="b-v-down">${d.toFixed(1)}× slower</i>` : "";
+      return `<td style="--h:${shade(r).toFixed(2)}" title="${label}: ${fmt(r)} the time of ${m.baseName}">${fmt(r)}${move}</td>`;
+    };
+    el.innerHTML = `<table class="b-v-table"><thead><tr><th scope="col">Version</th>${data.programs.map((p) => `<th scope="col">${p.title}</th>`).join("")}<th scope="col">All six</th></tr></thead><tbody>` +
+      rows.map((row, i) => {
+        const prev = i ? rows[i - 1] : null;
+        return `<tr><th scope="row"><b>${row.v.version}</b><small>${row.v.released ? "released" : "main, not released yet"}</small></th>` +
+          row.rs.map((r, j) => td(r, prev?.rs[j], data.programs[j].title)).join("") + td(row.mean, prev?.mean, "All six (geometric mean)") + "</tr>";
+      }).join("") + "</tbody></table>";
+    $("#b-vers-note").textContent = `Times ${m.baseName}'s time, at the ${m.size === "big" ? "full" : "small"} sizes. Darker is slower; "faster" and "slower" compare a version with the one above it, when the change is more than the 15 % that times move by from run to run.`;
+  }
+  for (const b of document.querySelectorAll("[data-ver]")) {
+    b.addEventListener("click", () => { verMode = b.dataset.ver; $("#b-vers").hidden = false; versions(); });
+  }
+
   // --- Speed of each way to run
   const inter = data.sets.interpreted.times;
   const speedOf = (times, e) => geo(data.programs.filter((p) => times[p.key]?.[e] && times[p.key]?.c).map((p) => times[p.key][e] / times[p.key].c));
@@ -156,4 +205,5 @@
   legend();
   board();
   ba();
+  versions();
 })();
