@@ -477,7 +477,8 @@ GUIDE = [
 <h3>macOS and Linux</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="install-cmd"><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh
-zeno run hello.zeno</code></pre></figure>
+zeno new hello
+zeno run hello/main.zeno</code></pre></figure>
 <h3>Windows</h3>
 <p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.2.0/zeno-0.2.0-windows-setup.exe">zeno-0.2.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
 <h3>With a package manager</h3>
