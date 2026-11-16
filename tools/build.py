@@ -1075,7 +1075,7 @@ def build_benchmarks():
     <div class="card">{icon("zap")}<b>Owned memory matches C and Rust</b><span>On programs that make many objects it is faster: its pool hands out and takes back a block in a few instructions, where C calls <code>malloc</code> and <code>free</code>.</span></div>
     <div class="card">{icon("check")}<b>Checks cost a little</b><span>Most of the gap on arithmetic is the overflow check on every <code>+</code>, which <code>--release</code> drops, as Rust's release builds do. Index checks stay.</span></div>
     <div class="card">{icon("memory")}<b>A collector costs more</b><span>It has to look at what is still in use, again and again: about two times C on many small objects. That is why a program can choose.</span></div>
-    <div class="card">{icon("gauge")}<b>Floating point has room</b><span>Each planet is an object reached through a list, where C keeps the five in one array, and each <code>sqrt</code> checks its argument.</span></div>
+    <div class="card">{icon("gauge")}<b>Text and floats are level with C</b><span><code>for ch in text</code> walks the text without making a list of it, and a field a function never writes is read once, as a C programmer would by hand (decisions 22.7 and 22.8).</span></div>
   </div>
   <p class="b-sub">Choose once, in <code>zeno.package</code>, with <code>memory owned</code>, or for one build with <code>zeno build --owned</code>. See <a href="/docs/memory-modes/">Choosing how memory is freed</a>.</p>
 </section>

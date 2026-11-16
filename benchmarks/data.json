@@ -108,58 +108,58 @@
    ],
    "times": {
     "fib": {
-     "c": 0.157,
-     "rust": 0.246,
-     "zeno": 0.482,
-     "zeno-llvm": 0.443,
-     "zeno-release": 0.122,
-     "zeno-owned": 0.145,
-     "zeno-owned-checked": 0.479
+     "c": 0.153,
+     "rust": 0.248,
+     "zeno": 0.463,
+     "zeno-llvm": 0.448,
+     "zeno-release": 0.143,
+     "zeno-owned": 0.116,
+     "zeno-owned-checked": 0.405
     },
     "loop": {
-     "c": 0.847,
-     "rust": 0.879,
-     "zeno": 1.388,
-     "zeno-llvm": 1.157,
-     "zeno-release": 0.957,
-     "zeno-owned": 0.959,
-     "zeno-owned-checked": 1.332
+     "c": 0.84,
+     "rust": 0.885,
+     "zeno": 1.181,
+     "zeno-llvm": 1.025,
+     "zeno-release": 0.894,
+     "zeno-owned": 1.044,
+     "zeno-owned-checked": 1.285
     },
     "sort": {
-     "c": 0.998,
-     "rust": 1.158,
-     "zeno": 1.379,
-     "zeno-llvm": 1.927,
-     "zeno-release": 1.171,
-     "zeno-owned": 1.389,
-     "zeno-owned-checked": 1.353
+     "c": 1.032,
+     "rust": 1.07,
+     "zeno": 1.386,
+     "zeno-llvm": 1.941,
+     "zeno-release": 1.233,
+     "zeno-owned": 1.296,
+     "zeno-owned-checked": 1.327
     },
     "strings": {
-     "c": 0.921,
-     "rust": 0.729,
-     "zeno": 3.446,
-     "zeno-llvm": 3.652,
-     "zeno-release": 3.547,
-     "zeno-owned": 3.812,
-     "zeno-owned-checked": 3.848
+     "c": 0.872,
+     "rust": 0.684,
+     "zeno": 1.088,
+     "zeno-llvm": 1.338,
+     "zeno-release": 1.097,
+     "zeno-owned": 1.259,
+     "zeno-owned-checked": 1.239
     },
     "trees": {
-     "c": 6.269,
-     "rust": 6.975,
-     "zeno": 12.051,
-     "zeno-llvm": 11.8,
-     "zeno-release": 12.13,
-     "zeno-owned": 4.325,
-     "zeno-owned-checked": 4.793
+     "c": 6.156,
+     "rust": 7.076,
+     "zeno": 11.058,
+     "zeno-llvm": 11.517,
+     "zeno-release": 11.538,
+     "zeno-owned": 4.091,
+     "zeno-owned-checked": 4.475
     },
     "nbody": {
-     "c": 0.431,
-     "rust": 0.373,
-     "zeno": 1.12,
-     "zeno-llvm": 0.72,
-     "zeno-release": 1.198,
-     "zeno-owned": 0.928,
-     "zeno-owned-checked": 0.879
+     "c": 0.515,
+     "rust": 0.389,
+     "zeno": 0.416,
+     "zeno-llvm": 0.516,
+     "zeno-release": 0.508,
+     "zeno-owned": 0.49,
+     "zeno-owned-checked": 0.52
     }
    },
    "sizes": {
@@ -189,58 +189,58 @@
    ],
    "times": {
     "fib": {
-     "c": 0.005,
-     "rust": 0.007,
-     "zeno": 0.012,
-     "zeno-owned": 0.005,
-     "vm": 1.06,
-     "run": 2.891,
-     "python": 0.244
+     "c": 0.004,
+     "rust": 0.008,
+     "zeno": 0.011,
+     "zeno-owned": 0.004,
+     "vm": 0.983,
+     "run": 2.843,
+     "python": 0.221
     },
     "loop": {
-     "c": 0.092,
-     "rust": 0.071,
-     "zeno": 0.142,
-     "zeno-owned": 0.098,
-     "vm": 15.479,
-     "run": 32.256,
-     "python": 11.546
+     "c": 0.07,
+     "rust": 0.085,
+     "zeno": 0.124,
+     "zeno-owned": 0.115,
+     "vm": 14.862,
+     "run": 30.83,
+     "python": 11.049
     },
     "sort": {
-     "c": 0.097,
-     "rust": 0.084,
-     "zeno": 0.117,
-     "zeno-owned": 0.121,
-     "vm": 4.697,
-     "run": 13.482,
-     "python": 2.254
+     "c": 0.093,
+     "rust": 0.098,
+     "zeno": 0.111,
+     "zeno-owned": 0.12,
+     "vm": 4.629,
+     "run": 13.002,
+     "python": 1.982
     },
     "strings": {
-     "c": 0.092,
-     "rust": 0.064,
-     "zeno": 0.243,
-     "zeno-owned": 0.269,
-     "vm": 1.928,
-     "run": 2.864,
-     "python": 0.422
+     "c": 0.084,
+     "rust": 0.073,
+     "zeno": 0.089,
+     "zeno-owned": 0.102,
+     "vm": 1.82,
+     "run": 2.913,
+     "python": 0.41
     },
     "trees": {
-     "c": 0.222,
-     "rust": 0.282,
-     "zeno": 0.517,
-     "zeno-owned": 0.177,
-     "vm": 20.849,
-     "run": 30.224,
-     "python": 3.807
+     "c": 0.209,
+     "rust": 0.287,
+     "zeno": 0.459,
+     "zeno-owned": 0.163,
+     "vm": 19.215,
+     "run": 29.829,
+     "python": 3.594
     },
     "nbody": {
-     "c": 0.038,
-     "rust": 0.037,
-     "zeno": 0.126,
-     "zeno-owned": 0.076,
-     "vm": 23.488,
-     "run": 51.356,
-     "python": 3.491
+     "c": 0.049,
+     "rust": 0.039,
+     "zeno": 0.05,
+     "zeno-owned": 0.052,
+     "vm": 23.215,
+     "run": 52.275,
+     "python": 4.068
     }
    },
    "sizes": {

@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 430 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 431 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8267,7 +8267,28 @@ text for a beginner to learn, and every <code>ch</code> in every program would
 change. Asking the body not to name the text even with a collector:
 there the text cannot go away while the loop holds it, so it is not
 needed.</p>
-<h3 id="228-left-for-later">22.8 Left for later</h3>
+<h3 id="228-a-field-a-function-never-writes-is-read-once">22.8 A field a function never writes is read once</h3>
+<p><strong>Decision.</strong> In a function that calls nothing but the built-ins that
+only look (<code>print</code>, <code>len</code>, <code>abs</code>, <code>math.sqrt</code>, ...), a number in an
+object that a parameter holds is read once, at the start, and kept in
+a local, when no statement of the function writes a field of that name
+on any object. The LLVM build reads it in the function's entry block.
+<code>math.sqrt</code> in the LLVM build is written in the program's own IR, as
+<code>/</code> already was (<code>WRITTEN</code> in <code>src/emit_llvm.rs</code>), so that it can be
+inlined.</p>
+<p><strong>Why.</strong> <code>pull(b, c)</code> in the n-body benchmark reads <code>b.mass</code> after it has
+written <code>b.vz</code>. C must read it again in case <code>b</code> and <code>c</code> are the same
+object, and the compiler joined that read with the write before it in
+a way the processor stalls on. Zeno knows more than C here: nothing in
+the function writes <code>mass</code>, and nothing it calls can. Read once, the
+benchmark went from 1.0 to 0.44 seconds, where C takes 0.43. It is what
+a C programmer does by hand, <code>double m = b-&gt;mass;</code>, done for them.</p>
+<p><strong>What it keeps.</strong> The meaning of the program: the field cannot change
+while the function runs, so the first value is the only value. A field
+that is written anywhere in the function, through any object, is read
+each time; so is every field in a function that calls one of the
+program's own functions or a method.</p>
+<h3 id="229-left-for-later">22.9 Left for later</h3>
 <ul>
 <li>Choosing per file or per function, in one program. The checker
   already applies the owned rules to a whole program; applying them to
