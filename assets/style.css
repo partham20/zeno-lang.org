@@ -630,7 +630,7 @@ main:not(.home) { padding-bottom: 4rem; }
 .b-key:hover { border-color: var(--tone); }
 .e-c { --tone: var(--slate); } .e-rust { --tone: #e2622c; } .e-py { --tone: #d4a20c; }
 .e-z1 { --tone: color-mix(in srgb, var(--cobalt) 45%, var(--paper)); } .e-z2 { --tone: color-mix(in srgb, var(--cobalt) 72%, var(--paper)); } .e-z3 { --tone: var(--cobalt); }
-.e-zl { --tone: #8a3ffc; } .e-vm { --tone: #0f9d8a; } .e-run { --tone: #b0388f; }
+.e-z4 { --tone: #00a3a3; } .e-zl { --tone: #8a3ffc; } .e-vm { --tone: #0f9d8a; } .e-run { --tone: #b0388f; }
 .b-board { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .b-prog { padding: 1.3rem 1.3rem 1.1rem; border: 1px solid var(--rule); border-radius: 16px; background: var(--sheet); }
 .b-prog header { display: grid; grid-template-columns: auto 1fr; align-items: baseline; gap: 0 0.6rem; margin-bottom: 0.9rem; }

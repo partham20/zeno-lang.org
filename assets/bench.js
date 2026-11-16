@@ -127,7 +127,7 @@
   // Each cell: a version's time over C's time in the same record (or
   // Python's, for the ways that interpret). "Fastest build" takes the
   // quickest compiled engine that version had.
-  const BUILDS = ["zeno", "zeno-llvm", "zeno-nc", "zeno-release", "zeno-owned"];
+  const BUILDS = ["zeno", "zeno-llvm", "zeno-nc", "zeno-release", "zeno-owned", "zeno-fast", "zeno-fast-gc"];
   const VER = {
     zeno: { size: "big", base: "c", baseName: "C", pick: (t) => t.zeno },
     best: { size: "big", base: "c", baseName: "C", pick: (t) => Math.min(...BUILDS.map((e) => t[e]).filter((x) => typeof x === "number")) },

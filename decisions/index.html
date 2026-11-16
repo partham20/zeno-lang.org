@@ -41,12 +41,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 436 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 441 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8350,8 +8350,8 @@ the next collection is full. After each collection the full pages of
 blocks with pointers are made read-only with <code>mprotect</code>; the first write
 to one is caught by a signal handler, which opens the page and marks it
 as written. A small collection looks inside the old blocks of every page
-that is open. On a chip, and for now on macOS and Windows, every
-collection is full (22.11).</p>
+that is open. On a chip, and for now on Windows, every collection is
+full (22.11).</p>
 <p><strong>Why.</strong> The trees benchmark keeps a tree of two million nodes for the
 whole run, and every collection marked all of it again: 140 times. With
 generations it is marked a few times, and the run went from 11 to 7
@@ -8372,13 +8372,13 @@ collections, which trades memory for time without changing the work.</p>
 <ul>
 <li>Generations on Windows, with <code>VirtualProtect</code> and a handler of its
   own.</li>
-<li>Generations on macOS. They were on at first, and in the 0.3.0
-  release rehearsal three compiled test programs hung on a Mac with
-  Apple silicon while Linux passed. The cause is not found yet; the
-  likeliest is a write fault the handler does not clear, so the same
-  write faults forever. Until it is found and a Mac test shows it gone,
-  macOS has every collection full, as Windows does: slower on programs
-  that keep many objects, never wrong.</li>
+<li>Generations on macOS (done after 0.3.0). They were on at first, and
+  in the 0.3.0 release rehearsal three compiled test programs hung on a
+  Mac with Apple silicon while Linux passed, so 0.3.0 shipped with every
+  collection full on macOS. The cause was found after the release
+  (22.14): a <code>try</code> in an LLVM build left the signal mask junk. With a
+  matched pair the whole suite passes on a Mac with generations, and
+  they are on there again.</li>
 </ul>
 <h3 id="2212-each-release-keeps-its-benchmark-times">22.12 Each release keeps its benchmark times</h3>
 <p><code>bench/record.py --version X</code> times the benchmarks with every engine
@@ -8420,6 +8420,23 @@ every message is written. One meaning stays in one place (5.10).</p>
 <p><strong>Rejected for 0.3.</strong> A register machine and 16-byte values, which
 would be the next big step; Partha chose to finish 0.3 first and decide
 after seeing its benchmarks (2026-11-16).</p>
+<h3 id="2214-a-try-jumps-with-_setjmp-and-_longjmp">22.14 A <code>try</code> jumps with <code>_setjmp</code> and <code>_longjmp</code></h3>
+<p>Outside Windows, the runtime's <code>zeno_raise</code> jumps with <code>_longjmp</code>, and
+the C build's <code>try</code> calls <code>_setjmp</code> (the macros <code>zeno_setjmp</code> and
+<code>zeno_longjmp</code> in runtime.c). Windows keeps <code>setjmp</code> and <code>longjmp</code>.</p>
+<p><strong>Why.</strong> The LLVM build has always called <code>_setjmp</code>, since IR cannot
+call the macro <code>setjmp</code>. The runtime answered with plain <code>longjmp</code>. On
+macOS <code>longjmp</code> also sets the signal mask from the jmp_buf, and
+<code>_setjmp</code> stores none there, so after a caught error the mask was
+whatever bytes were in that place. The 0.3.0 release rehearsal found
+it: in an LLVM build that caught an error, the write-fault signal of
+the collector's generations (22.10) was held back, and the next write
+to a guarded page stopped the program for good. glibc's <code>_setjmp</code> marks
+the mask as not saved, so Linux never showed it. The release thread
+traced it on a Mac (lldb on the hung program, decisions 22.11). A
+matched pair is correct on every system, and <code>_setjmp</code> saves a system
+call for each <code>try</code> on macOS. Zeno never changes the signal mask, so
+there is nothing for a jump to put back.</p>
 <h3 id="206-the-playground-shows-the-c-a-program-becomes">20.6 The playground shows the C a program becomes</h3>
 <p>The playground has a C tab: the program as <code>zeno build</code> writes it,
 by the same compiler, with a choice of the three builds and the
@@ -8439,6 +8456,71 @@ desk, and Copy copies the whole file, which builds as it is.</p>
 <p><strong>Why by the compiler itself.</strong> <code>zeno.wasm</code> already holds the C
 emitter (<code>main.rs</code> is compiled for the browser too), so the C in the
 page is exactly the C <code>zeno build</code> writes, and cannot drift from it.</p>
+<h2 id="23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</h2>
+<p>Partha asked (2026-11-16) for Zeno to match C and Rust one to one on the
+benchmarks, with a new option to build that way, so that the builds
+there are keep every check they have.</p>
+<h3 id="231-zeno-build-fast">23.1 <code>zeno build --fast</code></h3>
+<p><code>--fast</code> is <code>--release</code> (overflow wraps round) and leaves out the checks
+a correct program never fails: a list index out of range, a float
+divided by zero, the square root of a number below zero. The C compiler
+gets <code>-O3 -fno-math-errno</code>, and so does clang for <code>--llvm</code>. The C file
+starts with <code>#define ZENO_UNCHECKED 1</code>; the runtime's checks sit behind
+<code>#ifndef ZENO_UNCHECKED</code>. In LLVM IR an item is found with a
+<code>getelementptr</code>, <code>/</code> of floats is <code>fdiv</code> and <code>math.sqrt</code> is
+<code>llvm.sqrt.f64</code>, with nothing in front.</p>
+<p><strong>Why a new option and not a faster <code>--release</code>.</strong> Partha asked for the
+existing builds to stay as they are. <code>--release</code> drops one check, which
+can only change what an overflowing program prints. <code>--fast</code> drops
+checks whose failure means reading memory that is not the list's, which
+is a different promise; it gets its own word, and the help says "as
+unforgiving as C".</p>
+<p><strong>Why the word <code>fast</code>.</strong> It says what it is for, which is how people look
+for it. <code>--unchecked</code> says what it does and was the other choice; the
+help text and docs/memory-modes.md say exactly which checks go, in a
+table, so nothing is hidden.</p>
+<p><strong>Why a whole number divided by zero is still caught.</strong> In C it is not a
+wrong answer but a signal that kills the program, or undefined behaviour
+an optimiser may build on. The check is one compare, usually against a
+constant the C compiler folds away.</p>
+<p><strong>Why <code>-fno-math-errno</code>.</strong> C's <code>sqrt</code> must set <code>errno</code> for a number below
+zero, so the compiler calls the library instead of using the one
+instruction. No Zeno program can read <code>errno</code>. On nbody the flag alone
+took a fifth off.</p>
+<p><strong>Rejected.</strong> <code>-march=native</code>: the program would not run on an older
+processor of the same family, and a build is often copied to another
+machine. <code>restrict</code> on parameters that are objects: two parameters may
+be the same object in a correct Zeno program (<code>pull(b, b)</code>), and
+<code>restrict</code> would make that program print a wrong answer, which is a
+different thing from leaving out a check that only a wrong program
+fails. It is also what keeps nbody behind Rust, whose borrow rules prove
+the two bodies apart (23.4).</p>
+<h3 id="232-numbers-become-text-without-snprintf">23.2 Numbers become text without <code>snprintf</code></h3>
+<p><code>str(n)</code> and every <code>{n}</code> in an f-string write the digits from the right,
+two at a time from a table of the hundred pairs, in every build. On the
+strings benchmark, <code>snprintf</code> (which reads its format string every
+time) was more than a third of the run.</p>
+<h3 id="233-a-big-list-grows-with-realloc">23.3 A big list grows with <code>realloc</code></h3>
+<p>In an owned build on a computer (a pool that grows), the items of a list
+of 64 KB or more come from the system with <code>calloc</code>, not from the pool,
+and grow with <code>realloc</code>, as a C program's growing array does. <code>realloc</code>
+of a big block usually moves no bytes: the system maps the same pages
+at a new address. Before, each doubling took a new pool block, cleared
+it, copied the items over and gave the old one back. The block carries
+its size in front and a head whose step is <code>ZENO_FROM_SYSTEM</code>, so
+<code>zeno_free</code> knows where it goes back. Kept text is no longer cleared
+before it is copied in (<code>zeno_alloc_raw</code>), and <code>join</code> finds the end of
+each piece while copying it.</p>
+<p><strong>Why only big lists, and only with a pool that grows.</strong> A small list
+from the pool is cheaper than a call to the system. A build for a chip
+has no system to ask: its pool is all the memory there is.</p>
+<h3 id="234-where-rust-is-still-ahead">23.4 Where Rust is still ahead</h3>
+<p>On nbody Rust takes 0.36 s where Zeno <code>--fast</code> and C take about 0.46.
+Rust knows that <code>bi</code> and <code>c</code> in its inner loop are different bodies, so
+it keeps <code>bi</code>'s speeds in registers for the whole loop; C and Zeno must
+write them back after every step, in case the two are one. Getting that
+in Zeno needs the language to know that two values lent at once are
+different (as <code>owned</code> values already are), which is left for later.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

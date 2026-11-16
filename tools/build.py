@@ -968,6 +968,8 @@ BENCH_ENGINES = {
     "zeno-llvm": ("Zeno LLVM", "zeno build --llvm: the same program through LLVM instead of C.", "e-zl"),
     "zeno-release": ("Zeno release", "zeno build --release: no overflow checks, as in Rust's release builds.", "e-z2"),
     "zeno-owned": ("Zeno owned", "zeno build --release --owned: one owner for each value and no collector.", "e-z3"),
+    "zeno-fast": ("Zeno fast", "zeno build --fast --owned: no checks a correct program never fails, as in C, and -O3.", "e-z4"),
+    "zeno-fast-gc": ("Zeno fast, collector", "zeno build --fast: the same, with the garbage collector.", "e-z4"),
     "zeno-owned-checked": ("Zeno owned, checked", "zeno build --owned: one owner, overflow checks kept.", "e-z2"),
     "zeno-nc": ("Zeno, no collector", "The old build for a chip, with one fixed pool.", "e-z2"),
     "vm": ("zeno run --vm", "The bytecode virtual machine.", "e-vm"),
@@ -1005,8 +1007,8 @@ def build_benchmarks():
     m = now_big["machine"]
     sets = {
         "compiled": {"title": "Compiled", "res": now_big,
-                     "engines": ["c", "rust", "zeno", "zeno-llvm", "zeno-release", "zeno-owned"],
-                     "on": ["c", "rust", "zeno", "zeno-release", "zeno-owned"]},
+                     "engines": ["c", "rust", "zeno", "zeno-llvm", "zeno-release", "zeno-owned", "zeno-fast", "zeno-fast-gc"],
+                     "on": ["c", "rust", "zeno", "zeno-owned", "zeno-fast"]},
         "interpreted": {"title": "Interpreted", "res": now_small,
                         "engines": ["c", "python", "vm", "run", "zeno", "zeno-owned"],
                         "on": ["c", "python", "vm", "run"]},
@@ -1028,12 +1030,13 @@ def build_benchmarks():
     t = now_big["times"]
     def ratio(p, e): return t[p][e] / t[p]["c"]
     keys = [k for k, _, _ in BENCH_PROGRAMS if k in t]
-    geo = math.exp(sum(math.log(ratio(k, "zeno-owned")) for k in keys) / len(keys))
+    best = "zeno-fast" if all("zeno-fast" in t[k] for k in keys) else "zeno-owned"
+    geo = math.exp(sum(math.log(ratio(k, best)) for k in keys) / len(keys))
     trees = t["trees"]["c"] / t["trees"]["zeno-owned"]
     gain = before_big["times"]["trees"]["zeno"] / t["trees"]["zeno-owned"]
     py = math.exp(sum(math.log(now_small["times"][k]["python"] / now_small["times"][k]["zeno-owned"]) for k in keys) / len(keys))
     stats = [
-        (f"{geo:.2f}", "× the time of C", "Zeno owned, across all six programs (geometric mean)"),
+        (f"{geo:.2f}", "× the time of C", f"{'zeno build --fast' if best == 'zeno-fast' else 'Zeno owned'}, across all six programs (geometric mean)"),
         (f"{trees:.1f}", "× faster than C", "on many small objects, where its pool beats malloc"),
         (f"{gain:.1f}", "× faster than before", "on the same objects, since the paged collector and owned memory"),
         (f"{py:.0f}", "× faster than Python", "compiled Zeno, on average"),
@@ -1045,7 +1048,8 @@ def build_benchmarks():
         ("run", "zeno run", "Walks the syntax tree", "Every step looks at a node of the tree and decides what it means. Simple, exact errors, and slow.", "tree"),
         ("vm", "zeno run --vm", "Runs bytecode", "The tree is turned into a flat list of small instructions once, then a loop runs them. Two to three times faster.", "layers"),
         ("zeno", "zeno build", "Compiles to C", "The program becomes C and then machine code. Each value is found by a garbage collector, and each <code>+</code> checks for overflow.", "cpu"),
-        ("zeno-owned", "--release --owned", "No collector, no overflow checks", "Each value has one owner and is freed at a line you can point to, from a pool that hands out a block in a few instructions.", "zap"),
+        ("zeno-owned", "--release --owned", "No collector, no overflow checks", "Each value has one owner and is freed at a line you can point to, from a pool that hands out a block in a few instructions.", "memory"),
+        ("zeno-fast", "--fast --owned", "No checks a correct program never fails", "No index checks either, a float divided by zero is infinity, and the C compiler tries its hardest. As fast as C, and as unforgiving.", "zap"),
     ]
     mode_html = "".join(
         f'<li class="b-mode {BENCH_ENGINES[k][2]}"><span class="b-mode-ico">{icon(ic)}</span><code>{esc(cmd)}</code><b>{head}</b><p>{txt}</p>'
@@ -1100,8 +1104,8 @@ def build_benchmarks():
 </section>
 
 <section class="b-section">
-  <h2>Four ways to run a program</h2>
-  <p class="b-sub">The same file, run four ways. Each step down does more work before the program starts, and less while it runs.</p>
+  <h2>Five ways to run a program</h2>
+  <p class="b-sub">The same file, run five ways. Each step down does more work before the program starts, and less while it runs.</p>
   <ol class="b-modes">{mode_html}</ol>
 </section>
 

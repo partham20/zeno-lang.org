@@ -184,6 +184,56 @@ an <code>OverflowError</code>. Everything else is still checked (an index past t
 end, <code>//</code> by zero, <code>u8(300)</code>), and <code>zeno run</code> checks everything as it
 always did. It is what Rust's release builds do, for the same reason:
 the check costs a little on every step of a tight loop. Decision 22.3.</p>
+<h2 id="-fast"><code>--fast</code></h2>
+<pre><code>zeno build --fast --owned main.zeno</code></pre>
+<p><code>--fast</code> is <code>--release</code>, and it leaves out the other checks that a
+correct program never fails, as C and Rust leave them out:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>other builds</th>
+<th><code>--fast</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xs[i]</code> with <code>i</code> out of range</td>
+<td><code>IndexError</code></td>
+<td>reads (or writes) whatever memory is there</td>
+</tr>
+<tr>
+<td><code>x / 0.0</code></td>
+<td><code>ZeroDivisionError</code></td>
+<td>infinity, or NaN for <code>0.0 / 0.0</code></td>
+</tr>
+<tr>
+<td><code>math.sqrt(-1.0)</code></td>
+<td><code>ValueError</code></td>
+<td>NaN</td>
+</tr>
+<tr>
+<td><code>n // 0</code>, <code>n % 0</code> of whole numbers</td>
+<td><code>ZeroDivisionError</code></td>
+<td><code>ZeroDivisionError</code> still</td>
+</tr>
+<tr>
+<td>overflow of <code>+ - *</code></td>
+<td><code>OverflowError</code></td>
+<td>wraps round (as <code>--release</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>The C compiler is asked for <code>-O3</code> and told that no line reads <code>errno</code>
+after a function of maths (<code>-fno-math-errno</code>), so <code>sqrt</code> is one
+instruction. The C says <code>#define ZENO_UNCHECKED 1</code> on its first line,
+so the file builds the same way by hand. It goes with <code>--llvm</code>, where
+an item is read with a <code>getelementptr</code> and <code>/</code> is <code>fdiv</code>, and with any
+way of freeing memory. <code>zeno run</code> checks everything, as always.</p>
+<p>Build it the ordinary way while a program is being written and tested,
+and with <code>--fast</code> when its tests pass and the last bit of speed
+matters. A wrong index in a <code>--fast</code> build is a wrong answer or a crash
+far from the line that caused it, exactly as in C. Decision 23.1.</p>
 <h2 id="what-it-buys">What it buys</h2>
 <p>On the benchmarks in <code>bench/</code> (<code>python3 bench/run.py --size big</code>; the
 numbers and how they were taken are in bench/README.md), a program
@@ -198,7 +248,9 @@ times slower than C.</p>
   a kind of build, and <code>package_memory</code>.</li>
 <li><code>src/runtime.c</code>: the pool that grows and the chain of text rooms,
   marked <code>ZENO_HEAP</code>; the collector, under "Where blocks live".</li>
-<li><code>src/emit_c.rs</code>, <code>src/emit_llvm.rs</code>: <code>Options { release, grows }</code>.</li>
+<li><code>src/emit_c.rs</code>, <code>src/emit_llvm.rs</code>: <code>Options { release, grows, fast }</code>.
+  The checks <code>--fast</code> leaves out are behind <code>#ifndef ZENO_UNCHECKED</code> in
+  runtime.c; <code>optimise</code> in main.rs picks the C compiler's flags.</li>
 <li><code>src/ast.rs</code>: <code>walks_in_place</code>, which lets a loop skip its copy.</li>
 </ul>
 <h2 id="things-to-try">Things to try</h2>
@@ -210,6 +262,9 @@ times slower than C.</p>
 <li>Put <code>memory owned</code> in a <code>zeno.package</code> beside a program that shares
    a list between two variables. What does <code>zeno run</code> say now?</li>
 <li>Time <code>bench/trees.zeno</code> built the three ways in the table above.</li>
+<li>Build <code>let xs = [1, 2, 3]</code> / <code>print(xs[5])</code> with <code>--release</code> and with
+   <code>--fast</code>, and run both. Then look for <code>ZENO_UNCHECKED</code> in the two <code>.c</code>
+   files.</li>
 <li>Move <code>Node</code>, <code>make</code> and <code>check</code> of <code>bench/trees.zeno</code> into a file
    of their own that says <code>memory owned</code>, import it, and build with
    <code>--memory</code>. How many collections are left?</li>
@@ -217,7 +272,7 @@ times slower than C.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/memory-modes.md">docs/memory-modes.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/found-by-the-book/"><span>Previous</span>What writing the book found</a><a class="next" href="/docs/stores/"><span>Next</span>Stores: where each package manager looks for Zeno</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#a-program-that-says-memory-owned">A program that says memory owned</a></li><li><a href="#one-file-that-says-memory-owned">One file that says memory owned</a></li><li><a href="#for-a-chip">For a chip</a></li><li><a href="#-release">--release</a></li><li><a href="#what-it-buys">What it buys</a></li><li><a href="#the-files">The files</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#a-program-that-says-memory-owned">A program that says memory owned</a></li><li><a href="#one-file-that-says-memory-owned">One file that says memory owned</a></li><li><a href="#for-a-chip">For a chip</a></li><li><a href="#-release">--release</a></li><li><a href="#-fast">--fast</a></li><li><a href="#what-it-buys">What it buys</a></li><li><a href="#the-files">The files</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">
