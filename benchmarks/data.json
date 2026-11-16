@@ -1,0 +1,310 @@
+{
+ "programs": [
+  {
+   "key": "fib",
+   "title": "Function calls",
+   "about": "The slow recursive Fibonacci of a number: millions of calls and additions."
+  },
+  {
+   "key": "loop",
+   "title": "A tight loop",
+   "about": "Whole-number arithmetic in a while loop, a billion times round."
+  },
+  {
+   "key": "sort",
+   "title": "Sorting a list",
+   "about": "A quicksort written in the program, over ten million made-up numbers."
+  },
+  {
+   "key": "strings",
+   "title": "Building text",
+   "about": "Ten million numbers turned to text, joined, then read a character at a time."
+  },
+  {
+   "key": "trees",
+   "title": "Many small objects",
+   "about": "The binary-trees test: make and drop millions of small trees."
+  },
+  {
+   "key": "nbody",
+   "title": "Floating point",
+   "about": "Five planets moved ten million small steps, as in the benchmarks game."
+  }
+ ],
+ "engines": {
+  "c": {
+   "label": "C",
+   "about": "cc -O2. The line every other bar is measured against.",
+   "tone": "e-c"
+  },
+  "rust": {
+   "label": "Rust",
+   "about": "rustc -C opt-level=3.",
+   "tone": "e-rust"
+  },
+  "python": {
+   "label": "Python 3",
+   "about": "CPython, the usual python3.",
+   "tone": "e-py"
+  },
+  "zeno": {
+   "label": "Zeno",
+   "about": "zeno build: C, with the garbage collector and every overflow check.",
+   "tone": "e-z1"
+  },
+  "zeno-llvm": {
+   "label": "Zeno LLVM",
+   "about": "zeno build --llvm: the same program through LLVM instead of C.",
+   "tone": "e-zl"
+  },
+  "zeno-release": {
+   "label": "Zeno release",
+   "about": "zeno build --release: no overflow checks, as in Rust's release builds.",
+   "tone": "e-z2"
+  },
+  "zeno-owned": {
+   "label": "Zeno owned",
+   "about": "zeno build --release --owned: one owner for each value and no collector.",
+   "tone": "e-z3"
+  },
+  "zeno-owned-checked": {
+   "label": "Zeno owned, checked",
+   "about": "zeno build --owned: one owner, overflow checks kept.",
+   "tone": "e-z2"
+  },
+  "zeno-nc": {
+   "label": "Zeno, no collector",
+   "about": "The old build for a chip, with one fixed pool.",
+   "tone": "e-z2"
+  },
+  "vm": {
+   "label": "zeno run --vm",
+   "about": "The bytecode virtual machine.",
+   "tone": "e-vm"
+  },
+  "run": {
+   "label": "zeno run",
+   "about": "The interpreter that walks the syntax tree.",
+   "tone": "e-run"
+  }
+ },
+ "sets": {
+  "compiled": {
+   "title": "Compiled",
+   "engines": [
+    "c",
+    "rust",
+    "zeno",
+    "zeno-llvm",
+    "zeno-release",
+    "zeno-owned"
+   ],
+   "on": [
+    "c",
+    "rust",
+    "zeno",
+    "zeno-release",
+    "zeno-owned"
+   ],
+   "times": {
+    "fib": {
+     "c": 0.157,
+     "rust": 0.246,
+     "zeno": 0.482,
+     "zeno-llvm": 0.443,
+     "zeno-release": 0.122,
+     "zeno-owned": 0.145,
+     "zeno-owned-checked": 0.479
+    },
+    "loop": {
+     "c": 0.847,
+     "rust": 0.879,
+     "zeno": 1.388,
+     "zeno-llvm": 1.157,
+     "zeno-release": 0.957,
+     "zeno-owned": 0.959,
+     "zeno-owned-checked": 1.332
+    },
+    "sort": {
+     "c": 0.998,
+     "rust": 1.158,
+     "zeno": 1.379,
+     "zeno-llvm": 1.927,
+     "zeno-release": 1.171,
+     "zeno-owned": 1.389,
+     "zeno-owned-checked": 1.353
+    },
+    "strings": {
+     "c": 0.921,
+     "rust": 0.729,
+     "zeno": 3.446,
+     "zeno-llvm": 3.652,
+     "zeno-release": 3.547,
+     "zeno-owned": 3.812,
+     "zeno-owned-checked": 3.848
+    },
+    "trees": {
+     "c": 6.269,
+     "rust": 6.975,
+     "zeno": 12.051,
+     "zeno-llvm": 11.8,
+     "zeno-release": 12.13,
+     "zeno-owned": 4.325,
+     "zeno-owned-checked": 4.793
+    },
+    "nbody": {
+     "c": 0.431,
+     "rust": 0.373,
+     "zeno": 1.12,
+     "zeno-llvm": 0.72,
+     "zeno-release": 1.198,
+     "zeno-owned": 0.928,
+     "zeno-owned-checked": 0.879
+    }
+   },
+   "sizes": {
+    "fib": 40,
+    "loop": 1000000000,
+    "sort": 10000000,
+    "strings": 10000000,
+    "trees": 20,
+    "nbody": 10000000
+   }
+  },
+  "interpreted": {
+   "title": "Interpreted",
+   "engines": [
+    "c",
+    "python",
+    "vm",
+    "run",
+    "zeno",
+    "zeno-owned"
+   ],
+   "on": [
+    "c",
+    "python",
+    "vm",
+    "run"
+   ],
+   "times": {
+    "fib": {
+     "c": 0.005,
+     "rust": 0.007,
+     "zeno": 0.012,
+     "zeno-owned": 0.005,
+     "vm": 1.06,
+     "run": 2.891,
+     "python": 0.244
+    },
+    "loop": {
+     "c": 0.092,
+     "rust": 0.071,
+     "zeno": 0.142,
+     "zeno-owned": 0.098,
+     "vm": 15.479,
+     "run": 32.256,
+     "python": 11.546
+    },
+    "sort": {
+     "c": 0.097,
+     "rust": 0.084,
+     "zeno": 0.117,
+     "zeno-owned": 0.121,
+     "vm": 4.697,
+     "run": 13.482,
+     "python": 2.254
+    },
+    "strings": {
+     "c": 0.092,
+     "rust": 0.064,
+     "zeno": 0.243,
+     "zeno-owned": 0.269,
+     "vm": 1.928,
+     "run": 2.864,
+     "python": 0.422
+    },
+    "trees": {
+     "c": 0.222,
+     "rust": 0.282,
+     "zeno": 0.517,
+     "zeno-owned": 0.177,
+     "vm": 20.849,
+     "run": 30.224,
+     "python": 3.807
+    },
+    "nbody": {
+     "c": 0.038,
+     "rust": 0.037,
+     "zeno": 0.126,
+     "zeno-owned": 0.076,
+     "vm": 23.488,
+     "run": 51.356,
+     "python": 3.491
+    }
+   },
+   "sizes": {
+    "fib": 32,
+    "loop": 100000000,
+    "sort": 1000000,
+    "strings": 1000000,
+    "trees": 16,
+    "nbody": 1000000
+   }
+  }
+ },
+ "before": {
+  "fib": {
+   "c": 0.167,
+   "rust": 0.229,
+   "zeno": 0.46,
+   "zeno-llvm": 0.447,
+   "zeno-nc": 0.422
+  },
+  "loop": {
+   "c": 0.854,
+   "rust": 0.884,
+   "zeno": 1.249,
+   "zeno-llvm": 1.036,
+   "zeno-nc": 1.308
+  },
+  "sort": {
+   "c": 1.041,
+   "rust": 1.087,
+   "zeno": 1.292,
+   "zeno-llvm": 2.032,
+   "zeno-nc": 1.314
+  },
+  "strings": {
+   "c": 0.944,
+   "rust": 0.699,
+   "zeno": 24.538,
+   "zeno-llvm": 25.317,
+   "zeno-nc": "failed: error: a statement built more text than there is room for (ZENO_TEXT_ROOM is 16777216 bytes)"
+  },
+  "trees": {
+   "c": 5.887,
+   "rust": 6.843,
+   "zeno": 57.809,
+   "zeno-llvm": 57.466,
+   "zeno-nc": 4.612
+  },
+  "nbody": {
+   "c": 0.419,
+   "rust": 0.37,
+   "zeno": 1.325,
+   "zeno-llvm": 1.094,
+   "zeno-nc": 1.234
+  }
+ },
+ "machine": {
+  "cpu": "Intel(R) Xeon(R) Processor @ 2.10GHz",
+  "cores": 4,
+  "os": "Linux-6.18.44-fc-v470-x86_64-with-glibc2.39",
+  "zeno": "zeno 0.3.0",
+  "cc": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "rustc": "rustc 1.97.0 (2d8144b78 2026-07-07)",
+  "python": "3.13.18",
+  "date": "2026-11-16"
+ }
+}

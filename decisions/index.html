@@ -46,7 +46,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 429 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 430 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8245,15 +8245,35 @@ character. Each was a block of its own; now a text of one ASCII
 character is taken from a table of all 128 that is part of the
 program, and no block is made. With no collector nothing frees them,
 which is right, since only text in the pool is ever freed.</p>
-<h3 id="227-left-for-later">22.7 Left for later</h3>
+<h3 id="227-for-ch-in-text-walks-the-text-and-makes-no-list">22.7 <code>for ch in text</code> walks the text and makes no list</h3>
+<p><strong>Decision.</strong> A loop over text with one name walks the text where it is,
+one character at a time. The loop variable is a character of ASCII from
+the table of 22.6, or, for any other character, a copy of it. With a
+collector the copy is the collector's. With no collector the loop holds
+the last such copy and frees it when it makes the next one, or when the
+loop ends or is left; whatever keeps the character has its own copy
+already (a list, a variable outside the loop). With no collector the
+text must stay where it is while it is walked, so this is done when the
+loop is over a variable the body never names, or over a literal. Every
+other loop over text, and every loop with two names (<code>for i, ch in
+text</code>), walks a list of the characters, as before.</p>
+<p><strong>Why.</strong> The list was the whole cost: ten million characters made a list
+of ten million slots, grown by doubling, then freed. The strings
+benchmark went from 3.5 to 1.1 seconds (C takes 0.9). A character as a
+str of its own keeps the language as it was: <code>ch</code> is still a str, and
+<code>ch == ","</code> still means what it meant.</p>
+<p><strong>Rejected.</strong> A separate <code>char</code> type: faster still, but a second kind of
+text for a beginner to learn, and every <code>ch</code> in every program would
+change. Asking the body not to name the text even with a collector:
+there the text cannot go away while the loop holds it, so it is not
+needed.</p>
+<h3 id="228-left-for-later">22.8 Left for later</h3>
 <ul>
 <li>Choosing per file or per function, in one program. The checker
   already applies the owned rules to a whole program; applying them to
   some files and not others needs a rule for where the two meet (a
   shared list lent to a function of an owned file, say), and that rule
   is not written yet.</li>
-<li><code>for ch in text</code> still makes a list of the characters first. Walking
-  the text itself would save the list.</li>
 <li>A generational collector (22.5).</li>
 </ul>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>

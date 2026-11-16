@@ -959,55 +959,139 @@ def bench_table(results, engines):
     return f'<div class="bench-table"><table><thead><tr><th></th>{head}</tr></thead><tbody>{rows}</tbody></table></div>'
 
 
+BENCH_ENGINES = {
+    # key: (label, what it is, colour class)
+    "c": ("C", "cc -O2. The line every other bar is measured against.", "e-c"),
+    "rust": ("Rust", "rustc -C opt-level=3.", "e-rust"),
+    "python": ("Python 3", "CPython, the usual python3.", "e-py"),
+    "zeno": ("Zeno", "zeno build: C, with the garbage collector and every overflow check.", "e-z1"),
+    "zeno-llvm": ("Zeno LLVM", "zeno build --llvm: the same program through LLVM instead of C.", "e-zl"),
+    "zeno-release": ("Zeno release", "zeno build --release: no overflow checks, as in Rust's release builds.", "e-z2"),
+    "zeno-owned": ("Zeno owned", "zeno build --release --owned: one owner for each value and no collector.", "e-z3"),
+    "zeno-owned-checked": ("Zeno owned, checked", "zeno build --owned: one owner, overflow checks kept.", "e-z2"),
+    "zeno-nc": ("Zeno, no collector", "The old build for a chip, with one fixed pool.", "e-z2"),
+    "vm": ("zeno run --vm", "The bytecode virtual machine.", "e-vm"),
+    "run": ("zeno run", "The interpreter that walks the syntax tree.", "e-run"),
+}
+
+
 def build_benchmarks():
+    import json, math
     now_big, now_small = bench_results("now-big"), bench_results("now-small")
     before_big = bench_results("before-big")
     if now_big is None or now_small is None or before_big is None:
         print("  benchmarks: no results in bench/results; page skipped")
         return
     m = now_big["machine"]
-    compiled = [("c", "C"), ("rust", "Rust"), ("zeno", "Zeno"), ("zeno-release", "Zeno --release"),
-                ("zeno-owned", "Zeno --release, owned")]
-    interpreted = [("c", "C"), ("python", "Python 3"), ("vm", "zeno run --vm"), ("run", "zeno run")]
-    before = [("c", "C"), ("zeno", "Zeno, collector"), ("zeno-nc", "Zeno, no collector")]
-    programs = "".join(f"<li><b>{esc(t)}</b> <code>{k}</code>: {esc(d)}</li>" for k, t, d in BENCH_PROGRAMS)
-    body = page_head("Benchmarks", "How fast is Zeno?",
-                     "Six programs, each written once in Zeno, C, Rust and Python, doing the same steps and printing "
-                     "the same thing. Every number here was measured, and every time counts only if the program "
-                     "printed exactly what the C program printed.", "chart") + f"""
-<div class="narrow prose bench">
-<h2>Compiled programs</h2>
-<p>Seconds, best of three, at full size. The bar is how many times slower than C, on a scale that grows slowly.
-<b>Zeno</b> is <code>zeno build</code> with the garbage collector, <b>--release</b> drops the overflow checks,
-and <b>owned</b> is <code>memory owned</code>: one owner for each value and no collector, as in Rust.</p>
-{bench_table(now_big, compiled)}
-<h2>What this shows</h2>
-<ul>
-<li><b>With one owner for each value, Zeno is as fast as C and Rust</b> on programs that make many objects, and sometimes faster: its pool hands out and takes back a block in a few instructions, where C calls <code>malloc</code> and <code>free</code>.</li>
-<li><b>On arithmetic and lists it is close to C</b>, and most of what is left is the overflow check on every <code>+</code>, which <code>--release</code> drops, as Rust's release builds do. Index checks stay, as they do in Rust.</li>
-<li><b>Floating point is still about two times slower than C.</b> Each planet is an object reached through a list, where C holds the five in one array, and each <code>sqrt</code> and division checks its argument.</li>
-<li><b>The garbage collector costs.</b> A collector has to look at what is still in use, again and again. Zeno's is now about two times slower than C on many small objects. That is why a program can choose.</li>
-<li><b>Building text</b> is slower than it should be: <code>for ch in text</code> still makes a list of the characters first.</li>
-</ul>
-<h2>Choose how memory is freed</h2>
-<p>A program says it once, in its <code>zeno.package</code>:</p>
-<pre><code>package server
-memory owned</code></pre>
-<p>or for one build, <code>zeno build --owned</code>. Single values can be <code>owned</code> in a collector program, and <code>unsafe {{ }}</code> blocks manage memory by hand, as in C. See <a href="/docs/memory-modes/">Choosing how memory is freed</a>.</p>
-<h2>Where it started</h2>
-<p>The first run, on the same machine, before this work. The collector kept every block in one table that it sorted on each collection; it now keeps blocks in pages and finds them through a hash table (<a href="/decisions/">decision 22.5</a>). The build with no collector was made for a chip, with a fixed pool of memory, and could not build text this big.</p>
-{bench_table(before_big, before)}
-<h2>Interpreted</h2>
-<p>At a tenth of the size, because the interpreters are far slower. <code>zeno run</code> walks the syntax tree; <code>zeno run --vm</code> runs bytecode. Both are made to be simple to read and to give exact error messages, not to be fast, and they are slower than Python, which has had thirty years of tuning: the bytecode one by one and a half to seven times, the tree walker by three to fifteen.</p>
-{bench_table(now_small, interpreted)}
-<h2>The programs</h2>
-<ul>{programs}</ul>
-<p>They are in <a href="{GITHUB}/tree/main/bench"><code>bench/</code></a>, one file per language, with the script that runs them:</p>
-<pre><code>cargo build --release
-python3 bench/run.py --size big --engines c,rust,zeno,zeno-release,zeno-owned</code></pre>
-<p class="muted">Measured on {esc(m["date"])}: {esc(m["cpu"])}, {m["cores"]} cores, Linux. {esc(m["zeno"])} (main), {esc(m["cc"].split(" (")[0])} {esc(m["cc"].split(") ")[-1])} with <code>-O2</code>, {esc(m["rustc"].split(" (")[0])} with <code>-C opt-level=3</code>, Python {esc(m["python"])}. Wall-clock time of the whole program, start to finish.</p>
+    sets = {
+        "compiled": {"title": "Compiled", "res": now_big,
+                     "engines": ["c", "rust", "zeno", "zeno-llvm", "zeno-release", "zeno-owned"],
+                     "on": ["c", "rust", "zeno", "zeno-release", "zeno-owned"]},
+        "interpreted": {"title": "Interpreted", "res": now_small,
+                        "engines": ["c", "python", "vm", "run", "zeno", "zeno-owned"],
+                        "on": ["c", "python", "vm", "run"]},
+    }
+    data = {
+        "programs": [{"key": k, "title": t, "about": d} for k, t, d in BENCH_PROGRAMS],
+        "engines": {k: {"label": v[0], "about": v[1], "tone": v[2]} for k, v in BENCH_ENGINES.items()},
+        "sets": {name: {"title": s["title"], "engines": [e for e in s["engines"] if any(e in t for t in s["res"]["times"].values())],
+                        "on": s["on"], "times": s["res"]["times"], "sizes": s["res"].get("sizes", {})}
+                 for name, s in sets.items()},
+        "before": before_big["times"],
+        "machine": m,
+    }
+    (SITE / "benchmarks").mkdir(exist_ok=True)
+    (SITE / "benchmarks" / "data.json").write_text(json.dumps(data, indent=1) + "\n")
+
+    # Headline numbers, worked out from the results so they stay true.
+    t = now_big["times"]
+    def ratio(p, e): return t[p][e] / t[p]["c"]
+    keys = [k for k, _, _ in BENCH_PROGRAMS if k in t]
+    geo = math.exp(sum(math.log(ratio(k, "zeno-owned")) for k in keys) / len(keys))
+    trees = t["trees"]["c"] / t["trees"]["zeno-owned"]
+    gain = before_big["times"]["trees"]["zeno"] / t["trees"]["zeno-owned"]
+    py = math.exp(sum(math.log(now_small["times"][k]["python"] / now_small["times"][k]["zeno-owned"]) for k in keys) / len(keys))
+    stats = [
+        (f"{geo:.2f}", "× the time of C", "Zeno owned, across all six programs (geometric mean)"),
+        (f"{trees:.1f}", "× faster than C", "on many small objects, where its pool beats malloc"),
+        (f"{gain:.1f}", "× faster than before", "on the same objects, since the paged collector and owned memory"),
+        (f"{py:.0f}", "× faster than Python", "compiled Zeno, on average"),
+    ]
+    stat_html = "".join(f'<div class="b-stat"><b data-count="{n}">{n}</b><span>{u}</span><small>{d}</small></div>' for n, u, d in stats)
+
+    noscript = f"<noscript>{bench_table(now_big, [(e, BENCH_ENGINES[e][0]) for e in sets['compiled']['on']])}</noscript>"
+    modes = [
+        ("run", "zeno run", "Walks the syntax tree", "Every step looks at a node of the tree and decides what it means. Simple, exact errors, and slow.", "tree"),
+        ("vm", "zeno run --vm", "Runs bytecode", "The tree is turned into a flat list of small instructions once, then a loop runs them. Two to three times faster.", "layers"),
+        ("zeno", "zeno build", "Compiles to C", "The program becomes C and then machine code. Each value is found by a garbage collector, and each <code>+</code> checks for overflow.", "cpu"),
+        ("zeno-owned", "--release --owned", "No collector, no overflow checks", "Each value has one owner and is freed at a line you can point to, from a pool that hands out a block in a few instructions.", "zap"),
+    ]
+    mode_html = "".join(
+        f'<li class="b-mode {BENCH_ENGINES[k][2]}"><span class="b-mode-ico">{icon(ic)}</span><code>{esc(cmd)}</code><b>{head}</b><p>{txt}</p>'
+        f'<span class="b-mode-speed" data-mode="{k}"></span></li>' for k, cmd, head, txt, ic in modes)
+
+    body = f"""<div class="b">
+<header class="b-hero">
+  <p class="eyebrow">{icon("chart")}Benchmarks</p>
+  <h1>How fast is Zeno?</h1>
+  <p class="lede">Six programs, written once in Zeno, C, Rust and Python, doing the same steps. Every time was measured, and counts only if the program printed exactly what C printed.</p>
+  <div class="b-stats">{stat_html}</div>
+</header>
+
+<section class="b-section" id="chart">
+  <div class="b-controls">
+    <div class="segmented" role="tablist" aria-label="Which programs" id="b-set">
+      <button role="tab" aria-selected="true" data-set="compiled" aria-controls="b-board" id="b-t-compiled">Compiled</button>
+      <button role="tab" aria-selected="false" data-set="interpreted" aria-controls="b-board" id="b-t-interpreted" tabindex="-1">Interpreted</button>
+    </div>
+    <div class="b-view" role="group" aria-label="Show">
+      <button type="button" data-view="ratio" aria-pressed="true">× C</button><button type="button" data-view="seconds" aria-pressed="false">Seconds</button>
+    </div>
+  </div>
+  <div class="b-legend" id="b-legend" aria-label="Show or hide a language"></div>
+  <div class="b-board" id="b-board" role="tabpanel" aria-labelledby="b-t-compiled"></div>
+  <p class="b-note" id="b-note"></p>
+  {noscript}
+</section>
+
+<section class="b-section b-split">
+  <div>
+    <h2>Before and after</h2>
+    <p>Drag to compare. Before is the first run, when the collector kept every block in one table that it sorted on each collection. Now it keeps them in pages, and a program can choose <code>memory owned</code> instead (<a href="/decisions/">decision 22.5</a>).</p>
+    <label class="b-slider"><span>Before</span><input type="range" min="0" max="100" value="100" id="b-slide" aria-label="Before or now"><span>Now</span></label>
+  </div>
+  <div class="b-ba" id="b-ba"></div>
+</section>
+
+<section class="b-section">
+  <h2>Four ways to run a program</h2>
+  <p class="b-sub">The same file, run four ways. Each step down does more work before the program starts, and less while it runs.</p>
+  <ol class="b-modes">{mode_html}</ol>
+</section>
+
+<section class="b-section b-why">
+  <h2>What the numbers say</h2>
+  <div class="cards">
+    <div class="card">{icon("zap")}<b>Owned memory matches C and Rust</b><span>On programs that make many objects it is faster: its pool hands out and takes back a block in a few instructions, where C calls <code>malloc</code> and <code>free</code>.</span></div>
+    <div class="card">{icon("check")}<b>Checks cost a little</b><span>Most of the gap on arithmetic is the overflow check on every <code>+</code>, which <code>--release</code> drops, as Rust's release builds do. Index checks stay.</span></div>
+    <div class="card">{icon("memory")}<b>A collector costs more</b><span>It has to look at what is still in use, again and again: about two times C on many small objects. That is why a program can choose.</span></div>
+    <div class="card">{icon("gauge")}<b>Floating point has room</b><span>Each planet is an object reached through a list, where C keeps the five in one array, and each <code>sqrt</code> checks its argument.</span></div>
+  </div>
+  <p class="b-sub">Choose once, in <code>zeno.package</code>, with <code>memory owned</code>, or for one build with <code>zeno build --owned</code>. See <a href="/docs/memory-modes/">Choosing how memory is freed</a>.</p>
+</section>
+
+<section class="b-section b-method">
+  <h2>How it was measured</h2>
+  <p>Wall-clock time of the whole program, best of three. Compiled programs at full size, interpreted ones at a tenth of it. {esc(m["cpu"])}, {m["cores"]} cores, Linux, on {esc(m["date"])}. {esc(m["zeno"])}, {esc(m["cc"].split(" (")[0])} {esc(m["cc"].split(") ")[-1])} with <code>-O2</code>, {esc(m["rustc"].split(" (")[0])} with <code>-C opt-level=3</code>, Python {esc(m["python"])}.</p>
+  <p>The programs and the script are in <a href="{GITHUB}/tree/main/bench"><code>bench/</code></a>. The numbers on this page are in <a href="/benchmarks/data.json">data.json</a>.</p>
+  <figure class="window shell"><figcaption>{icon("terminal")}<span class="file">Terminal</span><button class="copy" type="button" data-copy="b-cmd">{icon("copy")}<span>Copy</span></button></figcaption>
+  <pre id="b-cmd"><code>cargo build --release
+python3 bench/run.py --size big --engines c,rust,zeno,zeno-release,zeno-owned</code></pre></figure>
+</section>
+<script id="b-data" type="application/json">{json.dumps(data).replace("</", "<\\/")}</script>
+<script src="/assets/bench.js" defer></script>
 </div>"""
-    layout("/benchmarks/", "Benchmarks", "Zeno next to C, Rust and Python on six programs, measured.", body, "/benchmarks/")
+    layout("/benchmarks/", "Benchmarks", "Zeno next to C, Rust and Python on six programs, measured, with interactive charts.", body, "/benchmarks/")
 
 
 def build_404():
