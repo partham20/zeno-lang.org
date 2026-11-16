@@ -96,6 +96,59 @@ MARK = ('<svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="no
         '<circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg>')
 
 
+# Link previews: what a chat or a social site shows when a page is shared.
+# Each kind of page has its own card, drawn by tools/og (card.html, render.js).
+OG_KINDS = {"/playground/": "playground", "/benchmarks/": "benchmarks", "/book/": "book", "/download/": "download"}
+OG_ALT = {
+    "home": "Zeno, a programming language: code that reads like what it means.",
+    "playground": "The Zeno playground: run Zeno in your browser.",
+    "benchmarks": "Zeno benchmarks: the time of six programs against C.",
+    "book": "The Zeno Book: the whole language, in one book.",
+    "download": "Download Zeno for Windows, macOS and Linux.",
+}
+
+
+def social(path, title, description):
+    """The Open Graph and Twitter tags for one page."""
+    kind = next((k for prefix, k in OG_KINDS.items() if path.startswith(prefix)), "home")
+    image = f"{ORIGIN}/og/{kind}.png"
+    t, d, a = html.escape(title), html.escape(description), html.escape(OG_ALT[kind])
+    return f"""<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="{t}">
+<meta property="og:description" content="{d}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{ORIGIN}{path}">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="{image}">
+<meta property="og:image:secure_url" content="{image}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{a}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{t}">
+<meta name="twitter:description" content="{d}">
+<meta name="twitter:image" content="{image}">
+<meta name="twitter:image:alt" content="{a}">"""
+
+
+def add_social(file, path):
+    """Put the preview tags into a page this script did not write (the playground, the book)."""
+    page = file.read_text()
+    if 'property="og:title"' in page:
+        return
+    title = re.search(r"<title>(.*?)</title>", page, re.S)
+    desc = re.search(r'<meta name="description" content="([^"]*)"', page)
+    title = html.unescape(title.group(1).strip()) if title else "Zeno"
+    desc = html.unescape(desc.group(1)) if desc else "Zeno, a programming language."
+    if path.startswith("/book/") and path != "/book/" and "Zeno" not in title:
+        title = f"{title} · The Zeno Book"
+    tags = social(path, title, desc) + f'\n<link rel="canonical" href="{ORIGIN}{path}">\n'
+    if "rel=\"canonical\"" in page:
+        tags = social(path, title, desc) + "\n"
+    file.write_text(page.replace("</head>", tags + "</head>", 1))
+
+
 def layout(path, title, description, body, active=None, home=False):
     nav = "".join(
         f'<a href="{href}"{" aria-current=\"page\"" if href == active else ""}>{name}</a>'
@@ -108,12 +161,7 @@ def layout(path, title, description, body, active=None, home=False):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{esc(full_title)}</title>
 <meta name="description" content="{html.escape(description)}">
-<meta property="og:title" content="{html.escape(full_title)}">
-<meta property="og:description" content="{html.escape(description)}">
-<meta property="og:type" content="website">
-<meta property="og:url" content="{ORIGIN}{path}">
-<meta property="og:image" content="{ORIGIN}/og.png">
-<meta name="twitter:card" content="summary_large_image">
+{social(path, full_title, description)}
 <meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
 <link rel="canonical" href="{ORIGIN}{path}">
@@ -1180,6 +1228,7 @@ def build_playground():
         dest = SITE / "playground"
         dest.mkdir(exist_ok=True)
         shutil.copy(Path(tmp) / "playground.html", dest / "index.html")
+    add_social(dest / "index.html", "/playground/")
     PAGES.append("/playground/")
 
 
@@ -1192,7 +1241,9 @@ def build_book():
     shutil.rmtree(dest, ignore_errors=True)
     shutil.copytree(src, dest)
     for page in sorted(dest.glob("*.html")):
-        PAGES.append("/book/" if page.name == "index.html" else f"/book/{page.name}")
+        path = "/book/" if page.name == "index.html" else f"/book/{page.name}"
+        add_social(page, path)
+        PAGES.append(path)
 
 
 def build_sitemap():

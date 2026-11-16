@@ -92,3 +92,14 @@ when the system asks for reduced motion (Windows' "Animation effects" off),
 because with that setting the whole site looked stuck (Partha, 2026-11-16).
 Only smooth scrolling and the hero's slide-in are dropped then. Nothing on
 the site moves the page itself, zooms, or uses parallax.
+
+## Link previews
+
+Every page carries Open Graph and Twitter tags (`social()` in build.py),
+with a 1200 by 630 card: `/og/home.png` for most pages, and its own card
+for the playground, benchmarks, book and download pages. The cards are
+drawn in `tools/og/card.html` (black, the #0078D4 accent, the Almost
+wordmark and the Checked icon). After a release or a benchmark run, redraw
+them with `node tools/og/render.js && python3 tools/og/clean.py`; the
+second step leaves only the pixels in each file. `/og.png` is a copy of
+the home card, for links shared before the cards existed.

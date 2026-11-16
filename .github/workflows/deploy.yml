@@ -40,3 +40,18 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy _site --project-name zeno-lang --branch main
+      - name: Check link previews as the crawlers see them
+        run: |
+          sleep 20
+          for ua in "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)" \
+                    "WhatsApp/2.23.20.0" "Twitterbot/1.0" "LinkedInBot/1.0" \
+                    "Slackbot-LinkExpanding 1.0 (+https://api.slack.com/robots)" "Discordbot/2.0" "TelegramBot (like TwitterBot)"; do
+            page=$(curl -s -A "$ua" -w '\n%{http_code}' "https://zeno-lang.org/?preview=$GITHUB_RUN_ID")
+            code=$(echo "$page" | tail -1)
+            image=$(echo "$page" | grep -o 'property="og:image" content="[^"]*"' | cut -d'"' -f4)
+            img=$(curl -s -A "$ua" -o /dev/null -w '%{http_code} %{content_type} %{size_download}' "$image")
+            echo "$ua -> page $code, og:image ${image:-none} -> $img"
+          done
+          for path in playground/ benchmarks/ book/ download/; do
+            echo "/$path -> $(curl -s -A 'facebookexternalhit/1.1' "https://zeno-lang.org/$path" | grep -o 'property="og:image" content="[^"]*"' | cut -d'"' -f4)"
+          done

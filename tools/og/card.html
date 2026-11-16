@@ -1,0 +1,238 @@
+<!doctype html>
+<!--
+  The link-preview cards (1200 by 630) that a chat or a social site shows
+  when a zeno-lang.org link is shared. One card per page kind, chosen by
+  ?kind=: home, playground, benchmarks, book, download.
+  tools/og/render.js photographs each one into /og/<kind>.png.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0a; --panel: #141414; --line: #262626; --fg: #ededed; --muted: #9a9a9a; --dim: #6b6b6b;
+    --blue: #0078d4; --blue-text: #4ca3ff;
+    --key: #6cb6ff; --type: #c5a3ff; --str: #7fd6a2; --num: #ffb86b; --com: #6b6b6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1200px; height: 630px; overflow: hidden; background: var(--bg); }
+  body { font-family: "Hanken Grotesk", sans-serif; color: var(--fg); -webkit-font-smoothing: antialiased; }
+  .card { display: none; position: relative; width: 1200px; height: 630px; padding: 56px 64px; overflow: hidden; }
+  .card.on { display: block; }
+
+  /* A faint grid that fades out, and one blue glow behind the picture. */
+  .card::before { content: ""; position: absolute; inset: 0;
+    background-image: linear-gradient(#ffffff0a 1px, transparent 1px), linear-gradient(90deg, #ffffff0a 1px, transparent 1px);
+    background-size: 48px 48px; mask-image: radial-gradient(ellipse 80% 90% at 75% 50%, #000 20%, transparent 75%); }
+  .card::after { content: ""; position: absolute; width: 760px; height: 760px; right: -240px; top: -80px;
+    background: radial-gradient(circle, #0078d438 0%, #0078d412 38%, transparent 68%); }
+  .card > * { position: relative; z-index: 1; }
+  .rule { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; background: var(--blue); z-index: 2; }
+
+  .brand { display: flex; align-items: center; gap: 18px; }
+  .brand .icon { width: 60px; height: 60px; }
+  .brand .mark { height: 34px; color: var(--fg); }
+  .brand .mark .dot { fill: var(--blue); }
+  .brand .ver { margin-left: auto; font: 500 20px "JetBrains Mono", monospace; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 7px 16px; background: #0a0a0acc; }
+
+  .text { position: absolute; left: 64px; top: 158px; width: 540px; }
+  .kicker { font: 500 20px "JetBrains Mono", monospace; color: var(--blue-text); letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 18px; }
+  h1 { font-size: 60px; line-height: 1.04; font-weight: 600; letter-spacing: -0.025em; }
+  h1 em { font-style: normal; color: var(--blue-text); }
+  .sub { margin-top: 22px; font-size: 26px; line-height: 1.38; color: var(--muted); }
+  .url { position: absolute; left: 64px; bottom: 48px; font: 500 22px "JetBrains Mono", monospace; color: var(--fg); display: flex; align-items: center; gap: 12px; }
+  .url::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--blue); }
+
+  .art { position: absolute; right: 64px; top: 136px; width: 500px; }
+  .window { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; box-shadow: 0 30px 80px #00000099; }
+  .window .bar { display: flex; align-items: center; gap: 10px; padding: 14px 18px; border-bottom: 1px solid var(--line); font: 500 17px "JetBrains Mono", monospace; color: var(--muted); }
+  .window .bar i { width: 12px; height: 12px; border-radius: 50%; background: #2e2e2e; }
+  .window .bar span { margin-left: 8px; }
+  .window .bar .run { margin-left: auto; background: var(--blue); color: #fff; font: 600 17px "Hanken Grotesk", sans-serif; padding: 6px 16px; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
+  pre { font: 400 17px/1.55 "JetBrains Mono", monospace; padding: 20px 22px; color: var(--fg); white-space: pre; }
+  .k { color: var(--key); } .t { color: var(--type); } .s { color: var(--str); } .n { color: var(--num); } .f { font-weight: 500; } .c { color: var(--com); font-style: italic; }
+  .out { border-top: 1px solid var(--line); background: #0d0d0d; padding: 12px 22px 14px; font: 400 16px/1.5 "JetBrains Mono", monospace; color: var(--muted); }
+  .out b { display: block; font: 500 14px "JetBrains Mono", monospace; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px; }
+  .out .ok { color: var(--str); }
+
+  /* Benchmarks: time against C for each program, C at 1.0. */
+  .chart { padding: 22px 26px 18px; }
+  .chart .legend { display: flex; gap: 22px; font-size: 18px; color: var(--muted); margin-bottom: 14px; }
+  .chart .legend span { display: flex; align-items: center; gap: 8px; }
+  .chart .legend span::before { content: ""; width: 14px; height: 14px; border-radius: 4px; background: var(--sw); }
+  .row { display: grid; grid-template-columns: 116px 1fr; align-items: center; gap: 14px; height: 50px; }
+  .row .name { font-size: 18px; color: var(--fg); }
+  .bars { position: relative; height: 36px; }
+  .bars .b { position: absolute; left: 0; height: 15px; border-radius: 0 5px 5px 0; }
+  .bars .b.c { top: 2px; background: #4a4a4a; }
+  .bars .b.z { top: 19px; background: var(--blue); }
+  .bars .v { position: absolute; top: 15px; font: 500 15px "JetBrains Mono", monospace; color: var(--blue-text); }
+  .base { position: absolute; top: -4px; bottom: -4px; width: 2px; background: #ededed55; }
+  .note { padding: 0 26px 18px; font-size: 16px; color: var(--dim); }
+
+  /* Book: a cover standing in the light. */
+  .book { position: absolute; right: 120px; top: 120px; width: 330px; height: 430px; transform: perspective(1400px) rotateY(-16deg) rotateX(3deg);
+    border-radius: 6px 14px 14px 6px; background: linear-gradient(135deg, #10263d 0%, #0b1622 55%, #08111a 100%);
+    box-shadow: inset 10px 0 0 #00000066, inset 12px 0 0 #ffffff14, 40px 40px 90px #000000cc; padding: 44px 36px 36px 50px; border: 1px solid #1d3550; }
+  .book .icon { width: 64px; height: 64px; }
+  .book .t1 { margin-top: 56px; font-size: 26px; color: #9fc6ee; font-weight: 500; }
+  .book .t2 { font-size: 52px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; margin-top: 6px; }
+  .book .t3 { margin-top: 18px; font-size: 20px; color: #9fc6ee; line-height: 1.4; }
+  .book .foot { position: absolute; left: 50px; right: 36px; bottom: 34px; display: flex; justify-content: space-between; font: 500 16px "JetBrains Mono", monospace; color: #6f93b8; }
+  .pages { position: absolute; right: 108px; top: 132px; width: 330px; height: 414px; border-radius: 4px 12px 12px 4px; background: #d9d9d9; transform: perspective(1400px) rotateY(-16deg) rotateX(3deg) translateX(10px); box-shadow: 30px 30px 60px #000000aa; }
+
+  /* Download: one line to install, and the systems. */
+  .systems { display: flex; gap: 12px; margin-top: 18px; }
+  .systems span { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 8px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; font-size: 19px; color: var(--fg); }
+  .systems svg { width: 34px; height: 34px; fill: var(--fg); }
+  .systems span.yours { border-color: var(--blue); box-shadow: 0 0 0 1px var(--blue) inset; }
+  .systems span.yours svg { fill: var(--blue-text); }
+  .dl { margin-top: 18px; display: flex; align-items: center; justify-content: center; gap: 12px; background: var(--blue); color: #fff; border-radius: 12px; padding: 16px; font-size: 22px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<template id="icon"><svg class="icon" viewBox="0 0 128 128" aria-hidden="true"><rect width="128" height="128" rx="28" fill="#161616" stroke="#2a2a2a" stroke-width="2"/><g transform="translate(64 64) scale(0.8) translate(-64 -64)"><clipPath id="c"><rect x="0" y="40.5" width="128" height="67.5"/></clipPath><rect fill="#ededed" x="42" y="20" width="68" height="17"/><polygon fill="#ededed" points="67.5,91 110,91 110,108 52,108"/><g clip-path="url(#c)"><polyline fill="none" stroke="#0078d4" stroke-width="17" stroke-linejoin="miter" stroke-miterlimit="6" points="17,75 42,99 104,30.5"/></g></g></svg></template>
+<template id="brand"><div class="brand"><slot-icon></slot-icon><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg><span class="ver">0.3 · MIT</span></div></template>
+
+<section class="card" id="home">
+  <div data-brand></div>
+  <div class="text">
+    <div class="kicker">A programming language</div>
+    <h1>Code that reads like <em>what it means.</em></h1>
+    <p class="sub">Whole-word keywords, checked before it runs, small enough for a microcontroller.</p>
+  </div>
+  <div class="art"><div class="window">
+    <div class="bar"><i></i><i></i><i></i><span>readings.zeno</span></div>
+<pre><span class="k">enum</span> <span class="t">Reading</span> {
+    <span class="f">Value</span>(celsius: <span class="t">float</span>)
+    <span class="f">Gap</span>
+}
+<span class="k">for</span> r <span class="k">in</span> [<span class="f">Value</span>(<span class="n">21.5</span>), <span class="f">Gap</span>] {
+    <span class="k">match</span> r {
+        <span class="k">case</span> <span class="f">Value</span>(c) { <span class="f">print</span>(<span class="s">f"{c} °C"</span>) }
+        <span class="k">case</span> <span class="f">Gap</span> { <span class="f">print</span>(<span class="s">"no reading"</span>) }
+    }
+}</pre>
+    <div class="out"><b>Output</b>21.5 °C<br>no reading</div>
+  </div></div>
+  <div class="url">zeno-lang.org</div>
+  <div class="rule"></div>
+</section>
+
+<section class="card" id="playground">
+  <div data-brand></div>
+  <div class="text">
+    <div class="kicker">Playground</div>
+    <h1>Run Zeno <em>in your browser.</em></h1>
+    <p class="sub">Write a program and press Run. Nothing to install, and nothing leaves the page.</p>
+  </div>
+  <div class="art"><div class="window">
+    <div class="bar"><i></i><i></i><i></i><span>main.zeno</span><span class="run">▶ Run</span></div>
+<pre><span class="k">let</span> temperature = <span class="n">31</span>
+<span class="k">if</span> temperature > <span class="n">30</span> {
+    <span class="f">print</span>(<span class="s">"hot"</span>)
+} <span class="k">else</span> {
+    <span class="f">print</span>(<span class="s">"mild"</span>)
+}
+<span class="k">for</span> i <span class="k">in</span> <span class="f">range</span>(<span class="n">2</span>) {
+    <span class="f">print</span>(<span class="s">"tick"</span>, i)
+}</pre>
+    <div class="out"><b>Output</b>hot<br>tick 0<br>tick 1</div>
+  </div></div>
+  <div class="url">zeno-lang.org/playground</div>
+  <div class="rule"></div>
+</section>
+
+<section class="card" id="benchmarks">
+  <div data-brand></div>
+  <div class="text">
+    <div class="kicker">Benchmarks</div>
+    <h1>How fast <em>is Zeno?</em></h1>
+    <p class="sub">Six programs written in Zeno, C, Rust and Python, each one timed and checked.</p>
+  </div>
+  <div class="art"><div class="window">
+    <div class="bar"><i></i><i></i><i></i><span>time against C</span></div>
+    <div class="chart" id="chart">
+      <div class="legend"><span style="--sw:#4a4a4a">C, cc -O2</span><span style="--sw:#0078d4">Zeno, zeno build --fast</span></div>
+    </div>
+    <div class="note">Shorter is faster. The line is C.</div>
+  </div></div>
+  <div class="url">zeno-lang.org/benchmarks</div>
+  <div class="rule"></div>
+</section>
+
+<section class="card" id="book">
+  <div data-brand></div>
+  <div class="text">
+    <div class="kicker">The Zeno Book</div>
+    <h1>The whole language, <em>in one book.</em></h1>
+    <p class="sub">From the first program to firmware. Free to read online, or as a PDF.</p>
+  </div>
+  <div class="pages"></div>
+  <div class="book">
+    <div data-icon></div>
+    <div class="t1">The</div>
+    <div class="t2">Zeno Book</div>
+    <div class="t3">Beginner to advanced:<br>everything in the language.</div>
+    <div class="foot"><span>zeno-lang.org</span></div>
+  </div>
+  <div class="url">zeno-lang.org/book</div>
+  <div class="rule"></div>
+</section>
+
+<section class="card" id="download">
+  <div data-brand></div>
+  <div class="text">
+    <div class="kicker">Download</div>
+    <h1>Get <em>Zeno 0.3.</em></h1>
+    <p class="sub">Installers and packages for Windows, macOS and Linux, and every earlier version.</p>
+  </div>
+  <div class="art" style="top:170px">
+    <div class="window">
+      <div class="bar"><i></i><i></i><i></i><span>Terminal</span></div>
+      <pre style="font-size:17px;padding:18px 20px"><span class="c">$</span> curl -fsSL …/install.sh | sh
+<span class="c">$</span> zeno new hello
+<span class="c">$</span> zeno run hello/main.zeno
+<span class="s">Hello, world, from hello.</span></pre>
+    </div>
+    <div class="systems">
+      <span class="yours"><svg viewBox="0 0 24 24"><path d="M3 5.1l7.4-1v7.2H3V5.1zm0 13.8l7.4 1v-7.1H3v6.1zm8.2 1.1L21 21.3v-8.5h-9.8V20zm0-15.9v7.2H21V2.7l-9.8 1.4z"/></svg>Windows</span>
+      <span><svg viewBox="0 0 24 24"><path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.8-1-2.8-4.1zM13.9 5.2c.7-.8 1.2-2 1-3.2-1 .1-2.3.7-3 1.5-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.4z"/></svg>macOS</span>
+      <span><svg viewBox="0 0 24 24"><path d="M12 2c-2.2 0-3.6 1.9-3.6 4.6 0 1.4.3 2.3-.6 3.6-1 1.5-3 3.7-3 6.3 0 .7.2 1.3.5 1.8-.6.3-1.3.9-1.3 1.6 0 .9 1.2 1.3 2.6 1.6 1.2.2 2 .6 2.8.6s1.3-.5 2.1-.5h1c.8 0 1.3.5 2.1.5s1.6-.4 2.8-.6c1.4-.3 2.6-.7 2.6-1.6 0-.7-.7-1.3-1.3-1.6.3-.5.5-1.1.5-1.8 0-2.6-2-4.8-3-6.3-.9-1.3-.6-2.2-.6-3.6C15.6 3.9 14.2 2 12 2zm-1.5 4.2c.4 0 .7.5.7 1.1s-.3 1.1-.7 1.1-.7-.5-.7-1.1.3-1.1.7-1.1zm3 0c.4 0 .7.5.7 1.1s-.3 1.1-.7 1.1-.7-.5-.7-1.1.3-1.1.7-1.1zM12 9.3c.9 0 2 .6 2 1s-1.1 1.1-2 1.1-2-.7-2-1.1 1.1-1 2-1z"/></svg>Linux</span>
+    </div>
+  </div>
+  <div class="url">zeno-lang.org/download</div>
+  <div class="rule"></div>
+</section>
+
+<script>
+  const icon = document.getElementById("icon").innerHTML;
+  const brand = document.getElementById("brand").innerHTML.replace("<slot-icon></slot-icon>", icon);
+  document.querySelectorAll("[data-brand]").forEach(el => el.outerHTML = brand);
+  document.querySelectorAll("[data-icon]").forEach(el => el.outerHTML = icon);
+
+  // Benchmarks: read the measured times the site publishes.
+  const DATA = window.BENCH || null;
+  if (DATA) {
+    const s = DATA.sets.compiled, names = Object.fromEntries(DATA.programs.map(p => [p.key, p.title]));
+    const short = { fib: "Calls", loop: "Loop", sort: "Sorting", strings: "Text", trees: "Objects", nbody: "Floats" };
+    const max = 1.6, width = 340;
+    const chart = document.getElementById("chart");
+    for (const p of DATA.programs) {
+      const t = s.times[p.key], r = t["zeno-fast"] / t.c;
+      chart.insertAdjacentHTML("beforeend",
+        `<div class="row"><div class="name">${short[p.key] || names[p.key]}</div><div class="bars">` +
+        `<div class="b c" style="width:${width / max}px"></div>` +
+        `<div class="b z" style="width:${Math.min(r, max) * width / max}px"></div>` +
+        `<div class="v" style="left:${Math.min(r, max) * width / max + 8}px">${r.toFixed(2)}×</div>` +
+        `<div class="base" style="left:${width / max}px"></div></div></div>`);
+    }
+  }
+  const kind = new URLSearchParams(location.search).get("kind") || "home";
+  document.getElementById(kind).classList.add("on");
+</script>
+</body>
+</html>
