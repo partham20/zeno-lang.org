@@ -512,6 +512,49 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
   </div>
 </section>
 
+<section class="band" id="targets">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>Write it once, read it in nine languages.</h2>
+      <p><span class="soon">Coming in 0.5</span> <code>zeno build --target</code> writes your program in another language: a file you can read, keep, and run with that language's own tools. It follows fixed rules, so the same program gives the same file every time.</p>
+    </div>
+    <div class="targets-row">
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">area.zeno</span></figcaption><pre><code class="zeno">import math
+
+function area(r: float) -&gt; float {
+    return math.pi * r * r
+}
+print(area(2.0))</code></pre><div class="out-label">output</div><pre class="out"><code>12.566370614359172</code></pre></figure>
+      <figure class="window"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 7L3.5 12l5 5M15.5 7l5 5-5 5M13.5 4.5l-3 15"/></svg><span class="file">area.js</span></figcaption><pre><code>// … Zeno's rules for JavaScript, then:
+Z.start(["area.zeno"], function main() {
+  let area, math_;
+  area = Z.fn("area", ["r"], [false], function (r) {
+    return Z.mul(Z.mul(Z.builtin("math.pi"), r, 4), r, 4);
+  });
+  math_ = Z.module("math");
+  Z.b.print([area(Z.float(2.0))], 6);
+});</code></pre></figure>
+    </div>
+    <ul class="target-grid">
+      <li><b>JavaScript</b><code>--target js</code><span>node hello.js</span></li>
+      <li><b>A web page</b><code>--target html</code><span>any browser</span></li>
+      <li><b>Python</b><code>--target py</code><span>python3 hello.py</span></li>
+      <li><b>Go</b><code>--target go</code><span>go run hello.go</span></li>
+      <li><b>Java</b><code>--target java</code><span>java hello.java</span></li>
+      <li><b>C#</b><code>--target cs</code><span>dotnet run hello.cs</span></li>
+      <li><b>C++</b><code>--target cpp</code><span>g++ -std=c++17</span></li>
+      <li><b>Rust</b><code>--target rust</code><span>rustc -O</span></li>
+      <li><b>WebAssembly</b><code>--target wasm</code><span>wasmtime hello.wasm</span></li>
+    </ul>
+    <div class="after-diagram">
+      <div><h3>It does what <code>zeno run</code> does</h3><p>The same text, the same errors on the same line, and numbers that overflow where Zeno's do, even in JavaScript and Python.</p></div>
+      <div><h3>Held to it by a tool</h3><p>Every example and every sample in the book is built for every target, run, and compared with <code>zeno run</code>.</p></div>
+      <div><h3>One file, nothing else</h3><p>Zeno's rules for that language go at the top of the file, so it needs no library and no install of Zeno.</p></div>
+    </div>
+    <p class="after"><a href="/docs/targets/">How the targets work</a></p>
+  </div>
+</section>
+
 <section class="band" id="road">
   <div class="wrap">
     <div class="head">
@@ -523,6 +566,7 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
       <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx=".8"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/></svg></span><b>Firmware</b><span>C with no heap, no collector, memory by hand.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></span><b>Library and modules</b><span>Files, input, maths, dictionaries, programs in many files.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3l3 3-3 3"/><path d="M20 6H9a5 5 0 0 0-5 5v1M7 21l-3-3 3-3"/><path d="M4 18h11a5 5 0 0 0 5-5v-1"/></svg></span><b>Version 0.4</b><span>Builds as fast as C and Rust, and a choice of how memory is freed.</span><small>Works today</small></li>
+      <li class="next"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg></span><b>Version 0.5</b><span>The program written in nine other languages, from JavaScript to Rust.</span><small>Coming, on main now</small></li>
       <li class="next"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 3.5 5.5 3.5 8.5s-1 6-3.5 8.5c-2.5-2.5-3.5-5.5-3.5-8.5s1-6 3.5-8.5z"/></svg></span><b>Hardware and servers</b><span>Reading real pins, <code>async</code> and C interop.</span><small>Next</small></li>
     </ol>
     <p class="after"><a href="/roadmap/">The full roadmap</a></p>

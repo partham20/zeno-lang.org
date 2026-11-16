@@ -706,3 +706,19 @@ main:not(.home) { padding-bottom: 4rem; }
 .b-v-up { color: var(--good); }
 .b-v-down { color: var(--bad); }
 .b-v-miss { color: var(--faint); }
+
+/* Work on main that is not in a release yet. */
+.soon { display: inline-block; font: 600 0.75rem/1 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--on-cobalt); background: var(--cobalt); border-radius: 999px; padding: 0.35rem 0.6rem; margin-right: 0.5rem; vertical-align: 0.15em; }
+.soon-note { border: 1px solid var(--rule); background: var(--cobalt-soft); border-radius: 0.75rem; padding: 0.85rem 1rem; color: var(--slate); }
+
+/* Home: other languages. */
+.targets-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 1.5rem; align-items: start; }
+.targets-row .window { margin: 0; }
+.target-grid { list-style: none; padding: 0; margin: 2rem 0 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+.target-grid li { display: grid; gap: 0.2rem; padding: 0.9rem 1rem; border: 1px solid var(--rule); border-radius: 0.75rem; background: var(--sheet); transition: border-color 0.2s, transform 0.2s var(--ease); }
+.target-grid li:hover { border-color: var(--cobalt); transform: translateY(-2px); }
+.target-grid b { font-size: 1rem; }
+.target-grid code { color: var(--cobalt-text); font-size: 0.85rem; justify-self: start; }
+.target-grid span { color: var(--slate); font: 0.8rem var(--mono); }
+@media (max-width: 58rem) { .targets-row { grid-template-columns: minmax(0, 1fr); } .target-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 30rem) { .target-grid { grid-template-columns: minmax(0, 1fr); } }

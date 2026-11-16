@@ -259,6 +259,36 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
   </div>
 </section>
 
+<section class="band" id="targets">
+  <div class="wrap">
+    <div class="split-head">
+      <h2>Write it once, read it in nine languages.</h2>
+      <p><span class="soon">Coming in 0.5</span> <code>zeno build --target</code> writes your program in another language: a file you can read, keep, and run with that language's own tools. It follows fixed rules, so the same program gives the same file every time.</p>
+    </div>
+    <div class="targets-row">
+      <!--WINDOW:area-->
+      <!--TARGET-JS:area-->
+    </div>
+    <ul class="target-grid">
+      <li><b>JavaScript</b><code>--target js</code><span>node hello.js</span></li>
+      <li><b>A web page</b><code>--target html</code><span>any browser</span></li>
+      <li><b>Python</b><code>--target py</code><span>python3 hello.py</span></li>
+      <li><b>Go</b><code>--target go</code><span>go run hello.go</span></li>
+      <li><b>Java</b><code>--target java</code><span>java hello.java</span></li>
+      <li><b>C#</b><code>--target cs</code><span>dotnet run hello.cs</span></li>
+      <li><b>C++</b><code>--target cpp</code><span>g++ -std=c++17</span></li>
+      <li><b>Rust</b><code>--target rust</code><span>rustc -O</span></li>
+      <li><b>WebAssembly</b><code>--target wasm</code><span>wasmtime hello.wasm</span></li>
+    </ul>
+    <div class="after-diagram">
+      <div><h3>It does what <code>zeno run</code> does</h3><p>The same text, the same errors on the same line, and numbers that overflow where Zeno's do, even in JavaScript and Python.</p></div>
+      <div><h3>Held to it by a tool</h3><p>Every example and every sample in the book is built for every target, run, and compared with <code>zeno run</code>.</p></div>
+      <div><h3>One file, nothing else</h3><p>Zeno's rules for that language go at the top of the file, so it needs no library and no install of Zeno.</p></div>
+    </div>
+    <p class="after"><a href="/docs/targets/">How the targets work</a></p>
+  </div>
+</section>
+
 <section class="band" id="road">
   <div class="wrap">
     <div class="head">
@@ -270,6 +300,7 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
       <li class="done"><span class="pin"><!--ICON:cpu--></span><b>Firmware</b><span>C with no heap, no collector, memory by hand.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><!--ICON:package--></span><b>Library and modules</b><span>Files, input, maths, dictionaries, programs in many files.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><!--ICON:loop--></span><b>Version 0.4</b><span>Builds as fast as C and Rust, and a choice of how memory is freed.</span><small>Works today</small></li>
+      <li class="next"><span class="pin"><!--ICON:copies--></span><b>Version 0.5</b><span>The program written in nine other languages, from JavaScript to Rust.</span><small>Coming, on main now</small></li>
       <li class="next"><span class="pin"><!--ICON:globe--></span><b>Hardware and servers</b><span>Reading real pins, <code>async</code> and C interop.</span><small>Next</small></li>
     </ol>
     <p class="after"><a href="/roadmap/">The full roadmap</a></p>

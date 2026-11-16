@@ -297,9 +297,22 @@ def toc_html(tokens, depth=2):
 
 # --- Docs --------------------------------------------------------------------
 
+# Pages about work on main that no release has yet, and the release it is
+# coming in. Take an entry out when that version is published.
+UNRELEASED = {"targets": "0.5"}
+
+
+def coming(name):
+    version = UNRELEASED.get(name)
+    if not version:
+        return ""
+    return (f'<p class="soon-note"><span class="soon">Coming in {version}</span>'
+            f'This is on <a href="{GITHUB}">main</a> and not in a release yet: '
+            f'build Zeno from source to try it, or wait for {version}.</p>')
+
 DOC_ICONS = {"The front end": "tree", "The engines": "play", "Memory": "memory",
              "Firmware and hardware": "cpu", "The type system": "copies", "Memory by hand": "key",
-             "The standard library": "package", "Programs in many files": "layers", "The web": "globe", "Tools": "terminal", "The audit and 0.1": "eye",
+             "The standard library": "package", "Programs in many files": "layers", "The web": "globe", "Other languages": "copies", "Tools": "terminal", "The audit and 0.1": "eye",
              "More": "book"}
 
 DOC_GROUPS = [
@@ -321,6 +334,8 @@ DOC_GROUPS = [
      ["modules"]),
     ("The web", "A program in a web page, built to WebAssembly.",
      ["web", "playground"]),
+    ("Other languages", "Coming in 0.5: the program written in JavaScript, Python, Go, Java, C#, C++, Rust or WebAssembly.",
+     ["targets"]),
     ("Tools", "Installers, packages for apt, Homebrew and the rest, releases, tests, the formatter and the language server.",
      ["install", "packages", "release", "new", "testing", "format", "lsp"]),
     ("The audit and 0.1", "Every feature checked, the gaps real programs found, and what 0.1 holds.",
@@ -362,6 +377,7 @@ def build_docs():
 <article class="prose">
   <p class="eyebrow">{icon("book")}<a href="/docs/">Docs</a></p>
   <h1>{esc(title)}</h1>
+  {coming(name)}
   {body}
   <p class="source">This page is <a href="{GITHUB}/blob/main/docs/{name}.md">docs/{name}.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next">{prev_link}{next_link}</nav>
@@ -697,6 +713,7 @@ DONE = [
     ("JSON", "<code>json.parse</code> and <code>json.write</code>.", "json"),
 ]
 NEXT = [
+    ("In 0.5", "Nine other languages", "<code>zeno build --target</code> writes the program in JavaScript, an HTML page, Python, Go, Java, C#, C++, Rust or WebAssembly, and it prints what <code>zeno run</code> prints. Done on main; <a href=\"/docs/targets/\">how it works</a>."),
     ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
     ("Planned", "Bytes", "A <code>list[u8]</code> at one byte an item, <code>u64</code>, and files read as bytes."),
     ("Planned", "More with no collector", "Dicts of lists and objects, and <code>list[int or none]</code>."),
@@ -1197,6 +1214,17 @@ def build_404():
 
 # --- Home --------------------------------------------------------------------
 
+def target_js(name):
+    """The program part of what `zeno build --target js` writes for a snippet (the runtime above it is left out)."""
+    zeno = Path(ARGS.zeno) / "target" / "release" / "zeno"
+    with tempfile.TemporaryDirectory() as tmp:
+        shutil.copy(SNIPPETS / f"{name}.zeno", tmp)
+        subprocess.run([str(zeno), "build", "--target", "js", f"{name}.zeno"], cwd=tmp, check=True, capture_output=True)
+        text = (Path(tmp) / f"{name}.js").read_text()
+    program = text.split("// The program.\n", 1)[1].rstrip()
+    return window(f"{name}.js", "// … Zeno's rules for JavaScript, then:\n" + program, lang="js")
+
+
 def build_home():
     source = (TOOLS / "home.html").read_text()
 
@@ -1208,6 +1236,7 @@ def build_home():
     source = re.sub(r"<!--CODE:(\w+)(?::(\d+))?-->", code, source)
     source = re.sub(r"<!--OUT:(\w+)-->", lambda m: esc(run_zeno(SNIPPETS / f"{m.group(1)}.zeno")), source)
     source = re.sub(r"<!--WINDOW:(\w+)-->", lambda m: sample(m.group(1)), source)
+    source = re.sub(r"<!--TARGET-JS:(\w+)-->", lambda m: target_js(m.group(1)), source)
     source = icons_in(source)
     assert "<!--" not in source.replace("<!-- ", "")
     layout("/", "Zeno: code that reads like what it means",

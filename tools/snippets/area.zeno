@@ -1,0 +1,6 @@
+import math
+
+function area(r: float) -> float {
+    return math.pi * r * r
+}
+print(area(2.0))

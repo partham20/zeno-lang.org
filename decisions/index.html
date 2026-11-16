@@ -52,12 +52,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li><li><a href="#24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 446 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 465 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8747,6 +8747,262 @@ not in; it is the first thing to do if <code>--fast</code> ever wraps.</p>
 match C would then take two words, and the word <code>fast</code> would mean
 "nearly". Checking only the multiplications whose result goes into a
 <code>%</code>: one rule for one benchmark.</p>
+<h2 id="24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</h2>
+<p>Partha asked (2026-11-16) for <code>zeno build</code> to write a program "in
+almost all mainstream languages", HTML among them, by fixed rules and
+with no AI when it builds. <code>zeno build --target &lt;language&gt;</code> does it;
+docs/targets.md is the walkthrough.</p>
+<h3 id="241-fixed-rules-the-same-file-every-time">24.1 Fixed rules, the same file every time</h3>
+<p>Each target is a printer of a lowered program (24.3) plus a runtime
+(24.2). Nothing is guessed: the same program gives the same file, byte
+for byte, on every machine.</p>
+<p><strong>Why.</strong> Partha asked for it, and it is the only way the written
+program can be trusted: a rule that is right once is right every time,
+and <code>tools/targets.py</code> (24.9) can prove it for every program it runs.
+A translation that varies cannot be tested this way.</p>
+<h3 id="242-the-rules-of-zeno-go-with-the-program-a-runtime-per-language">24.2 The rules of Zeno go with the program: a runtime per language</h3>
+<p>Each target has a runtime (<code>src/runtime.js</code>, <code>src/runtime.py</code>) that
+does what <code>ops.rs</code> and <code>builtins.rs</code> do, step for step and message for
+message, and every operator goes through it: <code>a + b</code> is <code>Z.add(a, b,
+line)</code>. The runtime is put at the top of the written file.</p>
+<p><strong>Why.</strong> The promise is "it prints what <code>zeno run</code> prints", including
+where it stops. A <code>+</code> of the target language would wrap (C++, Go,
+Java, C#, Rust in release), lose precision (JavaScript) or never
+overflow (Python), and print floats in its own way. Zeno's <code>+</code> is the
+one that has to happen.</p>
+<p><strong>Why at the top of the file, not a package beside it.</strong> One file that
+runs by itself, with nothing to install, which is what a person who
+asked for "the program in Python" expects to get. The runtime is about
+900 lines; it costs nothing to carry.</p>
+<p><strong>Rejected.</strong> Typed code (a plain <code>+</code> where the checker knows both
+sides are ints), for now: it is faster, but each shortcut is a place
+where the target could disagree with <code>zeno run</code>, and correctness comes
+first. It is the next step for speed, one proven case at a time.</p>
+<h3 id="243-one-lowering-for-every-target">24.3 One lowering for every target</h3>
+<p><code>src/lower.rs</code> turns the checked program into a small one any language
+can say: unique names, each block's variables listed at its top,
+functions moved to the top of their block, and what Zeno writes as one
+expression but most languages need statements for (comprehensions,
+<code>0 &lt;= t &lt; 10</code>, <code>and</code>/<code>or</code> whose right side needs statements) made into
+statements, in Zeno's order of evaluation. Pattern matching becomes a
+chain of <code>if</code>s; <code>try</code> becomes the target's own <code>try</code> with a chain of
+tests that throws on what no <code>except</code> catches.</p>
+<p><strong>Why.</strong> Every hard question (what order things happen in, what a
+name refers to, which variable an inner function shares) is answered
+once, where it can be tested once. The printers only spell.</p>
+<h3 id="244-names">24.4 Names</h3>
+<p>Every variable gets a name no other variable in the program has
+(<code>total</code>, <code>total_2</code>). A name that is a word of any target language
+(one list for all of them) gets a <code>_</code> after it. Names starting with
+<code>z_</code>, <code>Z</code> or <code>__</code>, which the runtime and the printers use, get <code>v_</code> in
+front.</p>
+<p><strong>Why one list for all targets.</strong> A program's names are then the same
+in every language it is written in, which makes the files easy to
+compare with each other and with the Zeno.</p>
+<h3 id="245-functions-before-they-are-written">24.5 Functions before they are written</h3>
+<p>A function declared in a block is set at the top of the block, so it
+can be called from a line above it, as in Zeno. A <code>let</code> or <code>import</code>
+it uses that is written further down is made at the top of the block
+too, empty until its line runs.</p>
+<p><strong>Why.</strong> It is Zeno's rule, and the only order in which two functions
+that call each other can both be set.</p>
+<h3 id="246-ints-in-javascript">24.6 Ints in JavaScript</h3>
+<p>A Zeno int is a JavaScript number while it is a safe integer (below
+2^53), and a <code>BigInt</code> beyond that, held to 64 bits by the runtime. A
+float is a <code>Float</code> object, so that <code>2.0</code> stays a float.</p>
+<p><strong>Why.</strong> Almost every int a program uses is small, and a number is many
+times faster than a <code>BigInt</code>. A <code>BigInt</code> for every int was simpler and
+three to ten times slower. A float has to be told from an int (<code>2.0</code>
+prints as <code>2.0</code>), and JavaScript has one kind of number.</p>
+<h3 id="247-variables-an-inner-function-shares-in-python">24.7 Variables an inner function shares, in Python</h3>
+<p>A variable that an inner function uses is kept in a <code>Cell</code> (a new one
+each time its block starts, so each round of a loop has its own), and
+the inner function is handed its cells as keyword parameters of its own
+(<code>def f(x, *, total=total)</code>). A function made inside an expression is
+written as a <code>def</code> on the lines before the statement.</p>
+<p><strong>Why.</strong> Python's closures share one variable across every round of a
+loop, where Zeno gives each round its own; handing the cell over when
+the function is made gives Zeno's rule. A <code>lambda</code> holds one
+expression and a Zeno function holds statements, so it must be a <code>def</code>;
+making a function has no effect that can be seen, so it can be made a
+moment early.</p>
+<h3 id="248-what-a-target-cannot-do-board-web-unsafe">24.8 What a target cannot do: board, web, unsafe</h3>
+<p>A program that uses <code>import board</code>, <code>import web</code> or <code>unsafe</code> is
+refused with a message naming the line.</p>
+<p><strong>Why.</strong> The pins of a board, the page of <code>--web</code> and manual memory
+belong to a program compiled for that place. Pretending (a pin that
+does nothing) would print something <code>zeno run</code> never does.</p>
+<h3 id="249-toolstargetspy-every-target-held-to-zeno-run">24.9 <code>tools/targets.py</code>: every target held to <code>zeno run</code></h3>
+<p>The tool runs every example, every sample of the book and the corner
+programs in <code>tools/targets/</code> with <code>zeno run</code>, then builds each for each
+target, runs it with that language's own tools and compares what it
+printed and whether it stopped with an error. A weekly job on GitHub
+runs it on the newest version of every language.</p>
+<p><strong>Why.</strong> "Prints what <code>zeno run</code> prints" is a claim about 300 programs
+and a dozen languages; only a machine can check it, and only on the
+newest versions can it catch a language changing under us.</p>
+<h3 id="2410-target-html-a-page-built-on-the-javascript">24.10 <code>--target html</code>: a page, built on the JavaScript</h3>
+<p><code>--target html</code> writes one <code>.html</code> file with the JavaScript program and
+its runtime in a <code>&lt;script&gt;</code>. What the program prints goes into the
+element <code>zeno-output</code> (a <code>&lt;pre&gt;</code> is added if the page has none); an
+error is shown under it. The program's own page (<code>counter.html</code> beside
+<code>counter.zeno</code>) is used if there is one, and Zeno refuses to write over
+it. A page cannot write files or <code>sleep</code>, and says so when the program
+tries; <code>input</code> asks with the browser's question box, as in <code>--web</code>.</p>
+<p><strong>Why a page and not "HTML".</strong> HTML is not a language a program can be
+written in: it describes a page. What a person asking for "Zeno in
+HTML" wants is a file that opens in a browser and runs the program,
+and that is a page with the program in it, in JavaScript, which is the
+browser's language.</p>
+<p><strong>Why one file.</strong> It opens from a disk, an email or any host, with
+nothing beside it to lose.</p>
+<p><strong>Why beside <code>--web</code> and not in place of it.</strong> <code>--web</code> runs Zeno itself
+in the page, so <code>import web</code> works and the program can answer buttons;
+it is a bigger file and the program runs at <code>zeno run</code> speed.
+<code>--target html</code> is the program compiled: small and fast, but without
+<code>import web</code> for now.</p>
+<p><strong>Why <code>sleep</code> is refused.</strong> A page does one thing at a time; a program
+that slept would freeze it. <code>--web</code> refuses <code>sleep</code> for the same reason
+(14.11).</p>
+<h3 id="2411-the-order-of-the-targets">24.11 The order of the targets</h3>
+<p>JavaScript first, since the page is built on it and Node runs it
+everywhere; then HTML; then Python, whose model (one kind of int that
+never overflows, dicts that keep order) is closest to JavaScript's and
+so tests the shared lowering against a second language early; then Go,
+Java, C#, C++ and Rust, the statically typed ones; then WebAssembly.</p>
+<p><strong>Why Python earlier than the order first suggested.</strong> It shares the
+most with JavaScript, so it was the cheapest way to find what in the
+lowering was really JavaScript's; it found nothing, which is the
+evidence that the lowering is not tied to one language.</p>
+<h3 id="2412-go-java-and-c-every-value-is-the-languages-anything">24.12 Go, Java and C#: every value is the language's "anything"</h3>
+<p>In Go every Zeno value is an <code>any</code>, in Java and C# an <code>Object</code>: a
+whole number is a 64-bit <code>int64</code>/<code>long</code>, a float a <code>float64</code>/<code>double</code>,
+and a list, dict, object or function a class of the runtime. Each
+operator is a call of the runtime that looks at what it was given, as in
+JavaScript and Python.</p>
+<p><strong>Why not the language's own types.</strong> The checker often knows that a
+variable is an <code>int</code>, and could write <code>int64</code>. But a Zeno program also
+has values whose type is only known as the program runs (<code>json.parse</code>,
+a list of mixed things, an <code>Optional</code>), and both kinds have to meet in
+the same call. One kind of value everywhere keeps the printer small and
+the three runtimes the same as the other two. Typed code where the type
+is known is the step for speed after this one (24.2).</p>
+<h3 id="2413-what-each-of-the-three-languages-needed">24.13 What each of the three languages needed</h3>
+<ul>
+<li><strong>Go</strong> refuses a variable that is never read, so every variable is
+  also given to <code>_</code> once (<code>_ = total</code>). Go has no <code>try</code>: Zeno's <code>try</code>
+  is a call of <code>Ztry</code> with two functions, the body and the handler,
+  which answer with a number for what happens next (go on, <code>break</code>,
+  <code>continue</code> or <code>return</code>), and the code after the call does it.</li>
+<li><strong>Java</strong> lets a lambda use only a variable that never changes, so a
+  variable an inner function uses is kept in a <code>Z.Cell</code>, as in Python
+  (24.7). Java refuses a statement it can prove is never reached, so
+  <code>return x</code> is written <code>if (true) return x;</code>. And Java reads <code>\u000a</code>
+  in a string as a new line in the source, so a character below a space
+  is written as an octal escape.</li>
+<li><strong>C#</strong> needs neither: a lambda can change a variable outside it, and
+  a statement never reached is only a warning, which the file turns
+  off. It refuses a name in an inner block that one outside has, which
+  the lowering's unique names (24.4) already rule out.</li>
+</ul>
+<p><strong>Why the lowering stays the same.</strong> All three are things a printer can
+do by itself. The one change the lowering needed is 24.14.</p>
+<h3 id="2414-the-order-arguments-are-worked-out-in">24.14 The order arguments are worked out in</h3>
+<p>Zeno works out a call's arguments from left to right. JavaScript,
+Python, Java and C# do too; Go and C++ do not promise it. For those two
+the lowering copies every argument before the last one that calls
+something into a variable of its own, first, in Zeno's order: so in
+<code>show(count, next())</code> the <code>count</code> that is shown is the one before
+<code>next()</code> ran, as in Zeno, even if <code>next</code> changes it.</p>
+<p><strong>Why copy plain variables too.</strong> Go reads a variable whenever it
+likes, so a plain <code>count</code> beside a call is not safe either; the first
+version left plain variables alone, and <code>examples/labels.zeno</code> printed
+the wrong count in Go.</p>
+<h3 id="2415-nesting-1000-calls-in-every-target">24.15 Nesting: 1000 calls, in every target</h3>
+<p><code>zeno run</code> stops a program whose calls nest more than 1000 deep, with a
+message that asks if the function calls itself forever. The Go, Java
+and C# runtimes count calls the same way and stop with the same
+message, and they run the program on a thread with a big stack so that
+1000 calls always fit.</p>
+<p><strong>Why.</strong> A program that recurses forever should end the same way in
+every language, with Zeno's message, not with a Go "goroutine stack
+exceeds" or a Java <code>StackOverflowError</code>.</p>
+<h3 id="2416-the-last-digit-of-sin-exp-and-pow">24.16 The last digit of <code>sin</code>, <code>exp</code> and <code>pow</code></h3>
+<p><code>zeno run</code> takes <code>math.sin</code>, <code>math.exp</code>, <code>math.pow</code> and the other
+functions of floats from the C library of the computer. Python, C#, C++
+and Rust use the same library, so they print the same digits. Others
+have their own: JavaScript's (in Node) and Java's <code>StrictMath</code> give a
+different last digit for about one input in ten, and Go's own <code>pow</code> for
+about one in three. To keep the difference as small as can be:</p>
+<ul>
+<li>Go uses its own <code>sqrt</code>, <code>exp</code> and <code>log</code> (which agree with the C
+  library on the programs here) and, for <code>sin</code>, <code>cos</code> and <code>tan</code>, a copy
+  of the functions JavaScript uses, written in Go in runtime.go.</li>
+<li>Java uses <code>Math</code>, not <code>StrictMath</code>: <code>Math</code> is allowed to use the
+  computer's own, which agree far more often.</li>
+</ul>
+<p>Where the last digit can still differ, it is listed as a known limit
+(in <code>docs/targets.md</code>): the answer is right to the 16th digit, but
+the 17th, which a float's printing shows, may be one off.</p>
+<p><strong>Why not exact everywhere now.</strong> Making every runtime give the
+correctly rounded answer means writing those functions in each language
+with extra precision, a project of its own. None of the 319 programs
+shows a difference; the fix waits until a program needs it.</p>
+<h3 id="2417-c-a-small-value-shared-pointers-cells">24.17 C++: a small value, shared pointers, cells</h3>
+<p>In C++ a Zeno value is a <code>Z::V</code>: a tag, a union for an int, a float or
+a bool, and a <code>shared_ptr</code> for anything else (a str, a list, an object).
+A value is freed when the last pointer to it goes. A variable an inner
+function uses lives in a <code>Z::Cell</code> (a shared box), because a lambda
+written <code>[=]</code> copies what it uses. Arguments are put in variables first
+(24.14). The file builds with any C++17 compiler and needs nothing
+beside it.</p>
+<p><strong>Why shared pointers and not a collector.</strong> They free almost
+everything at the moment it is no longer used, with nothing to add to
+the file. What they miss is a cycle, such as a list that holds itself;
+a program that makes many of those would grow. None of the 319 does,
+and a collector can come later without changing the printer.</p>
+<p><strong>Why <code>[=]</code> and cells rather than <code>[&amp;]</code>.</strong> A lambda that kept references
+to the variables around it would point at nothing once the function
+that made it returned, and a Zeno function can outlive the one that
+made it.</p>
+<h3 id="2418-rust-failures-as-results-try-as-a-closure">24.18 Rust: failures as results, <code>try</code> as a closure</h3>
+<p>Rust has no exceptions. Every step of runtime.rs that can fail gives a
+<code>z::R</code>, the value or the failure (an error on its way to a <code>try</code>, or a
+mistake that stops the program), and the program passes a failure on
+with <code>?</code>. A <code>try</code> body is a closure called at once; the code after it
+looks at how it ended. A <code>break</code>, <code>continue</code> or <code>return</code> in the body
+cannot reach outside the closure, so the body ends with which one it
+was and the code after it does it, as in Go (24.13). A variable an inner
+function uses lives in a <code>z::Cell</code>, and each function gets its own copy
+of the cells it uses where it is made: the lowering lists them for each
+function (<code>captures</code>).</p>
+<p><strong>Why results and not panics.</strong> A panic can be caught, but it is meant
+for bugs: it prints to the screen unless told not to, and it is slow to
+catch. A result costs nothing until something fails, and <code>?</code> keeps the
+written program as short as the others.</p>
+<p><strong>Why the same printing.</strong> Zeno is written in Rust, so the Rust runtime
+shows floats with <code>{:?}</code>, fixed decimals with <code>{:.2}</code>, and text with
+the same quoting, exactly as <code>zeno run</code> does. It is the one target that
+cannot differ in the last digit.</p>
+<h3 id="2419-webassembly-through-rust-with-wasi">24.19 WebAssembly: through Rust, with WASI</h3>
+<p><code>--target wasm</code> writes the program in Rust, has <code>rustc</code> build it for
+<code>wasm32-wasip1</code>, and keeps the <code>.wasm</code> file. WASI is the system
+interface that WebAssembly hosts outside a browser give a program: the
+keyboard, the screen, the command line and files. The file runs in
+wasmtime, wasmer, or Node (<code>tools/run-wasi.js</code>). WebAssembly has no
+threads, so there the program runs on its one thread, built with a
+32 MB stack, which holds 1000 nested calls.</p>
+<p><strong>Why through Rust.</strong> Rust builds WebAssembly well and has done so for
+years, and the Rust target already prints what <code>zeno run</code> prints; a
+WebAssembly printer of its own would be a second compiler to keep in
+step. This is also the one target where <code>zeno build</code> runs a compiler
+itself, because a <code>.wasm</code> file is not text a person would keep: what
+they want is the file that runs.</p>
+<p><strong>Why WASI and not the browser.</strong> The page target (24.10) is already
+the browser's. <code>zeno build --web</code> puts Zeno itself in a page as
+WebAssembly. What was missing was a program that runs anywhere a
+WebAssembly host does, the same file on every computer, and that is
+WASI.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
