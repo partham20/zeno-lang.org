@@ -269,8 +269,8 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
       <li class="done"><span class="pin"><!--ICON:terminal--></span><b>Scripts</b><span>An interpreter and a bytecode VM.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><!--ICON:cpu--></span><b>Firmware</b><span>C with no heap, no collector, memory by hand.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><!--ICON:package--></span><b>Library and modules</b><span>Files, input, maths, dictionaries, programs in many files.</span><small>Works today</small></li>
-      <li class="done"><span class="pin"><!--ICON:loop--></span><b>Version 0.1</b><span>Packages, tests, a formatter and a language server.</span><small>Works today</small></li>
-      <li class="next"><span class="pin"><!--ICON:globe--></span><b>Hardware, web, servers</b><span>Reading real pins, WebAssembly, <code>async</code> and C interop.</span><small>Next</small></li>
+      <li class="done"><span class="pin"><!--ICON:loop--></span><b>Version 0.2</b><span>Installers, tests, an editor server, and programs that are web pages.</span><small>Works today</small></li>
+      <li class="next"><span class="pin"><!--ICON:globe--></span><b>Hardware and servers</b><span>Reading real pins, <code>async</code> and C interop.</span><small>Next</small></li>
     </ol>
     <p class="after"><a href="/roadmap/">The full roadmap</a></p>
   </div>
@@ -280,7 +280,7 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
   <div class="wrap start">
     <div>
       <h2>Run it yourself.</h2>
-      <p>You need <a href="https://rustup.rs">Rust</a> to build Zeno, and a C compiler for <code>zeno build</code>. There is nothing else to install.</p>
+      <p>Zeno 0.2 is out, open source under the MIT licence. One line installs it on macOS and Linux, and <a href="https://github.com/partham20/zeno-lang/releases/download/v0.2.0/zeno-0.2.0-windows-setup.exe">a setup program</a> on Windows. Or try it first in the <a href="/playground/">playground</a>.</p>
       <div class="actions">
         <a class="button" href="/learn/#install">Install and first steps</a>
         <a class="button ghost" href="/examples/">Browse the examples</a>
@@ -288,10 +288,9 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
     </div>
     <figure class="window shell">
       <figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="shell"><!--ICON:copy--><span>Copy</span></button></figcaption>
-      <pre id="shell"><code>git clone https://github.com/partham20/zeno-lang
-cd zeno-lang
-cargo build --release
-./target/release/zeno run examples/tour.zeno</code></pre>
+      <pre id="shell"><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh
+zeno new hello
+zeno run hello/main.zeno</code></pre>
     </figure>
   </div>
 </section>
