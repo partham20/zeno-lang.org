@@ -396,7 +396,7 @@ Wrote lists.c
 Built lists. Run it with ./lists
 $ ./lists
 1000 998001
-memory: 12 blocks made (16388 bytes), at most 12312 bytes in use at once, 0 collections, 8 blocks freed without the collector</code></pre>
+memory: 12 blocks made (16388 bytes), at most 12320 bytes in use at once, 0 collections, 8 blocks freed without the collector</code></pre>
 <p><a href="memory.html#ch-memory">Memory</a> explains the
 report.</p>
 <h3 class="unnumbered" id="through-llvm"><span
@@ -454,6 +454,68 @@ error: `zeno build` cannot compile a function inside a function or block yet. `z
 <p>A function written with no name,
 <code>let inner = function() { ... }</code>, does compile. <a
 href="limits.html#app-limits">Appendix G</a> has the full list.</p>
+<h3 class="unnumbered" id="in-another-language"><span
+class="number">28.9</span> In another language</h3>
+<p><code>zeno build --target</code> writes the program in another
+language: a file you can read, keep, and run with that language’s own
+tools. The languages are <code>js</code> (JavaScript, for Node),
+<code>html</code> (a page that runs the program), <code>py</code>
+(Python), <code>go</code>, <code>java</code>, <code>cs</code> (C#),
+<code>cpp</code> (C++), <code>rust</code>, and <code>wasm</code>
+(WebAssembly, built through Rust).</p>
+<div class="zenofile">
+<p>area.zeno</p>
+</div>
+<div class="sourceCode" id="cb12" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> math</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> area(r: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> math.pi * r * r</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>print(area(<span class="dv">2.0</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --target js area.zeno
+Wrote area.js. Run it with `node area.js`
+$ node area.js
+12.566370614359172
+$ zeno build --target py area.zeno
+Wrote area.py. Run it with `python3 area.py`
+$ python3 area.py
+12.566370614359172</code></pre>
+<p>The file is written by fixed rules, so the same program always gives
+the same file, letter for letter. Each language gets a runtime of its
+own, at the top of the file, which does what <code>zeno run</code> does,
+step for step: an <code>int</code> still overflows in JavaScript, whose
+numbers never do, and in Python, whose whole numbers never stop
+growing.</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --target py area.zeno &gt; /dev/null
+$ grep -A6 &quot;^def main&quot; area.py
+def main():
+    area = None
+    math_ = Z.Cell()
+    def z_f1(r, *, math_=math_):
+        return Z.mul(Z.mul(Z.builtin(&quot;math.pi&quot;), r, 4), r, 4)
+    area = Z.fn(&quot;area&quot;, [&quot;r&quot;], [False], z_f1)
+    math_.v = Z.module(&quot;math&quot;)</code></pre>
+<p><code>Z.mul(a, b, 4)</code> multiplies as Zeno multiplies, and stops
+with Zeno’s message for line 4 if the answer does not fit.
+<code>math</code> is <code>math_</code> because <code>math</code> is a
+name the languages’ own libraries use.</p>
+<p>As with <code>zeno build</code> itself, a tool holds every target to
+<code>zeno run</code>: <code>tools/targets.py</code> runs every example
+and every sample of this book in every language and compares what each
+prints, and it runs once a week on the newest version of each
+language.</p>
+<p>A program that uses the board, <code>unsafe</code> or manual memory
+is refused: those belong to a program compiled to machine code. The page
+cannot use the keyboard or files, or <code>sleep</code>.</p>
+<div class="why">
+<p>A program you have written in Zeno can then live where another
+language lives: on a web page, in a Python project, on a Java server.
+And it is a way to learn: the same program, written by fixed rules in
+nine languages, shows what each language needs said that Zeno does not.
+(Decisions 24.1 to 24.19; <code>docs/targets.md</code> has every
+target.)</p>
+</div>
 <div class="summary">
 <p><code>zeno build</code> writes C, compiles it with the machine’s
 compiler, and keeps both. The compiled program prints what
@@ -461,7 +523,8 @@ compiler, and keeps both. The compiled program prints what
 A build is always strict. <code>--llvm</code> goes through LLVM;
 <code>--memory</code>, <code>--firmware</code> and
 <code>--no-collector</code> are for the board. For another processor,
-the C goes to that processor’s compiler.</p>
+the C goes to that processor’s compiler. <code>--target</code> writes
+the program in another language instead.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -473,6 +536,9 @@ built program on the primes example, with a larger limit.</p></li>
 message the same as <code>zeno run</code>’s?</p></li>
 <li><p>Build with <code>--llvm</code>, open the <code>.ll</code> file,
 and find <code>is_prime</code>.</p></li>
+<li><p>Build the area example with <code>--target go</code> and
+<code>--target java</code>. Find <code>area</code> in each, and compare
+the two with the Python.</p></li>
 </ol>
 </div>
 </article>

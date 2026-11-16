@@ -266,7 +266,7 @@ comments, which say what can be written, and then one line:</p>
 </div>
 <div class="sourceCode" id="cb2" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> weather</span></code></pre></div>
-<p>There are two kinds of line, and that is all the file can say:</p>
+<p>There are three kinds of line, and that is all the file can say:</p>
 <div class="center">
 <table>
 <thead>
@@ -291,6 +291,13 @@ counted from this file’s folder. Nothing is copied</td>
 style="text-align: left;"><code>needs units from "address" at "v1.2.0"</code></td>
 <td style="text-align: left;">it needs the package in that git
 repository, at that tag, branch or commit</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>memory owned</code></td>
+<td style="text-align: left;">how the program frees memory:
+<code>owned</code> (one owner for each value, no collector) or
+<code>collector</code>, which is what it gets with no line (<a
+href="memory.html#ch-memory">Memory</a>)</td>
 </tr>
 </tbody>
 </table>

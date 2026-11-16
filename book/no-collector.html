@@ -438,8 +438,8 @@ sent 44400 samples, skipped 13 quiet frames
 refused 33 frames, the first on channel 84
 [3, 3, 3, 3]
 4
-memory: 1691 blocks made (2646563 bytes), at most 13336 bytes in use at once, no collector, 0 blocks left at the end
-pool: 25384 bytes taken, in a pool of 32768
+memory: 1409 blocks made (1971147 bytes), at most 12592 bytes in use at once, no collector, 0 blocks left at the end
+pool: 17184 bytes taken, in a pool of 32768
 text: at most 53 bytes in use at once, in a room of 1024</code></pre>
 <p>It made over 1600 blocks and gave every one back. Search the C for
 <code>zeno_collect</code>, <code>setjmp</code> or <code>malloc</code>:

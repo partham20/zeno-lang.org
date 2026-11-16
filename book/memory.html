@@ -280,13 +280,15 @@ class="number">29.3</span> Mark and sweep</h3>
 <p>Zeno’s collector is the oldest and simplest kind. It was invented for
 Lisp in 1960, and it is what MicroPython runs on microcontrollers.</p>
 <ol>
-<li><p>Every block is written in a table as it is handed out.</p></li>
+<li><p>Every block is handed out from a <em>page</em>: 64 KB of memory
+holding blocks of one size, which keeps a bit for each block to say
+whether it is in use.</p></li>
 <li><p><strong>Mark.</strong> Start from the variables, the
 <em>roots</em>. Whatever a root points at is in use: mark it. Whatever a
 marked block points at is in use too. Carry on until nothing new turns
 up.</p></li>
-<li><p><strong>Sweep.</strong> Go through the table. A block with no
-mark cannot be reached: free it. Take the marks off the rest.</p></li>
+<li><p><strong>Sweep.</strong> Go through the pages. A block in use with
+no mark cannot be reached: free it.</p></li>
 </ol>
 <p>Two objects that point at each other, and at nothing in use, are
 freed like anything else: no root reaches them, so neither is marked.
@@ -296,9 +298,45 @@ references.</p>
 compiler lists, and everything on the C stack: the collector reads the
 stack from the function running now back to <code>main</code>, a word at
 a time, and asks of each word whether it is the address of one of its
-blocks. When unsure, it keeps, so it can never free a block in use.</p>
+blocks. When unsure, it keeps, so it can never free a block in use. The
+question is quick to answer: every page starts at an address that is a
+multiple of 64 KB, and a hash table says which page covers each 64 KB of
+memory, so one look and one division find the block a word points into.
+(Until version 0.3 the collector kept one table of every block, sorted
+it at each collection, and searched it for every word; on a program with
+millions of blocks, the pages made it five times faster. Decision
+22.5.)</p>
+<p>A word that points just past the end of a block is also the start of
+the next one. Only the rows that hold a list’s items, which a loop may
+walk off the end of, count such a word for the block before; they have
+pages of their own for that reason. When every block counted it, each
+block kept its neighbour alive, and the neighbour its own: a benchmark
+that needed 130 MB held 2.3 GB. (Decision 22.10.)</p>
+<h3 class="unnumbered" id="young-and-old"><span
+class="number">29.4</span> Young and old</h3>
+<p>Most blocks are garbage soon after they are made, and a block that
+has lived through one collection usually lives through many. So most
+collections are small: they look only at the blocks made since the last
+one, the <em>young</em>, and take every block that lived through a
+collection, the <em>old</em>, to be still in use. A block is old when
+its mark is still there from the collection it lived through; a small
+collection stops at it instead of looking inside it again. Once the old
+have grown to twice what the last full collection kept, the next
+collection is full and looks at everything.</p>
+<p>There is one danger: an old block given a pointer to a young one
+since the last collection. Nobody would look inside the old block, and
+the young one would be freed while in use. So after each collection,
+every full page of blocks that can hold pointers is made read-only with
+the system’s <code>mprotect</code>. The first write to such a page stops
+the program for a moment; a handler opens the page again and notes that
+it was written, and the next small collection looks inside its old
+blocks. The processor keeps watch, so no line of the compiled program
+has to. On a program that keeps a tree of two million nodes for its
+whole run, this took the time from 11 seconds to 7. On a chip, and for
+now on Windows, every collection is full. (Decisions 22.10 and
+22.14.)</p>
 <h3 class="unnumbered" id="seeing-it-work"><span
-class="number">29.4</span> Seeing it work</h3>
+class="number">29.5</span> Seeing it work</h3>
 <p><code>zeno build --memory</code> makes a program that reports, as it
 ends, what memory it used. This one, from the <code>examples</code>
 folder, logs a reading every tick for 50 000 ticks, and keeps only the
@@ -375,7 +413,7 @@ still held:
   tick 49998: 22.5 C (sample 49998)
   tick 49999: 26.2 C (sample 49999)
 hottest: tick 102: 35.0 C (sample 102)
-memory: 780027 blocks made (13222784 bytes), at most 1048574 bytes in use at once, 10 collections, 60002 blocks freed without the collector</code></pre>
+memory: 730027 blocks made (13122784 bytes), at most 4194304 bytes in use at once, 4 collections, 60002 blocks freed without the collector</code></pre>
 <p>The last line is the report. The program asked for thirteen
 megabytes, a few bytes at a time, and never held more than one megabyte
 or so at once, because the collector ran when it was needed and gave the
@@ -384,9 +422,9 @@ could point to, without waiting for the collector: the old storage of a
 list that has just grown, and the copy that a <code>for</code> loop
 walks.</p>
 <h3 class="unnumbered" id="when-it-runs"><span
-class="number">29.5</span> When it runs</h3>
-<p>Collecting takes time, in proportion to what is still in use, so it
-is not done on every allocation. The runtime counts the bytes in use and
+class="number">29.6</span> When it runs</h3>
+<p>Collecting takes time, in proportion to what it looks at, so it is
+not done on every allocation. The runtime counts the bytes in use and
 collects when they pass a limit; after each collection the limit becomes
 twice what survived. A program that keeps little is collected often and
 cheaply, and one that keeps a lot is left alone for longer. And if
@@ -394,14 +432,16 @@ cheaply, and one that keeps a lot is left alone for longer. And if
 runs and the request is tried again. On a board with 64 KB of memory,
 that second trigger is the one that matters.</p>
 <h3 class="unnumbered" id="what-it-costs-1"><span
-class="number">29.6</span> What it costs</h3>
+class="number">29.7</span> What it costs</h3>
 <ul>
 <li><p><strong>Pauses.</strong> While the collector runs, the program
-does not, and the pause grows with the memory in use. A control loop
-that must answer within microseconds should not make blocks inside the
-loop. Numbers, bools and fixed text never do.</p></li>
-<li><p><strong>A few words for each block</strong>: a header and its
-line in the table.</p></li>
+does not. A small collection’s pause grows with what was made since the
+last one, a full one’s with all the memory in use. A control loop that
+must answer within microseconds should not make blocks inside the loop.
+Numbers, bools and fixed text never do.</p></li>
+<li><p><strong>A little memory for each block</strong>: two bits in its
+page, and the room left over when a block is rounded up to its page’s
+size.</p></li>
 <li><p><strong>It leans on the C compiler.</strong> Reading the stack
 word by word is not something the C standard describes. Every mainstream
 compiler and processor allows it, and the Boehm collector, Ruby and
@@ -417,7 +457,7 @@ default, and the next chapters give firmware the other choices where it
 needs them. (Decision 5.7.)</p>
 </div>
 <h3 class="unnumbered" id="three-ways-to-manage-memory"><span
-class="number">29.7</span> Three ways to manage memory</h3>
+class="number">29.8</span> Three ways to manage memory</h3>
 <div class="center">
 <table>
 <thead>
@@ -438,18 +478,72 @@ chapter</td>
 any build: <a href="ownership.html#ch-ownership">Ownership</a></td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>memory owned</code></td>
+<td style="text-align: left;">every list and object has one owner, and
+there is no collector: Rust’s way. Said once, in
+<code>zeno.package</code>, or with <code>zeno build --owned</code>.
+Memory grows as the program needs it</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>--no-collector</code></td>
-<td style="text-align: left;">every list and object has one owner,
-memory comes from a fixed pool, and there is no collector: <a
+<td style="text-align: left;">the same rules for a chip: memory comes
+from a fixed pool. <a
 href="no-collector.html#ch-no-collector">Building with No
 Collector</a></td>
 </tr>
 </tbody>
 </table>
 </div>
+<p>A program chooses with one line in its <code>zeno.package</code>:</p>
+<pre><code>package server
+memory owned</code></pre>
+<p>and <code>zeno build</code>, <code>zeno check</code> and
+<code>zeno run</code> all follow it. <code>memory collector</code> is
+what a program gets when nothing is said. It is a choice for the whole
+program because how memory is freed has to go with each value, and a
+value is used on many lines; a single value can still be
+<code>owned</code> in a collector program. (Decision 22.1.)</p>
+<p>One file of a program can choose too. A file that begins with the
+line <code>memory owned</code> makes every class it declares an owned
+class, as if each were written <code>owned class</code>: its objects
+have one owner and are freed where that owner ends, even in a program
+with a collector, while the rest of the program shares its values as
+before. Where the two meet, the rules are those of owned values in a
+collector program: a function that only looks can be given any object,
+and an object with one owner cannot be kept in a shared list. When every
+file says <code>memory owned</code>, the whole program is owned and
+built with no collector. (Decision 22.9.)</p>
+<p><code>--release</code> goes with any of them: whole numbers wrap
+round on overflow, as the processor does, instead of stopping the
+program, and every other check stays. It is what Rust’s release builds
+do. On the benchmarks in the repository’s <code>bench</code> folder, an
+owned release build of a program that makes millions of small objects
+runs as fast as the same program in C, or faster, and the collector
+build about two times slower. (Decision 22.3.)</p>
+<p><code>--fast</code> goes further. It leaves out every check that a
+correct program never fails, as C leaves them out: a list index out of
+range reads whatever memory is there, a float divided by zero is
+infinity, and the square root of a number below zero is NaN. A whole
+number divided by zero is still caught, because C would stop the program
+with a signal or worse. The C compiler is asked to try harder too
+(<code>-O3</code>).</p>
+<p>Overflow is where <code>--fast</code> and <code>--release</code>
+part. With <code>--release</code> a sum that overflows wraps round: a
+wrong number, but a known one. With <code>--fast</code> it has no
+defined result, as in C, and the C compiler builds on its not happening:
+a count that starts at 0 and only goes up is never below zero, so the
+<code>%</code> of it needs no care for numbers below zero. That one
+piece of knowledge is what makes a tight loop of whole numbers the very
+same instructions a C program gets. A program that does overflow may
+print a wrong number or never leave a loop. Since an overflow is an
+error in Zeno, a program that runs clean under <code>zeno run</code> has
+none.</p>
+<p>Use <code>--fast</code> for a program whose tests pass, when every
+last bit of speed matters; build it the ordinary way while it is being
+written. (Decisions 23.1 and 23.6.)</p>
 <p>Memory a program asks for itself with <code>allocate</code> is apart
-from all three: the collector never looks at it, and the program gives
-it back with <code>free</code> (<a
+from all of these: the collector never looks at it, and the program
+gives it back with <code>free</code> (<a
 href="unsafe.html#ch-unsafe">Unsafe Code</a>).</p>
 <div class="summary">
 <p>Built text, lists, dicts, objects, enum values that carry something

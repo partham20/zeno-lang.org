@@ -352,9 +352,15 @@ multiply":</p>
 0006    1  Const        1          ; none
 0007    |  Return</code></pre>
 <p>Both engines share one file, <code>ops.rs</code>, for what every
-operator does, so what <code>*</code> means is written once. The VM is
-about twice as fast, and every test program runs on both and must print
-the same.</p>
+operator does, so what <code>*</code> means is written once, and every
+test program runs on both and must print the same. The VM is two to four
+times as fast. Since 0.3 it lays <em>superinstructions</em> over the
+commonest runs of instructions:
+<code>GetLocal i, GetLocal n, Binary &lt;,</code>
+<code>JumpIfFalse</code> at the top of a <code>while</code> becomes one
+step that does all four and skips the other three, which stay in place
+so that no jump has to move. <code>zeno bytecode</code> still shows the
+four, as the compiler wrote them.</p>
 <p>A web page (<a href="web.html#ch-web">A Program in a Web
 Page</a>) is not a fifth engine. <code>zeno.wasm</code> is the lexer,
 parser, checker and interpreter, built by Rust for a browser, and runs
