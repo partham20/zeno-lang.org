@@ -323,3 +323,46 @@ if (tocLinks.length && "IntersectionObserver" in window) {
     if (el) watch.observe(el);
   }
 }
+
+// --- Download -------------------------------------------------------------------
+// Find the visitor's system, mark its card, and point the big button at it.
+
+if (document.getElementById("systems")) {
+  const ua = navigator.userAgent;
+  const plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || "";
+  const mobile = /Android|iPhone|iPad|iPod/i.test(ua);
+  const os = mobile ? null : /Win/i.test(plat + ua) ? "windows" : /Mac/i.test(plat + ua) ? "macos" : /Linux|X11|CrOS/i.test(plat + ua) ? "linux" : null;
+  const primary = document.getElementById("dl-primary");
+  const note = document.getElementById("dl-note");
+  if (os) {
+    const card = document.querySelector(`.dl-card[data-os="${os}"]`);
+    card.classList.add("yours");
+    const first = card.querySelector(".dl-big");
+    const names = { windows: "Windows", macos: "macOS", linux: "Linux" };
+    if (os === "linux") {
+      primary.href = "#terminal";
+      primary.querySelector("span").textContent = "Install on Linux";
+      note.textContent = "One line in a terminal, or a .deb, snap, flatpak or archive below.";
+    } else if (first) {
+      primary.href = first.href;
+      primary.querySelector("span").textContent = `Download for ${names[os]}`;
+      note.textContent = os === "macos" ? "For Apple silicon. Intel Macs, Homebrew and the one-line installer are below."
+                                        : "The setup program, for every Windows PC. The .zip files are below.";
+    }
+    if (window.matchMedia("(max-width: 60rem)").matches) card.parentNode.prepend(card);
+  } else if (mobile) {
+    note.textContent = "Zeno runs on Windows, macOS and Linux. On a phone, try it in the playground.";
+  }
+  // A link to a tab of the terminal section opens that tab.
+  for (const link of document.querySelectorAll("[data-tab]")) {
+    link.addEventListener("click", () => document.getElementById(link.dataset.tab)?.click());
+  }
+  // Copy a file's SHA-256.
+  for (const b of document.querySelectorAll(".sha")) {
+    b.addEventListener("click", async () => {
+      const shown = b.textContent;
+      try { await navigator.clipboard.writeText(b.dataset.sha); b.textContent = "Copied"; } catch (e) { b.textContent = b.dataset.sha; return; }
+      setTimeout(() => (b.textContent = shown), 1400);
+    });
+  }
+}

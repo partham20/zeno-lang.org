@@ -136,7 +136,8 @@ def layout(path, title, description, body, active=None, home=False):
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       {icon("sun", "icon sun")}{icon("moon", "icon moon")}
     </button>
-    <a class="button small ghost" href="{GITHUB}">{icon("github")}GitHub</a>
+    <a class="button small ghost nav-gh" href="{GITHUB}">{icon("github")}GitHub</a>
+    <a class="button small" href="/download/">{icon("download")}Download</a>
   </div>
 </header>
 <main id="content"{' class="home"' if home else ''}>
@@ -151,9 +152,9 @@ def layout(path, title, description, body, active=None, home=False):
   <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
   <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
-    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/learn/#install">Install</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
-    <div><h4>Project</h4><a href="/about/">About</a><a href="{GITHUB}">Source on GitHub</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="{GITHUB}">Source on GitHub</a></div>
   </div>
   <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
 </div>
@@ -700,6 +701,222 @@ def build_about():
     layout("/about/", "About", "Zeno is a programming language built from scratch by a firmware engineer, to learn by building.", body, "/about/")
 
 
+# --- Download ----------------------------------------------------------------
+
+RELEASES_API = "https://api.github.com/repos/partham20/zeno-lang/releases"
+RELEASES_CACHE = TOOLS / "releases.json"
+
+# The marks of the three systems, filled, on a 24 by 24 grid.
+OS_MARKS = {
+    "windows": '<path d="M3 5.1l7.4-1v7.2H3zM11.4 3.9L21 2.6v8.7h-9.6zM3 12.6h7.4v7.3L3 18.9zM11.4 12.6H21v8.8l-9.6-1.3z"/>',
+    "macos": '<path d="M16.4 12.7c0-2.5 2-3.7 2.1-3.8-1.2-1.7-3-1.9-3.6-2-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.3 1-4.2 2.5-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.3.8c1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9-.1 0-2.8-1-2.8-4.1zM13.9 5.2c.7-.8 1.2-2 1-3.2-1 .1-2.3.7-3 1.5-.7.8-1.2 2-1.1 3.1 1.2.1 2.3-.6 3.1-1.4z"/>',
+    "linux": '<path d="M12 2c-2.3 0-3.6 1.9-3.6 4.4 0 1.3.2 2.2-.5 3.4-.9 1.5-2.6 3.6-2.6 6.3 0 .8.2 1.5.5 2.1-.9.4-1.8 1-1.8 1.8 0 1.1 1.9 1.4 3.4 1.8 1.2.3 2 .9 3 .9.8 0 1.3-.4 1.6-.9h0c.3.5.8.9 1.6.9 1 0 1.8-.6 3-.9 1.5-.4 3.4-.7 3.4-1.8 0-.8-.9-1.4-1.8-1.8.3-.6.5-1.3.5-2.1 0-2.7-1.7-4.8-2.6-6.3-.7-1.2-.5-2.1-.5-3.4C15.6 3.9 14.3 2 12 2zm-1.6 3.6c.5 0 .8.6.8 1.2 0 .3-.1.6-.2.8l-.8-.2c.1-.2.1-.4.1-.6 0-.3-.1-.5-.2-.5-.2 0-.3.3-.3.6v.2l-.7-.3c0-.7.6-1.2 1.3-1.2zm3.2 0c.7 0 1.3.5 1.3 1.2l-.7.3v-.2c0-.3-.1-.6-.3-.6-.1 0-.2.2-.2.5 0 .2 0 .4.1.6l-.8.2c-.1-.2-.2-.5-.2-.8 0-.6.3-1.2.8-1.2zM12 8.3c.9 0 2.2.6 2.2 1 0 .3-1.4 1.2-2.2 1.2S9.8 9.6 9.8 9.3c0-.4 1.3-1 2.2-1zm-1.9 3c.6.3 1.2.5 1.9.5s1.3-.2 1.9-.5c.9 1.2 1.7 2.8 1.7 4.6 0 2.1-1.6 3.2-3.6 3.2s-3.6-1.1-3.6-3.2c0-1.8.8-3.4 1.7-4.6z"/>',
+}
+ARCH = {"x86_64": "x64", "amd64": "x64", "arm64": "Arm64", "aarch64": "Arm64", "armv7": "Arm32",
+        "armhf": "Arm32", "armv6": "ArmV6", "x86": "x86", "i386": "x86"}
+ARCH_ORDER = ["x64", "Arm64", "Arm32", "ArmV6", "x86"]
+
+
+def releases():
+    """Every published release of Zeno, newest first. Read from GitHub when the
+    build can reach it, and kept in tools/releases.json for when it cannot."""
+    import json, urllib.request
+    try:
+        req = urllib.request.Request(RELEASES_API, headers={"Accept": "application/vnd.github+json", "User-Agent": "zeno-lang.org build"})
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.load(r)
+        keep = [{"tag": d["tag_name"], "name": d["name"], "date": d["published_at"][:10], "url": d["html_url"],
+                 "assets": [{"name": a["name"], "size": a["size"], "url": a["browser_download_url"],
+                             "sha256": (a.get("digest") or "").removeprefix("sha256:")} for a in d["assets"]]}
+                for d in data if not d["draft"] and not d["prerelease"]]
+        RELEASES_CACHE.write_text(json.dumps(keep, indent=1) + "\n")
+        return keep
+    except Exception as e:
+        print(f"  releases: GitHub not reachable ({e}); using tools/releases.json")
+        return json.loads(RELEASES_CACHE.read_text())
+
+
+def classify(name):
+    """(system, format, arch label) for a release file, or None."""
+    m = re.fullmatch(r"zeno-[\d.]+-windows-setup\.exe", name)
+    if m: return ("windows", "setup", "all")
+    m = re.fullmatch(r"zeno-[\d.]+-(linux|macos|windows)-(\w+)\.(tar\.gz|zip)", name)
+    if m: return (m[1], m[3], ARCH.get(m[2], m[2]))
+    m = re.fullmatch(r"zeno_[\d.]+_(\w+)\.(deb|snap)", name)
+    if m: return ("linux", m[2], ARCH.get(m[1], m[1]))
+    m = re.fullmatch(r"zeno-[\d.]+-(\w+)\.flatpak", name)
+    if m: return ("linux", "flatpak", ARCH.get(m[1], m[1]))
+    m = re.fullmatch(r"zeno-bin-[\d.]+-\d+-(\w+)\.pkg\.tar\.zst", name)
+    if m: return ("linux", "pacman", ARCH.get(m[1], m[1]))
+    if name == "install.sh": return ("any", "install.sh", "")
+    if name == "SHA256SUMS.txt": return ("any", "sums", "")
+    return None
+
+
+def human_size(n):
+    return f"{n / 1048576:.1f} MB" if n >= 1048576 else f"{n / 1024:.0f} KB"
+
+
+def human_date(d):
+    y, m, day = d.split("-")
+    return f"{int(day)} {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][int(m)-1]} {y}"
+
+
+def build_download():
+    rels = releases()
+    latest = rels[0]
+    v = latest["tag"].lstrip("v")
+    files = {}
+    for a in latest["assets"]:
+        c = classify(a["name"])
+        if c:
+            files.setdefault((c[0], c[1]), {})[c[2]] = a
+
+    def mark(os_):
+        return f'<svg class="os-mark" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">{OS_MARKS[os_]}</svg>'
+
+    def chips(os_, fmt, label, note=""):
+        got = files.get((os_, fmt), {})
+        if not got:
+            return ""
+        links = "".join(f'<a class="chip" href="{got[a]["url"]}" title="{esc(got[a]["name"])}, {human_size(got[a]["size"])}">{a}</a>'
+                        for a in ARCH_ORDER if a in got)
+        return f'<div class="dl-row"><span class="dl-fmt">{label}{f"<small>{note}</small>" if note else ""}</span><span class="dl-chips">{links}</span></div>'
+
+    def big(os_, fmt, arch, title, sub):
+        a = files.get((os_, fmt), {}).get(arch)
+        if not a:
+            return ""
+        return (f'<a class="dl-big" href="{a["url"]}">{icon("download")}<span><b>{title}</b>'
+                f'<small>{sub} · {human_size(a["size"])}</small></span></a>')
+
+    win = (big("windows", "setup", "all", "Windows setup", "x64, Arm64 and x86 in one")
+           + chips("windows", "zip", ".zip"))
+    mac = (big("macos", "tar.gz", "Arm64", "Apple silicon", "M1 and later, .tar.gz")
+           + big("macos", "tar.gz", "x64", "Intel", ".tar.gz")
+           + '<div class="dl-row"><span class="dl-fmt">Homebrew</span><a class="chip" href="#terminal" data-tab="t-brew">brew install</a></div>')
+    lin = (big("linux", "deb", "x64", ".deb", "Debian, Ubuntu, Raspberry Pi OS")
+           + chips("linux", "deb", ".deb", "apt")
+           + chips("linux", "tar.gz", ".tar.gz", "any")
+           + chips("linux", "snap", ".snap")
+           + chips("linux", "flatpak", ".flatpak")
+           + chips("linux", "pacman", ".pkg.tar.zst", "Arch"))
+    cards = "".join(
+        f'<section class="dl-card" data-os="{os_}"><div class="dl-head">{mark(os_)}<h2>{name}</h2><p>{req}</p></div>'
+        f'<span class="dl-yours">Your system</span>{body}</section>'
+        for os_, name, req, body in [("windows", "Windows", "Windows 10 and 11", win),
+                                     ("macos", "macOS", "macOS 11 and later", mac),
+                                     ("linux", "Linux", "Any distribution, glibc or not", lin)])
+
+    def f(os_, fmt, arch):
+        return files.get((os_, fmt), {}).get(arch, {}).get("name", "")
+    rel = f"https://github.com/partham20/zeno-lang/releases/download/{latest['tag']}"
+    terminal = [
+        ("sh", "macOS and Linux", "One line. It picks the right <code>zeno</code>, puts it on your <code>PATH</code>, and offers a C compiler and git if they are missing.",
+         "curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh"),
+        ("brew", "Homebrew", "On macOS and Linux.",
+         "brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang\nbrew install partham20/zeno-lang/zeno"),
+        ("apt", "apt", "Debian, Ubuntu, Raspberry Pi OS. apt brings a C compiler and git along if the machine has none. For a Raspberry Pi use the <code>arm64</code> or <code>armhf</code> file.",
+         f"curl -LO {rel}/{f('linux','deb','x64')}\nsudo apt install ./{f('linux','deb','x64')}"),
+        ("pacman", "pacman", "Arch, Manjaro.",
+         f"curl -LO {rel}/{f('linux','pacman','x64')}\nsudo pacman -U {f('linux','pacman','x64')}"),
+        ("snap", "snap", "Until Zeno is in the Snap Store, a snap installed from its file needs <code>--dangerous</code>.",
+         f"curl -LO {rel}/{f('linux','snap','x64')}\nsudo snap install --classic --dangerous {f('linux','snap','x64')}"),
+        ("flatpak", "flatpak", "Installed for you alone.",
+         f"curl -LO {rel}/{f('linux','flatpak','x64')}\nflatpak install --user {f('linux','flatpak','x64')}"),
+        ("win", "Windows", "In PowerShell, to download the setup program and run it. Or use the button above.",
+         f"curl.exe -LO {rel}/{f('windows','setup','all')}\n.\\{f('windows','setup','all')}"),
+        ("src", "From source", "With <a href=\"https://rustup.rs\">Rust</a> installed.",
+         "git clone https://github.com/partham20/zeno-lang\ncd zeno-lang\ncargo build --release"),
+    ]
+    tabs = "".join(f'<button role="tab" aria-selected="{"true" if i == 0 else "false"}" aria-controls="p-{k}" id="t-{k}"{"" if i == 0 else " tabindex=\"-1\""}>{t}</button>'
+                   for i, (k, t, _, _) in enumerate(terminal))
+    panels = "".join(
+        f'<div class="dl-panel" role="tabpanel" id="p-{k}" aria-labelledby="t-{k}"{"" if i == 0 else " hidden"}><p>{note}</p>'
+        f'<figure class="window shell"><figcaption>{icon("terminal")}<span class="file">Terminal</span>'
+        f'<button class="copy" type="button" data-copy="c-{k}">{icon("copy")}<span>Copy</span></button></figcaption>'
+        f'<pre id="c-{k}"><code>{esc(cmd)}</code></pre></figure></div>'
+        for i, (k, _, note, cmd) in enumerate(terminal))
+
+    groups = [("Windows", "windows", ["setup", "zip"]), ("macOS", "macos", ["tar.gz"]),
+              ("Linux", "linux", ["deb", "tar.gz", "snap", "flatpak", "pacman"]), ("Any system", "any", ["install.sh", "sums"])]
+    olds = ""
+    for i, r in enumerate(rels):
+        rows = ""
+        for gname, os_, fmts in groups:
+            items = [(classify(a["name"]), a) for a in r["assets"]]
+            items = [(c, a) for c, a in items if c and c[0] == os_ and c[1] in fmts]
+            items.sort(key=lambda ca: (fmts.index(ca[0][1]), ARCH_ORDER.index(ca[0][2]) if ca[0][2] in ARCH_ORDER else 9))
+            for c, a in items:
+                sha = (f'<button class="sha" type="button" data-sha="{a["sha256"]}" title="Copy the SHA-256">{a["sha256"][:12]}…</button>'
+                       if a["sha256"] else "")
+                rows += (f'<tr><td>{gname}</td><td><a href="{a["url"]}">{esc(a["name"])}</a></td>'
+                         f'<td>{c[2] if c[2] not in ("all", "") else ""}</td><td>{human_size(a["size"])}</td><td>{sha}</td></tr>')
+        tag = r["tag"].lstrip("v")
+        olds += (f'<details class="dl-old"{" open" if i == 0 else ""}><summary><b>Zeno {tag}</b>'
+                 f'{"<em>Latest</em>" if i == 0 else ""}<span>{human_date(r["date"])}</span></summary>'
+                 f'<p class="dl-old-links"><a href="{r["url"]}">Release notes</a>'
+                 f'<a href="https://github.com/partham20/zeno-lang/releases/download/{r["tag"]}/SHA256SUMS.txt">SHA256SUMS.txt</a>'
+                 f'<a href="https://github.com/partham20/zeno-lang/tree/{r["tag"]}">Source at {r["tag"]}</a></p>'
+                 f'<div class="dl-table"><table><thead><tr><th>System</th><th>File</th><th>CPU</th><th>Size</th><th>SHA-256</th></tr></thead>'
+                 f'<tbody>{rows}</tbody></table></div></details>')
+
+    body = f"""<div class="dl">
+<header class="dl-hero">
+  <p class="eyebrow">{icon("download")}Download</p>
+  <h1>Download Zeno</h1>
+  <p class="lede">Free and open source under the MIT licence.<br>Version {v}, released {human_date(latest["date"])}.</p>
+  <p class="dl-hero-actions"><a class="button" id="dl-primary" href="#systems">{icon("download")}<span>Choose your system</span></a><a class="button ghost" href="/playground/">Try it in the browser</a></p>
+  <p class="dl-hero-note" id="dl-note">One file, a few megabytes, and nothing else needed to run, check and test programs.</p>
+</header>
+<div class="dl-cards" id="systems">{cards}</div>
+<p class="dl-sums">Every file's SHA-256 is in <a href="{rel}/SHA256SUMS.txt">SHA256SUMS.txt</a>. Windows and macOS warn about Zeno the first time, because it is not signed yet: on Windows choose “More info”, then “Run anyway”; on macOS run <code>xattr -d com.apple.quarantine zeno</code>.</p>
+
+<section class="dl-section" id="terminal">
+  <h2>{icon("terminal")}Install from a terminal</h2>
+  <div class="segmented" role="tablist" aria-label="How to install" data-group="install">{tabs}</div>
+  {panels}
+  <p class="muted">Each command installs version {v}. What the installers do, step by step, is in <a href="/docs/install/">the installer docs</a>, and what each package holds in <a href="/docs/packages/">the package docs</a>.</p>
+</section>
+
+<section class="dl-section dl-needs">
+  <h2>{icon("package")}What Zeno needs</h2>
+  <div class="cards">
+    <div class="card">{icon("play")}<b>Nothing, to run</b><span><code>zeno run</code>, <code>check</code>, <code>test</code>, <code>format</code> and <code>lsp</code> are all in the one file.</span></div>
+    <div class="card">{icon("cpu")}<b>A C compiler, to build</b><span><code>zeno build</code> uses <code>cc</code>, <code>gcc</code> or <code>clang</code>. <code>--llvm</code> needs clang.</span></div>
+    <div class="card">{icon("globe")}<b>git, for packages</b><span><code>zeno fetch</code> gets packages with git. <code>zeno build --web</code> needs only <code>zeno.wasm</code>, which comes with every install.</span></div>
+  </div>
+</section>
+
+<section class="dl-section" id="previous">
+  <h2>{icon("clock")}Every version</h2>
+  <p class="muted">Each release keeps all of its files. Older versions stay here for anyone who needs to match one.</p>
+  {olds}
+</section>
+</div>"""
+    layout("/download/", "Download", f"Download Zeno {v} for Windows, macOS and Linux: installers, packages, archives, and every earlier version.", body, "/download/")
+
+
+def build_privacy():
+    body = f"""<div class="narrow prose about">
+<p class="eyebrow">{icon("check")}Privacy</p>
+<h1>Privacy</h1>
+<p class="lede">Zeno collects nothing about you.</p>
+<h2>The compiler and its tools</h2>
+<p><code>zeno</code> sends nothing anywhere. It has no telemetry, no crash reports and no update checks. The only time it uses the network is when you ask it to: <code>zeno fetch</code> runs git to download the packages your <code>zeno.package</code> names, from the addresses written there.</p>
+<h2>The installers</h2>
+<p>The Windows setup program and <code>install.sh</code> download Zeno's files from GitHub, and offer to install a C compiler and git through your system's own package manager. They send nothing about you or your machine.</p>
+<h2>The playground and built pages</h2>
+<p>The playground runs your program in your browser. Nothing you write is sent to a server. A link made with “Copy link” holds the program in the part of the address after <code>#</code>, which browsers do not send to a server. A page made with <code>zeno build --web</code> uses the network only if its program calls <code>web.fetch</code> or <code>web.post</code>.</p>
+<h2>This website</h2>
+<p>zeno-lang.org is plain pages served by Cloudflare Pages. It sets no cookies and has no analytics or trackers. It loads its fonts from Google Fonts, and Cloudflare and Google may keep the usual server logs of requests, such as IP addresses. Your choice of light or dark is kept in your own browser.</p>
+<h2>Downloads</h2>
+<p>Files are downloaded from GitHub Releases, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</p>
+<p class="muted">Questions: open an issue on <a href="{GITHUB}/issues">GitHub</a>.</p>
+</div>"""
+    layout("/privacy/", "Privacy", "Zeno, its installers and this website collect nothing about you.", body)
+
+
 def build_404():
     body = f"""<div class="narrow lost">
 <p class="eyebrow">{icon("compass")}404</p>
@@ -783,6 +1000,8 @@ def main():
     build_about()
     build_book()
     build_playground()
+    build_download()
+    build_privacy()
     build_404()
     build_sitemap()
     print(f"wrote {len(PAGES)} pages")
