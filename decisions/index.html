@@ -40,12 +40,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 379 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 390 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -6862,7 +6862,8 @@ quantity has only one kind, so there is nothing to tell apart, and
 <code>3 V</code> is how a person writes three volts. A format gives the decimals
 when they are wanted: <code>f"{supply:.1f}"</code> is <code>3.0 V</code> (10.29).</p>
 <h3 id="138-found-and-left-for-later">13.8 Found and left for later</h3>
-<p>(Three more were on this list at first, and are in 13.9.)</p>
+<p>(Three more were on this list at first, and are in 13.9. The three
+below were taken up after the release: chapter 17.)</p>
 <ul>
 <li>For <code>let x: str = first([1])</code> the error is reported at the
   argument (<code>items</code> should be <code>list[str]</code>), not at <code>x</code>. A list that
@@ -7217,6 +7218,27 @@ change both files. It protects against everything less than that.</p>
   GitHub's Windows machines have no winget.</li>
 <li><code>zeno</code> does not update itself. The installer, run again, does.</li>
 </ul>
+<h3 id="1511-an-earlier-release-gets-installers-added-and-nothing-in-it-changed">15.11 An earlier release gets installers added, and nothing in it changed</h3>
+<p>Zeno 0.1.0 was released before the installers. A workflow,
+<code>add-installers.yml</code>, makes them for it from the files of that
+release: the setup program from the three <code>zeno.exe</code> that were
+released, and <code>install.sh</code> with <code>version=0.1.0</code> in it. It adds the two
+files to the release, and two lines to the list of checksums.</p>
+<p><strong>Why.</strong> Somebody who has an archive of 0.1.0 and its checksum must
+find the same file and the same checksum there tomorrow. So a release
+is added to and never changed. Making the installers from the released
+files, and not from the source of that day, means there is one
+<code>zeno 0.1.0</code> and not two that should be the same.</p>
+<p><strong>Turned down.</strong> <em>A 0.1.1 that differs only by having installers</em>: a
+new version says that Zeno changed, and it did not. <em>Building 0.1.0
+again from its tag</em>: a second build is not the first one byte for
+byte, so the setup program would install a <code>zeno</code> that nobody checked.
+<em>Leaving 0.1.0 as it was</em>: it is the only release there is until 0.2.0
+is published.</p>
+<p>The installers are today's, so they had to allow for what 0.1.0 lacks:
+no <code>zeno.wasm</code>, and a <code>zeno build</code> that knows only <code>cc</code> (15.5). The
+setup program leaves the first out and says the second in the box that
+offers a compiler.</p>
 <h2 id="16-a-page-that-does-more">16. A page that does more</h2>
 <p>Chapter 14 made the least that is a page. Its last section (14.14)
 listed what a real front end would miss: where the mouse is, the
@@ -7464,7 +7486,7 @@ button for a program that never returns (it needs a Worker, and a
 program in a Worker cannot reach the page).</p>
 <h3 id="1613-left-for-later">16.13 Left for later</h3>
 <ul>
-<li>JSON read into values, which <code>fetch</code> wants.</li>
+<li>JSON read into values, which <code>fetch</code> wants (done since: chapter 18).</li>
 <li>A timer that can be stopped, and an event with the keys held
   down and the button of the mouse (16.6, 16.2).</li>
 <li>Images and curves on a canvas.</li>
@@ -7472,6 +7494,156 @@ program in a Worker cannot reach the page).</p>
   walks through.</li>
 <li>Other browsers. Only Chromium has run any of this.</li>
 <li>A compiled page, small and fast (14.1). It is still the big one.</li>
+</ul>
+<h2 id="17-what-01-left-taken-up">17. What 0.1 left, taken up</h2>
+<p>13.8 and the last list of <a href="/docs/version-0.1/"><code>version-0.1.md</code></a> named
+things that were found and left. This chapter is the ones that have
+been taken up since, each with what was done and why, and one that
+was looked at and left as it is.</p>
+<h3 id="171-a-written-list-says-what-it-holds-when-the-place-could-never-agree">17.1 A written list says what it holds, when the place could never agree</h3>
+<p><code>let x: str = first([1])</code> used to say that <code>items</code> of <code>first[str]</code>
+should be <code>list[str]</code>, at the argument. Now it says "<code>x</code> should be
+str, but this is int", at <code>x</code>.</p>
+<p>The rule of 3.16b stays: a list that is written out waits for the
+place the result goes, so that <code>let b: list[u8] = twice([1, 2])</code> is
+a list of bytes. What changed is that the place is listened to only
+if the written values could be what it asks for. A written number
+can be an int, a float, a sized number or a quantity. It can never
+be a str. Where it never can, the list is what it looks like, and
+the mismatch is reported where it really is: an int is being put
+into a str.</p>
+<p><strong>Why.</strong> The old message was true and in the wrong order (13.8). It
+named a type, <code>first[str]</code>, that the reader never wrote, and pointed
+at the half of the line that was right.</p>
+<h3 id="172-box-outside-strict-mode-stays-of-unknown-type">17.2 <code>Box([])</code> outside strict mode stays of unknown type</h3>
+<p><code>let b = Box([])</code>, with <code>class Box[T] { items: list[T] }</code>, gives a
+<code>Box</code> whose <code>T</code> nothing says. In strict mode that is an error that
+asks for the type. Outside it, <code>T</code> is unknown, and no message is
+given. 13.8 called that "without a word" and left it open. It is
+now settled as it is.</p>
+<p><strong>Why.</strong> It is the rule of 0.2 (types are optional) and nothing
+else. <code>let xs = []</code> is a list of unknown type outside strict mode
+and an error in it, and <code>Box([])</code> is the same list with a class
+around it. A message for the one and not the other would be a rule
+with an exception, and a message for both would end optional types
+for the commonest line in a first program.</p>
+<h3 id="173-min-and-max-take-quantities-in-one-unit-sum-does-not">17.3 <code>min</code> and <code>max</code> take quantities in one unit. <code>sum</code> does not</h3>
+<p><code>max(3 V, 2 V)</code> is <code>3 V</code>, and <code>min(readings)</code> of a <code>list[V]</code> is in
+volts, in every engine. Quantities in two units are refused, with
+the conversion to write (<code>x.V</code>), and so is a quantity beside a plain
+number.</p>
+<p><strong>Why now.</strong> 13.6 refused them with a message that said to compare
+with <code>&lt;</code>. That was honest and it was a loop to write for something
+every list of readings wants.</p>
+<p><strong>Why one unit.</strong> <code>min</code> gives back one of the values it was given,
+as it is. <code>min(3 V, 200 mV)</code> would be <code>200 mV</code>, and <code>min(1 V, 2000
+mV)</code> would be <code>1 V</code>: the unit of the answer would depend on the
+numbers, and the checker has to know the unit before the program
+runs (1.15). With one unit going in, one unit comes out.</p>
+<p><strong>Why not <code>sum</code>.</strong> The sum of no volts is <code>0 V</code>. A list that is
+running does not know its unit when it is empty: the unit is in the
+values. <code>zeno run</code> would print <code>0</code> where the compiled program, which
+knows the type, prints <code>0 V</code>, and the two must print the same
+(5.19). So <code>sum</code> still refuses, and its message now gives the three
+lines to write: start from <code>var total = 0 V</code>, and add each in a
+loop. <code>min</code> and <code>max</code> have no such case, because the least of
+nothing is an error already.</p>
+<h3 id="174-resting-the-mouse-on-a-field-says-its-type">17.4 Resting the mouse on a field says its type</h3>
+<p>In an editor, the <code>x</code> of <code>p.x</code> answers <code>x: int</code>, and a method what
+it takes and returns. <code>ExprKind::Field</code> now keeps where the name
+after the dot is written (<code>at</code>), and the checker notes each one it
+reads with its type.</p>
+<p><strong>Why only the type, and not where it was declared.</strong> A use of a
+variable points back to its declaration through a number the
+checker gives each one (9.11). A field has no such number and
+<code>ast::Field</code> has no place. Giving it one is a change to the tree
+that every stage reads, for a question ("where is <code>x</code> declared?")
+whose answer is nearly always "in the class two screens up", which
+"go to declaration" on the class already finds.</p>
+<h3 id="175-zeno-test-only-text-chooses-tests-by-their-name">17.5 <code>zeno test --only "text"</code> chooses tests by their name</h3>
+<p>It runs the tests whose name has the text in it, exactly as
+written, and passes over the rest. The file itself runs whole
+first, as always.</p>
+<p><strong>Why text in the name, and not a pattern.</strong> A test's name is a
+sentence (10.16), so a word or two of it is how anyone would point
+at it. A pattern language is a second thing to learn for a tool
+that is used in a hurry.</p>
+<p><strong>Why the capitals count.</strong> "The same text" has one meaning.
+"The same, give or take capitals" has one for English and several
+for other languages (3.14 is the same choice for <code>upper</code>).</p>
+<p><strong>Why the program still runs whole.</strong> Tests use what the file
+declares and what its top level did (10.19). Running less would
+make a test pass alone and fail in company, or the other way.</p>
+<h2 id="18-json">18. JSON</h2>
+<p>A page that can ask the network (16.8) gets text back, and nearly
+always the text is JSON. 16.13 left reading it for later, and this
+is that. <a href="/docs/json/"><code>json.md</code></a> is the walkthrough.</p>
+<h3 id="181-jsonparse-gives-a-value-whose-type-is-known-when-the-program-runs">18.1 <code>json.parse</code> gives a value whose type is known when the program runs</h3>
+<p><code>json.parse(text)</code> gives dicts, lists, text, numbers, bools and
+<code>none</code>, as the text has them. The checker treats the result as it
+treats a variable with no type written: anything may be asked of
+it, and a mistake is found when the line runs. Strict mode and
+<code>zeno build</code> refuse it, with the message they have for any value of
+unknown type.</p>
+<p><strong>Why.</strong> What the text holds is not known until it arrives. A
+language has two honest answers to that. One is a type for "some
+JSON" with a way to ask what each part is. The other is a value
+whose type is found out at run time. Zeno has the second already:
+it is what a type left out means (0.2), and every program a
+beginner writes uses it. Using it here adds nothing to learn.</p>
+<p><strong>The cost.</strong> JSON is out of firmware builds. A board does not
+parse JSON from a server, and the day one must, the answer is
+reading into a class (18.5), which has types.</p>
+<p><strong>Turned down.</strong> A <code>Json</code> enum with a case for each kind
+(<code>Text(str)</code>, <code>Number(float)</code>, <code>List(...)</code>): right for a language
+with only static types, and four lines of <code>match</code> to read one
+price.</p>
+<h3 id="182-jsonwrite-writes-an-object-field-by-field">18.2 <code>json.write</code> writes an object field by field</h3>
+<p><code>json.write(order)</code> writes <code>{"who": ..., "lines": [...]}</code>: each
+field by its name, in the order the class declares them. It also
+takes what <code>parse</code> gives. A dict's keys are written as text.</p>
+<p><strong>Why objects.</strong> A JSON object nearly always has values of several
+types under its names: a name, a count, a list. A dict written in a
+Zeno program cannot, because its values have one type (6.31,
+10.11), and that rule is right for dicts. The thing in Zeno that
+has named parts of different types is an object. So a program says
+what it sends by declaring a class, and the checker holds every
+value to it before anything is sent.</p>
+<p><strong>Why an int key becomes text.</strong> JSON's keys are text. The other
+choice is to refuse, and then a dict that counts by number cannot
+be written at all without being rebuilt by hand.</p>
+<p><strong>Why a quantity is refused.</strong> <code>3.3 V</code> would be written <code>3.3</code>, and
+whoever reads it has to guess the unit. Dropping a unit silently is
+what quantities exist to stop (1.15). The message says to write the
+number and put the unit in the name.</p>
+<h3 id="183-a-number-with-nothing-after-the-point-is-an-int">18.3 A number with nothing after the point is an int</h3>
+<p><code>12</code> and <code>12.0</code> both give an int. <code>12.5</code> gives a float.</p>
+<p><strong>Why.</strong> JSON has one kind of number, and what writes it often
+does not keep the difference: a price of two is <code>2</code> from one server
+and <code>2.0</code> from another, and <code>2</code> from JavaScript always. If the
+<code>.0</code> decided the type, the same program would get an int on Monday
+and a float on Tuesday from the same server. Deciding by the value
+is at least the same every day. A program that wants a float says
+<code>float(...)</code>, which takes either.</p>
+<p><strong>The cost.</strong> <code>json.write(json.parse("2.0"))</code> is <code>2</code>.</p>
+<h3 id="184-a-member-that-is-null-is-left-out-of-the-dict">18.4 A member that is <code>null</code> is left out of the dict</h3>
+<p><code>{"note": null}</code> gives a dict with no <code>note</code>.</p>
+<p><strong>Why.</strong> A dict holds no <code>none</code> (10.11): <code>get</code> gives <code>none</code> for a
+key that is not there, and one way to say "nothing here" is the
+rule. JSON has two (the member is missing, or it is <code>null</code>), and
+programs that write JSON use them for the same thing. With the
+member left out, <code>data.get("note")</code> is <code>none</code> either way, and
+<code>data["note"]</code> is a <code>KeyError</code> either way.</p>
+<p><strong>The cost.</strong> A text that is read and written again loses its
+<code>null</code> members. In a list, where position matters, <code>null</code> stays as
+<code>none</code>.</p>
+<h3 id="185-left-for-later">18.5 Left for later</h3>
+<ul>
+<li>Reading into a class: <code>json.read(text, Order)</code>, with each field
+  checked as it is read. It would give JSON to strict mode and to
+  compiled programs.</li>
+<li>The place of a mistake in the text.</li>
+<li>JSON laid out over several lines.</li>
 </ul>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
