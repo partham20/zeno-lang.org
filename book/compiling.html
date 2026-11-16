@@ -454,8 +454,10 @@ error: `zeno build` cannot compile a function inside a function or block yet. `z
 <p>A function written with no name,
 <code>let inner = function() { ... }</code>, does compile. <a
 href="limits.html#app-limits">Appendix G</a> has the full list.</p>
-<h3 class="unnumbered" id="in-another-language"><span
-class="number">28.9</span> In another language</h3>
+<h3 class="unnumbered" id="in-another-language-new-in-0.5"><span
+class="number">28.9</span> In another language (new in 0.5)</h3>
+<p><em>This is in Zeno 0.5, which is on its way and not yet released. In
+0.4.0, <code>zeno build</code> writes C and LLVM IR only.</em></p>
 <p><code>zeno build --target</code> writes the program in another
 language: a file you can read, keep, and run with that language’s own
 tools. The languages are <code>js</code> (JavaScript, for Node),
