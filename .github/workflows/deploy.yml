@@ -35,6 +35,15 @@ jobs:
           api /accounts | jq -r '.result[] | "  \(.name) matches_secret=\(.id == env.ACCOUNT)"'
           echo "pages projects under the secret's account:"
           api "/accounts/$ACCOUNT/pages/projects" | jq -r 'if .success then (.result[] | "  " + .name) else "  error: " + (.errors[0].message) end'
+          # Whether this token could also set up mail for the domain
+          # (Email Routing). It prints no address.
+          zone=$(api "/zones?name=zeno-lang.org" | jq -r '.result[0].id // empty')
+          if [ -n "$zone" ]; then
+            echo "email routing: $(api "/zones/$zone/email/routing" | jq -r 'if .success then "enabled=\(.result.enabled) status=\(.result.status)" else "this token cannot read it: " + (.errors[0].message) end')"
+            echo "email routing rules: $(api "/zones/$zone/email/routing/rules" | jq -r 'if .success then "\(.result | length) rule(s)" else "this token cannot read them: " + (.errors[0].message) end')"
+          else
+            echo "email routing: this token cannot see the zone zeno-lang.org"
+          fi
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

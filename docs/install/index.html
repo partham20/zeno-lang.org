@@ -63,7 +63,7 @@ build</code> wanted a C compiler. Each step is small, and each is a place to
 give up.</p>
 <p>So there are two installers that do all of it.</p>
 <p><strong>On Windows</strong>, a setup program, as Python has:</p>
-<pre><code>zeno-0.2.0-windows-setup.exe</code></pre>
+<pre><code>zeno-0.5.1-windows-setup.exe</code></pre>
 <p>Run it and press Next. It is the same file for every Windows machine.</p>
 <p><strong>On macOS and Linux</strong>, one line in a terminal, as Rust has:</p>
 <pre><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh</code></pre>
@@ -173,8 +173,8 @@ text, so that every folder in it reads <code>;folder;</code>, and cuts out the
 one that matches. Setup then tells the programs that are running that
 the environment has changed, which is why a terminal opened after it
 finds <code>zeno</code> and one that was already open does not.</p>
-<pre><code>tools\installer\build.cmd 0.2.0 files       makes zeno-0.2.0-windows-setup.exe
-pwsh tools\installer\try.ps1 zeno-0.2.0-windows-setup.exe</code></pre>
+<pre><code>tools\installer\build.cmd 0.5.1 files       makes zeno-0.5.1-windows-setup.exe
+pwsh tools\installer\try.ps1 zeno-0.5.1-windows-setup.exe</code></pre>
 <p><code>try.ps1</code> installs without showing a window, checks that <code>zeno</code> is
 there, runs and is on the PATH, that it builds a page, that installing
 twice leaves the PATH with one entry, and that uninstalling leaves
@@ -186,10 +186,10 @@ releasing it.</p>
 file of every release, and <code>sh</code> runs it. It is a shell script of about
 three hundred lines, half of them comments, written for the plainest
 shell there is, and it is meant to be read before it is trusted.</p>
-<pre><code class="zeno">Zeno 0.2.0 for macos on arm64
-  from https://github.com/partham20/zeno-lang/releases/download/v0.2.0
+<pre><code class="zeno">Zeno 0.5.1 for macos on arm64
+  from https://github.com/partham20/zeno-lang/releases/download/v0.5.1
   the download is whole
-  installed zeno 0.2.0 in /Users/partha/.zeno
+  installed zeno 0.5.1 in /Users/partha/.zeno
   added it to the PATH, in /Users/partha/.zshrc
 
 Zeno is installed. Open a new terminal, so that it is on the PATH, and try it:
@@ -244,8 +244,9 @@ ten builds, <code>windows-setup</code>, that takes the three Windows builds,
 makes the setup program, and tries it. The Linux and macOS builds that
 run on their own processor run <code>try-install.sh</code>. If either fails,
 there is no release.</p>
-<p>A release then has twelve files and their checksums: the ten archives,
-<code>zeno-0.2.0-windows-setup.exe</code> and <code>install.sh</code>.</p>
+<p>A release then has the ten archives, <code>zeno-0.5.1-windows-setup.exe</code>,
+<code>install.sh</code> and their checksums, and with them the ten packages of
+<a href="/docs/packages/"><code>packages.md</code></a>.</p>
 <p><code>.github/workflows/installer.yml</code> tries the installers on one machine
 without a release, and keeps the setup program it made for a week, to
 download and run by hand.</p>
