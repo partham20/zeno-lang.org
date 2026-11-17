@@ -471,7 +471,7 @@ zeno build --fast --owned main.zeno # as fast as C, no collector</code></pre></f
   <div class="lesson-code"></div>
 </section><section class="lesson wide" id="targets">
   <div class="lesson-text"><div class="lesson-head"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg>Step 25 of 25</div><h2>Other languages</h2>
-<p><code>zeno build --target</code> writes your program in another language: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++ or Rust, a web page, or a WebAssembly file. The file needs nothing else, and it prints what <code>zeno run</code> prints, down to the same error on the same line.</p>
+<p><code>zeno build --target</code> writes your program in another language: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++ or Rust, a web page, or a WebAssembly file. The file needs nothing else, and it prints what <code>zeno run</code> prints, down to the same error on the same line. Lua, Ruby, Dart and Kotlin come with the next release.</p>
 <figure class="window shell"><figcaption><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="2.5"/><path d="M7 10l3 2.5L7 15M12.5 15.5H17"/></svg><span class="file">Terminal</span></figcaption>
 <pre><code>zeno build --target py main.zeno    # writes main.py
 python3 main.py

@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Starting another program · Zeno</title>
+<meta name="description" content="A computer is full of programs that already do one thing well: git keeps versions, ffmpeg turns one kind of video into another, a C compiler compiles. A program that needs one of those things done does not do it again. It starts the program that…">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="Starting another program · Zeno">
+<meta property="og:description" content="A computer is full of programs that already do one thing well: git keeps versions, ffmpeg turns one kind of video into another, a C compiler compiles. A program that needs one of those things done does not do it again. It starts the program that…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/running-programs/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Starting another program · Zeno">
+<meta name="twitter:description" content="A computer is full of programs that already do one thing well: git keeps versions, ffmpeg turns one kind of video into another, a C compiler compiles. A program that needs one of those things done does not do it again. It starts the program that…">
+<meta name="twitter:image" content="https://zeno-lang.org/og/home.png">
+<meta name="twitter:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/running-programs/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/benchmarks/">Benchmarks</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/memory-modes/">Choosing how memory is freed</a><a href="/docs/running-programs/" aria-current="page">Starting another program</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Starting another program</h1>
+  <p class="soon-note"><span class="soon">Coming next</span><code>program.run</code> is on <a href="https://github.com/zeno-src/zeno-lang">main</a> and not in a release yet: build Zeno from source to try it, or wait for the release after 0.5.1.</p>
+  <p>A computer is full of programs that already do one thing well: <code>git</code>
+keeps versions, <code>ffmpeg</code> turns one kind of video into another, a C
+compiler compiles. A program that needs one of those things done does
+not do it again. It starts the program that can, and waits.</p>
+<pre><code class="zeno">import program
+
+let ended = program.run("git", ["status", "--short"])
+print(f"git ended with {ended}")</code></pre>
+<pre><code> M docs/decisions.md
+?? examples/download.zeno
+git ended with 0</code></pre>
+<p>That is the whole of it: one function, in the module that already had
+<code>program.arguments()</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Gives</th>
+<th>Can fail with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>program.run(name, words)</code></td>
+<td>the <code>int</code> the program ended with</td>
+<td><code>FileError</code></td>
+</tr>
+</tbody>
+</table>
+<p>The decisions behind it are 25.1 to 25.7 in
+<a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-run-does">What <code>run</code> does</h2>
+<ol>
+<li>It looks for a program called <code>name</code> where the system looks for
+   programs: the folders of <code>PATH</code>. A name with a <code>/</code> in it is a path,
+   and is used as it is. On Windows <code>yt-dlp</code> finds <code>yt-dlp.exe</code>.</li>
+<li>It starts the program with <code>words</code> as the words after its name.</li>
+<li>It waits until the program ends. While it runs, the program uses
+   this program's screen and keyboard, so what it prints appears among
+   this program's lines, in the order things happened.</li>
+<li>It gives the number the program ended with. 0 means that all went
+   well; what any other number means is for the other program to say.</li>
+</ol>
+<h2 id="the-words-are-a-list">The words are a list</h2>
+<pre><code class="zeno">program.run("yt-dlp", ["--paths", "my videos", address])</code></pre>
+<p>Each item is one word for the other program, whatever is in it. <code>my
+videos</code> has a blank in it and is still one word, because it is one
+item. Nothing reads the words on the way: no shell is started, so a
+<code>*</code>, a <code>$</code>, a <code>;</code> or a quote in an item means nothing but itself.</p>
+<p>This matters most when a word comes from outside the program, as an
+address does. In languages where the command is one line of text
+handed to a shell, an address that ends in <code>; rm -rf ~</code> is two
+commands. In Zeno it is one odd address, which the other program will
+refuse (25.3).</p>
+<p>A program that wants a shell's pipes and stars starts a shell, and the
+line shows it:</p>
+<pre><code class="zeno">program.run("sh", ["-c", "ls *.zeno | wc -l"])</code></pre>
+<p>A Zeno program that is started this way gets the list back, item for
+item, from its own <code>program.arguments()</code>.</p>
+<h2 id="when-it-cannot-be-started">When it cannot be started</h2>
+<pre><code class="zeno">try {
+    program.run("yt-dlp", ["--version"])
+} except FileError as error {
+    print(error.message)        # there is no program `yt-dlp` to run
+}</code></pre>
+<p>That a program is installed cannot be known before it is started, so
+<code>run</code> raises a <code>FileError</code>, the error the <code>files</code> module raises for a
+file that is not there. A function that calls <code>run</code> catches it or says
+<code>raises FileError</code>, and <code>zeno check --strict</code> holds it to that.</p>
+<p>A program that started and then ended with 3 is not an error. It ran,
+and 3 is its answer.</p>
+<h2 id="the-example">The example</h2>
+<p><a href="/examples/download/"><code>examples/download.zeno</code></a> saves a video
+from YouTube in a folder. It is for videos you have the right to keep,
+and its first lines say so.</p>
+<pre><code>zeno run examples/download.zeno https://youtu.be/VIDEO videos</code></pre>
+<p>Zeno does not fetch the video. The program checks that the address is
+one of YouTube's, puts together the words for
+<a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a>, starts it, and says in
+plain words how it went:</p>
+<pre><code class="zeno">try {
+    let ended = program.run("yt-dlp", words_for(address, folder, audio_only))
+    if ended == 0 and folder == "." {
+        print("Saved in this folder.")
+    } else if ended == 0 {
+        print(f"Saved in `{folder}`.")
+    } else {
+        print(f"yt-dlp could not save it, and ended with {ended}. What went wrong is in its lines above.")
+    }
+} except FileError {
+    print("yt-dlp is not installed, or is not where programs are looked for.")
+    print("Get it with `pip install yt-dlp`, or from https://github.com/yt-dlp/yt-dlp")
+}</code></pre>
+<p>Three things can happen, and each has its line: the program is not
+there, it ran and failed, it ran and worked.</p>
+<h2 id="where-it-works">Where it works</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>zeno run</code>, <code>zeno run --vm</code>, <code>zeno test</code></td>
+<td>yes</td>
+</tr>
+<tr>
+<td><code>zeno build</code>, <code>zeno build --llvm</code></td>
+<td>not yet: the build says so and names the line</td>
+</tr>
+<tr>
+<td><code>zeno build --target ...</code></td>
+<td>not yet, the same way</td>
+</tr>
+<tr>
+<td><code>zeno build --firmware</code></td>
+<td>never: a board has no other programs</td>
+</tr>
+<tr>
+<td>In a page</td>
+<td>a <code>FileError</code>: a browser starts no programs</td>
+</tr>
+</tbody>
+</table>
+<h2 id="how-it-is-built">How it is built</h2>
+<p>One function in <code>builtins.rs</code>, <code>program_run</code>, which both engines call.
+It hands the name and the words to Rust's <code>std::process::Command</code>,
+which starts the program without a shell on every system, and on
+Windows joins the words into the one line Windows wants, quoted by
+Windows' rules.</p>
+<p>Just before, it pushes out whatever this program has printed, so that
+the other program's lines come after it and not before.</p>
+<p>The checker's part is <code>"program.run"</code> in <code>builtin</code>: a <code>str</code>, a
+<code>list[str]</code>, an <code>int</code> back, and <code>can_raise("FileError")</code>.</p>
+<p><code>emit_c.rs</code> and <code>emit_llvm.rs</code> each have one arm that refuses, and
+<code>lower.rs</code> has <code>no_target_has</code>, which refuses for every target at
+once.</p>
+<p>The tests are in <code>interpreter.rs</code>
+(<code>another_program_is_run_with_the_words_as_they_are</code>, which has <code>sh</code>
+write each word it was given into a file, among them <code>two words</code>,
+<code>a"b</code>, <code>$HOME</code>, <code>*</code> and an empty one; and
+<code>a_program_that_is_not_there_is_a_file_error</code>), in <code>checker.rs</code>, and
+one in each of <code>emit_c.rs</code>, <code>emit_llvm.rs</code> and <code>lower.rs</code> for the
+refusals. Every one that runs a program runs it in both engines.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>
+<p>Run <code>zeno run examples/download.zeno</code> with no words, then with an
+   address that is not YouTube's. Which lines of the program decide
+   each answer?</p>
+</li>
+<li>
+<p>Write <code>today.zeno</code>, which runs <code>date</code> (or <code>cmd</code> with <code>["/C",
+   "date", "/T"]</code> on Windows) and prints the number it ended with.
+   Then misspell the name of the program and read the message.</p>
+</li>
+<li>
+<p>Write a program that prints its <code>program.arguments()</code>, and a second
+   that starts the first with <code>program.run("zeno", ["run",
+   "first.zeno", "two words", "*"])</code>. How many arguments does the
+   first one see?</p>
+</li>
+<li>
+<p><code>program.run("ls", ["*.zeno"])</code> says there is no such file, and
+   <code>program.run("sh", ["-c", "ls *.zeno"])</code> lists them. Who turns <code>*</code>
+   into names?</p>
+</li>
+<li>
+<p>In <code>download.zeno</code>, add a third word, <code>--small</code>, that asks yt-dlp
+   for a picture no taller than 480 lines (<code>--format-sort</code> and then
+   <code>res:480</code>). Where do the words go in <code>words_for</code>, and why must
+   they be two items and not one?</p>
+</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/running-programs.md">docs/running-programs.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/memory-modes/"><span>Previous</span>Choosing how memory is freed</a><a class="next" href="/docs/stores/"><span>Next</span>Stores: where each package manager looks for Zeno</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-run-does">What run does</a></li><li><a href="#the-words-are-a-list">The words are a list</a></li><li><a href="#when-it-cannot-be-started">When it cannot be started</a></li><li><a href="#the-example">The example</a></li><li><a href="#where-it-works">Where it works</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

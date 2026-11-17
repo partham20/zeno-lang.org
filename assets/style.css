@@ -718,6 +718,7 @@ main:not(.home) { padding-bottom: 4rem; }
 .target-grid li { display: grid; gap: 0.2rem; padding: 0.9rem 1rem; border: 1px solid var(--rule); border-radius: 0.75rem; background: var(--sheet); transition: border-color 0.2s, transform 0.2s var(--ease); }
 .target-grid li:hover { border-color: var(--cobalt); transform: translateY(-2px); }
 .target-grid b { font-size: 1rem; }
+.target-grid i { font: 600 0.68rem/1 var(--sans); letter-spacing: 0.04em; text-transform: uppercase; color: var(--cobalt-text); border: 1px solid var(--rule); border-radius: 999px; padding: 0.2rem 0.45rem; margin-left: 0.5rem; vertical-align: 0.15em; white-space: nowrap; }
 .target-grid code { color: var(--cobalt-text); font-size: 0.85rem; justify-self: start; }
 .target-grid span { color: var(--slate); font: 0.8rem var(--mono); }
 @media (max-width: 58rem) { .targets-row { grid-template-columns: minmax(0, 1fr); } .target-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

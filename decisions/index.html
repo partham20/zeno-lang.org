@@ -52,12 +52,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li><li><a href="#24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li><li><a href="#24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</a></li><li><a href="#25-starting-another-program">25. Starting another program</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 475 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 487 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -9264,6 +9264,312 @@ crates beside itself, so there is little for it to join; it took a
 minute to build and was not timed). Leaving
 it, as within the noise of this machine: it was the same direction on
 all six programs, four rounds running.</p>
+<h3 id="2430-lua-its-own-ints-a-none-of-its-own-try-as-a-coroutine">24.30 Lua: its own ints, a <code>none</code> of its own, <code>try</code> as a coroutine</h3>
+<p><code>zeno build --target lua</code> writes a <code>.lua</code> file that <code>lua</code> runs (5.4),
+with <code>src/runtime.lua</code> at its top. The target's name is the
+language's, in full, as <code>rust</code> is: <code>lua</code>, <code>ruby</code>, <code>dart</code> and <code>kotlin</code>
+are short already, and <code>rb</code> or <code>kt</code> would have to be learnt.</p>
+<ul>
+<li><strong>An int is a Lua integer, a float a Lua float.</strong> Lua 5.4 keeps the
+  two apart and its integer has 64 bits. Its <code>+</code>, <code>-</code> and <code>*</code> wrap
+  around when the answer does not fit; the runtime looks for that
+  (the signs of the two sides and of the answer) and raises
+  <code>OverflowError</code>. That is why it is 5.4 and not LuaJIT or 5.1, where
+  every number is a float.</li>
+<li><strong><code>none</code> is <code>Z.none</code>, not <code>nil</code>.</strong> A Lua table cannot hold <code>nil</code>:
+  <code>{1, nil, 3}</code> has a hole and no certain length. A Zeno list can
+  hold <code>none</code>, and a dict can have it as a value. So <code>none</code> is one
+  value the runtime makes, and <code>nil</code> never reaches the program.</li>
+<li><strong>A list is a table from 1, a dict a table of keys in order and a
+  table of values.</strong> Lua's own table forgets the order keys were
+  added in, and Zeno's dict keeps it.</li>
+<li><strong><code>try</code> is a function handed to <code>Z.try</code>.</strong> Lua has no <code>try</code>; it has
+  <code>pcall</code>, which calls a function and says whether it failed. A
+  <code>return</code>, <code>break</code> or <code>continue</code> inside that function cannot leave
+  what is around it, so the function gives back how it ended (1, 2, or
+  3 and a value) and the lines after the call do it, as in Go (24.13).</li>
+<li><strong>The body runs as a coroutine.</strong> <code>pcall</code> may be inside itself about
+  190 times and then Lua stops with "C stack overflow". A Zeno program
+  may be 999 calls deep with a <code>try</code> in each (24.15). So <code>Z.try</code> does
+  not call the body: it hands it to the loop in <code>Z.start</code>, which runs
+  it as a coroutine of its own while the one that asked waits. However
+  many <code>try</code>s are inside one another, Lua sees one <code>pcall</code>.</li>
+<li><strong><code>continue</code> is <code>goto</code>.</strong> Lua has <code>goto</code> and no <code>continue</code>; the
+  label is at the end of the loop's body.</li>
+<li><strong>Past 100 variables, a block keeps its own in a table.</strong> A Lua
+  function may have 200 <code>local</code>s, and what an expression is worked out
+  in counts toward a limit of 255. A program is one function, and a
+  generated one can pass that.</li>
+<li><strong>Time.</strong> Lua has <code>os.time</code>, in whole seconds, and no <code>sleep</code>. If
+  LuaSocket is there the runtime uses it. If not, <code>time.now()</code> is
+  <code>os.clock</code>, the time the processor worked, and <code>sleep</code> counts it.
+  A wait that keeps the processor busy is a poor wait; the other
+  choices were to stop the program with a message (then a program
+  that sleeps cannot be written in Lua at all) or to start <code>sleep</code>,
+  the program of the system, for each wait (not there on Windows, and
+  slow).</li>
+</ul>
+<p><strong>Alternatives rejected.</strong> <code>nil</code> for <code>none</code>, with a list that keeps
+its own length (every step that reads a list would have to know).
+<code>pcall</code> as it is, with the limit of 190 written down (a limit <code>zeno
+run</code> does not have). A <code>repeat ... until true</code> around a loop's body
+for <code>continue</code> (a <code>break</code> inside it then means <code>continue</code>, and the
+real <code>break</code> needs a flag).</p>
+<h3 id="2431-ruby-lambdas-loops-that-are-blocks-and-room-for-calls">24.31 Ruby: lambdas, loops that are blocks, and room for calls</h3>
+<p><code>zeno build --target ruby</code> writes a <code>.rb</code> file that <code>ruby</code> runs (3.0
+or newer, no gem), with <code>src/runtime.rb</code> at its top.</p>
+<ul>
+<li><strong>A Zeno function is a lambda</strong>, <code>-&gt;(r) { ... }</code>. Ruby has three
+  things like a function. A <code>def</code> does not see the variables around
+  it, and a Zeno function does. A <code>proc</code> takes any number of arguments
+  and its <code>return</code> leaves the method around it. A lambda takes the
+  arguments it names and its <code>return</code> leaves the lambda.</li>
+<li><strong>An int is a Ruby Integer.</strong> It grows without end, so each step
+  looks whether the answer still fits in 64 bits, as the Python
+  runtime does.</li>
+<li><strong><code>for</code> is a block</strong>: <code>Z.each(xs, line) do |x| ... end</code>. A block's
+  parameter is a new variable each round, so the functions made in
+  three rounds see three values. Ruby's own <code>for x in xs</code> has one <code>x</code>
+  for all rounds.</li>
+<li><strong><code>while</code> is Ruby's <code>while</code>, unless its body declares a variable an
+  inner function uses.</strong> A variable first set inside a Ruby <code>while</code>
+  belongs to what is around the loop: one for all rounds. So such a
+  loop is written <code>Z.loop do ... break unless cond ... end</code>, a block,
+  whose variables are new each round. Only such a loop, because a
+  block costs a call each round and most loops make no function.</li>
+<li><strong>A name that begins with a capital gets <code>z_</code> before it.</strong> In Ruby
+  that is a constant: it cannot be set inside a function, and setting
+  it twice is a warning. <code>Total</code> becomes <code>z_Total</code>. This is done in
+  the Ruby printer and not in the shared list of names, since no other
+  target minds.</li>
+<li><strong><code>#</code> in a text is written <code>\#</code>.</strong> <code>"#{x}"</code> in Ruby fills in <code>x</code>.</li>
+<li><strong>The program starts itself once more.</strong> Ruby gives a program one
+  megabyte for calls inside one another, and 999 Zeno calls, each
+  some Ruby calls, can pass it. How much there is, is decided before
+  Ruby starts (<code>RUBY_THREAD_VM_STACK_SIZE</code>), so the runtime starts the
+  same file again asking for 64 megabytes. If that cannot be done, the
+  program runs with what it has.</li>
+</ul>
+<p><strong>Alternatives rejected.</strong> Cells, as in Python (Ruby's blocks already
+do it). Every <code>while</code> as a block (slower for nothing). Running the
+program in a <code>Thread</code> with a bigger stack (a thread's stack size
+cannot be set in Ruby). Telling the reader to set the variable (the
+file must run by <code>ruby hello.rb</code> and nothing more).</p>
+<h3 id="2432-dart-object-one-list-of-arguments-and-the-vm-only">24.32 Dart: <code>Object?</code>, one list of arguments, and the VM only</h3>
+<p><code>zeno build --target dart</code> writes a <code>.dart</code> file that <code>dart run</code> runs
+(Dart 3 or newer), with <code>src/runtime.dart</code> at its top.</p>
+<ul>
+<li><strong>Every value is an <code>Object?</code>.</strong> Dart checks types before the
+  program runs, and what a Zeno value is, is found out while it runs
+  (24.2). <code>Object?</code> is Dart's <code>any</code>: <code>dynamic</code> would let a wrong call
+  through to fail with Dart's message, and with <code>Object?</code> every use
+  goes through the runtime, which gives Zeno's.</li>
+<li><strong>A function takes one list.</strong> <code>(List&lt;Object?&gt; z_a) { Object? r =
+  z_a[0]; ... }</code>. All functions then have one type, and a call with
+  names, defaults or a wrong count is lined up by the runtime, as in
+  Go, Java and C#.</li>
+<li><strong>For the Dart VM only.</strong> There an <code>int</code> has 64 bits and wraps, and
+  the runtime sees the overflow. Compiled to JavaScript for a page, a
+  Dart <code>int</code> is a JavaScript number, and the checks would be wrong.
+  <code>--target html</code> is the target for a page.</li>
+<li><strong><code>$</code> in a text is written <code>\$</code>.</strong> <code>"$x"</code> in Dart fills in <code>x</code>.</li>
+<li><strong><code>log10</code> is worked out as the C library does it.</strong> Dart has <code>log</code>
+  and no <code>log10</code>, and <code>log(x) / ln10</code> is one digit off for some
+  inputs (<code>log10(1000)</code> gives <code>2.9999999999999996</code>). The runtime does
+  the steps of the C library's <code>log10</code>, so it prints what <code>zeno run</code>
+  prints.</li>
+<li><strong>Printing waits.</strong> Dart's <code>stdout.write</code> hands the text to be
+  written later, and a program that stops with an error could lose
+  its last lines. The runtime writes the bytes itself and waits for
+  them.</li>
+</ul>
+<p><strong>Alternatives rejected.</strong> <code>dynamic</code> (above). Real Dart types from the
+Zeno types (a Zeno <code>int</code> that overflows is still not a Dart <code>int</code>,
+and a second printer for every target is not worth what it gives).</p>
+<h3 id="2433-kotlin-the-java-runtime-in-kotlin-and-fun-not-a-lambda">24.33 Kotlin: the Java runtime in Kotlin, and <code>fun</code>, not a lambda</h3>
+<p><code>zeno build --target kotlin</code> writes a <code>.kt</code> file. <code>kotlinc</code> compiles
+it to a <code>.jar</code> and <code>java</code> runs that. <code>src/runtime.kt</code> is
+<code>src/runtime.java</code> in Kotlin, for the same machine: an int is a
+<code>Long</code>, a list an <code>ArrayList</code>, a dict a <code>LinkedHashMap</code>, and <code>sin</code> and
+<code>exp</code> are Java's <code>Math</code> (24.16).</p>
+<ul>
+<li><strong>No cells.</strong> A Java lambda may only read the variables around it,
+  so the Java target keeps a shared variable in a <code>Z.Cell</code> (24.13). A
+  Kotlin function may change them, and a variable declared in a loop's
+  body is new each round. The program is plain variables.</li>
+<li><strong>A Zeno function is <code>fun(z_a: Array&lt;Any?&gt;): Any? { ... }</code>.</strong> Kotlin
+  has a shorter way, a lambda <code>{ a -&gt; ... }</code>. But a plain <code>return</code> is
+  not allowed in a lambda, and its value is its last line. A <code>fun</code>
+  with no name has <code>return</code> as Zeno has it.</li>
+<li><strong>A block of its own is <code>if (true) { ... }</code>.</strong> <code>{ ... }</code> alone is a
+  lambda in Kotlin, made and never called.</li>
+<li><strong>The file turns Kotlin's warnings off</strong> (<code>@file:Suppress</code>). A Zeno
+  function that ends without a <code>return</code> gives <code>none</code>, so there is a
+  <code>return null</code> after its last line, which Kotlin calls unreachable
+  when that line was a <code>return</code> too; and a <code>var</code> that is set once
+  "could be <code>val</code>". Both are what the rules write, as in C# (24.13).</li>
+<li><strong>The program runs in a thread with room for calls</strong>, as in Java
+  (24.15): 999 Zeno calls, each some calls of the runtime, do not
+  always fit in what a JVM gives its first thread.</li>
+<li><strong>The program comes first in the file, the runtime after</strong>, as in
+  Java and C#, so the reader finds <code>main</code> at the top.</li>
+<li><strong><code>$</code> in a text is written <code>\$</code></strong>, as in Dart.</li>
+</ul>
+<p><strong>The cost.</strong> <code>kotlinc</code> takes about ten seconds for any program,
+because the runtime, some 2,200 lines, is compiled with it each time.
+A jar of the runtime made once would be faster, and then the <code>.kt</code>
+file would not run by itself, which every target's file does (24.2).</p>
+<p><strong>Alternatives rejected.</strong> Calling the Java runtime from Kotlin (two
+files and a build). Kotlin for JavaScript or native (other machines,
+with other ints and other limits; one Kotlin is enough to say the
+program in Kotlin).</p>
+<h3 id="2434-the-words-of-the-four-languages-and-a-program-that-tries-them">24.34 The words of the four languages, and a program that tries them</h3>
+<p>The list of words that get a <code>_</code> (24.4, 24.25) took those of Lua
+(<code>end</code>, <code>local</code>, <code>then</code>, <code>until</code>, <code>repeat</code>, <code>elseif</code>), Ruby (<code>begin</code>,
+<code>rescue</code>, <code>ensure</code>, <code>unless</code>, <code>redo</code>, <code>retry</code>, <code>alias</code>, <code>undef</code>,
+<code>defined</code>, <code>elsif</code>, and <code>_1</code> to <code>_9</code>, which in a Ruby block mean its
+arguments), Dart (<code>late</code>, <code>required</code>, <code>factory</code>, <code>mixin</code>, <code>on</code>,
+<code>show</code>, <code>hide</code>, <code>part</code>, <code>library</code>, <code>external</code>, <code>covariant</code>,
+<code>deferred</code>, <code>extension</code>, <code>rethrow</code>, <code>sync</code>, and <code>List</code> and
+<code>identical</code>, which the printed program itself uses) and Kotlin
+(<code>fun</code>, <code>val</code>, <code>it</code>, <code>typealias</code>, <code>arrayOf</code>, <code>booleanArrayOf</code>).</p>
+<p>It is still one list for every target, so a variable <code>end</code> is <code>end_</code>
+in JavaScript too, where it need not be. That keeps a program's names
+the same in every language it is written in (24.4), and it means the
+old targets are checked again with the new words: all of them still
+print what <code>zeno run</code> prints.</p>
+<p><code>tools/targets/edge-names-2.zeno</code> is the twenty-third corner program.
+It has a variable for each of about a hundred such words and for
+names that look like the runtimes' own (<code>Z</code>, <code>ZRaise</code>, <code>z_ok</code>, <code>z_a</code>,
+<code>_G</code>, <code>self</code>, <code>it</code>); variables, a class, its fields and a function
+with capitals; texts that say <code>$5</code>, <code>${x}</code>, <code>#{y}</code>, <code>#$z</code>, <code>#@w</code> and
+<code>[[x]]</code>; functions made in the rounds of a <code>while</code> and of a <code>for</code>;
+<code>break</code>, <code>continue</code> and <code>return</code> from inside a <code>try</code> inside a loop; an
+error raised again through the <code>try</code>s of calls inside one another; and
+a function with 230 variables. The Lua coroutines, Ruby's <code>Z.loop</code> and the table of
+variables each came from a program like these failing first.</p>
+<h2 id="25-starting-another-program">25. Starting another program</h2>
+<p>Partha asked (2026-11-17) for a program in Zeno that downloads a video
+from YouTube. <a href="/examples/download/"><code>examples/download.zeno</code></a> is
+that program, and <code>program.run</code> is what Zeno needed for it.
+<a href="/docs/running-programs/"><code>running-programs.md</code></a> is the walkthrough.</p>
+<h3 id="251-the-example-starts-yt-dlp-and-does-not-fetch-the-video-itself">25.1 The example starts yt-dlp, and does not fetch the video itself</h3>
+<p><code>download.zeno</code> checks the address, starts
+<a href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a> with the right words, and
+says how it went.</p>
+<p><strong>Why.</strong> How YouTube hands out a video is not written down anywhere,
+and it changes every few weeks. yt-dlp is kept working by many people
+who follow each change; the same thing written in Zeno would work for
+a month. It would also need an encrypted connection, which Zeno has
+no library for. What the example shows instead is something nearly
+every real program does sooner or later: it uses a tool that is
+already there.</p>
+<p><strong>What its first lines say.</strong> That it is for videos the user has the
+right to keep: their own, one whose licence allows it, or one whose
+owner agreed. YouTube's terms of service allow no other download, and
+a reader of the example should not have to find that out afterwards.</p>
+<p><strong>Alternatives rejected.</strong> Fetching the video in Zeno (above). An
+<code>http</code> module first: the larger part of it is the encryption, and the
+video would still be out of reach.</p>
+<h3 id="252-programrunname-words-starts-a-program-waits-for-it-and-gives-the-number-it-ended-with">25.2 <code>program.run(name, words)</code> starts a program, waits for it, and gives the number it ended with</h3>
+<pre><code class="zeno">import program
+
+let ended = program.run("yt-dlp", ["--paths", folder, address])
+if ended != 0 {
+    print("that did not work")
+}</code></pre>
+<p><strong>Why a number.</strong> Every program on Linux, macOS and Windows ends with
+a whole number, and 0 means that all went well. A <code>bool</code> would throw
+away what the other numbers say: <code>grep</code> ends with 1 for "nothing
+found" and 2 for "could not look".</p>
+<p><strong>Why it waits.</strong> A line of a Zeno program is done when the next line
+begins. A program that went on while another ran would need a value
+for the one still running, and ways to ask it, wait for it and stop
+it. That is left for later (25.7).</p>
+<p><strong>Why in <code>program</code>.</strong> <code>program.arguments()</code> is the words this program
+was started with. <code>program.run</code> gives another program the words it is
+started with, and if that program is written in Zeno, its
+<code>program.arguments()</code> is exactly the list that was passed. The two
+are one idea seen from its two ends, so they are in one module, and
+<code>import program</code> is still the one line for "the programs on this
+computer".</p>
+<p><strong>Alternatives rejected.</strong> A module of its own (<code>process</code>, <code>system</code>):
+a module for one function, and a second name to learn beside
+<code>program</code>. <code>run</code> as a plain word like <code>print</code>: it would take a common
+name away from every program for something few of them do.</p>
+<h3 id="253-the-words-are-a-list-and-no-shell-reads-them">25.3 The words are a list, and no shell reads them</h3>
+<p>Each item of the list is one word for the other program, whatever is
+in it.</p>
+<p><strong>Why.</strong> The other way is one line of text that a shell takes apart:
+<code>system("yt-dlp " + address)</code> in C. Then a blank in a folder's name
+makes two words of it, and an address with <code>&amp;</code> or <code>;</code> in it is the
+end of one command and the start of another, which may be <code>rm</code>. That
+is one of the oldest ways a program is broken into, and it is there
+whenever the text comes from outside, as an address does. With a list
+there is nothing to quote and nothing to get wrong: <code>"my videos"</code> is
+one word because it is one item.</p>
+<p>A program that wants what a shell does asks for a shell, and it shows
+on the line: <code>program.run("sh", ["-c", "ls | wc -l"])</code>.</p>
+<p><strong>Alternatives rejected.</strong> One str, split at blanks (then a blank
+inside a word needs quoting rules, which differ between Windows and
+the rest). Both a str and a list (two ways to write one thing, and
+the shorter one is the one with the hole).</p>
+<h3 id="254-the-other-program-uses-this-programs-keyboard-and-screen">25.4 The other program uses this program's keyboard and screen</h3>
+<p>What it prints appears where this program's lines appear, and what is
+typed while it runs goes to it. What this program printed before is
+on the screen first.</p>
+<p><strong>Why.</strong> yt-dlp redraws a line of progress as it goes, and a tool
+that asks a question can be answered. Nothing has to be kept in
+memory, however much the other program prints. It is also what
+happens when one program is started from another at a command line,
+so it is what a user expects to see.</p>
+<h3 id="255-a-program-that-cannot-be-started-is-a-fileerror-and-one-that-ends-badly-is-not">25.5 A program that cannot be started is a <code>FileError</code>, and one that ends badly is not</h3>
+<pre><code>FileError: there is no program `yt-dlp` to run
+FileError: cannot run `notes.txt`</code></pre>
+<p><strong>Why an error that is raised as a value.</strong> Whether the program is
+installed is known only when it is started, as whether a file is
+there is known only when it is opened (6.14). So a function that
+calls <code>program.run</code> says <code>raises FileError</code> or catches it, in a
+<code>--strict</code> check too.</p>
+<p><strong>Why <code>FileError</code>.</strong> A program is a file that is looked for in the
+folders the system keeps for programs, and what goes wrong is what
+goes wrong with a file: it is not there, or it may not be used. A
+kind of its own would be an eighth name for one function, and a
+program that handles both would write two <code>except</code> blocks that say
+the same.</p>
+<p><strong>Why a number other than 0 is not an error.</strong> The program was
+started and ran, which is all <code>run</code> promised. What its number means is
+the other program's business: for <code>grep</code>, 1 is an answer.</p>
+<p><strong>Stopped from outside.</strong> A program that was stopped by Ctrl-C or
+<code>kill</code> has no number of its own. <code>run</code> gives 128 plus the number of
+the signal, which is what a shell reports, so 137 for <code>kill -9</code>.</p>
+<h3 id="256-only-zeno-run-has-it-so-far-provisional">25.6 Only <code>zeno run</code> has it so far (provisional)</h3>
+<p><code>program.run</code> works under <code>zeno run</code>, with and without <code>--vm</code>, and
+under <code>zeno test</code>. <code>zeno build</code>, in C and in LLVM, and <code>zeno build
+--target</code> refuse a program that uses it, with a message that names
+the line and says that <code>zeno run</code> can run it. That is how <code>json</code> is
+treated by <code>zeno build</code> (18.1). In a page it raises a <code>FileError</code>: a
+browser starts no programs.</p>
+<p><strong>Why provisional.</strong> In C, starting a program is <code>fork</code> and <code>exec</code> on
+Linux and macOS and <code>CreateProcess</code> on Windows, where the words have
+to be joined into one line by quoting rules of their own, and the
+list has to be read in each of the three ways memory is kept. For
+<code>--target</code> it is ten runtimes. None of it is hard, and all of it
+needs trying on three systems. The example that asked for <code>run</code> is a
+script, and <code>zeno run</code> is how a script is run.</p>
+<p><strong>Not provisional.</strong> A firmware build will never have it: a board has
+no other programs.</p>
+<h3 id="257-left-for-later">25.7 Left for later</h3>
+<ul>
+<li><code>program.run</code> in a built program and in the targets (25.6).</li>
+<li>Reading what the other program printed, and giving it text to
+  read.</li>
+<li>Going on while the other program runs; stopping it; giving up
+  after a time.</li>
+<li>The folder it starts in, and its environment variables.</li>
+<li><code>program.exit(n)</code>: <code>download.zeno</code> can say in words that the
+  download failed, and cannot yet end with a number that says so.</li>
+</ul>
   <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

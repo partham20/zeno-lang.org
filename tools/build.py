@@ -300,9 +300,30 @@ def toc_html(tokens, depth=2):
 # Pages about work on main that no release has yet, and the release it is
 # coming in. Take an entry out when that version is published.
 UNRELEASED = {}
+# The same for a page that is only partly new: the label, and what to say.
+# Empty it, and UNRELEASED_TARGETS, when the release with them is published.
+UNRELEASED_PARTS = {
+    "targets": ("Four more coming",
+                "Lua, Ruby, Dart and Kotlin are on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
+                "build Zeno from source to try them, or wait for the release after 0.5.1. "
+                "The other eleven are in 0.5."),
+    "running-programs": ("Coming next",
+                         "<code>program.run</code> is on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
+                         "build Zeno from source to try it, or wait for the release after 0.5.1."),
+}
+# Examples that need what no release has yet, and what to say under each.
+UNRELEASED_EXAMPLES = {
+    "download": "This program uses <code>program.run</code>, which is on main and not in a release yet: "
+                "build Zeno from source to run it, or wait for the release after 0.5.1.",
+}
+# Targets of `zeno build --target` that are on main and in no release yet.
+UNRELEASED_TARGETS = {"lua", "ruby", "dart", "kotlin"}
 
 
 def coming(name):
+    if name in UNRELEASED_PARTS:
+        label, text = UNRELEASED_PARTS[name]
+        return f'<p class="soon-note"><span class="soon">{label}</span>{text.replace("{GITHUB}", GITHUB)}</p>'
     version = UNRELEASED.get(name)
     if not version:
         return ""
@@ -511,6 +532,8 @@ def build_examples():
         if typed:
             shown = ", ".join(f"<code>{esc(t)}</code>" for t in typed.strip().split("\n"))
             note = f'<p class="note-small">Run with these lines typed on the keyboard: {shown}. The keyboard is not echoed, so the prompts run together.</p>'
+        if name in UNRELEASED_EXAMPLES:
+            note += f'<p class="note-small">{UNRELEASED_EXAMPLES[name]}</p>'
         prev_link = f'<a class="prev" href="/examples/{names[i-1]}/"><span>Previous</span>{label(names[i-1])}</a>' if i else "<span></span>"
         next_link = f'<a class="next" href="/examples/{names[i+1]}/"><span>Next</span>{label(names[i+1])}</a>' if i + 1 < len(names) else "<span></span>"
         page = f"""<div class="narrow">
@@ -615,7 +638,7 @@ zeno build main.zeno                # compiled, every check kept
 zeno build --fast --owned main.zeno # as fast as C, no collector</code></pre></figure>
 <p>A wrong index in a <code>--fast</code> build is a wrong answer or a crash, exactly as in C, so build the ordinary way while a program is being written. <a href="/docs/memory-modes/">Choosing how memory is freed</a> and <a href="/benchmarks/">the benchmarks</a> say more.</p>"""),
     ("targets", "Other languages", None, """
-<p><code>zeno build --target</code> writes your program in another language: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++ or Rust, a web page, or a WebAssembly file. The file needs nothing else, and it prints what <code>zeno run</code> prints, down to the same error on the same line.</p>
+<p><code>zeno build --target</code> writes your program in another language: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++ or Rust, a web page, or a WebAssembly file. The file needs nothing else, and it prints what <code>zeno run</code> prints, down to the same error on the same line. Lua, Ruby, Dart and Kotlin come with the next release.</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span></figcaption>
 <pre><code>zeno build --target py main.zeno    # writes main.py
 python3 main.py
@@ -729,6 +752,7 @@ DONE = [
     ("Other languages (0.5)", "<code>zeno build --target</code>: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++, Rust, a web page and WebAssembly, each printing what <code>zeno run</code> prints.", "targets"),
 ]
 NEXT = [
+    ("In the next release", "Four more languages", "<code>zeno build --target</code> for Lua, Ruby, Dart and Kotlin. Written and checked on every example, and waiting for the release after 0.5.1."),
     ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
     ("Planned", "Bytes", "A <code>list[u8]</code> at one byte an item, <code>u64</code>, and files read as bytes."),
     ("Planned", "More with no collector", "Dicts of lists and objects, and <code>list[int or none]</code>."),
@@ -1327,8 +1351,18 @@ def targets():
 
 
 def target_grid():
-    return '<ul class="target-grid">' + "".join(
-        f"<li><b>{esc(name)}</b><code>--target {flag}</code><span>{esc(run)}</span></li>" for flag, name, run in targets()) + "</ul>"
+    def item(flag, name, run):
+        soon = "<i>Coming next</i>" if flag in UNRELEASED_TARGETS else ""
+        return f"<li><b>{esc(name)}{soon}</b><code>--target {flag}</code><span>{esc(run)}</span></li>"
+    return '<ul class="target-grid">' + "".join(item(*t) for t in targets()) + "</ul>"
+
+
+def targets_coming():
+    """A sentence for the home page about the targets no release has yet, or nothing."""
+    names = [name for flag, name, _ in targets() if flag in UNRELEASED_TARGETS]
+    if not names:
+        return ""
+    return f" {', '.join(names[:-1])} and {names[-1]} come with the next release."
 
 
 def build_home():
@@ -1343,7 +1377,9 @@ def build_home():
     source = re.sub(r"<!--OUT:(\w+)-->", lambda m: esc(run_zeno(SNIPPETS / f"{m.group(1)}.zeno")), source)
     source = re.sub(r"<!--WINDOW:(\w+)-->", lambda m: sample(m.group(1)), source)
     source = re.sub(r"<!--TARGET-JS:(\w+)-->", lambda m: target_js(m.group(1)), source)
+    released = [t for t in targets() if t[0] not in UNRELEASED_TARGETS]
     source = source.replace("<!--TARGET-GRID-->", target_grid()).replace("<!--TARGET-COUNT-->", COUNT_WORDS[len(targets())])
+    source = source.replace("<!--TARGET-COUNT-RELEASED-->", COUNT_WORDS[len(released)]).replace("<!--TARGETS-COMING-->", targets_coming())
     source = icons_in(source)
     assert "<!--" not in source.replace("<!-- ", "")
     layout("/", "Zeno: code that reads like what it means",
