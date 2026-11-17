@@ -777,8 +777,14 @@ def build_about():
 <p>Zeno 0.5 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM, to a web page and to eleven other languages, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
 <p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>, under the MIT licence. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
-<h2>Contact</h2>
-<p>For a question, an idea, or something on this site that looks wrong, write to <a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a>. A bug in Zeno itself is best reported as an <a href="{GITHUB}/issues">issue on GitHub</a>, where others can see it. If what you found is a security problem, write to <a href="mailto:security@zeno-lang.org">security@zeno-lang.org</a> and do not open a public issue: <a href="{GITHUB}/blob/main/SECURITY.md">SECURITY.md</a> says what to send.</p>
+<h2 id="contact">Contact</h2>
+<p>There are four addresses, one for each kind of mail.</p>
+<ul>
+<li><b>Stuck installing or using Zeno?</b> Write to <a href="mailto:help@zeno-lang.org">help@zeno-lang.org</a>, with what you typed and what Zeno printed.</li>
+<li><b>A bug in Zeno</b> is best reported as an <a href="{GITHUB}/issues">issue on GitHub</a>, where others can see it and its answer. With no GitHub account, write to <a href="mailto:issues@zeno-lang.org">issues@zeno-lang.org</a>.</li>
+<li><b>A security problem</b> goes to <a href="mailto:security@zeno-lang.org">security@zeno-lang.org</a>, in private, and not into a public issue. <a href="{GITHUB}/blob/main/SECURITY.md">SECURITY.md</a> says what to send.</li>
+<li><b>Anything else</b>, an idea, the website, the book: <a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a>.</li>
+</ul>
 </div>"""
     layout("/about/", "About", "Zeno is a programming language built from scratch by a firmware engineer, to learn by building.", body, "/about/")
 
@@ -958,7 +964,7 @@ def build_download():
   <h2>{icon("terminal")}Install from a terminal</h2>
   <div class="segmented" role="tablist" aria-label="How to install" data-group="install">{tabs}</div>
   {panels}
-  <p class="muted">Each command installs version {v}. What the installers do, step by step, is in <a href="/docs/install/">the installer docs</a>, and what each package holds in <a href="/docs/packages/">the package docs</a>.</p>
+  <p class="muted">Each command installs version {v}. What the installers do, step by step, is in <a href="/docs/install/">the installer docs</a>, and what each package holds in <a href="/docs/packages/">the package docs</a>. If an install does not work, write to <a href="mailto:help@zeno-lang.org">help@zeno-lang.org</a> with the message it stopped at and the name of your system.</p>
 </section>
 
 <section class="dl-section dl-needs">
@@ -994,7 +1000,9 @@ def build_privacy():
 <p>zeno-lang.org is plain pages served by Cloudflare Pages. It sets no cookies and has no analytics or trackers. It loads its fonts from Google Fonts, and Cloudflare and Google may keep the usual server logs of requests, such as IP addresses. Your choice of light or dark is kept in your own browser.</p>
 <h2>Downloads</h2>
 <p>Files are downloaded from GitHub Releases, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub's privacy statement</a>.</p>
-<p class="muted">Questions: open an issue on <a href="{GITHUB}/issues">GitHub</a>.</p>
+<h2>Mail</h2>
+<p>If you write to one of Zeno's addresses, Cloudflare forwards your mail to Partha's inbox. Your address and what you wrote are used to answer you, and for nothing else.</p>
+<p class="muted">Questions: write to <a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a>.</p>
 </div>"""
     layout("/privacy/", "Privacy", "Zeno, its installers and this website collect nothing about you.", body)
 
