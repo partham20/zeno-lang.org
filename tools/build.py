@@ -299,7 +299,7 @@ def toc_html(tokens, depth=2):
 
 # Pages about work on main that no release has yet, and the release it is
 # coming in. Take an entry out when that version is published.
-UNRELEASED = {"targets": "0.5"}
+UNRELEASED = {}
 
 
 def coming(name):
@@ -334,7 +334,7 @@ DOC_GROUPS = [
      ["modules"]),
     ("The web", "A program in a web page, built to WebAssembly.",
      ["web", "playground"]),
-    ("Other languages", "Coming in 0.5: the program written in JavaScript, Python, Go, Java, C#, C++, Rust or WebAssembly.",
+    ("Other languages", "The program written in JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++, Rust, a web page or WebAssembly.",
      ["targets"]),
     ("Tools", "Installers, packages for apt, Homebrew and the rest, releases, tests, the formatter and the language server.",
      ["install", "packages", "release", "new", "testing", "format", "lsp"]),
@@ -538,25 +538,25 @@ def build_examples():
 
 GUIDE = [
     ("install", "Install", None, """
-<p>Zeno 0.4 is out, open source under the MIT licence. Install it with one line on macOS and Linux, or a setup program on Windows. Both put <code>zeno</code> on your <code>PATH</code>, and offer a C compiler and git if the machine has none: <code>zeno build</code> needs the first, <code>zeno fetch</code> the second, and nothing else needs either.</p>
+<p>Zeno 0.5 is out, open source under the MIT licence. Install it with one line on macOS and Linux, or a setup program on Windows. Both put <code>zeno</code> on your <code>PATH</code>, and offer a C compiler and git if the machine has none: <code>zeno build</code> needs the first, <code>zeno fetch</code> the second, and nothing else needs either.</p>
 <h3>macOS and Linux</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="install-cmd"><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh
 zeno new hello
 zeno run hello/main.zeno</code></pre></figure>
 <h3>Windows</h3>
-<p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.4.0/zeno-0.4.0-windows-setup.exe">zeno-0.4.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
+<p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-windows-setup.exe">zeno-0.5.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
 <h3>With a package manager</h3>
-<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.4.0">release page</a>, and a Homebrew tap:</p>
+<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.0">release page</a>, and a Homebrew tap:</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="pkg-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
-<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.4.0_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
-sudo pacman -U zeno-lang-bin-0.4.0-1-x86_64.pkg.tar.zst  # Arch, Manjaro
-sudo snap install --classic --dangerous zeno_0.4.0_amd64.snap
-flatpak install --user zeno-0.4.0-x86_64.flatpak
+<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.5.0_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
+sudo pacman -U zeno-lang-bin-0.5.0-1-x86_64.pkg.tar.zst  # Arch, Manjaro
+sudo snap install --classic --dangerous zeno_0.5.0_amd64.snap
+flatpak install --user zeno-0.5.0-x86_64.flatpak
 
 brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
 brew install partham20/zeno-lang/zeno                   # macOS and Linux</code></pre></figure>
-<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.4.0">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
+<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.0">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
 <h3>From source</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="src-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="src-cmd"><code>git clone https://github.com/partham20/zeno-lang
@@ -607,7 +607,21 @@ cargo build --release
     ("modules", "Programs in several files", None, """
 <p>A file is a module. <code>import sensors</code> brings in <code>sensors.zeno</code> from the same folder, and its names are written <code>sensors.check</code>; <code>from sensors import Reading</code> brings in one name to use as it is. A dot is a folder, so <code>import drivers.uart</code> is <code>drivers/uart.zeno</code>. There is nothing to declare and nothing to export: what a file declares at the top is what others can import. See the weather station in <a href="/examples/station/">examples/station</a>, four files with its output.</p>"""),
     ("board", "Pins and time", "board", """
-<p><code>from board import led, pin</code> and <code>from time import sleep, now</code> give a program pins and a clock. On a computer the board is simulated and prints each pin as it changes. A compiled program meets a real board through four C functions.</p>"""),
+<p><code>from board import led, pin</code> and <code>from time import sleep, now</code> give a program pins and a clock. On a computer the board is simulated and prints each pin as it changes. A compiled program meets a real board through four C functions.</p>"""),    ("speed", "Building for speed", None, """
+<p><code>zeno run</code> runs a program straight away and checks everything. <code>zeno build</code> compiles it to C and keeps the checks: an index out of range, a division by zero and an overflow still stop the program with Zeno's message. When the tests pass, two choices make it faster. <code>--owned</code> gives every list and object one owner and frees it on the line its owner ends, with no collector at all. <code>--fast</code> leaves out the checks that a correct program never fails, as C does, and runs about as fast as C and Rust.</p>
+<figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span></figcaption>
+<pre><code>zeno run main.zeno                  # straight away, every check
+zeno build main.zeno                # compiled, every check kept
+zeno build --fast --owned main.zeno # as fast as C, no collector</code></pre></figure>
+<p>A wrong index in a <code>--fast</code> build is a wrong answer or a crash, exactly as in C, so build the ordinary way while a program is being written. <a href="/docs/memory-modes/">Choosing how memory is freed</a> and <a href="/benchmarks/">the benchmarks</a> say more.</p>"""),
+    ("targets", "Other languages", None, """
+<p><code>zeno build --target</code> writes your program in another language: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++ or Rust, a web page, or a WebAssembly file. The file needs nothing else, and it prints what <code>zeno run</code> prints, down to the same error on the same line.</p>
+<figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span></figcaption>
+<pre><code>zeno build --target py main.zeno    # writes main.py
+python3 main.py
+zeno build --target js main.zeno    # writes main.js
+node main.js</code></pre></figure>
+<p>The same program gives the same file every time. A program that uses the board, a web page or memory by hand stays with Zeno's own builds. <a href="/docs/targets/">How the targets work</a>.</p>"""),
 ]
 
 
@@ -615,7 +629,7 @@ LESSON_ICONS = {"install": "terminal", "first": "play", "variables": "type", "ty
                 "overflow": "gauge", "control": "loop", "truth": "check", "functions": "function", "closures": "braces",
                 "lists": "words", "classes": "package", "enums": "layers", "none": "none", "errors": "alert",
                 "units": "ruler", "sized": "memory", "generics": "copies", "ownership": "key", "board": "board",
-                "dicts": "key", "files": "edit", "modules": "layers"}
+                "dicts": "key", "files": "edit", "modules": "layers", "speed": "zap", "targets": "copies"}
 
 
 def icons_in(text):
@@ -711,9 +725,10 @@ DONE = [
     ("A playground", "Write and run Zeno in the browser, with nothing installed.", "playground"),
     ("What 0.1 left, taken up", "<code>min</code> and <code>max</code> on quantities, <code>zeno test --only</code>, field hover.", "testing"),
     ("JSON", "<code>json.parse</code> and <code>json.write</code>.", "json"),
+    ("Owners and the fast build (0.3, 0.4)", "<code>--owned</code>, a program with no collector, and <code>zeno build --fast</code>, as fast as C and Rust.", "memory-modes"),
+    ("Other languages (0.5)", "<code>zeno build --target</code>: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++, Rust, a web page and WebAssembly, each printing what <code>zeno run</code> prints.", "targets"),
 ]
 NEXT = [
-    ("In 0.5", "Nine other languages", "<code>zeno build --target</code> writes the program in JavaScript, an HTML page, Python, Go, Java, C#, C++, Rust or WebAssembly, and it prints what <code>zeno run</code> prints. Done on main; <a href=\"/docs/targets/\">how it works</a>."),
     ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
     ("Planned", "Bytes", "A <code>list[u8]</code> at one byte an item, <code>u64</code>, and files read as bytes."),
     ("Planned", "More with no collector", "Dicts of lists and objects, and <code>list[int or none]</code>."),
@@ -729,7 +744,7 @@ def build_roadmap():
         f'<li class="{s.split()[0].lower()}">{icon("clock" if s in ("In progress", "Next") else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
         for s, t, d in NEXT)
     body = page_head("Roadmap", "Where Zeno stands",
-                     "Zeno 0.4 is out: zeno build --fast makes programs as fast as C and Rust, and a program can choose how its memory is freed. "
+                     "Zeno 0.5 is out: zeno build --target writes a program in eleven other languages, zeno build --fast makes it as fast as C and Rust, and a program can choose how its memory is freed. "
                      "The goal is one language for every job you would reach for C, C++, Python, JavaScript, Java or Rust to do. "
                      "Each use case arrives with a piece of the compiler. This is the order they have come in, and the order the rest will.", "map") + f"""
 <div class="roadmap">
@@ -759,7 +774,7 @@ def build_about():
 <h2>The name</h2>
 <p>Zeno of Elea argued that Achilles can never catch a tortoise: before he reaches it he must cover half the distance, then half of what is left, forever. The quantum Zeno effect says a system watched closely enough never changes. Both suit a compiler that will always be almost finished. The bar at the top of every page closes half the distance that is left as you scroll, and never arrives.</p>
 <h2>Status</h2>
-<p>Zeno 0.4 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM and to a web page, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
+<p>Zeno 0.5 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM, to a web page and to eleven other languages, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
 <p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>, under the MIT licence. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 </div>"""
@@ -1062,6 +1077,62 @@ def bench_versions(now_big, now_small):
     return out
 
 
+def bench_targets():
+    """The newest release record with a `targets` table (0.5 on): each program
+    written in another language by `zeno build --target` and run there.
+    Returns (version, record) or None."""
+    import json
+    folder = Path(ARGS.zeno) / "bench" / "results" / "versions"
+    best = None
+    for path in folder.glob("*.json") if folder.exists() else []:
+        r = json.loads(path.read_text())
+        if "targets" in r:
+            v = tuple(int(x) for x in path.stem.split("."))
+            if best is None or v > best[0]:
+                best = (v, r)
+    return (best[1]["version"], best[1]) if best else None
+
+
+def bench_targets_html(programs):
+    """A table: for each target, its time against C on each program, and the geometric mean."""
+    import math
+    found = bench_targets()
+    if not found:
+        return ""
+    version, record = found
+    t = record["targets"]
+    engines = [e for e in t["engines"] if e != "c"]
+    rows = []
+    for e in engines:
+        ratios = {k: t["times"][k][e] / t["times"][k]["c"] for k in t["times"]
+                  if isinstance(t["times"][k].get(e), (int, float)) and t["times"][k].get("c")}
+        if not ratios:
+            continue
+        mean = math.exp(sum(math.log(r) for r in ratios.values()) / len(ratios))
+        rows.append((mean, e, ratios))
+    rows.sort()
+    top = max(m for m, _, _ in rows)
+    def width(r):
+        return max(3, round(100 * math.log10(max(r, 1)) / math.log10(top)))
+    head = "".join(f"<th>{esc(p['title'])}</th>" for p in programs if p["key"] in t["times"])
+    body = ""
+    for mean, e, ratios in rows:
+        label = t["engines"][e]
+        flag, _, how = label.partition(", ")
+        cells = "".join(f"<td><b>{ratios[p['key']]:.0f}× C</b></td>" if p["key"] in ratios else "<td>–</td>"
+                        for p in programs if p["key"] in t["times"])
+        tone = "good" if mean < 15 else "ok" if mean < 60 else "slow"
+        body += (f'<tr><th scope="row">{esc(flag)}<small>{esc(how)}</small></th>'
+                 f'<td><span class="bench-bar {tone}" style="width:{width(mean)}%"></span><b>{mean:.0f}× C</b><i>on average</i></td>{cells}</tr>')
+    return f"""<section class="b-section" id="targets">
+  <h2>The program in other languages</h2>
+  <p class="b-sub">New in 0.5: <a href="/docs/targets/"><code>zeno build --target</code></a> writes a program in another language. Here each one is run with that language's own tools, at the small sizes, so the times include starting Node, the JVM or .NET. Every cell is a time divided by the time of the same program in C. Smaller is faster. From the record of {esc(version)}.</p>
+  <div class="bench-table"><table><thead><tr><th></th><th>Average</th>{head}</tr></thead><tbody>{body}</tbody></table></div>
+  <p class="b-note">A written program carries Zeno's rules with it, so it does what <code>zeno run</code> does, checks and all, in a language that was not built for them. <code>zeno run --vm</code> is in the table as a guide. The targets are for reading, keeping and running a program where Zeno is not; for speed, <code>zeno build --fast</code> is the way.</p>
+</section>
+"""
+
+
 def build_benchmarks():
     import json, math
     now_big, now_small = bench_results("now-big"), bench_results("now-small")
@@ -1153,6 +1224,7 @@ def build_benchmarks():
   <div class="b-ba" id="b-ba"></div>
 </section>
 
+{bench_targets_html([{"key": k, "title": t} for k, t, _ in BENCH_PROGRAMS])}
 <section class="b-section" id="versions">
   <h2>Version by version</h2>
   <p class="b-sub">Each release keeps a record of its times, made with <a href="{GITHUB}/blob/main/bench/record.py"><code>bench/record.py</code></a>. Every cell is a time divided by the time of C (or of Python, for the ways that interpret) in the same run, so records made on different days still line up. Smaller is faster.</p>

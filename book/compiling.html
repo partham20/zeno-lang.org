@@ -456,13 +456,11 @@ error: `zeno build` cannot compile a function inside a function or block yet. `z
 href="limits.html#app-limits">Appendix G</a> has the full list.</p>
 <h3 class="unnumbered" id="in-another-language-new-in-0.5"><span
 class="number">28.9</span> In another language (new in 0.5)</h3>
-<p><em>This is in Zeno 0.5, which is on its way and not yet released. In
-0.4.0, <code>zeno build</code> writes C and LLVM IR only.</em></p>
 <p><code>zeno build --target</code> writes the program in another
 language: a file you can read, keep, and run with that language’s own
 tools. The languages are <code>js</code> (JavaScript, for Node),
-<code>html</code> (a page that runs the program), <code>py</code>
-(Python), <code>go</code>, <code>java</code>, <code>cs</code> (C#),
+<code>ts</code> (TypeScript), <code>html</code> (a page that runs the
+program), <code>py</code> (Python), <code>php</code>, <code>go</code>, <code>java</code>, <code>cs</code> (C#),
 <code>cpp</code> (C++), <code>rust</code>, and <code>wasm</code>
 (WebAssembly, built through Rust).</p>
 <div class="zenofile">
@@ -514,8 +512,8 @@ cannot use the keyboard or files, or <code>sleep</code>.</p>
 <p>A program you have written in Zeno can then live where another
 language lives: on a web page, in a Python project, on a Java server.
 And it is a way to learn: the same program, written by fixed rules in
-nine languages, shows what each language needs said that Zeno does not.
-(Decisions 24.1 to 24.26; <code>docs/targets.md</code> has every
+eleven languages, shows what each language needs said that Zeno does not.
+(Decisions 24.1 to 24.28; <code>docs/targets.md</code> has every
 target.)</p>
 </div>
 <div class="summary">

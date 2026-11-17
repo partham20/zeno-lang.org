@@ -169,8 +169,8 @@ hand: tick the box, press the button, and wait about six minutes.</p>
 be seen later (the benchmarks page on zeno-lang.org draws it). After
 the tag is pushed, on the machine the earlier versions were timed on:</p>
 <pre><code>cargo build --release
-python3 bench/record.py --version 0.4.0
-git add bench/results/versions/0.4.0.json</code></pre>
+python3 bench/record.py --version 0.5.0
+git add bench/results/versions/0.5.0.json</code></pre>
 <p><a href="https://github.com/partham20/zeno-lang/blob/main/bench/record.py"><code>bench/record.py</code></a> times every program with every
 engine the version has, beside C, Rust and Python, and writes
 <code>bench/results/versions/&lt;version&gt;.json</code>. The page shows each time as a
@@ -207,6 +207,8 @@ it is packed, by <code>tools/release-check.sh</code>:</p>
 every example is laid out as `zeno format` lays it out
 `zeno new` makes a program that runs and whose tests pass
 ok</code></pre>
+<p>Since 0.5 it also has <code>zeno build --target</code> write <code>examples/hello.zeno</code>
+in each of ten languages, which needs none of them installed.</p>
 <p>A build for another processor cannot run on the machine that built it.
 For the ARM builds for Linux the script is given an emulator, a program
 that acts as the other processor:</p>

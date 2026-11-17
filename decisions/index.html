@@ -57,7 +57,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 472 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 474 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -9150,6 +9150,82 @@ program is started with (<code>.args</code>), and typed input that is not text
 (<code>.stdin</code> is bytes).</p>
 <p><strong>Why.</strong> "The same error" was promised (24.2) and not checked. The
 nesting difference of 24.23 would have been caught the first day.</p>
+<h3 id="2427-typescript-the-javascript-with-the-type-any">24.27 TypeScript: the JavaScript, with the type <code>any</code></h3>
+<p><code>zeno build --target ts</code> writes the program as TypeScript. It is the
+program <code>--target js</code> writes, with a type on every variable, parameter
+and caught error, after <code>src/runtime.ts</code>, which is <code>src/runtime.js</code>
+with types. The type is <code>any</code>. The file passes <code>tsc --strict</code>, and
+Node (22.18 or newer) runs it as it is; <code>tools/targets.py</code> does both
+for every program.</p>
+<p><strong>Why <code>any</code>.</strong> What a Zeno value is, is found out while the program
+runs, by the runtime, in every target (24.2): that is how an int that
+overflows, a wrong unit or a missing field gives Zeno's message at
+Zeno's line. Go has <code>any</code> for this, Java <code>Object</code>, Rust an enum.
+TypeScript's types say what JavaScript would do with a value, and Zeno
+does not do what JavaScript does (<code>1 + "a"</code> is an error, an int is 64
+bits). A type like <code>number</code> on a Zeno int would be a promise the
+program does not keep.</p>
+<p><strong>Why a typed copy of the runtime, and not <code>// @ts-nocheck</code>.</strong> A
+TypeScript project that takes the file should not have to switch its
+checker off for it. The copy costs little: a test
+(<code>the_typed_runtime_is_the_runtime_with_types</code>) takes the types out of
+<code>runtime.ts</code> and holds what is left to <code>runtime.js</code>, line by line, so
+the two cannot drift and what is tried for JavaScript holds for
+TypeScript.</p>
+<p><strong>Why the file is a module</strong> (it ends in <code>export {};</code>). In a
+TypeScript project every file that is not a module shares one set of
+names, so two built programs would both declare <code>Z</code> and neither would
+pass. A module's names are its own.</p>
+<p><strong>What changed in the JavaScript for it.</strong> The runtime took Node's
+file module with <code>require("fs")</code>, which a module does not have. It now
+asks Node for it by name (<code>process.getBuiltinModule("fs")</code>), which
+works in a script and in a module, so the <code>.js</code> file also runs where
+<code>"type": "module"</code> is set. It needs Node 22.3 or newer (20.16 in the
+20 line); the oldest Node still kept up is 22.</p>
+<p><strong>Alternatives rejected.</strong> Real types worked out from the Zeno types
+(a second printer and a second runtime, and still wrong at the edges:
+a Zeno <code>int</code> is not a <code>number</code>). Running <code>tsc</code> in <code>zeno build</code> and
+keeping only the <code>.js</code> (then it is the <code>js</code> target).</p>
+<h3 id="2428-php-its-own-ints-and-floats-lists-in-objects-use-x">24.28 PHP: its own ints and floats, lists in objects, <code>use (&amp;$x)</code></h3>
+<p><code>zeno build --target php</code> writes a <code>.php</code> file that <code>php</code> runs (8.0 or
+newer), with <code>src/runtime.php</code> at its top. It is a port of the
+JavaScript runtime, and holds all 337 programs to <code>zeno run</code>.</p>
+<ul>
+<li><strong>An int is a PHP int, a float a PHP float.</strong> PHP keeps the two
+  apart (<code>3</code> and <code>3.0</code> are different values), and its int is 64 bits,
+  so neither needs a box. PHP turns <code>+</code>, <code>-</code> and <code>*</code> that do not fit
+  into a float instead of wrapping; the runtime sees that the answer
+  is no longer an int and raises <code>OverflowError</code>.</li>
+<li><strong>A list and a dict are objects</strong> (<code>ZList</code>, <code>ZDict</code>) around a PHP
+  array. A PHP array is copied when it is handed on; a Zeno list is
+  shared, and <code>xs.append(1)</code> inside a function must be seen outside.
+  PHP makes the key <code>"1"</code> the int <code>1</code>; Zeno keeps them apart, so a str
+  key is stored with an <code>s</code> before it.</li>
+<li><strong>An inner function names what it uses</strong>: <code>function ($x) use
+  (&amp;$total)</code>. The <code>&amp;</code> shares the variable. A PHP variable lasts for
+  its whole function, so a shared variable declared in the body of a
+  loop is <code>unset</code> where its block begins: the next round's is then a
+  new variable, and the functions made in the round before keep
+  theirs, as in Zeno.</li>
+<li><strong>No extension is needed.</strong> <code>mbstring</code>, <code>ctype</code>, <code>bcmath</code> and <code>gmp</code>
+  are not in every PHP. Characters are counted and split with <code>preg</code>
+  (always there) and by hand, and <code>{x:.2f}</code> works out the exact
+  decimal text of the float with plain ints, a half going to the even
+  digit as in <code>zeno run</code>.</li>
+<li><strong>A long chain is let go in a loop.</strong> PHP frees an object's fields
+  from inside freeing the object, so a chain of 200,000 objects
+  crashed it. <code>ZInstance</code> and <code>ZCase</code> hand their fields to a list
+  that one loop empties, as the Rust runtime does.</li>
+<li><strong>PHP's settings are fixed at the start</strong>: no memory limit, floats
+  written with all their digits, and a PHP warning stops the program
+  as a fault of the runtime instead of being printed among the
+  program's lines.</li>
+</ul>
+<p><strong>Alternatives rejected.</strong> Cells for shared variables, as the Python
+target has (<code>$total-&gt;v</code> everywhere, where PHP has a word for exactly
+this). <code>mb_strlen</code> and <code>number_format</code> (the first is not always
+installed, the second rounds a half up after rounding the float
+first, which is not what <code>zeno run</code> prints).</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

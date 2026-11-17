@@ -54,7 +54,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>Targets: a Zeno program written in another language</h1>
-  <p class="soon-note"><span class="soon">Coming in 0.5</span>This is on <a href="https://github.com/partham20/zeno-lang">main</a> and not in a release yet: build Zeno from source to try it, or wait for 0.5.</p>
+  
   <p><code>zeno build --target &lt;language&gt;</code> writes your program in another
 language: a file you can read, keep, and run with that language's own
 tools.</p>
@@ -86,6 +86,11 @@ Wrote hello.html. Open it in a browser</code></pre>
 <td><code>node hello.js</code></td>
 </tr>
 <tr>
+<td><code>ts</code></td>
+<td><code>hello.ts</code>, TypeScript</td>
+<td><code>node hello.ts</code> (Node 22.18 or later), or <code>tsc</code>, Bun, Deno</td>
+</tr>
+<tr>
 <td><code>html</code></td>
 <td><code>hello.html</code>, a page that runs the program</td>
 <td>a browser</td>
@@ -94,6 +99,11 @@ Wrote hello.html. Open it in a browser</code></pre>
 <td><code>py</code></td>
 <td><code>hello.py</code></td>
 <td><code>python3 hello.py</code></td>
+</tr>
+<tr>
+<td><code>php</code></td>
+<td><code>hello.php</code></td>
+<td><code>php hello.php</code> (PHP 8.0 or later, no extension needed)</td>
 </tr>
 <tr>
 <td><code>go</code></td>
@@ -168,7 +178,9 @@ runs it, and compares what it printed and, if it stopped with an error,
 the message, the file and the line:</p>
 <pre><code>$ python3 tools/targets.py
 js: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+ts: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
 py: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+php: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
 go: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
 java: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
 cs: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
@@ -188,13 +200,13 @@ html: 328 of 328 programs print what `zeno run` prints (30 left out: ...)</code>
    statements for (<code>[x * x for x in xs if x &gt; 0]</code>, <code>0 &lt;= t &lt; 10</code>) made
    into statements, in the order Zeno would do them.</li>
 <li><strong>The runtime</strong> (<code>src/runtime.js</code>, <code>src/runtime.py</code>,
-   <code>src/runtime.go</code>, <code>src/runtime.java</code>, <code>src/runtime.cs</code>,
+   <code>src/runtime.php</code>, <code>src/runtime.go</code>, <code>src/runtime.java</code>, <code>src/runtime.cs</code>,
    <code>src/runtime.cpp</code>, <code>src/runtime.rs</code>): what every Zeno
    value is in that language, and what each operator and built-in does
    with it, written to do what <code>ops.rs</code> and <code>builtins.rs</code> do for
    <code>zeno run</code>, step for step and message for message. It goes at the
    top of the file, so the file needs nothing else.</li>
-<li><strong>Printing</strong> (<code>src/emit_js.rs</code>, <code>src/emit_py.rs</code>, <code>src/emit_go.rs</code>,
+<li><strong>Printing</strong> (<code>src/emit_js.rs</code>, <code>src/emit_py.rs</code>, <code>src/emit_php.rs</code>, <code>src/emit_go.rs</code>,
    <code>src/emit_java.rs</code>, <code>src/emit_cs.rs</code>, <code>src/emit_cpp.rs</code>,
    <code>src/emit_rust.rs</code>): the lowered
    program in that
@@ -293,6 +305,49 @@ made:</p>
         def z_f1(*, i=i):
             return i.v
         Z.call_method(makers, "append", [Z.fn("", [], [], z_f1)], 3)</code></pre>
+<h2 id="typescript-target-ts">TypeScript: <code>--target ts</code></h2>
+<p><code>--target ts</code> writes the program <code>--target js</code> writes, as TypeScript:
+<code>src/runtime.ts</code> is <code>runtime.js</code> with types, and every variable,
+parameter and caught error of the program has its type.</p>
+<pre><code>Z.start(["area.zeno"], function main() {
+  let area: any, math_: any;
+  area = Z.fn("area", ["r"], [false], function (r: any) {
+    return Z.mul(Z.mul(Z.builtin("math.pi"), r, 4), r, 4);
+  });
+  math_ = Z.module("math");
+  Z.b.print([Z.direct(area, 7, Z.float(2.0))], 7);
+});
+
+export {};</code></pre>
+<p>The type is <code>any</code>. What a Zeno value is, is found out while the
+program runs, by the runtime, as in every target: that is what gives
+Zeno's message at Zeno's line for an int that overflows or a unit
+that does not fit. A <code>number</code> on a Zeno int would promise what
+JavaScript does, and Zeno does not do what JavaScript does (decision
+24.27).</p>
+<p>The file passes <code>tsc --strict</code>, so a TypeScript project can take it as
+it is, and it is a module (it ends in <code>export {};</code>), so two built
+programs in one project do not share their names. Node 22.18 or later
+runs a <code>.ts</code> file as it is; <code>tools/targets.py</code> checks each program
+with <code>tsc --strict</code> and then runs it with Node.</p>
+<h2 id="php-target-php">PHP: <code>--target php</code></h2>
+<pre><code>Z::start(["area.zeno"], function () {
+    $area = $math_ = null;
+    $area = Z::fn("area", ["r"], [false], function ($r) use (&amp;$math_) {
+        return Z::mul(Z::mul(Z::builtin("math.pi"), $r, 4), $r, 4);
+    });
+    $math_ = Z::module("math");
+    Z::b_print([Z::direct($area, 7, 2.0)], 7);
+});</code></pre>
+<p>An int is a PHP int and a float a PHP float: PHP keeps the two apart
+and its int has 64 bits. A sum too big for an int becomes a float in
+PHP, which is how the runtime sees the overflow and raises Zeno's
+error. A list and a dict are objects around a PHP array, because PHP
+copies an array when it is handed on and a Zeno list is shared.</p>
+<p>An inner function names the variables around it that it works with,
+after <code>use</code>, with <code>&amp;</code> so that it is the same variable and not a copy.
+The file needs PHP 8.0 or later and no extension: not <code>mbstring</code>, not
+<code>bcmath</code> (decision 24.28).</p>
 <h2 id="the-page-target-html">The page: <code>--target html</code></h2>
 <p><code>--target html</code> writes one <code>.html</code> file: the program in JavaScript,
 with its runtime, in a <code>&lt;script&gt;</code> at the end of a page. What it prints
@@ -376,6 +431,14 @@ target keep, and a program in <code>tools/targets/</code> that holds them to it:
   a float prints, for some inputs. Go uses a copy of JavaScript's <code>sin</code>,
   <code>cos</code> and <code>tan</code>, and Java uses <code>Math</code> rather than <code>StrictMath</code>, which
   makes it rare; none of the 337 programs shows it (decision 24.16).</li>
+<li><strong>Node 22 and a big WebAssembly program.</strong> Node 22 (seen with
+  22.23) can stop with a segmentation fault while it runs a <code>.wasm</code>
+  that asks for hundreds of megabytes: the strings and sort benchmarks
+  at a million items stopped in about half of their runs. The fault is
+  inside Node, in its garbage collector, when the program's memory
+  grows; a WebAssembly program cannot do that to its host by any
+  mistake of its own. Node 24 ran the same files every time. If it
+  happens, use a newer Node, or wasmtime.</li>
 <li><strong>A device as a file.</strong> On WebAssembly a program sees only the folder
   it was started in, so <code>/dev/null</code> and the like are not there.</li>
 </ul>
@@ -390,6 +453,7 @@ that allows. Seconds, on the benchmarks in <code>bench/</code>, against <code>ze
 <th><code>zeno run --vm</code></th>
 <th><code>js</code> (Node 22)</th>
 <th><code>py</code> (Python 3.13)</th>
+<th><code>php</code> (PHP 8.3)</th>
 <th><code>go</code> (Go 1.24)</th>
 <th><code>java</code> (JDK 21)</th>
 <th><code>cs</code> (.NET 10)</th>
@@ -401,62 +465,99 @@ that allows. Seconds, on the benchmarks in <code>bench/</code>, against <code>ze
 <tbody>
 <tr>
 <td>fib</td>
-<td>0.78</td>
-<td>0.16</td>
-<td>3.5</td>
-<td>0.31</td>
-<td>0.19</td>
+<td>0.81</td>
+<td>0.14</td>
+<td>3.4</td>
+<td>2.1</td>
+<td>0.30</td>
+<td>0.18</td>
 <td>0.90</td>
-<td>0.19</td>
-<td>0.40</td>
-<td>0.59</td>
+<td>0.27</td>
+<td>0.46</td>
+<td>0.66</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>9.0</td>
+<td>4.7</td>
+<td>60.1</td>
+<td>28.5</td>
+<td>6.2</td>
+<td>1.5</td>
+<td>11.2</td>
+<td>2.2</td>
+<td>6.8</td>
+<td>10.5</td>
 </tr>
 <tr>
 <td>sort</td>
-<td>3.7</td>
+<td>4.4</td>
+<td>1.1</td>
+<td>19.7</td>
+<td>10.2</td>
+<td>1.9</td>
 <td>1.2</td>
-<td>19.6</td>
-<td>2.1</td>
-<td>1.2</td>
-<td>4.2</td>
-<td>1.3</td>
-<td>1.8</td>
-<td>2.6</td>
+<td>4.0</td>
+<td>1.6</td>
+<td>2.3</td>
+<td>3.1</td>
 </tr>
 <tr>
 <td>strings</td>
 <td>1.8</td>
-<td>0.6</td>
-<td>1.7</td>
-<td>0.9</td>
-<td>0.8</td>
-<td>1.8</td>
-<td>1.8</td>
-<td>1.3</td>
+<td>0.57</td>
+<td>1.9</td>
 <td>1.2</td>
+<td>0.93</td>
+<td>0.97</td>
+<td>1.9</td>
+<td>2.0</td>
+<td>1.4</td>
+<td>1.4</td>
 </tr>
 <tr>
 <td>trees</td>
-<td>10.6</td>
-<td>2.3</td>
-<td>37.4</td>
-<td>4.2</td>
-<td>1.4</td>
-<td>6.6</td>
-<td>4.6</td>
+<td>10.7</td>
+<td>2.9</td>
+<td>39.1</td>
+<td>22.3</td>
 <td>4.5</td>
-<td>4.2</td>
+<td>1.2</td>
+<td>6.7</td>
+<td>5.5</td>
+<td>5.8</td>
+<td>5.7</td>
+</tr>
+<tr>
+<td>nbody</td>
+<td>17.8</td>
+<td>10.4</td>
+<td>134</td>
+<td>67.0</td>
+<td>12.8</td>
+<td>4.3</td>
+<td>26.5</td>
+<td>12.4</td>
+<td>13.3</td>
+<td>19.3</td>
 </tr>
 </tbody>
 </table>
-<p>(Go, Java, C++ and Rust timed as built programs, built first; C#
-as <code>dotnet run</code> on its second run, which reuses the build, about half
-a second of each figure being <code>dotnet</code> starting.)</p>
-<p>JavaScript and Java are three to eight times faster than the VM,
-because Node and the JVM compile the program to machine code as it runs
-and learn which kinds of value each <code>Z.add</code> really sees. Go is two to
-three times faster: it is compiled before it runs, but every value is
-an <code>any</code> and every <code>+</code> a call that looks at both sides. Python is
+<p>(Go, Java, C#, C++ and Rust are built first and the built program is
+timed; for C# that is <code>dotnet run --no-build</code>, about half a second of
+each figure being <code>dotnet</code> starting.)</p>
+<p>TypeScript is not in the table because it is the <code>js</code> column: Node
+takes the types off and runs the same JavaScript. PHP has no JIT as it
+is installed, and is slower than the VM and faster than Python, except
+for strings, where PHP's own text functions do the work. The table is
+the record of 0.5.0 (<code>bench/results/versions/0.5.0.json</code>, made by
+<code>python3 bench/record.py</code>).</p>
+<p>JavaScript is two to six times faster than the VM and Java two to
+nine, because Node and the JVM compile the program to machine code as
+it runs and learn which kinds of value each <code>Z.add</code> really sees. Go is
+one and a half to three times faster: it is compiled before it runs,
+but every value is an <code>any</code> and every <code>+</code> a call that looks at both
+sides. Python is
 slower: every <code>+</code> is a call of <code>Z.add</code>, which checks what Zeno checks.
 Where the checker knows both sides are ints, a plain <code>+</code> (with the
 overflow check) would do; that is the next step for speed.</p>
@@ -496,7 +597,7 @@ overflow check) would do; that is the next step for speed.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/targets.md">docs/targets.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/playground/"><span>Previous</span>The playground: Zeno in a page, with nothing installed</a><a class="next" href="/docs/install/"><span>Next</span>Installing Zeno: a setup program, and one line</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-the-written-program-does">What the written program does</a></li><li><a href="#how-it-is-done">How it is done</a></li><li><a href="#the-page-target-html">The page: --target html</a></li><li><a href="#what-cannot-be-written-for-another-language">What cannot be written for another language</a></li><li><a href="#corners-that-have-a-rule">Corners that have a rule</a></li><li><a href="#known-limits">Known limits</a></li><li><a href="#speed">Speed</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-the-written-program-does">What the written program does</a></li><li><a href="#how-it-is-done">How it is done</a></li><li><a href="#typescript-target-ts">TypeScript: --target ts</a></li><li><a href="#php-target-php">PHP: --target php</a></li><li><a href="#the-page-target-html">The page: --target html</a></li><li><a href="#what-cannot-be-written-for-another-language">What cannot be written for another language</a></li><li><a href="#corners-that-have-a-rule">Corners that have a rule</a></li><li><a href="#known-limits">Known limits</a></li><li><a href="#speed">Speed</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">

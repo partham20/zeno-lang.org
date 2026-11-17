@@ -1,5 +1,151 @@
 [
  {
+  "tag": "v0.5.0",
+  "name": "Zeno 0.5.0",
+  "date": "2026-11-17",
+  "url": "https://github.com/partham20/zeno-lang/releases/tag/v0.5.0",
+  "assets": [
+   {
+    "name": "install.sh",
+    "size": 11461,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/install.sh",
+    "sha256": "d35ab0561f3b09172334441da3576e016badeb4c3b932b201fe8dcc389d28e95"
+   },
+   {
+    "name": "SHA256SUMS.txt",
+    "size": 2031,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/SHA256SUMS.txt",
+    "sha256": "3516fcf8a23e93616e78f36f4f5ba307dd7f62b59674c50f925bfd7e1567fa3c"
+   },
+   {
+    "name": "zeno-0.5.0-aarch64.flatpak",
+    "size": 2004072,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-aarch64.flatpak",
+    "sha256": "7f22337cc1cb4b8f3bc7a8ef60df372f883dcf0942c3c117c9603fadf806c43f"
+   },
+   {
+    "name": "zeno-0.5.0-linux-arm64.tar.gz",
+    "size": 2858972,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-linux-arm64.tar.gz",
+    "sha256": "177124497bb35d39ed86e02eae33a79f0446f81d67098a7f174a50b5524ff920"
+   },
+   {
+    "name": "zeno-0.5.0-linux-armv6.tar.gz",
+    "size": 2912655,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-linux-armv6.tar.gz",
+    "sha256": "3bbeff1c4510b22e53df5f91c29c8b40a5ab92f0fa4ea05961a14bb4cc10cded"
+   },
+   {
+    "name": "zeno-0.5.0-linux-armv7.tar.gz",
+    "size": 2880543,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-linux-armv7.tar.gz",
+    "sha256": "436f5e23a69dbec4e4557f1470277ed5405151020531ee20e7ae497524367901"
+   },
+   {
+    "name": "zeno-0.5.0-linux-x86.tar.gz",
+    "size": 3092366,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-linux-x86.tar.gz",
+    "sha256": "d8c177e1f8958a1ed0013b2a250bce2c631646fa99ee8b498674069629e28c5f"
+   },
+   {
+    "name": "zeno-0.5.0-linux-x86_64.tar.gz",
+    "size": 3046135,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-linux-x86_64.tar.gz",
+    "sha256": "5c791bf9c61a4723c298e75e99c70cf07ee1b0d76df120464a3ef1bce8e35193"
+   },
+   {
+    "name": "zeno-0.5.0-macos-arm64.tar.gz",
+    "size": 2782077,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-macos-arm64.tar.gz",
+    "sha256": "48d059ccfcf22b5ae0a0fe7c97deb11181b5367eff7378d0b7c113e6a383d603"
+   },
+   {
+    "name": "zeno-0.5.0-macos-x86_64.tar.gz",
+    "size": 2940298,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-macos-x86_64.tar.gz",
+    "sha256": "5c9250dc84071cce82a2400a224ec32641c9b21eeb16794c919afae2a49c7fb3"
+   },
+   {
+    "name": "zeno-0.5.0-windows-arm64.zip",
+    "size": 2885058,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-windows-arm64.zip",
+    "sha256": "d1b4580dea51e99c2bb3b38b46fd313802bdea033fb92ad5f500e35550b6f59a"
+   },
+   {
+    "name": "zeno-0.5.0-windows-setup.exe",
+    "size": 6457873,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-windows-setup.exe",
+    "sha256": "6125b3752db5f4b03184ae3183f204e78f2b868f768008cbf4c317a069c78ad3"
+   },
+   {
+    "name": "zeno-0.5.0-windows-x86.zip",
+    "size": 2894373,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-windows-x86.zip",
+    "sha256": "160d10014a31f82de6a9b79721da992f61288ae9b2a090deb796412760846d4f"
+   },
+   {
+    "name": "zeno-0.5.0-windows-x86_64.zip",
+    "size": 3029775,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-windows-x86_64.zip",
+    "sha256": "ce722c581efb96b4eb1443c89ff12b7aedd3854471914668201d9302b4327c95"
+   },
+   {
+    "name": "zeno-0.5.0-x86_64.flatpak",
+    "size": 2219840,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-x86_64.flatpak",
+    "sha256": "ea97ec35fc2ab3bf92826252022c8b099b47284fc54d2a2bb9c9b77f55f47421"
+   },
+   {
+    "name": "zeno-lang-bin-0.5.0-1-x86_64.pkg.tar.zst",
+    "size": 2942218,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-lang-bin-0.5.0-1-x86_64.pkg.tar.zst",
+    "sha256": "7dac8650870a245feebd13be4e6572540068224694205d4b2e3366bae493c5ee"
+   },
+   {
+    "name": "zeno_0.5.0_amd64.deb",
+    "size": 2351880,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno_0.5.0_amd64.deb",
+    "sha256": "af46c26d4916cac9874427f7005d34b0884d10142897751fca0b715d60e5fde5"
+   },
+   {
+    "name": "zeno_0.5.0_amd64.snap",
+    "size": 2703360,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno_0.5.0_amd64.snap",
+    "sha256": "f96c3c41f46204ffded80378ef39d50dad96b4dbbc83d4a087fc40cd0b81e18e"
+   },
+   {
+    "name": "zeno_0.5.0_arm64.deb",
+    "size": 2215130,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno_0.5.0_arm64.deb",
+    "sha256": "24662c1d0cf6fd5bafc3f79e1c16cd73f4c6c069d7a221522fda6f3a821931ab"
+   },
+   {
+    "name": "zeno_0.5.0_arm64.snap",
+    "size": 2453504,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno_0.5.0_arm64.snap",
+    "sha256": "fc93fe6eb11e81f6118d1bb63b0165f47496255cf07da81c2c400a3739ed7797"
+   },
+   {
+    "name": "zeno_0.5.0_armhf.deb",
+    "size": 2274862,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno_0.5.0_armhf.deb",
+    "sha256": "b78cf112aeddd0ff42350281d82a835365589986453742c37599eb6ce46a62a5"
+   },
+   {
+    "name": "zeno_0.5.0_armhf.snap",
+    "size": 2461696,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno_0.5.0_armhf.snap",
+    "sha256": "4101a2b945042a8236ace53cfd6c4829359e5eee1b97dbd1acbd664b5614c3d5"
+   },
+   {
+    "name": "zeno_0.5.0_i386.deb",
+    "size": 2434108,
+    "url": "https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno_0.5.0_i386.deb",
+    "sha256": "e9ef2e41494fa791344e45e7a109bcb1a7ff71d3130146160cdd12f379a27b75"
+   }
+  ]
+ },
+ {
   "tag": "v0.4.0",
   "name": "Zeno 0.4.0",
   "date": "2026-11-16",
