@@ -31,19 +31,12 @@ jobs:
           api() { curl -s -H "Authorization: Bearer $TOKEN" "https://api.cloudflare.com/client/v4$1"; }
           echo "token status: $(api /user/tokens/verify | jq -r '.result.status // .errors[0].message')"
           echo "account ID length: ${#ACCOUNT} (should be 32)"
+          # The name of an account can be its owner's mail address, and this
+          # log is public, so the accounts are numbered, not named.
           echo "accounts this token can see:"
-          api /accounts | jq -r '.result[] | "  \(.name) matches_secret=\(.id == env.ACCOUNT)"'
+          api /accounts | jq -r '.result | to_entries[] | "  account \(.key + 1) matches_secret=\(.value.id == env.ACCOUNT)"'
           echo "pages projects under the secret's account:"
-          api "/accounts/$ACCOUNT/pages/projects" | jq -r 'if .success then (.result[] | "  " + .name) else "  error: " + (.errors[0].message) end'
-          # Whether this token could also set up mail for the domain
-          # (Email Routing). It prints no address.
-          zone=$(api "/zones?name=zeno-lang.org" | jq -r '.result[0].id // empty')
-          if [ -n "$zone" ]; then
-            echo "email routing: $(api "/zones/$zone/email/routing" | jq -r 'if .success then "enabled=\(.result.enabled) status=\(.result.status)" else "this token cannot read it: " + (.errors[0].message) end')"
-            echo "email routing rules: $(api "/zones/$zone/email/routing/rules" | jq -r 'if .success then "\(.result | length) rule(s)" else "this token cannot read them: " + (.errors[0].message) end')"
-          else
-            echo "email routing: this token cannot see the zone zeno-lang.org"
-          fi
+          api "/accounts/$ACCOUNT/pages/projects" | jq -r 'if .success then "  zeno-lang is among them: \(any(.result[]; .name == "zeno-lang")) (\(.result | length) in all)" else "  error: " + (.errors[0].message) end'
       - uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
