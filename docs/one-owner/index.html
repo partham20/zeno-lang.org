@@ -44,7 +44,7 @@
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
     </button>
-    <a class="button small ghost nav-gh" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
     <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
   </div>
 </header>
@@ -85,14 +85,14 @@ third of five steps that take the rules of that build from "refuse what
 has no owner" to "whoever receives a value owns it".</p>
 <h2 id="the-files">The files</h2>
 <ul>
-<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/checker.rs"><code>src/checker.rs</code></a>: <code>Rules</code> and <code>check_by</code> at the
+<li><a href="https://github.com/zeno-src/zeno-lang/blob/main/src/checker.rs"><code>src/checker.rs</code></a>: <code>Rules</code> and <code>check_by</code> at the
   top. Then, under "Owned values": <code>takes_out</code>, <code>walk</code>, <code>being_walked</code>,
   <code>item</code>, and the end of <code>take</code>.</li>
-<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>: <code>Drops</code>, which names the function
+<li><a href="https://github.com/zeno-src/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>: <code>Drops</code>, which names the function
   that frees each kind of value, and <code>write_drops</code>, which writes the
   ones a program needs.</li>
-<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_llvm.rs"><code>src/emit_llvm.rs</code></a>: <code>drop_list</code>, the same in IR.</li>
-<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/main.rs"><code>src/main.rs</code></a>: <code>zeno check --no-collector</code>.</li>
+<li><a href="https://github.com/zeno-src/zeno-lang/blob/main/src/emit_llvm.rs"><code>src/emit_llvm.rs</code></a>: <code>drop_list</code>, the same in IR.</li>
+<li><a href="https://github.com/zeno-src/zeno-lang/blob/main/src/main.rs"><code>src/main.rs</code></a>: <code>zeno check --no-collector</code>.</li>
 </ul>
 <h2 id="the-idea-a-build-with-no-collector-has-no-shared-values">The idea: a build with no collector has no shared values</h2>
 <p>Zeno has two kinds of lists and objects (<a href="/docs/ownership/"><code>ownership.md</code></a>).
@@ -440,7 +440,7 @@ while a function is looking at the old one.</p>
    refused for. Which one word, written in one place, makes it build?
    (<a href="/docs/enums-and-none/"><code>enums-and-none.md</code></a> is the next page.)</li>
 </ol>
-  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/one-owner.md">docs/one-owner.md</a> in the language repository.</p>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/one-owner.md">docs/one-owner.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/temporaries/"><span>Previous</span>What a statement owns</a><a class="next" href="/docs/enums-and-none/"><span>Next</span>Enum values and none, with one owner</a></nav>
 </article>
 <aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#the-idea-a-build-with-no-collector-has-no-shared-values">The idea: a build with no collector has no shared values</a></li><li><a href="#a-list-owns-its-items">A list owns its items</a></li><li><a href="#only-the-owner-takes-an-item-out">Only the owner takes an item out</a></li><li><a href="#what-the-c-looks-like">What the C looks like</a></li><li><a href="#an-assignment-can-reach-through-a-list">An assignment can reach through a list</a></li><li><a href="#errors">Errors</a></li><li><a href="#the-same-through-llvm">The same, through LLVM</a></li><li><a href="#what-is-still-refused">What is still refused</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
@@ -457,7 +457,7 @@ while a function is looking at the old one.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
-    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
   </div>
   <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
 </div>

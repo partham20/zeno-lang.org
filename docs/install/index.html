@@ -44,7 +44,7 @@
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
     </button>
-    <a class="button small ghost nav-gh" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
     <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
   </div>
 </header>
@@ -66,7 +66,7 @@ give up.</p>
 <pre><code>zeno-0.5.1-windows-setup.exe</code></pre>
 <p>Run it and press Next. It is the same file for every Windows machine.</p>
 <p><strong>On macOS and Linux</strong>, one line in a terminal, as Rust has:</p>
-<pre><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh</code></pre>
+<pre><code>curl -fsSL https://github.com/zeno-src/zeno-lang/releases/latest/download/install.sh | sh</code></pre>
 <p>Both do the same five things:</p>
 <ol>
 <li>Work out which <code>zeno</code> this machine needs.</li>
@@ -158,7 +158,7 @@ sign it with, until enough people have run it. Nothing is wrong with
 the file. A certificate costs money every year, and is not worth
 buying for a language that is being learnt on (15.6).</p>
 <h3 id="how-it-is-made">How it is made</h3>
-<p><a href="https://github.com/partham20/zeno-lang/blob/main/tools/installer/zeno.iss"><code>tools/installer/zeno.iss</code></a> is a script
+<p><a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/installer/zeno.iss"><code>tools/installer/zeno.iss</code></a> is a script
 for <strong>Inno Setup</strong>, a free program that turns such a script into a
 setup <code>.exe</code>. Most of it is lists: which files go where, which boxes
 to show, which shortcuts to make. The part that is code is at the end,
@@ -181,13 +181,13 @@ twice leaves the PATH with one entry, and that uninstalling leaves
 nothing. The release workflow runs it on the setup program before
 releasing it.</p>
 <h2 id="the-line-for-macos-and-linux">The line for macOS and Linux</h2>
-<pre><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh</code></pre>
-<p><code>curl</code> downloads <a href="https://github.com/partham20/zeno-lang/blob/main/tools/install.sh"><code>tools/install.sh</code></a>, which is a
+<pre><code>curl -fsSL https://github.com/zeno-src/zeno-lang/releases/latest/download/install.sh | sh</code></pre>
+<p><code>curl</code> downloads <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/install.sh"><code>tools/install.sh</code></a>, which is a
 file of every release, and <code>sh</code> runs it. It is a shell script of about
 three hundred lines, half of them comments, written for the plainest
 shell there is, and it is meant to be read before it is trusted.</p>
 <pre><code class="zeno">Zeno 0.5.1 for macos on arm64
-  from https://github.com/partham20/zeno-lang/releases/download/v0.5.1
+  from https://github.com/zeno-src/zeno-lang/releases/download/v0.5.1
   the download is whole
   installed zeno 0.5.1 in /Users/partha/.zeno
   added it to the PATH, in /Users/partha/.zshrc
@@ -234,12 +234,12 @@ curl -fsSL .../install.sh | sh -s -- --yes     # options, when piped</code></pre
 <p><code>ZENO_VERSION</code> installs another version, <code>ZENO_HOME</code> into another
 folder, and <code>ZENO_FROM</code> from another place, which can be a folder.
 That last one is how it is tried:
-<a href="https://github.com/partham20/zeno-lang/blob/main/tools/try-install.sh"><code>tools/try-install.sh</code></a> packs the <code>zeno</code>
+<a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/try-install.sh"><code>tools/try-install.sh</code></a> packs the <code>zeno</code>
 that was just built as a release would, installs it from that folder
 into a home folder of its own, and checks the same things <code>try.ps1</code>
 does, and that a download with one byte added is refused.</p>
 <h2 id="in-the-release">In the release</h2>
-<p><a href="https://github.com/partham20/zeno-lang/blob/main/.github/workflows/release.yml"><code>release.yml</code></a> has a job after the
+<p><a href="https://github.com/zeno-src/zeno-lang/blob/main/.github/workflows/release.yml"><code>release.yml</code></a> has a job after the
 ten builds, <code>windows-setup</code>, that takes the three Windows builds,
 makes the setup program, and tries it. The Linux and macOS builds that
 run on their own processor run <code>try-install.sh</code>. If either fails,
@@ -253,7 +253,7 @@ download and run by hand.</p>
 <h2 id="for-a-version-that-was-released-before">For a version that was released before</h2>
 <p>Zeno 0.1.0 was released the day before there were installers. It has
 them too, added afterwards by
-<a href="https://github.com/partham20/zeno-lang/blob/main/.github/workflows/add-installers.yml"><code>add-installers.yml</code></a>, which
+<a href="https://github.com/zeno-src/zeno-lang/blob/main/.github/workflows/add-installers.yml"><code>add-installers.yml</code></a>, which
 is started by hand with a version:</p>
 <ol>
 <li>It downloads the three Windows archives of that release, checks
@@ -321,7 +321,7 @@ box that offers the compiler says so.</p>
    it have to live for <code>brew install zeno</code> to find it, and what would
    the release workflow have to do at each release?</li>
 </ol>
-  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/install.md">docs/install.md</a> in the language repository.</p>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/install.md">docs/install.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/targets/"><span>Previous</span>Targets: a Zeno program written in another language</a><a class="next" href="/docs/packages/"><span>Next</span>Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a></nav>
 </article>
 <aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-zeno-needs-and-what-it-does-not">What Zeno needs, and what it does not</a></li><li><a href="#the-setup-program-for-windows">The setup program for Windows</a></li><li><a href="#the-line-for-macos-and-linux">The line for macOS and Linux</a></li><li><a href="#in-the-release">In the release</a></li><li><a href="#for-a-version-that-was-released-before">For a version that was released before</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
@@ -338,7 +338,7 @@ box that offers the compiler says so.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
-    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
   </div>
   <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
 </div>

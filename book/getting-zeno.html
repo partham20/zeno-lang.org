@@ -180,8 +180,8 @@ Zeno</a>.</p>
 <p>Zeno 0.5.1 is the current release, and everything below installs it.
 Its files are on the releases page of the repository:</p>
 <div class="center">
-<p><a href="https://github.com/partham20/zeno-lang/releases/latest"
-class="uri">https://github.com/partham20/zeno-lang/releases/latest</a></p>
+<p><a href="https://github.com/zeno-src/zeno-lang/releases/latest"
+class="uri">https://github.com/zeno-src/zeno-lang/releases/latest</a></p>
 </div>
 <h3 class="unnumbered" id="the-installers"><span
 class="number">1.1</span> The installers</h3>
@@ -205,7 +205,7 @@ Zeno</em>; Zeno can also be removed from the list of installed apps in
 Windows’ settings.</p>
 <h4 class="unnumbered" id="on-macos-and-linux">On macOS and Linux</h4>
 <p>One line in a terminal:</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh</code></pre>
+<pre class="Output" data-language="Output" style="outputstyle"><code>curl -fsSL https://github.com/zeno-src/zeno-lang/releases/latest/download/install.sh | sh</code></pre>
 <p><code>curl</code> downloads a shell script of about three hundred
 lines, half of them comments, and <code>sh</code> runs it. It works out
 which machine this is, downloads the archive for it, checks the archive
@@ -248,8 +248,8 @@ inside, and its command is long, so give it a short name:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>alias zeno=&#39;flatpak run org.zeno_lang.Zeno&#39;</code></pre>
 <p>Homebrew, on macOS or Linux, reads a formula from the Zeno
 repository:</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
-brew install partham20/zeno-lang/zeno</code></pre>
+<pre class="Output" data-language="Output" style="outputstyle"><code>brew tap zeno-src/zeno-lang https://github.com/zeno-src/zeno-lang
+brew install zeno-src/zeno-lang/zeno</code></pre>
 <p>On Windows, winget runs the same setup program as above, with its
 boxes for the compiler and git left unticked, since somebody who uses
 winget installs those with winget too.</p>
@@ -422,7 +422,7 @@ built.</p></li>
 </ul>
 <p>Zeno is built and tested on Linux, macOS and Windows, with the same
 steps on each. Get the source and build it:</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>git clone https://github.com/partham20/zeno-lang
+<pre class="Output" data-language="Output" style="outputstyle"><code>git clone https://github.com/zeno-src/zeno-lang
 cd zeno-lang
 cargo build --release</code></pre>
 <p>The finished program is <code>target/release/zeno</code>. To use it

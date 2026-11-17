@@ -44,7 +44,7 @@
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
     </button>
-    <a class="button small ghost nav-gh" href="https://github.com/partham20/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
     <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
   </div>
 </header>
@@ -102,13 +102,13 @@ text is shared as it always was, and none of the functions on this page
 are in the program.</p>
 <h2 id="the-files">The files</h2>
 <ul>
-<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: the comment "Text that is kept"
+<li><a href="https://github.com/zeno-src/zeno-lang/blob/main/src/runtime.c"><code>src/runtime.c</code></a>: the comment "Text that is kept"
   and the seven functions after it, then <code>zeno_list_drop_text</code> and
   <code>zeno_list_copy_text</code>, and <code>zeno_error_of</code>.</li>
-<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>: the part headed "Kept text"
+<li><a href="https://github.com/zeno-src/zeno-lang/blob/main/src/emit_c.rs"><code>src/emit_c.rs</code></a>: the part headed "Kept text"
   (<code>keep</code> and <code>lend</code>), <code>free_code</code>, and the places that call them.
   Search for <code>is_text</code>.</li>
-<li><a href="https://github.com/partham20/zeno-lang/blob/main/src/emit_llvm.rs"><code>src/emit_llvm.rs</code></a>: the same part under the
+<li><a href="https://github.com/zeno-src/zeno-lang/blob/main/src/emit_llvm.rs"><code>src/emit_llvm.rs</code></a>: the same part under the
   same heading, and <code>arm</code> for <code>match</code>.</li>
 </ul>
 <h2 id="three-places-text-can-be">Three places text can be</h2>
@@ -475,7 +475,7 @@ text read too late would print as rubbish. None did. Exercise 6 of
    copy needed? Could the checker tell the compiler that the body never
    changes the list?</li>
 </ol>
-  <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/text.md">docs/text.md</a> in the language repository.</p>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/text.md">docs/text.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/pool/"><span>Previous</span>The memory pool</a><a class="next" href="/docs/temporaries/"><span>Next</span>What a statement owns</a></nav>
 </article>
 <aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-idea-text-is-never-changed-so-keep-a-copy">The idea: text is never changed, so keep a copy</a></li><li><a href="#the-files">The files</a></li><li><a href="#three-places-text-can-be">Three places text can be</a></li><li><a href="#keep-drop-lend-return">Keep, drop, lend, return</a></li><li><a href="#objects-and-lists">Objects and lists</a></li><li><a href="#errors-that-carry-text">Errors that carry text</a></li><li><a href="#match-and-for">match and for</a></li><li><a href="#what-it-costs">What it costs</a></li><li><a href="#through-llvm">Through LLVM</a></li><li><a href="#what-this-does-not-claim">What this does not claim</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
@@ -492,7 +492,7 @@ text read too late would print as rubbish. None did. Exercise 6 of
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
-    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/partham20/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
   </div>
   <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
 </div>

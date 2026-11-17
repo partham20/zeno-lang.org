@@ -1,6 +1,6 @@
 # zeno-lang.org
 
-The website of [Zeno](https://github.com/partham20/zeno-lang), a programming language that reads like plain English and is checked before it runs.
+The website of [Zeno](https://github.com/zeno-src/zeno-lang), a programming language that reads like plain English and is checked before it runs.
 
 The pages are plain HTML, committed as they are, so any static host can serve this folder with no build step.
 

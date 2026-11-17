@@ -32,7 +32,7 @@ from icons import icon  # noqa: E402
 SITE = Path(__file__).resolve().parent.parent
 TOOLS = SITE / "tools"
 SNIPPETS = TOOLS / "snippets"
-GITHUB = "https://github.com/partham20/zeno-lang"
+GITHUB = "https://github.com/zeno-src/zeno-lang"
 ORIGIN = "https://zeno-lang.org"
 
 ARGS = None
@@ -541,25 +541,25 @@ GUIDE = [
 <p>Zeno 0.5 is out, open source under the MIT licence. Install it with one line on macOS and Linux, or a setup program on Windows. Both put <code>zeno</code> on your <code>PATH</code>, and offer a C compiler and git if the machine has none: <code>zeno build</code> needs the first, <code>zeno fetch</code> the second, and nothing else needs either.</p>
 <h3>macOS and Linux</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
-<pre id="install-cmd"><code>curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh
+<pre id="install-cmd"><code>curl -fsSL https://github.com/zeno-src/zeno-lang/releases/latest/download/install.sh | sh
 zeno new hello
 zeno run hello/main.zeno</code></pre></figure>
 <h3>Windows</h3>
-<p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.5.1/zeno-0.5.1-windows-setup.exe">zeno-0.5.1-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
+<p>Download <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.5.1/zeno-0.5.1-windows-setup.exe">zeno-0.5.1-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
 <h3>With a package manager</h3>
-<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.1">release page</a>, and a Homebrew tap:</p>
+<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.1">release page</a>, and a Homebrew tap:</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="pkg-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="pkg-cmd"><code>sudo apt install ./zeno_0.5.1_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
 sudo pacman -U zeno-lang-bin-0.5.1-1-x86_64.pkg.tar.zst  # Arch, Manjaro
 sudo snap install --classic --dangerous zeno_0.5.1_amd64.snap
 flatpak install --user zeno-0.5.1-x86_64.flatpak
 
-brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
-brew install partham20/zeno-lang/zeno                   # macOS and Linux</code></pre></figure>
-<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.1">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
+brew tap zeno-src/zeno-lang https://github.com/zeno-src/zeno-lang
+brew install zeno-src/zeno-lang/zeno                   # macOS and Linux</code></pre></figure>
+<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.1">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
 <h3>From source</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="src-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
-<pre id="src-cmd"><code>git clone https://github.com/partham20/zeno-lang
+<pre id="src-cmd"><code>git clone https://github.com/zeno-src/zeno-lang
 cd zeno-lang
 cargo build --release
 ./target/release/zeno run examples/hello.zeno</code></pre></figure>
@@ -776,7 +776,7 @@ def build_about():
 <h2>Status</h2>
 <p>Zeno 0.5 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM, to a web page and to eleven other languages, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
-<p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">partham20/zeno-lang</a>, under the MIT licence. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
+<p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">zeno-src/zeno-lang</a>, under the MIT licence. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 <h2 id="contact">Contact</h2>
 <p>There are four addresses, one for each kind of mail.</p>
 <ul>
@@ -791,7 +791,7 @@ def build_about():
 
 # --- Download ----------------------------------------------------------------
 
-RELEASES_API = "https://api.github.com/repos/partham20/zeno-lang/releases"
+RELEASES_API = "https://api.github.com/repos/zeno-src/zeno-lang/releases"
 RELEASES_CACHE = TOOLS / "releases.json"
 
 # The marks of the three systems, filled, on a 24 by 24 grid.
@@ -898,12 +898,12 @@ def build_download():
 
     def f(os_, fmt, arch):
         return files.get((os_, fmt), {}).get(arch, {}).get("name", "")
-    rel = f"https://github.com/partham20/zeno-lang/releases/download/{latest['tag']}"
+    rel = f"https://github.com/zeno-src/zeno-lang/releases/download/{latest['tag']}"
     terminal = [
         ("sh", "macOS and Linux", "One line. It picks the right <code>zeno</code>, puts it on your <code>PATH</code>, and offers a C compiler and git if they are missing.",
-         "curl -fsSL https://github.com/partham20/zeno-lang/releases/latest/download/install.sh | sh"),
+         "curl -fsSL https://github.com/zeno-src/zeno-lang/releases/latest/download/install.sh | sh"),
         ("brew", "Homebrew", "On macOS and Linux.",
-         "brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang\nbrew install partham20/zeno-lang/zeno"),
+         "brew tap zeno-src/zeno-lang https://github.com/zeno-src/zeno-lang\nbrew install zeno-src/zeno-lang/zeno"),
         ("apt", "apt", "Debian, Ubuntu, Raspberry Pi OS. apt brings a C compiler and git along if the machine has none. For a Raspberry Pi use the <code>arm64</code> or <code>armhf</code> file.",
          f"curl -LO {rel}/{f('linux','deb','x64')}\nsudo apt install ./{f('linux','deb','x64')}"),
         ("pacman", "pacman", "Arch, Manjaro.",
@@ -915,7 +915,7 @@ def build_download():
         ("win", "Windows", "In PowerShell, to download the setup program and run it. Or use the button above.",
          f"curl.exe -LO {rel}/{f('windows','setup','all')}\n.\\{f('windows','setup','all')}"),
         ("src", "From source", "With <a href=\"https://rustup.rs\">Rust</a> installed.",
-         "git clone https://github.com/partham20/zeno-lang\ncd zeno-lang\ncargo build --release"),
+         "git clone https://github.com/zeno-src/zeno-lang\ncd zeno-lang\ncargo build --release"),
     ]
     tabs = "".join(f'<button role="tab" aria-selected="{"true" if i == 0 else "false"}" aria-controls="p-{k}" id="t-{k}"{"" if i == 0 else " tabindex=\"-1\""}>{t}</button>'
                    for i, (k, t, _, _) in enumerate(terminal))
@@ -944,8 +944,8 @@ def build_download():
         olds += (f'<details class="dl-old"{" open" if i == 0 else ""}><summary><b>Zeno {tag}</b>'
                  f'{"<em>Latest</em>" if i == 0 else ""}<span>{human_date(r["date"])}</span></summary>'
                  f'<p class="dl-old-links"><a href="{r["url"]}">Release notes</a>'
-                 f'<a href="https://github.com/partham20/zeno-lang/releases/download/{r["tag"]}/SHA256SUMS.txt">SHA256SUMS.txt</a>'
-                 f'<a href="https://github.com/partham20/zeno-lang/tree/{r["tag"]}">Source at {r["tag"]}</a></p>'
+                 f'<a href="https://github.com/zeno-src/zeno-lang/releases/download/{r["tag"]}/SHA256SUMS.txt">SHA256SUMS.txt</a>'
+                 f'<a href="https://github.com/zeno-src/zeno-lang/tree/{r["tag"]}">Source at {r["tag"]}</a></p>'
                  f'<div class="dl-table"><table><thead><tr><th>System</th><th>File</th><th>CPU</th><th>Size</th><th>SHA-256</th></tr></thead>'
                  f'<tbody>{rows}</tbody></table></div></details>')
 
