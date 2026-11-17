@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.2</span>
+  <span class="version">Zeno 0.5</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -171,10 +171,10 @@ class="number">G</span> What Zeno Does Not Have Yet</h2>
 <p>Before version 0.1, every decision in <code>docs/decisions.md</code>
 was read again, and thirty were answered "a limit of 0.1": the thing is
 left out of this version, and a program that asks for it is told so.
-Version 0.2 added the web page and left every one of these as it was.
-Each can be added later without changing what any program written now
-means. The numbers are the decisions, for anyone who wants the
-argument.</p>
+Later versions have taken some of them off the list, and what follows is
+what is still left out. Each can be added later without changing what
+any program written now means. The numbers are the decisions, for anyone
+who wants the argument.</p>
 <h3 class="unnumbered" id="on-a-board"><span class="number">G.1</span>
 On a board</h3>
 <dl>
@@ -232,12 +232,6 @@ be kept as a value (3.16e).</p>
 <h3 class="unnumbered" id="the-library"><span class="number">G.4</span>
 The library</h3>
 <dl>
-<dt><code>sort</code> by a function, in 0.2.0.</dt>
-<dd>
-<p>Zeno 0.3 adds <code>sort(by)</code> (<a
-href="lists.html#ch-lists">Lists</a>); in 0.2.0, <code>sort</code>
-uses the natural order of numbers and text (6.6).</p>
-</dd>
 <dt>Files in pieces.</dt>
 <dd>
 <p>A file is read whole, or as a list of lines (6.12, 6.20).</p>
