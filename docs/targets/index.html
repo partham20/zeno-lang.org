@@ -726,10 +726,77 @@ takes the types off and runs the same JavaScript. PHP has no JIT as it
 is installed, and is slower than the VM and faster than Python, except
 for strings, where PHP's own text functions do the work. The table is
 the record of 0.5.0 (<code>bench/results/versions/0.5.0.json</code>, made by
-<code>python3 bench/record.py</code>). Lua, Ruby, Dart and Kotlin came after
-0.5.0 and are not in that record; <code>python3 bench/run.py --engines
-c,vm,to-lua,to-ruby,to-dart,to-kotlin</code> times them where they are
-installed.</p>
+<code>python3 bench/record.py</code>).</p>
+<p>Lua, Ruby, Dart and Kotlin came after 0.5.0 and are not in that
+record. Timed once on the same machine (<code>python3 bench/run.py
+--engines c,vm,to-lua,to-ruby,to-dart,to-kotlin</code>, 2026-11-17):</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>zeno run --vm</code></th>
+<th><code>lua</code> (Lua 5.4)</th>
+<th><code>ruby</code> (Ruby 3.3)</th>
+<th><code>dart</code> (Dart 3.14)</th>
+<th><code>kotlin</code> (Kotlin 2.4, JDK 21)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>fib</td>
+<td>0.74</td>
+<td>2.3</td>
+<td>5.2</td>
+<td>0.60</td>
+<td>0.31</td>
+</tr>
+<tr>
+<td>loop</td>
+<td>8.1</td>
+<td>45.8</td>
+<td>57.0</td>
+<td>1.1</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td>sort</td>
+<td>3.5</td>
+<td>17.3</td>
+<td>16.9</td>
+<td>1.4</td>
+<td>1.3</td>
+</tr>
+<tr>
+<td>strings</td>
+<td>1.6</td>
+<td>3.7</td>
+<td>3.3</td>
+<td>1.4</td>
+<td>0.83</td>
+</tr>
+<tr>
+<td>trees</td>
+<td>9.9</td>
+<td>48.9</td>
+<td>44.1</td>
+<td>2.5</td>
+<td>1.4</td>
+</tr>
+<tr>
+<td>nbody</td>
+<td>17.6</td>
+<td>91.7</td>
+<td>126.9</td>
+<td>9.4</td>
+<td>4.7</td>
+</tr>
+</tbody>
+</table>
+<p>Dart and Kotlin are compiled to machine code as they run, as
+JavaScript and Java are, and are two to seven times faster than the
+VM. Lua and Ruby are interpreted, and every <code>+</code> is a call of the
+runtime: they are about as slow as Python. (The Kotlin program is
+compiled first and the jar is timed.)</p>
 <p>JavaScript is two to six times faster than the VM and Java two to
 nine, because Node and the JVM compile the program to machine code as
 it runs and learn which kinds of value each <code>Z.add</code> really sees. Go is
