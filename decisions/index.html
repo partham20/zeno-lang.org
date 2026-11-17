@@ -57,7 +57,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 465 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 472 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -8923,7 +8923,8 @@ the wrong count in Go.</p>
 message that asks if the function calls itself forever. The Go, Java
 and C# runtimes count calls the same way and stop with the same
 message, and they run the program on a thread with a big stack so that
-1000 calls always fit.</p>
+1000 calls always fit.
+(JavaScript and Python count too since 24.23.)</p>
 <p><strong>Why.</strong> A program that recurses forever should end the same way in
 every language, with Zeno's message, not with a Go "goroutine stack
 exceeds" or a Java <code>StackOverflowError</code>.</p>
@@ -9003,6 +9004,152 @@ the browser's. <code>zeno build --web</code> puts Zeno itself in a page as
 WebAssembly. What was missing was a program that runs anywhere a
 WebAssembly host does, the same file on every computer, and that is
 WASI.</p>
+<h3 id="2420-text-in-quotes-zenos-own-rule">24.20 Text in quotes: Zeno's own rule</h3>
+<p>A text shown inside a list, a dict or an object, or named in the
+message of an error, is in quotes. Inside them <code>"</code>, <code>\</code>, the new line,
+the carriage return and the tab are written as a program writes them
+(<code>\"</code>, <code>\\</code>, <code>\n</code>, <code>\r</code>, <code>\t</code>). Any other control character (below a
+space, and U+007F to U+009F) is written as its code, <code>\u{1b}</code>, because
+it would not show on a screen. Every other character is written as it
+is.</p>
+<p>Until now <code>zeno run</code> used Rust's <code>{:?}</code> for this, which escapes
+whatever Rust's tables of Unicode call "not printable" or "extending".
+That made <code>["தமிழ்"]</code> print as <code>["தமிழ\u{bcd}"]</code>: the last sign of
+the word is a combining one. The C that <code>zeno build</code> writes escaped
+five characters and nothing else, and the runtimes of the targets
+already followed the rule above. Three ways of running one program
+gave three answers. Now <code>zeno run</code>, the C runtime and every target
+quote a text the same way.</p>
+<p><strong>Why not Rust's rule everywhere.</strong> It needs Unicode's tables, which
+change with each version of Unicode, so the answer would depend on
+the version of Rust that built Zeno, and each runtime would need a
+copy of the tables. It also breaks words in Tamil, Hindi, Thai and
+every script that uses combining signs. <code>strip</code> and <code>upper</code> already
+keep to ASCII so that no table is needed (3.14); this is the same
+choice.</p>
+<p><strong>Why escape control characters at all.</strong> A list is shown to be read.
+An escape character or a zero-width control inside a text would
+change what the terminal does, or show nothing, and the reader could
+not tell <code>"a"</code> from <code>"a\u{1b}"</code>.</p>
+<p><strong>Rejected.</strong> Escaping everything that is not ASCII: exact, but a
+program that prints a list of names in Tamil would print codes.</p>
+<h3 id="2421-a-float-between-two-shortest-texts-takes-the-even-one">24.21 A float between two shortest texts takes the even one</h3>
+<p>A float is printed with the fewest digits that name it and no other
+float. Now and then two texts of that length are equally near: the
+float <code>1e15 + 0.25</code> lies exactly between <code>1000000000000000.2</code> and
+<code>1000000000000000.3</code>. Zeno prints the one whose last digit is even.</p>
+<p><strong>Why.</strong> C, JavaScript, Python, Java and C# do, and so did the C that
+<code>zeno build</code> writes. <code>zeno run</code> printed the upper one, because Rust
+does, so <code>zeno run</code> and <code>zeno build</code> disagreed, and so did five of the
+targets. The even digit is also what the rest of Zeno does with a
+half: <code>{x:.1f}</code> rounds the exact value to even. It can only happen to
+a float that needs 16 or 17 digits. <code>value::float_text</code> puts Rust's
+answer right in that one case; the Rust target carries the same
+function.</p>
+<p><strong>Rejected.</strong> Teaching five runtimes to round up as Rust does: more
+code in more places, for the rarer habit.</p>
+<h3 id="2422-a-variable-is-read-when-its-turn-comes">24.22 A variable is read when its turn comes</h3>
+<p>Zeno works a line out from left to right, and reads a variable at the
+moment its turn comes. The lowering (24.3, 24.14) now keeps to that in
+four places where it did not:</p>
+<ul>
+<li><code>f(b=two(), a=one())</code> runs <code>two()</code> first, as written. On JavaScript,
+  Python, Java, C# and Rust it ran <code>one()</code> first, because the
+  arguments had already been put in the order of the parameters.</li>
+<li><code>x += f()</code> reads <code>x</code> before <code>f()</code> runs, so a change <code>f</code> makes to <code>x</code>
+  is lost, as in <code>zeno run</code>. Go and C++ read <code>x</code> after.</li>
+<li><code>[x, bump()]</code>, <code>x &lt; bump() &lt; y</code>, <code>f"{x} {bump()}"</code>, <code>[x: bump()]</code>:
+  wherever a later part needs statements of its own (24.14), an
+  earlier plain variable is copied first. Before, only earlier calls
+  were copied, and a variable was read after the later part had
+  changed it, on every target.</li>
+<li><code>list[i] = value</code> and <code>object.field = value</code> work out the list, the
+  index and the value in that order.</li>
+</ul>
+<p><strong>Why.</strong> It is the rule of <code>zeno run</code>, and "it prints what <code>zeno run</code>
+prints" has no exceptions. None of the 319 programs changed a variable
+in the middle of a line that also read it, so none showed it.</p>
+<p><strong>Rejected.</strong> Copying every variable always: right, but each line of
+the written program would grow, and most lines change nothing midway.
+A variable is copied only when something after it on the line can run
+code.</p>
+<h3 id="2423-nesting-is-counted-in-javascript-and-python-too">24.23 Nesting is counted in JavaScript and Python too</h3>
+<p>24.15 had JavaScript and Python stop "where their own limit is". That
+is not the same program: <code>zeno run</code> stops at the 1000th nested call,
+with the name of the function and the line, and JavaScript ran more
+than 10,000 deep before it stopped with another message. Now both
+count as the other targets do: a call of a function of the program is
+<code>Z.direct(f, line, ...)</code>, which counts it in, calls it, and counts it
+out again whether it returned or raised.</p>
+<p><strong>Why.</strong> A program that prints how deep it got, or that recurses 5000
+deep on purpose, did something else in two of nine targets.</p>
+<p><strong>Cost.</strong> A call in Python is slower by about a third (<code>fib</code>: 2.3 s to
+3.5 s), in JavaScript a little (0.12 s to 0.16 s). Correct first
+(24.2).</p>
+<h3 id="2424-corners-of-the-library-pinned-down">24.24 Corners of the library, pinned down</h3>
+<p>The review of the targets found places where <code>zeno run</code> did whatever
+the Rust it is built with does, and a target did what its own language
+does. Each now has a rule, which <code>zeno run</code> and all targets follow:</p>
+<ul>
+<li><strong><code>lines()</code>.</strong> A line ends at <code>\n</code>. A <code>\r</code> just before that <code>\n</code>
+  goes with it. A <code>\r</code> anywhere else, and one at the very end with no
+  <code>\n</code> after it, stays in its line. It is written out in
+  <code>builtins.rs</code>, not left to Rust's <code>str::lines</code>.</li>
+<li><strong><code>input()</code>.</strong> The same for the line end. Bytes that are not UTF-8
+  become U+FFFD the way Rust, Python and browsers do it: one for each
+  run of bytes that began a character and did not finish it, one for
+  each byte that could not begin one.</li>
+<li><strong><code>range</code>.</strong> A step past the last int ends the range. <code>zeno run</code>
+  added the step without looking, which is a stop in a debug build
+  and a wrong, endless list in a release build.</li>
+<li><strong><code>math.floor</code>, <code>math.ceil</code>.</strong> Always an int: too big a float gives
+  the biggest int, not-a-number gives 0, as <code>math.round</code> and
+  <code>zeno run</code> do. Five targets gave the float back.</li>
+<li><strong><code>//</code> and <code>%</code> of floats.</strong> <code>-0.0</code> is kept where the arithmetic
+  gives it (Python lost it).</li>
+<li><strong>JSON.</strong> The four hex digits of <code>\u</code> are digits (<code>zeno run</code> took
+  <code>\u+041</code>); the second half of a pair is DC00 to DFFF; the blanks
+  before a text that is not JSON, which the message leaves out, are
+  JSON's four.</li>
+<li><strong><code>files</code>.</strong> A path with nothing in it is "no file". A path through
+  a file (<code>notes.txt/x</code>) "cannot be read".</li>
+</ul>
+<p><strong>Why list them.</strong> Each was found by a program written to look for it
+(<code>tools/targets/edge-*.zeno</code>), not by a user. They are small, but a
+rule that is whatever one compiler happens to do is not a rule
+(principle: unambiguous).</p>
+<h3 id="2425-file-names-and-names-in-capitals">24.25 File names, and names in capitals</h3>
+<ul>
+<li>A program may have any file name. The Rust file names its own crate
+  (<code>#![crate_name]</code>), so <code>my prog.rs</code> and <code>2048.rs</code> build; the command
+  that <code>zeno build</code> prints has <code>-o</code>, and quotes a name a shell would
+  split.</li>
+<li><code>go run</code> refuses a file that ends in <code>_test.go</code> and does not see one
+  that begins with <code>_</code> or <code>.</code>. For those, the Go file gets <code>program</code>
+  in its name: <code>speed_test.zeno</code> is written as
+  <code>speed_test_program.go</code>.</li>
+<li>Python looks for a module in the program's folder before its own
+  library. A program called <code>struct.py</code> or <code>re.py</code> was taken for
+  Python's module of that name. The runtime takes the folder off the
+  list before it imports anything.</li>
+<li>A name in capitals may be a macro of a C header (<code>ERANGE</code>, <code>SIGINT</code>,
+  <code>OVERFLOW</code>). The C++ file says <code>#undef</code> for each such name of the
+  program, after the runtime and before the program.</li>
+<li>The words the list of 24.4 had missed (<code>args</code>, <code>delegate</code>, the
+  sized ints of C++ and others) are in it.</li>
+</ul>
+<p><strong>Why <code>#undef</code> and not a longer list.</strong> The macros differ from system
+to system and there are hundreds; no list is complete. After the
+runtime nothing needs them.</p>
+<h3 id="2426-the-check-holds-the-error-to-zeno-run-too">24.26 The check holds the error to <code>zeno run</code> too</h3>
+<p><code>tools/targets.py</code> (24.9) compared what was printed and whether the
+program stopped with an error. Now, when it stops, the message, the
+file and the line must be the same too. It also takes a corner
+program in several files (a folder with <code>main.zeno</code>), the words a
+program is started with (<code>.args</code>), and typed input that is not text
+(<code>.stdin</code> is bytes).</p>
+<p><strong>Why.</strong> "The same error" was promised (24.2) and not checked. The
+nesting difference of 24.23 would have been caught the first day.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

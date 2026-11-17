@@ -532,20 +532,10 @@ Z.start(["area.zeno"], function main() {
     return Z.mul(Z.mul(Z.builtin("math.pi"), r, 4), r, 4);
   });
   math_ = Z.module("math");
-  Z.b.print([area(Z.float(2.0))], 6);
+  Z.b.print([Z.direct(area, 6, Z.float(2.0))], 6);
 });</code></pre></figure>
     </div>
-    <ul class="target-grid">
-      <li><b>JavaScript</b><code>--target js</code><span>node hello.js</span></li>
-      <li><b>A web page</b><code>--target html</code><span>any browser</span></li>
-      <li><b>Python</b><code>--target py</code><span>python3 hello.py</span></li>
-      <li><b>Go</b><code>--target go</code><span>go run hello.go</span></li>
-      <li><b>Java</b><code>--target java</code><span>java hello.java</span></li>
-      <li><b>C#</b><code>--target cs</code><span>dotnet run hello.cs</span></li>
-      <li><b>C++</b><code>--target cpp</code><span>g++ -std=c++17</span></li>
-      <li><b>Rust</b><code>--target rust</code><span>rustc -O</span></li>
-      <li><b>WebAssembly</b><code>--target wasm</code><span>wasmtime hello.wasm</span></li>
-    </ul>
+    <ul class="target-grid"><li><b>JavaScript</b><code>--target js</code><span>node hello.js</span></li><li><b>A web page</b><code>--target html</code><span>a browser</span></li><li><b>Python</b><code>--target py</code><span>python3 hello.py</span></li><li><b>Go</b><code>--target go</code><span>go run hello.go</span></li><li><b>Java</b><code>--target java</code><span>java hello.java</span></li><li><b>C#</b><code>--target cs</code><span>dotnet run hello.cs</span></li><li><b>C++</b><code>--target cpp</code><span>g++ -std=c++17 -O2 hello.cpp -o hello</span></li><li><b>Rust</b><code>--target rust</code><span>rustc -O --edition 2021 hello.rs -o hello</span></li><li><b>WebAssembly</b><code>--target wasm</code><span>wasmtime hello.wasm</span></li></ul>
     <div class="after-diagram">
       <div><h3>It does what <code>zeno run</code> does</h3><p>The same text, the same errors on the same line, and numbers that overflow where Zeno's do, even in JavaScript and Python.</p></div>
       <div><h3>Held to it by a tool</h3><p>Every example and every sample in the book is built for every target, run, and compared with <code>zeno run</code>.</p></div>

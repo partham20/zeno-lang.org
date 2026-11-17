@@ -1225,6 +1225,30 @@ def target_js(name):
     return window(f"{name}.js", "// … Zeno's rules for JavaScript, then:\n" + program, lang="js")
 
 
+TARGET_NAMES = {"js": "JavaScript", "ts": "TypeScript", "html": "A web page", "py": "Python", "go": "Go",
+                "java": "Java", "cs": "C#", "cpp": "C++", "rust": "Rust", "wasm": "WebAssembly", "php": "PHP",
+                "rb": "Ruby", "ruby": "Ruby", "lua": "Lua", "dart": "Dart", "kt": "Kotlin", "kotlin": "Kotlin"}
+COUNT_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+               "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen"]
+
+
+def targets():
+    """The targets of `zeno build --target`, from the table in docs/targets.md: (flag, name, how to run it)."""
+    text = (Path(ARGS.zeno) / "docs" / "targets.md").read_text()
+    rows = re.findall(r"^\| `([a-z]+)` \| [^|]+ \| ([^|]+) \|$", text, re.M)
+    out = []
+    for flag, run in rows:
+        run = re.sub(r"\s*\(.*?\)", "", run).strip()
+        run = re.findall(r"`([^`]+)`", run)[0] if "`" in run else run
+        out.append((flag, TARGET_NAMES.get(flag, flag), run.split(" && ")[0]))
+    return out
+
+
+def target_grid():
+    return '<ul class="target-grid">' + "".join(
+        f"<li><b>{esc(name)}</b><code>--target {flag}</code><span>{esc(run)}</span></li>" for flag, name, run in targets()) + "</ul>"
+
+
 def build_home():
     source = (TOOLS / "home.html").read_text()
 
@@ -1237,6 +1261,7 @@ def build_home():
     source = re.sub(r"<!--OUT:(\w+)-->", lambda m: esc(run_zeno(SNIPPETS / f"{m.group(1)}.zeno")), source)
     source = re.sub(r"<!--WINDOW:(\w+)-->", lambda m: sample(m.group(1)), source)
     source = re.sub(r"<!--TARGET-JS:(\w+)-->", lambda m: target_js(m.group(1)), source)
+    source = source.replace("<!--TARGET-GRID-->", target_grid()).replace("<!--TARGET-COUNT-->", COUNT_WORDS[len(targets())])
     source = icons_in(source)
     assert "<!--" not in source.replace("<!-- ", "")
     layout("/", "Zeno: code that reads like what it means",

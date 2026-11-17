@@ -118,7 +118,7 @@ Wrote hello.html. Open it in a browser</code></pre>
 <tr>
 <td><code>rust</code></td>
 <td><code>hello.rs</code></td>
-<td><code>rustc -O --edition 2021 hello.rs &amp;&amp; ./hello</code></td>
+<td><code>rustc -O --edition 2021 hello.rs -o hello &amp;&amp; ./hello</code></td>
 </tr>
 <tr>
 <td><code>wasm</code></td>
@@ -159,19 +159,23 @@ carry the program's text.)</p>
 overflows; the written program still overflows where Zeno's does,
 because the rules of Zeno come with it.</p>
 <p>That is held to by a tool, not by hope. <code>tools/targets.py</code> runs every
-example, every sample of the book and four programs written to try the
-corners (<code>tools/targets/</code>) with <code>zeno run</code>, then builds each for every
-target, runs it, and compares:</p>
+example, every sample of the book and twenty-two programs written to try
+the corners (<code>tools/targets/</code>: the edges of an int, floats as text,
+text in every script, the order a line is worked out in, errors, deep
+calls, JSON, files, typed lines that are not text, names that are words
+of other languages) with <code>zeno run</code>, then builds each for every target,
+runs it, and compares what it printed and, if it stopped with an error,
+the message, the file and the line:</p>
 <pre><code>$ python3 tools/targets.py
-js: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-py: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-go: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-java: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-cs: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-cpp: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-rust: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-wasm: 319 of 319 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
-html: 311 of 311 programs print what `zeno run` prints (29 left out: ...)</code></pre>
+js: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+py: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+go: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+java: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+cs: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+cpp: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+rust: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+wasm: 337 of 337 programs print what `zeno run` prints (21 left out: they use the board, a page, manual memory)
+html: 328 of 328 programs print what `zeno run` prints (30 left out: ...)</code></pre>
 <h2 id="how-it-is-done">How it is done</h2>
 <p>Three steps, in three files.</p>
 <ol>
@@ -209,7 +213,7 @@ print(area(2.0))</code></pre>
     return Z.mul(Z.mul(Z.builtin("math.pi"), r, 4), r, 4);
   });
   math_ = Z.module("math");
-  Z.b.print([area(Z.float(2.0))], 6);
+  Z.b.print([Z.direct(area, 6, Z.float(2.0))], 6);
 });</code></pre>
 <pre><code>def main():
     area = None
@@ -218,12 +222,14 @@ print(area(2.0))</code></pre>
         return Z.mul(Z.mul(Z.builtin("math.pi"), r, 4), r, 4)
     area = Z.fn("area", ["r"], [False], z_f1)
     math_.v = Z.module("math")
-    Z.b.print([area(2.0)], 6)</code></pre>
+    Z.b.print([Z.direct(area, 6, 2.0)], 6)</code></pre>
 <p><code>Z.mul(a, b, 4)</code> multiplies as Zeno multiplies, and if the answer does
-not fit, stops with Zeno's message for line 4. <code>area</code> is called as a
-plain function, since it is known where it is written; <code>math</code> is the
-module, renamed <code>math_</code> because <code>math</code> is a name the targets' own libraries
-use.
+not fit, stops with Zeno's message for line 4. <code>Z.direct(area, 6, ...)</code>
+calls <code>area</code> straight away, since it is known where it is written, and
+counts the call: the 1000th call inside another stops the program at
+line 6 with Zeno's message, as <code>zeno run</code> does (decision 24.23). <code>math</code>
+is the module, renamed <code>math_</code> because <code>math</code> is a name the targets'
+own libraries use.
 <code>area</code> is moved above the <code>import</code> line, as Zeno lets a function be
 used before the line it is written on. A function is a real
 function of the language, with its Zeno name and parameters kept on it
@@ -330,6 +336,37 @@ the program passes a failure on with <code>?</code>; a <code>try</code> body is 
 whose failure the code after it looks at, as in Go. Zeno is itself
 written in Rust, so the Rust runtime prints and reads floats, and
 quotes text, with the very code <code>zeno run</code> uses.</p>
+<h2 id="corners-that-have-a-rule">Corners that have a rule</h2>
+<p>A review of every target (2026-11-16) wrote programs to look for
+places where a target did what its own language does and not what
+<code>zeno run</code> does. It found about thirty, all in corners the first 319
+programs did not reach. Each now has a rule that <code>zeno run</code> and every
+target keep, and a program in <code>tools/targets/</code> that holds them to it:</p>
+<ul>
+<li><strong>The order of a line.</strong> Named arguments are worked out in the order
+  they are written; <code>x += f()</code> reads <code>x</code> first; a variable is read
+  when its turn comes, whatever a later part of the line changes
+  (decision 24.22).</li>
+<li><strong>Text in quotes.</strong> <code>["தமிழ்"]</code> prints as it is written. Only
+  control characters are shown as codes (24.20).</li>
+<li><strong>Floats.</strong> A float exactly between two shortest texts takes the
+  even one (24.21); the smallest floats print as <code>5e-324</code> in Java too.</li>
+<li><strong>Nesting.</strong> Every target counts calls and stops at the 1000th, with
+  the function's name and the line (24.23).</li>
+<li><strong>The library.</strong> <code>lines()</code> and <code>input()</code> and a lone <code>\r</code>; typed bytes
+  that are not UTF-8; <code>range</code> at the last int; <code>math.floor</code> of what is
+  not a number; <code>-0.0</code>; <code>\u</code> in JSON; a path with nothing in it
+  (24.24).</li>
+<li><strong>Names.</strong> Any file name builds (<code>my prog.zeno</code>, <code>2048.zeno</code>,
+  <code>speed_test.zeno</code>, <code>struct.zeno</code>); a name in capitals is safe from
+  the macros of C; <code>args</code> and <code>delegate</code> are safe in Java and C#
+  (24.25).</li>
+<li><strong>Long chains.</strong> A linked list of a million objects is let go link
+  by link in Rust and WebAssembly, not by a million calls inside one
+  another, which a WebAssembly host has no stack for.</li>
+<li><strong>A page.</strong> A text that says <code>&lt;/script&gt;</code> or <code>&lt;!--</code> cannot end or
+  hide the script of the page it is printed in.</li>
+</ul>
 <h2 id="known-limits">Known limits</h2>
 <ul>
 <li><strong>The last digit of <code>sin</code>, <code>exp</code>, <code>pow</code> and the like.</strong> <code>zeno run</code>
@@ -338,10 +375,9 @@ quotes text, with the very code <code>zeno run</code> uses.</p>
   carry their own, which can give a different 17th digit, the last one
   a float prints, for some inputs. Go uses a copy of JavaScript's <code>sin</code>,
   <code>cos</code> and <code>tan</code>, and Java uses <code>Math</code> rather than <code>StrictMath</code>, which
-  makes it rare; none of the 319 programs shows it (decision 24.16).</li>
-<li><strong>Nesting.</strong> Every target stops at 1000 nested calls with Zeno's
-  message, as <code>zeno run</code> does. Go, Java and C# count; JavaScript and
-  Python stop where their own limit is, with a message close to Zeno's.</li>
+  makes it rare; none of the 337 programs shows it (decision 24.16).</li>
+<li><strong>A device as a file.</strong> On WebAssembly a program sees only the folder
+  it was started in, so <code>/dev/null</code> and the like are not there.</li>
 </ul>
 <h2 id="speed">Speed</h2>
 <p>The written program is as correct as <code>zeno run</code> first, and as fast as
@@ -366,8 +402,8 @@ that allows. Seconds, on the benchmarks in <code>bench/</code>, against <code>ze
 <tr>
 <td>fib</td>
 <td>0.78</td>
-<td>0.12</td>
-<td>2.3</td>
+<td>0.16</td>
+<td>3.5</td>
 <td>0.31</td>
 <td>0.19</td>
 <td>0.90</td>
@@ -379,7 +415,7 @@ that allows. Seconds, on the benchmarks in <code>bench/</code>, against <code>ze
 <td>sort</td>
 <td>3.7</td>
 <td>1.2</td>
-<td>18.1</td>
+<td>19.6</td>
 <td>2.1</td>
 <td>1.2</td>
 <td>4.2</td>
@@ -391,7 +427,7 @@ that allows. Seconds, on the benchmarks in <code>bench/</code>, against <code>ze
 <td>strings</td>
 <td>1.8</td>
 <td>0.6</td>
-<td>1.6</td>
+<td>1.7</td>
 <td>0.9</td>
 <td>0.8</td>
 <td>1.8</td>
@@ -402,8 +438,8 @@ that allows. Seconds, on the benchmarks in <code>bench/</code>, against <code>ze
 <tr>
 <td>trees</td>
 <td>10.6</td>
-<td>2.2</td>
-<td>28.3</td>
+<td>2.3</td>
+<td>37.4</td>
 <td>4.2</td>
 <td>1.4</td>
 <td>6.6</td>
@@ -460,7 +496,7 @@ overflow check) would do; that is the next step for speed.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/targets.md">docs/targets.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/playground/"><span>Previous</span>The playground: Zeno in a page, with nothing installed</a><a class="next" href="/docs/install/"><span>Next</span>Installing Zeno: a setup program, and one line</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-the-written-program-does">What the written program does</a></li><li><a href="#how-it-is-done">How it is done</a></li><li><a href="#the-page-target-html">The page: --target html</a></li><li><a href="#what-cannot-be-written-for-another-language">What cannot be written for another language</a></li><li><a href="#known-limits">Known limits</a></li><li><a href="#speed">Speed</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-the-written-program-does">What the written program does</a></li><li><a href="#how-it-is-done">How it is done</a></li><li><a href="#the-page-target-html">The page: --target html</a></li><li><a href="#what-cannot-be-written-for-another-language">What cannot be written for another language</a></li><li><a href="#corners-that-have-a-rule">Corners that have a rule</a></li><li><a href="#known-limits">Known limits</a></li><li><a href="#speed">Speed</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">
