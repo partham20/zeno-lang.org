@@ -57,7 +57,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 474 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 475 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -9226,6 +9226,44 @@ target has (<code>$total-&gt;v</code> everywhere, where PHP has a word for exact
 this). <code>mb_strlen</code> and <code>number_format</code> (the first is not always
 installed, the second rounds a half up after rounding the float
 first, which is not what <code>zeno run</code> prints).</p>
+<h3 id="2429-zeno-is-built-as-one-piece-so-its-speed-does-not-move-when-code-is-added">24.29 Zeno is built as one piece, so its speed does not move when code is added</h3>
+<p><code>Cargo.toml</code> has <code>codegen-units = 1</code> for a release build: the Rust
+compiler works on all of Zeno at once.</p>
+<p><strong>What happened.</strong> 0.5.0 added the targets, about 20,000 lines that
+nothing runs unless <code>--target</code> is given. No line of the VM changed,
+and <code>bench/run.py --count</code> showed it: within two in a hundred of
+0.4.0's instructions, fewer on some programs and more on others. But
+timed, in four rounds on a quiet machine, <code>zeno run --vm</code> in the 0.5.0
+build was slower than in 0.4.0's on every benchmark: fib 7 %, loop
+5 %, sort 9 %, strings 1 %, trees 4 %, nbody 4 %. The built programs
+were not touched by it (their C is the same), nor was plain <code>zeno
+run</code>.</p>
+<p><strong>Why.</strong> By default the compiler cuts a program into sixteen pieces
+and works on each alone. Which functions land in one piece, and so
+which can be folded into which and what ends up beside what in the
+file, depends on everything else in the program. Adding code that
+never runs moved the VM's loop and its helpers about, and the
+processor's guesses and its cache did a little worse on the same
+instructions.</p>
+<p><strong>With one piece</strong> there is no cutting, so nothing unrelated decides
+it. The same source then runs fewer instructions than 0.4.0 (fib 2 %
+fewer, sort 1 %, strings 1 %) and, timed the same way, is within two
+in a hundred of 0.4.0 on five benchmarks (loop −2 %, sort −1 %,
+strings −2 %, trees −1 %, nbody −1 %) and 3 % above on fib, which is
+two hundredths of a second. Building Zeno takes 47 seconds where it
+took 36. The program is half a megabyte smaller.</p>
+<p><strong>The rule this is for.</strong> Partha, 2026-11-17: writing a program in
+other languages is a flag, and Zeno itself must stay as fast as it
+was. A count of instructions is not enough to show that; the check
+before a release that adds code is now both, the count and timed
+rounds against the release before.</p>
+<p><strong>Alternatives rejected.</strong> Moving the targets into a crate of their
+own (the VM's crate still changes with every other feature, so the
+same thing would come back). Whole-program <code>lto</code> on top of it (Zeno has no
+crates beside itself, so there is little for it to join; it took a
+minute to build and was not timed). Leaving
+it, as within the noise of this machine: it was the same direction on
+all six programs, four rounds running.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

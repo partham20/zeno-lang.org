@@ -545,18 +545,18 @@ GUIDE = [
 zeno new hello
 zeno run hello/main.zeno</code></pre></figure>
 <h3>Windows</h3>
-<p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.5.0/zeno-0.5.0-windows-setup.exe">zeno-0.5.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
+<p>Download <a href="https://github.com/partham20/zeno-lang/releases/download/v0.5.1/zeno-0.5.1-windows-setup.exe">zeno-0.5.1-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
 <h3>With a package manager</h3>
-<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.0">release page</a>, and a Homebrew tap:</p>
+<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.1">release page</a>, and a Homebrew tap:</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="pkg-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
-<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.5.0_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
-sudo pacman -U zeno-lang-bin-0.5.0-1-x86_64.pkg.tar.zst  # Arch, Manjaro
-sudo snap install --classic --dangerous zeno_0.5.0_amd64.snap
-flatpak install --user zeno-0.5.0-x86_64.flatpak
+<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.5.1_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
+sudo pacman -U zeno-lang-bin-0.5.1-1-x86_64.pkg.tar.zst  # Arch, Manjaro
+sudo snap install --classic --dangerous zeno_0.5.1_amd64.snap
+flatpak install --user zeno-0.5.1-x86_64.flatpak
 
 brew tap partham20/zeno-lang https://github.com/partham20/zeno-lang
 brew install partham20/zeno-lang/zeno                   # macOS and Linux</code></pre></figure>
-<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.0">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
+<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/partham20/zeno-lang/releases/tag/v0.5.1">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
 <h3>From source</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="src-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="src-cmd"><code>git clone https://github.com/partham20/zeno-lang

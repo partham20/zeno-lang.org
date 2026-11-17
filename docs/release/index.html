@@ -169,8 +169,8 @@ hand: tick the box, press the button, and wait about six minutes.</p>
 be seen later (the benchmarks page on zeno-lang.org draws it). After
 the tag is pushed, on the machine the earlier versions were timed on:</p>
 <pre><code>cargo build --release
-python3 bench/record.py --version 0.5.0
-git add bench/results/versions/0.5.0.json</code></pre>
+python3 bench/record.py --version 0.5.1
+git add bench/results/versions/0.5.1.json</code></pre>
 <p><a href="https://github.com/partham20/zeno-lang/blob/main/bench/record.py"><code>bench/record.py</code></a> times every program with every
 engine the version has, beside C, Rust and Python, and writes
 <code>bench/results/versions/&lt;version&gt;.json</code>. The page shows each time as a
@@ -181,6 +181,19 @@ worktree</code> and passing <code>--zeno</code> to that build.</p>
 <p>It is not a step of the release workflow: GitHub's machines are shared
 and their times move by a quarter from one run to the next, more than
 most of the changes the record is there to show (decisions 22.12).</p>
+<h2 id="as-fast-as-the-release-before">As fast as the release before</h2>
+<p>A release that adds code is compared with the one before, on one
+machine, before it goes out. The one before is built from its tag in a
+<code>git worktree</code>, and then:</p>
+<pre><code>python3 bench/run.py --count --engines zeno,zeno-release,zeno-owned,zeno-fast,vm --zeno path/to/old/zeno
+python3 bench/run.py --count --engines zeno,zeno-release,zeno-owned,zeno-fast,vm
+python3 bench/compare.py --old path/to/old/zeno</code></pre>
+<p>The first two count instructions, which shows a change of one in a
+hundred in what the program does. The third times the two builds in
+rounds, which shows what a count cannot: the same instructions placed
+worse. 0.5.0 went out with the count alone and its <code>zeno run --vm</code> was
+a few in a hundred slower than 0.4.0's; 0.5.1 mended it (decision
+24.29).</p>
 <h2 id="where-each-one-is-built">Where each one is built</h2>
 <p>GitHub lends three kinds of machine: Linux on x86-64, macOS on Apple
 silicon, and Windows on x86-64. Ten builds come out of those three
@@ -322,7 +335,7 @@ release workflow does, or less.</p>
   <p class="source">This page is <a href="https://github.com/partham20/zeno-lang/blob/main/docs/release.md">docs/release.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/packages/"><span>Previous</span>Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a class="next" href="/docs/new/"><span>Next</span>Starting a program: zeno new</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-release-is">What a release is</a></li><li><a href="#making-one">Making one</a></li><li><a href="#keeping-its-benchmark-times">Keeping its benchmark times</a></li><li><a href="#where-each-one-is-built">Where each one is built</a></li><li><a href="#checking-a-build-before-it-goes-out">Checking a build before it goes out</a></li><li><a href="#what-a-released-zeno-needs">What a released zeno needs</a></li><li><a href="#line-ends">Line ends</a></li><li><a href="#what-the-first-release-found">What the first release found</a></li><li><a href="#what-windows-found">What Windows found</a></li><li><a href="#a-trial-on-one-machine">A trial on one machine</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-a-release-is">What a release is</a></li><li><a href="#making-one">Making one</a></li><li><a href="#keeping-its-benchmark-times">Keeping its benchmark times</a></li><li><a href="#as-fast-as-the-release-before">As fast as the release before</a></li><li><a href="#where-each-one-is-built">Where each one is built</a></li><li><a href="#checking-a-build-before-it-goes-out">Checking a build before it goes out</a></li><li><a href="#what-a-released-zeno-needs">What a released zeno needs</a></li><li><a href="#line-ends">Line ends</a></li><li><a href="#what-the-first-release-found">What the first release found</a></li><li><a href="#what-windows-found">What Windows found</a></li><li><a href="#a-trial-on-one-machine">A trial on one machine</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">
