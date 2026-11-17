@@ -576,6 +576,10 @@ target keep, and a program in <code>tools/targets/</code> that holds them to it:
   (24.25). <code>end</code>, <code>local</code>, <code>rescue</code>, <code>it</code>, <code>fun</code>, <code>val</code> and <code>List</code>
   are safe in Lua, Ruby, Dart and Kotlin, and so is text that says
   <code>#{x}</code> or <code>${x}</code>, which those languages would fill in (24.34).</li>
+<li><strong>Multiply, then add.</strong> <code>a * b + c</code> is two steps, each rounded, on
+  a processor that could do both in one: the C++ file says so to its
+  compiler, as the C of <code>zeno build</code> does, and <code>7.0 % 0.1</code> is <code>0.0</code>
+  everywhere (24.35).</li>
 <li><strong>Long chains.</strong> A linked list of a million objects is let go link
   by link in Rust and WebAssembly, not by a million calls inside one
   another, which a WebAssembly host has no stack for.</li>
@@ -594,7 +598,9 @@ target keep, and a program in <code>tools/targets/</code> that holds them to it:
   Lua and Ruby use the C library. Kotlin uses Java's <code>Math</code>, as the
   Java target does. Dart has its own; its <code>log10</code> is worked out the
   way the C library does it, because <code>log(x) / ln10</code> is one digit off
-  for some inputs.</li>
+  for some inputs. On ARM64, Go may also do a multiply and an add of
+  its own <code>sin</code>, <code>cos</code> and <code>tan</code> in one step, which could move a last
+  digit there (24.35).</li>
 <li><strong>Time in Lua.</strong> Lua has a clock in whole seconds and no <code>sleep</code>.
   With LuaSocket installed, <code>time.now()</code> and <code>sleep</code> are exact. Without
   it, <code>time.now()</code> counts the time the processor worked, which is

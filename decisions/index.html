@@ -57,7 +57,7 @@
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 487 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 488 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -9448,6 +9448,45 @@ with capitals; texts that say <code>$5</code>, <code>${x}</code>, <code>#{y}</co
 error raised again through the <code>try</code>s of calls inside one another; and
 a function with 230 variables. The Lua coroutines, Ruby's <code>Z.loop</code> and the table of
 variables each came from a program like these failing first.</p>
+<h3 id="2435-multiply-then-add-is-two-steps-in-c-and-go-too-and-the-check-fails-when-a-program-differs">24.35 Multiply, then add, is two steps in C++ and Go too; and the check fails when a program differs</h3>
+<p>The first run of the weekly check with the four new languages
+(2026-11-17) showed a line that was not theirs: with the newest g++
+(15.2), <code>tools/targets/edge-ints.zeno</code> printed in C++</p>
+<pre><code>1e308 % 3.0    4.9896007738368e291     where `zeno run` prints 0.0
+7.0 % 0.1      -3.885780586188048e-16  where `zeno run` prints 0.0
+1 % 0.1        -5.551115123125783e-17  where `zeno run` prints 0.0</code></pre>
+<p><strong>Why.</strong> <code>a % b</code> on floats is <code>a - b * floor(a / b)</code>. Zeno multiplies
+and rounds, then takes away and rounds. A processor with a fused
+multiply-add does both in one instruction and rounds once, and what
+is left is the tiny error of the product, where two steps leave 0. A
+C++ compiler may pick that instruction without being asked, and that
+g++ did. The C of <code>zeno build</code> has said "two steps" to its compiler
+since the first release (decision 12.5); <code>runtime.cpp</code> did not.
+With g++ 13 on the same kind of machine nothing showed, because that
+compiler was not using the instruction.</p>
+<p><strong>The rule.</strong> <code>src/runtime.cpp</code> now says it to each family of
+compiler (<code>#pragma STDC FP_CONTRACT OFF</code> for clang, <code>#pragma GCC
+optimize("fp-contract=off")</code> for g++, <code>#pragma fp_contract(off)</code> for
+Microsoft's), for the whole file, the program included. In
+<code>src/runtime.go</code> the product in <code>%</code> is written <code>float64(y * q)</code>: Go
+may fuse too, on ARM64, and its rule is that a conversion written out
+rounds first. <code>edge-ints.zeno</code> has a line of <code>a * b + c</code> in a
+function, for every target. The other languages take two steps by
+their own rules (Java, Kotlin, C#, Rust, JavaScript, Dart) or run
+each step as an instruction of their own (Python, PHP, Lua, Ruby).</p>
+<p><strong>Not done.</strong> The Go runtime's own <code>sin</code>, <code>cos</code> and <code>tan</code> (24.16) are
+sums of products, and on ARM64 Go may fuse those: a last digit could
+differ there. It has not been seen and cannot be tried here; it is
+with the known limits.</p>
+<p><strong>The check did not fail.</strong> The step was <code>python3 tools/targets.py |
+tee targets-report.txt</code>, and without <code>pipefail</code> a step has the status
+of its last command, <code>tee</code>. So the run was green with a failed
+program in its report. The step now runs under <code>bash</code> with
+<code>pipefail</code>, and is red when any program differs.</p>
+<p><strong>Alternatives rejected.</strong> <code>-ffp-contract=off</code> in the command the
+user is told to run (the file must be right by itself, however it is
+compiled). A <code>volatile</code> in <code>%</code> only (a compiler that fuses there may
+fuse elsewhere in the file).</p>
 <h2 id="25-starting-another-program">25. Starting another program</h2>
 <p>Partha asked (2026-11-17) for a program in Zeno that downloads a video
 from YouTube. <a href="/examples/download/"><code>examples/download.zeno</code></a> is
