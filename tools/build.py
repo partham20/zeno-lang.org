@@ -311,12 +311,21 @@ UNRELEASED_PARTS = {
                  "Needing a package by its name, <code>zeno search</code> and <code>zeno publish</code> are on "
                  "<a href=\"{GITHUB}\">main</a> and not in a release yet: build Zeno from source to try them, "
                  "or wait for the release after 0.5.1. The registry itself is open."),
+    "using-packages": ("Coming next",
+                       "Needing a package by its name alone, <code>needs units at \"v1.2.0\"</code>, is on "
+                       "<a href=\"{GITHUB}\">main</a> and not in a release yet: build Zeno from source to try it, "
+                       "or wait for the release after 0.5.1. A folder and a git repository work in 0.5."),
+    "python": ("Coming next",
+               "<code>import python</code> is on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
+               "build Zeno from source to try it, or wait for the release after 0.5.1."),
     "running-programs": ("Coming next",
                          "<code>program.run</code> is on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
                          "build Zeno from source to try it, or wait for the release after 0.5.1."),
 }
 # Examples that need what no release has yet, and what to say under each.
 UNRELEASED_EXAMPLES = {
+    "video": "This program uses <code>import python</code>, which is on main and not in a release yet: "
+             "build Zeno from source to run it, or wait for the release after 0.5.1.",
     "download": "This program uses <code>program.run</code>, which is on main and not in a release yet: "
                 "build Zeno from source to run it, or wait for the release after 0.5.1.",
 }
