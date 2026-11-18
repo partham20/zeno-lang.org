@@ -172,41 +172,43 @@ class="number">20</span> Interfaces</a></li>
 class="number">21</span> Programs in Several Files</a></li>
 <li><a href="packages.html" id="toc-ch-packages"><span
 class="number">22</span> Packages</a></li>
+<li><a href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">23</span> Reading and Writing</a></li>
+class="number">24</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">24</span> Mathematics</a></li>
+class="number">25</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">25</span> Testing</a></li>
+class="number">26</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">26</span> The Tools</a></li>
+class="number">27</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">27</span> The Board</a></li>
+class="number">28</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">28</span> Compiling</a></li>
+class="number">29</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">29</span> Memory</a></li>
+class="number">30</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">30</span> Ownership</a></li>
+class="number">31</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">31</span> Firmware</a></li>
+class="number">32</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">32</span> Building with No Collector</a></li>
+class="number">33</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">33</span> Unsafe Code</a></li>
+class="number">34</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">34</span> A Program in a Web Page</a></li>
+class="number">35</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">35</span> Inside Zeno</a></li>
+class="number">36</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">36</span> Why Zeno Is as It Is</a></li>
+class="number">37</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -522,13 +524,54 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <p>Give the cases names that say which enum they belong to, such as
 <code>FlagRed</code>, or put the enums in different files (<a
 href="modules.html#ch-modules">Programs in Several Files</a>).</p>
+<h3 class="unnumbered" id="cases-that-stand-for-numbers"><span
+class="number">12.8</span> Cases that stand for numbers</h3>
+<p>On a wire or in a register, a command is a number. An enum whose
+cases carry nothing can give each case its number, where the case is
+written. <code>int(Ack)</code> then gives the number,
+<code>u8(Ack)</code> gives it checked to fit a byte, and
+<code>Reply(6)</code> gives the case back:</p>
+<div class="zenofile">
+<p>reply.zeno</p>
+</div>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Reply {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    Ack = <span class="dv">6</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    Nak = <span class="dv">21</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    Busy = <span class="dv">0x11</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> sent: <span class="dt">u8</span> = <span class="dt">u8</span>(Busy)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>print(sent)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> code <span class="kw">in</span> [<span class="dv">6</span>, <span class="dv">17</span>, <span class="dv">99</span>] {</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> reply = Reply(code)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> reply <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        print(code, <span class="st">&quot;is no reply&quot;</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">else</span> {</span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>        print(code, <span class="st">&quot;is&quot;</span>, reply)</span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>17
+6 is Ack
+17 is Busy
+99 is no reply</code></pre>
+<p><code>Reply(code)</code> gives <code>Reply or none</code>, because
+most numbers are no case at all, and a byte from outside can be
+anything. Every case has a number or none does, and no two have the
+same: a number nobody wrote down, as C counts them, would change when a
+case is added above it. A case is still not a number:
+<code>Ack == 6</code> is refused, and <code>int(Ack) == 6</code> says
+what is meant.</p>
 <div class="summary">
 <p>An enum lists the cases a value can be, and a case can carry values
 of its own. <code>match</code> runs the block of the case that fits,
 takes out what a case carries, and must handle every case of an enum,
 either by name or with a final <code>case _</code>. A <code>match</code>
 on numbers or text always needs <code>case _</code>, and a plain name as
-the last case gives the value a name.</p>
+the last case gives the value a name. A case that carries nothing can
+stand for a number written beside it: <code>int(Ack)</code> gives it,
+and <code>Reply(6)</code> gives the case or <code>none</code>.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -543,6 +586,9 @@ a function that prints a list of readings, with the fault codes in
 hexadecimal.</p></li>
 <li><p>Add <code>Jammed</code> to the door, and a <code>Closing</code>
 state, so that an open door closes again.</p></li>
+<li><p>Write <code>enum Month</code> with <code>January = 1</code> to
+<code>December = 12</code>, and print the name of the month whose number
+is typed, or that there is none.</p></li>
 </ol>
 </div>
 </article>

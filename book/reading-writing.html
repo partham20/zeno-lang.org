@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>23 Reading and Writing · The Zeno Book</title>
+  <title>24 Reading and Writing · The Zeno Book</title>
   <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@
   </style>
   <link rel="stylesheet" href="book.css">
 <meta property="og:site_name" content="Zeno">
-<meta property="og:title" content="23 Reading and Writing · The Zeno Book">
+<meta property="og:title" content="24 Reading and Writing · The Zeno Book">
 <meta property="og:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/book/reading-writing.html">
@@ -103,7 +103,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Zeno Book: the whole language, in one book.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="23 Reading and Writing · The Zeno Book">
+<meta name="twitter:title" content="24 Reading and Writing · The Zeno Book">
 <meta name="twitter:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta name="twitter:image" content="https://zeno-lang.org/og/book.png">
 <meta name="twitter:image:alt" content="The Zeno Book: the whole language, in one book.">
@@ -172,41 +172,43 @@ class="number">20</span> Interfaces</a></li>
 class="number">21</span> Programs in Several Files</a></li>
 <li><a href="packages.html" id="toc-ch-packages"><span
 class="number">22</span> Packages</a></li>
+<li><a href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
 <li><a class="here" href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">23</span> Reading and Writing</a></li>
+class="number">24</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">24</span> Mathematics</a></li>
+class="number">25</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">25</span> Testing</a></li>
+class="number">26</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">26</span> The Tools</a></li>
+class="number">27</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">27</span> The Board</a></li>
+class="number">28</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">28</span> Compiling</a></li>
+class="number">29</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">29</span> Memory</a></li>
+class="number">30</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">30</span> Ownership</a></li>
+class="number">31</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">31</span> Firmware</a></li>
+class="number">32</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">32</span> Building with No Collector</a></li>
+class="number">33</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">33</span> Unsafe Code</a></li>
+class="number">34</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">34</span> A Program in a Web Page</a></li>
+class="number">35</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">35</span> Inside Zeno</a></li>
+class="number">36</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">36</span> Why Zeno Is as It Is</a></li>
+class="number">37</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -226,12 +228,12 @@ class="number">G</span> What Zeno Does Not Have Yet</a></li>
 </aside>
 <main>
 <nav class="pager top">
-<a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
-<a class="next" href="math.html" rel="next"><span class="number">24</span> Mathematics →</a>
+<a class="prev" href="other-languages.html" rel="previous">← <span class="number">23</span> Libraries of Other Languages</a>
+<a class="next" href="math.html" rel="next"><span class="number">25</span> Mathematics →</a>
 </nav>
 <article>
 <h2 class="chapter unnumbered" id="ch-reading-writing"><span
-class="number">23</span> Reading and Writing</h2>
+class="number">24</span> Reading and Writing</h2>
 <p>A program is more useful when it can take something in and leave
 something behind: lines typed at a keyboard or sent down a serial line,
 words on the command line, files on a disk. This chapter covers all
@@ -259,34 +261,61 @@ three, and JSON, the text that programs hand each other.
 <td style="text-align: left;"><code>list[str]</code></td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">read the environment</td>
+<td
+style="text-align: left;"><code>program.environment(name)</code></td>
+<td style="text-align: left;"><code>str or none</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">write on the error stream</td>
+<td style="text-align: left;"><code>program.warn(text)</code></td>
+<td style="text-align: left;">nothing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">end the program now</td>
+<td style="text-align: left;"><code>program.exit(code)</code></td>
+<td style="text-align: left;">nothing</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">read a file</td>
 <td style="text-align: left;"><code>files.read(path)</code></td>
 <td style="text-align: left;"><code>str</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">write a file</td>
 <td style="text-align: left;"><code>files.write(path, text)</code></td>
 <td style="text-align: left;">nothing</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">add to a file</td>
 <td style="text-align: left;"><code>files.append(path, text)</code></td>
 <td style="text-align: left;">nothing</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">ask if a file is there</td>
 <td style="text-align: left;"><code>files.exists(path)</code></td>
 <td style="text-align: left;"><code>bool</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">remove a file</td>
 <td style="text-align: left;"><code>files.remove(path)</code></td>
+<td style="text-align: left;">nothing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">read a file as bytes</td>
+<td style="text-align: left;"><code>files.read_bytes(path)</code></td>
+<td style="text-align: left;"><code>list[u8]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">write bytes to a file</td>
+<td
+style="text-align: left;"><code>files.write_bytes(path, bytes)</code></td>
 <td style="text-align: left;">nothing</td>
 </tr>
 </tbody>
 </table>
 </div>
-<h3 class="unnumbered" id="print"><span class="number">23.1</span>
+<h3 class="unnumbered" id="print"><span class="number">24.1</span>
 print</h3>
 <p><code>print</code> shows its values on one line, with a space between
 them, and ends the line. Text is shown as it is; inside a list, it is
@@ -303,7 +332,7 @@ supply=3.30V
 
 after an empty line</code></pre>
 <h3 class="unnumbered" id="reading-lines-input"><span
-class="number">23.2</span> Reading lines: input</h3>
+class="number">24.2</span> Reading lines: input</h3>
 <p><code>input()</code> reads the next line, without its line end. Given
 a question, it prints the question first and stays on that line. When
 there are no more lines, it gives <code>none</code>: at a keyboard that
@@ -353,7 +382,7 @@ sure the program handles it. (Decision 6.18.)</p>
 line, and then <code>input()</code> reads a line from the serial
 port.</p>
 <h3 class="unnumbered" id="the-command-line"><span
-class="number">23.3</span> The command line</h3>
+class="number">24.3</span> The command line</h3>
 <p><code>program.arguments()</code> gives the words written after the
 file, as a list of text. The program’s own name is not in it, so the
 first word is <code>[0]</code>:</p>
@@ -377,17 +406,61 @@ program, even one that looks like an option of Zeno’s; Zeno’s own
 options go before the file: <code>zeno run --vm greet.zeno Ada</code>. A
 compiled program gets the same list from the words after its name:
 <code>./greet Ada Grace</code>.</p>
-<h3 class="unnumbered" id="files"><span class="number">23.4</span>
-Files</h3>
+<h3 class="unnumbered" id="ending-warning-and-the-environment"><span
+class="number">24.4</span> Ending, warning, and the environment</h3>
+<p>A program that other programs call says how it went with a number
+when it ends: 0 if all went well, anything up to 255 if not. A script
+reads that number with <code>&amp;&amp;</code>, <code></code>|| or
+<code>$?</code>. <code>program.exit(code)</code> ends the program there
+with that number. It is not an error, so no <code>try</code> stops it.
+<code>program.warn</code> writes a line on the error stream, which the
+shell keeps apart from what <code>print</code> prints, so a complaint
+does not end up in a file the output was sent to:</p>
+<div class="zenofile">
+<p>hello-all.zeno</p>
+</div>
 <div class="sourceCode" id="cb9" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>files.write(<span class="st">&quot;shopping.txt&quot;</span>, <span class="st">&quot;milk\neggs\n&quot;</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>files.append(<span class="st">&quot;shopping.txt&quot;</span>, <span class="st">&quot;bread\n&quot;</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>print(files.read(<span class="st">&quot;shopping.txt&quot;</span>).lines())</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>print(files.exists(<span class="st">&quot;shopping.txt&quot;</span>))</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>files.remove(<span class="st">&quot;shopping.txt&quot;</span>)</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>print(files.exists(<span class="st">&quot;shopping.txt&quot;</span>))</span></code></pre></div>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = program.arguments()</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> len(names) == <span class="dv">0</span> {</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    program.warn(<span class="st">&quot;usage: zeno run hello-all.zeno &lt;names&gt;&quot;</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    program.exit(<span class="dv">2</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> name <span class="kw">in</span> names {</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;hello,&quot;</span>, name)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>usage: zeno run hello-all.zeno &lt;names&gt;</code></pre>
+<p>A number outside 0 to 255 is a <code>ValueError</code>: on Linux,
+<code>exit(256)</code> would arrive as 0, a failure that looks like a
+success.</p>
+<p><code>program.environment(name)</code> reads the environment the
+program was started in, the names and text a shell sets, such as
+<code>HOME</code>. It gives <code>none</code> for a name that is not
+set, which the program must look at before it uses the text:</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> home = program.environment(<span class="st">&quot;HOME&quot;</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> home <span class="kw">is</span> <span class="cn">none</span> {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;no home folder&quot;</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>} <span class="kw">else</span> {</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;home is&quot;</span>, home)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>A firmware build refuses <code>program.environment</code>: a board
+has no environment. Chapter 34 of <code>docs/decisions.md</code> gives
+the reasons for all three.</p>
+<h3 class="unnumbered" id="files"><span class="number">24.5</span>
+Files</h3>
+<div class="sourceCode" id="cb12" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>files.write(<span class="st">&quot;shopping.txt&quot;</span>, <span class="st">&quot;milk\neggs\n&quot;</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>files.append(<span class="st">&quot;shopping.txt&quot;</span>, <span class="st">&quot;bread\n&quot;</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>print(files.read(<span class="st">&quot;shopping.txt&quot;</span>).lines())</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>print(files.exists(<span class="st">&quot;shopping.txt&quot;</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>files.remove(<span class="st">&quot;shopping.txt&quot;</span>)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>print(files.exists(<span class="st">&quot;shopping.txt&quot;</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;milk&quot;, &quot;eggs&quot;, &quot;bread&quot;]
 true
 false</code></pre>
@@ -446,22 +519,22 @@ style="text-align: left;"><code>cannot remove `notes.txt`</code></td>
 </tbody>
 </table>
 </div>
-<div class="sourceCode" id="cb11" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> first_line(path: <span class="dt">str</span>) -&gt; <span class="dt">str</span> <span class="kw">raises</span> FileError {</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> lines = files.read(path).lines()</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> len(lines) == <span class="dv">0</span> {</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;&quot;</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> lines[<span class="dv">0</span>]</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    print(first_line(<span class="st">&quot;settings.txt&quot;</span>))</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> FileError <span class="kw">as</span> e {</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;no settings:&quot;</span>, e.message)</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb14" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> first_line(path: <span class="dt">str</span>) -&gt; <span class="dt">str</span> <span class="kw">raises</span> FileError {</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> lines = files.read(path).lines()</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> len(lines) == <span class="dv">0</span> {</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> lines[<span class="dv">0</span>]</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    print(first_line(<span class="st">&quot;settings.txt&quot;</span>))</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> FileError <span class="kw">as</span> e {</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;no settings:&quot;</span>, e.message)</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>no settings: there is no file `settings.txt`</code></pre>
 <p>A missing file is not a mistake in the program: no check the program
 could make beforehand rules it out, since another program may remove the
@@ -472,48 +545,85 @@ uses a file says <code>raises FileError</code>, or catches it. (Decision
 <h4 class="unnumbered" id="a-file-holds-text">A file holds text</h4>
 <p><code>files.read</code> gives a <code>str</code>, and a
 <code>str</code> is characters, so the file must be UTF-8 text. A
-picture or any other bytes are refused with a <code>FileError</code>.
-Reading bytes is not in version 0.1.</p>
+picture or any other bytes are refused with a
+<code>FileError</code>.</p>
+<h4 class="unnumbered" id="bytes">Bytes</h4>
+<p>A file that is not text, such as a firmware image or a record a board
+wrote, is read with <code>files.read_bytes</code>. It gives every byte
+of the file, as it is, in a <code>list[u8]</code>: each byte is a number
+from 0 to 255, and the list does all a list does.
+<code>files.write_bytes</code> makes a file, or replaces what it held,
+with one byte for each item:</p>
+<div class="sourceCode" id="cb16" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame: <span class="dt">list</span>[<span class="dt">u8</span>] = [<span class="dv">0x7E</span>, <span class="dv">0x01</span>, <span class="dv">0x00</span>, <span class="dv">0xFF</span>]</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>files.write_bytes(<span class="st">&quot;frame.bin&quot;</span>, frame)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> back = files.read_bytes(<span class="st">&quot;frame.bin&quot;</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>print(len(back), back)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> sum = <span class="dv">0</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> byte <span class="kw">in</span> back {</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    sum = (sum + byte) % <span class="dv">256</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>print(sum)</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>files.write(<span class="st">&quot;name.txt&quot;</span>, <span class="st">&quot;é&quot;</span>)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>print(files.read_bytes(<span class="st">&quot;name.txt&quot;</span>))</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>files.remove(<span class="st">&quot;frame.bin&quot;</span>)</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>files.remove(<span class="st">&quot;name.txt&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>4 [126, 1, 0, 255]
+126
+[195, 169]</code></pre>
+<p>The last lines show that text is stored as UTF-8: one <code>é</code>
+is two bytes. The list given to <code>write_bytes</code> is a
+<code>list[u8]</code>, so every item fits in a byte; a number written
+out that does not, such as <code>256</code>, is refused before the
+program runs, and a <code>list[int]</code> is refused too, because it
+could hold anything. Write <code>[u8(n) for n in numbers]</code> to say
+where the check is made. The errors are those of
+<code>files.read</code>: no file, or one that cannot be read. (Decision
+36.1.)</p>
 <h3 class="unnumbered" id="a-worked-example-a-log-book"><span
-class="number">23.5</span> A worked example: a log book</h3>
+class="number">24.6</span> A worked example: a log book</h3>
 <p>This program keeps a log of readings in a file. Each run adds the
 readings given on the command line, then prints every reading so far and
 their average:</p>
 <div class="zenofile">
 <p>logbook.zeno</p>
 </div>
-<div class="sourceCode" id="cb13" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> path = <span class="st">&quot;readings.txt&quot;</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> word <span class="kw">in</span> program.arguments() {</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> value = <span class="dt">float</span>(word)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        files.append(path, <span class="st">f&quot;{value}\n&quot;</span>)</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError {</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;skipped:&quot;</span>, word)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> values: <span class="dt">list</span>[<span class="dt">float</span>] = []</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> files.exists(path) {</span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> line <span class="kw">in</span> files.read(path).lines() {</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        values.append(<span class="dt">float</span>(line))</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>print(len(values), <span class="st">&quot;readings:&quot;</span>, values)</span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> len(values) &gt; <span class="dv">0</span> {</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;average {sum(values) / float(len(values)):.2f}&quot;</span>)</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb18" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> path = <span class="st">&quot;readings.txt&quot;</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> word <span class="kw">in</span> program.arguments() {</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> value = <span class="dt">float</span>(word)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        files.append(path, <span class="st">f&quot;{value}\n&quot;</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError {</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;skipped:&quot;</span>, word)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> values: <span class="dt">list</span>[<span class="dt">float</span>] = []</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> files.exists(path) {</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> line <span class="kw">in</span> files.read(path).lines() {</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        values.append(<span class="dt">float</span>(line))</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>print(len(values), <span class="st">&quot;readings:&quot;</span>, values)</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> len(values) &gt; <span class="dv">0</span> {</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;average {sum(values) / float(len(values)):.2f}&quot;</span>)</span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno run logbook.zeno 21.5 22.0
 2 readings: [21.5, 22.0]
 average 21.75
 $ zeno run logbook.zeno 23.5
 3 readings: [21.5, 22.0, 23.5]
 average 22.33</code></pre>
-<h3 class="unnumbered" id="json"><span class="number">23.6</span>
+<h3 class="unnumbered" id="json"><span class="number">24.7</span>
 JSON</h3>
 <p>Programs hand each other text in one format more than any other:
 <em>JSON</em>. A server answers in it, and a program keeps its settings
@@ -524,17 +634,17 @@ one line.</p>
 <div class="zenofile">
 <p>settings.zeno</p>
 </div>
-<div class="sourceCode" id="cb15" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = <span class="st">&quot;{\&quot;name\&quot;: \&quot;pump 2\&quot;, \&quot;limit\&quot;: 80, \&quot;alarms\&quot;: [\&quot;high\&quot;, \&quot;dry\&quot;]}&quot;</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> settings = json.parse(text)</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name: <span class="dt">str</span> = settings[<span class="st">&quot;name&quot;</span>]</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> limit: <span class="dt">int</span> = settings[<span class="st">&quot;limit&quot;</span>]</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>print(name, limit + <span class="dv">5</span>)</span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> alarm <span class="kw">in</span> settings[<span class="st">&quot;alarms&quot;</span>] {</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    print(alarm.upper())</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb20" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = <span class="st">&quot;{\&quot;name\&quot;: \&quot;pump 2\&quot;, \&quot;limit\&quot;: 80, \&quot;alarms\&quot;: [\&quot;high\&quot;, \&quot;dry\&quot;]}&quot;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> settings = json.parse(text)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name: <span class="dt">str</span> = settings[<span class="st">&quot;name&quot;</span>]</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> limit: <span class="dt">int</span> = settings[<span class="st">&quot;limit&quot;</span>]</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>print(name, limit + <span class="dv">5</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> alarm <span class="kw">in</span> settings[<span class="st">&quot;alarms&quot;</span>] {</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    print(alarm.upper())</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>pump 2 85
 HIGH
 DRY</code></pre>
@@ -562,22 +672,22 @@ a class says which, and the checker holds every object to it.</p>
 <div class="zenofile">
 <p>order.zeno</p>
 </div>
-<div class="sourceCode" id="cb17" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Line {</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    item: <span class="dt">str</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    count: <span class="dt">int</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Order {</span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    who: <span class="dt">str</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    lines: <span class="dt">list</span>[Line]</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    note: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>print(json.write(Order(<span class="st">&quot;Ada&quot;</span>, [Line(<span class="st">&quot;tea&quot;</span>, <span class="dv">2</span>), Line(<span class="st">&quot;milk&quot;</span>, <span class="dv">1</span>)], <span class="cn">none</span>)))</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>print(json.write([<span class="st">&quot;volts&quot;</span>: <span class="dv">3.3</span>, <span class="st">&quot;amps&quot;</span>: <span class="dv">0.5</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb22" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Line {</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    item: <span class="dt">str</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    count: <span class="dt">int</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Order {</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    who: <span class="dt">str</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    lines: <span class="dt">list</span>[Line]</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    note: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>print(json.write(Order(<span class="st">&quot;Ada&quot;</span>, [Line(<span class="st">&quot;tea&quot;</span>, <span class="dv">2</span>), Line(<span class="st">&quot;milk&quot;</span>, <span class="dv">1</span>)], <span class="cn">none</span>)))</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>print(json.write([<span class="st">&quot;volts&quot;</span>: <span class="dv">3.3</span>, <span class="st">&quot;amps&quot;</span>: <span class="dv">0.5</span>]))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>{&quot;who&quot;:&quot;Ada&quot;,&quot;lines&quot;:[{&quot;item&quot;:&quot;tea&quot;,&quot;count&quot;:2},{&quot;item&quot;:&quot;milk&quot;,&quot;count&quot;:1}],&quot;note&quot;:null}
 {&quot;volts&quot;:3.3,&quot;amps&quot;:0.5}</code></pre>
 <p>A quantity is refused, because JSON has no units and a reader could
@@ -592,8 +702,9 @@ gives <code>none</code> when there are no more.
 <code>exists</code> and <code>remove</code> work on whole files of text,
 and every one but <code>exists</code> may raise a
 <code>FileError</code>, which can always be caught.
-<code>json.parse</code> and <code>json.write</code> read and write
-JSON.</p>
+<code>files.read_bytes</code> and <code>write_bytes</code> work on a
+file as its bytes, in a <code>list[u8]</code>. <code>json.parse</code>
+and <code>json.write</code> read and write JSON.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -605,15 +716,17 @@ wrong when it is given the wrong number of words.</p></li>
 <li><p>Keep a counter in a file: each run reads it, adds one, writes it
 back, and prints it. What should the first run do?</p></li>
 <li><p>Try to read a picture with <code>files.read</code> and read the
-message.</p></li>
+message. Then read it with <code>files.read_bytes</code>, and print its
+first eight bytes. A PNG begins
+<code>137, 80, 78, 71, 13, 10, 26, 10</code>.</p></li>
 <li><p>Keep the counter as JSON instead, <code>{"runs": 3}</code>, with
 <code>json.parse</code> and <code>json.write</code>.</p></li>
 </ol>
 </div>
 </article>
 <nav class="pager bottom">
-<a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
-<a class="next" href="math.html" rel="next"><span class="number">24</span> Mathematics →</a>
+<a class="prev" href="other-languages.html" rel="previous">← <span class="number">23</span> Libraries of Other Languages</a>
+<a class="next" href="math.html" rel="next"><span class="number">25</span> Mathematics →</a>
 </nav>
 <footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
 </main>

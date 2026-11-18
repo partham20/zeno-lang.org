@@ -172,41 +172,43 @@ class="number">20</span> Interfaces</a></li>
 class="number">21</span> Programs in Several Files</a></li>
 <li><a href="packages.html" id="toc-ch-packages"><span
 class="number">22</span> Packages</a></li>
+<li><a href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">23</span> Reading and Writing</a></li>
+class="number">24</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">24</span> Mathematics</a></li>
+class="number">25</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">25</span> Testing</a></li>
+class="number">26</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">26</span> The Tools</a></li>
+class="number">27</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">27</span> The Board</a></li>
+class="number">28</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">28</span> Compiling</a></li>
+class="number">29</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">29</span> Memory</a></li>
+class="number">30</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">30</span> Ownership</a></li>
+class="number">31</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">31</span> Firmware</a></li>
+class="number">32</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">32</span> Building with No Collector</a></li>
+class="number">33</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">33</span> Unsafe Code</a></li>
+class="number">34</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">34</span> A Program in a Web Page</a></li>
+class="number">35</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">35</span> Inside Zeno</a></li>
+class="number">36</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">36</span> Why Zeno Is as It Is</a></li>
+class="number">37</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -558,53 +560,114 @@ second can, so it is written. A <code>list[u8]</code> is not a
 <code>list[int]</code>, because lists are shared: whoever held it as a
 <code>list[int]</code> could append 300. Copy it,
 <code>[int(b) for b in frame]</code>.</p>
+<p>A compiled program stores a <code>list[u8]</code> one byte to an
+item, as C stores <code>uint8_t buf[64]</code>: a megabyte read from a
+file is a megabyte in memory. Nothing has to be asked for, and nothing
+in the program changes. Lists of the other sized types still take eight
+bytes an item. (Decision 36.2.)</p>
 <p>There is no <code>u64</code>. An <code>int</code> is 64 bits with a
 sign, so half the values of a <code>u64</code> would not fit in one, and
 "arithmetic gives an <code>int</code>" would stop being true. (Decision
 2.8d.)</p>
+<h3 class="unnumbered" id="a-float-of-32-bits-f32"><span
+class="number">18.6</span> A float of 32 bits: f32</h3>
+<p>A <code>float</code> is 64 bits. Most boards with a float unit, a
+Cortex-M4F or an ESP32, have one of 32, and on those a
+<code>float</code> sum is done in software, many times slower.
+<code>f32</code> is a float of 32 bits, as C’s <code>float</code>: about
+7 digits, the board’s own instructions, and four bytes in a field.</p>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> gain: <span class="dt">f32</span> = <span class="dv">0.1</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> total: <span class="dt">f32</span> = <span class="dv">0.0</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> i <span class="kw">in</span> range(<span class="dv">10</span>) {</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    total += gain</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>print(gain, total)       <span class="co"># 0.1 1.0000001</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>print(<span class="dt">float</span>(gain))       <span class="co"># 0.10000000149011612</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings: <span class="dt">list</span>[<span class="dt">f32</span>] = [<span class="dv">0.5</span>, <span class="dv">1.25</span>, -<span class="dv">2.0</span>]</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>print(sum(readings), max(readings), gain * <span class="dv">3</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>0.1 1.0000001
+0.10000000149011612
+-0.25 1.25 0.3</code></pre>
+<p>A number written where an <code>f32</code> is wanted, or beside one
+in a sum, becomes the nearest <code>f32</code>; there is no
+<code>0.1f</code>. An <code>f32</code> is printed with the fewest digits
+that make the same <code>f32</code> again, which is why
+<code>gain</code> prints as <code>0.1</code>.</p>
+<p>Unlike the sized whole numbers, a sum of <code>f32</code>s is an
+<code>f32</code>, and so is a sum with an <code>int</code>: the point of
+an <code>f32</code> is that the sum is done in 32 bits. An
+<code>f32</code> goes wherever a <code>float</code> is wanted, since
+every <code>f32</code> is exactly a float, and the functions of
+<code>math</code> take it and give a <code>float</code>. But an
+<code>f32</code> beside a <code>float</code> value is refused:</p>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> gain: <span class="dt">f32</span> = <span class="dv">0.5</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> offset = <span class="dv">1.5</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>print(gain + offset)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `+` between f32 and float would have to choose between 32 bits and 64. Write `f32( )` around the float to work in 32, or `float( )` around the f32 to work in 64
+ --&gt; main.zeno:3:7
+  |
+3 | print(gain + offset)
+  |       ^
+
+1 error found. Nothing was run.</code></pre>
+<p>The message says to write <code>f32(offset)</code> to work in 32 bits
+or <code>float(gain)</code> to work in 64. <code>f32(x)</code> rounds a
+float to the nearest <code>f32</code>, and one too big for an
+<code>f32</code>, past about <span
+class="math inline">3.4 × 10<sup>38</sup></span>, is an
+<code>OverflowError</code>.</p>
+<div class="why">
+<p>C picks 64 bits when a <code>float</code> meets a
+<code>double</code>, so one <code>1.5</code> written without an
+<code>f</code> turns a whole filter into software sums, and nothing says
+so. Picking 32 bits would throw away digits instead. Either guess can be
+the wrong one, so Zeno asks. (Decision 41.)</p>
+</div>
 <h3 class="unnumbered" id="a-worked-example-a-frame-from-a-sensor"><span
-class="number">18.6</span> A worked example: a frame from a sensor</h3>
+class="number">18.7</span> A worked example: a frame from a sensor</h3>
 <p>A sensor sends a frame of four bytes: a start byte <code>0x02</code>,
 a 16-bit reading high byte first, and a checksum of the first three.
 This program builds one and reads it back:</p>
 <div class="zenofile">
 <p>frame.zeno</p>
 </div>
-<div class="sourceCode" id="cb27" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> checksum(data: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">u8</span> {</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> total = <span class="dv">0</span></span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> byte <span class="kw">in</span> data {</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        total += byte</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">u8</span>.wrap(total)</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> make_frame(reading: <span class="dt">u16</span>) -&gt; <span class="dt">list</span>[<span class="dt">u8</span>] {</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> frame: <span class="dt">list</span>[<span class="dt">u8</span>] = [<span class="dv">0x02</span>, <span class="dt">u8</span>(reading &gt;&gt; <span class="dv">8</span>), <span class="dt">u8</span>(reading &amp; <span class="dv">0xFF</span>)]</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    frame.append(checksum(frame))</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> frame</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> read_frame(frame: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">u16</span> <span class="kw">raises</span> ValueError {</span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> frame[<span class="dv">0</span>] != <span class="dv">0x02</span> {</span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;a frame starts with 0x02&quot;</span>)</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> checksum(frame.slice(<span class="dv">0</span>, <span class="dv">3</span>)) != frame[<span class="dv">3</span>] {</span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;the checksum does not match&quot;</span>)</span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">u16</span>(frame[<span class="dv">1</span>] &lt;&lt; <span class="dv">8</span> | frame[<span class="dv">2</span>])</span>
-<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame = make_frame(<span class="dv">931</span>)</span>
-<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>print([<span class="st">f&quot;{b:02X}&quot;</span> <span class="kw">for</span> b <span class="kw">in</span> frame])</span>
-<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>print(read_frame(frame))</span>
-<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>frame[<span class="dv">2</span>] = <span class="dv">0x00</span></span>
-<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
-<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    read_frame(frame)</span>
-<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
-<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;refused:&quot;</span>, e.message)</span>
-<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> checksum(data: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">u8</span> {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> total = <span class="dv">0</span></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> byte <span class="kw">in</span> data {</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>        total += byte</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">u8</span>.wrap(total)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> make_frame(reading: <span class="dt">u16</span>) -&gt; <span class="dt">list</span>[<span class="dt">u8</span>] {</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> frame: <span class="dt">list</span>[<span class="dt">u8</span>] = [<span class="dv">0x02</span>, <span class="dt">u8</span>(reading &gt;&gt; <span class="dv">8</span>), <span class="dt">u8</span>(reading &amp; <span class="dv">0xFF</span>)]</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>    frame.append(checksum(frame))</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> frame</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> read_frame(frame: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">u16</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> frame[<span class="dv">0</span>] != <span class="dv">0x02</span> {</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;a frame starts with 0x02&quot;</span>)</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> checksum(frame.slice(<span class="dv">0</span>, <span class="dv">3</span>)) != frame[<span class="dv">3</span>] {</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;the checksum does not match&quot;</span>)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">u16</span>(frame[<span class="dv">1</span>] &lt;&lt; <span class="dv">8</span> | frame[<span class="dv">2</span>])</span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame = make_frame(<span class="dv">931</span>)</span>
+<span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>print([<span class="st">f&quot;{b:02X}&quot;</span> <span class="kw">for</span> b <span class="kw">in</span> frame])</span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>print(read_frame(frame))</span>
+<span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>frame[<span class="dv">2</span>] = <span class="dv">0x00</span></span>
+<span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb31-31"><a href="#cb31-31" aria-hidden="true" tabindex="-1"></a>    read_frame(frame)</span>
+<span id="cb31-32"><a href="#cb31-32" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb31-33"><a href="#cb31-33" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;refused:&quot;</span>, e.message)</span>
+<span id="cb31-34"><a href="#cb31-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;02&quot;, &quot;03&quot;, &quot;A3&quot;, &quot;A8&quot;]
 931
 refused: the checksum does not match</code></pre>
@@ -617,8 +680,11 @@ bits, bind tighter than comparisons, and shifts are checked.
 <code>i16</code> and <code>i32</code> say how many bits a number fits
 in. Arithmetic on them gives an <code>int</code>; <code>u8(n)</code>
 puts it back with a check, and <code>u8.wrap(n)</code> by cutting. A
-sized number is an <code>int</code> for free; the other way is
-written.</p>
+sized number is an <code>int</code> for free; the other way is written.
+<code>f32</code> is a float of 32 bits whose sums stay <code>f32</code>;
+it goes where a <code>float</code> is wanted, and never meets a
+<code>float</code> value without <code>f32( )</code> or
+<code>float( )</code>.</p>
 </div>
 <div class="tryit">
 <ol>

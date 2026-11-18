@@ -172,41 +172,43 @@ class="number">20</span> Interfaces</a></li>
 class="number">21</span> Programs in Several Files</a></li>
 <li><a href="packages.html" id="toc-ch-packages"><span
 class="number">22</span> Packages</a></li>
+<li><a href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">23</span> Reading and Writing</a></li>
+class="number">24</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">24</span> Mathematics</a></li>
+class="number">25</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">25</span> Testing</a></li>
+class="number">26</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">26</span> The Tools</a></li>
+class="number">27</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">27</span> The Board</a></li>
+class="number">28</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">28</span> Compiling</a></li>
+class="number">29</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">29</span> Memory</a></li>
+class="number">30</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">30</span> Ownership</a></li>
+class="number">31</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">31</span> Firmware</a></li>
+class="number">32</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">32</span> Building with No Collector</a></li>
+class="number">33</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">33</span> Unsafe Code</a></li>
+class="number">34</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">34</span> A Program in a Web Page</a></li>
+class="number">35</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">35</span> Inside Zeno</a></li>
+class="number">36</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">36</span> Why Zeno Is as It Is</a></li>
+class="number">37</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -530,16 +532,25 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
   |       ^
 
 1 error found. Nothing was run.</code></pre>
+<p><code>*</code> with a number repeats a list: the list comes first,
+and the result is a new list. It is how a buffer of zeros is made:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>print([<span class="dv">0</span>] * <span class="dv">4</span>, [<span class="dv">1</span>, <span class="dv">2</span>] * <span class="dv">2</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[0, 0, 0, 0] [1, 2, 1, 2]</code></pre>
+<p>A list of lists cannot be repeated, because every row would be one
+and the same row, and a change to one would show in all of them. A
+comprehension makes each row: <code>[[0] * 3 for i in range(3)]</code>.
+A count below zero is a <code>ValueError</code>. (Decision 36.3.)</p>
 <h3 class="unnumbered" id="comprehensions"><span
 class="number">9.5</span> Comprehensions</h3>
 <p>A <em>comprehension</em> builds a new list from another in one line:
 an expression for each item, a <code>for</code>, and if you like an
 <code>if</code> that keeps only some items:</p>
-<div class="sourceCode" id="cb25" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = range(<span class="dv">1</span>, <span class="dv">11</span>)</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>print([n * n <span class="kw">for</span> n <span class="kw">in</span> numbers])</span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>print([n <span class="kw">for</span> n <span class="kw">in</span> numbers <span class="kw">if</span> n % <span class="dv">3</span> == <span class="dv">0</span>])</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>print([word.upper() <span class="kw">for</span> word <span class="kw">in</span> [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]])</span></code></pre></div>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = range(<span class="dv">1</span>, <span class="dv">11</span>)</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>print([n * n <span class="kw">for</span> n <span class="kw">in</span> numbers])</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>print([n <span class="kw">for</span> n <span class="kw">in</span> numbers <span class="kw">if</span> n % <span class="dv">3</span> == <span class="dv">0</span>])</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>print([word.upper() <span class="kw">for</span> word <span class="kw">in</span> [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]])</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 [3, 6, 9]
 [&quot;A&quot;, &quot;B&quot;]</code></pre>
@@ -551,22 +562,22 @@ class="number">9.6</span> map, filter and reduce</h3>
 <code>map</code> applies it to each item, <code>filter</code> keeps the
 items it says <code>true</code> for, and <code>reduce</code> folds the
 list into one value:</p>
-<div class="sourceCode" id="cb27" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> square(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * n</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> is_even(n: <span class="dt">int</span>) -&gt; <span class="dt">bool</span> {</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n % <span class="dv">2</span> == <span class="dv">0</span></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add(total: <span class="dt">int</span>, n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> total + n</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>print(numbers.map(square))</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even))</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>print(numbers.reduce(add, <span class="dv">0</span>))</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even).map(square).reduce(add, <span class="dv">0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> square(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * n</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> is_even(n: <span class="dt">int</span>) -&gt; <span class="dt">bool</span> {</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n % <span class="dv">2</span> == <span class="dv">0</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add(total: <span class="dt">int</span>, n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> total + n</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>]</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>print(numbers.map(square))</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even))</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>print(numbers.reduce(add, <span class="dv">0</span>))</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>print(numbers.filter(is_even).map(square).reduce(add, <span class="dv">0</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[1, 4, 9, 16, 25, 36]
 [2, 4, 6]
 21
@@ -587,15 +598,15 @@ Values</a> covers that.</p>
 class="number">9.7</span> Two names, one list</h3>
 <p>A list is not copied when it is given another name, passed to a
 function or put in another list. Every name sees the one list:</p>
-<div class="sourceCode" id="cb29" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add_reading(readings: <span class="dt">list</span>[<span class="dt">float</span>], r: <span class="dt">float</span>) {</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    readings.append(r)</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mine = [<span class="dv">20.5</span>]</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> also_mine = mine</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>add_reading(also_mine, <span class="dv">21.0</span>)</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>print(mine)</span></code></pre></div>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> add_reading(readings: <span class="dt">list</span>[<span class="dt">float</span>], r: <span class="dt">float</span>) {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    readings.append(r)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mine = [<span class="dv">20.5</span>]</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> also_mine = mine</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>add_reading(also_mine, <span class="dv">21.0</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>print(mine)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[20.5, 21.0]</code></pre>
 <p>When you want a separate list, make one: <code>xs.slice(0)</code>
 copies the whole list.</p>
@@ -609,9 +620,58 @@ with No Collector</a> explains how. (Decision 3.10.)</p>
 <h3 class="unnumbered" id="equal-lists"><span class="number">9.8</span>
 Equal lists</h3>
 <p>Two lists are equal when they have equal items in the same order:</p>
-<div class="sourceCode" id="cb31" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>print([<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">2</span>, <span class="dv">1</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb33" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>print([<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">1</span>, <span class="dv">2</span>] == [<span class="dv">2</span>, <span class="dv">1</span>])</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>true false</code></pre>
+<h3 class="unnumbered" id="a-list-of-a-fixed-length"><span
+class="number">9.9</span> A list of a fixed length</h3>
+<p><code>list[u8, 64]</code> is a list that always has 64 items: a
+buffer, a frame, a block, whose size is known when the program is
+written. It gets a list of exactly that many items, and the count is
+checked before the program runs:</p>
+<div class="sourceCode" id="cb35" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer: <span class="dt">list</span>[<span class="dt">u8</span>, <span class="dv">8</span>] = [<span class="dv">0</span>] * <span class="dv">8</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>buffer[<span class="dv">0</span>] = <span class="dv">0x7E</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>print(buffer, len(buffer))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[126, 0, 0, 0, 0, 0, 0, 0] 8</code></pre>
+<p>Everything that leaves the length as it is works as on any list.
+<code>append</code>, <code>pop</code>, <code>insert</code> and
+<code>clear</code> are refused, and so is a position written as a number
+that is past the end:</p>
+<div class="sourceCode" id="cb37" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> buffer: <span class="dt">list</span>[<span class="dt">u8</span>, <span class="dv">8</span>] = [<span class="dv">0</span>] * <span class="dv">8</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>buffer.append(<span class="dv">1</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `append` would change how many items this list has, and a list of a fixed length always has 8. Give an item a new value instead, as in `list[0] = 7`
+ --&gt; main.zeno:2:1
+  |
+2 | buffer.append(1)
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<p>A function whose parameter is an ordinary <code>list[u8]</code> can
+be given one, if nothing in the function could change how many items the
+list has. The checker reads the function to know, and when something
+could, the message names the line:</p>
+<div class="sourceCode" id="cb39" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> total(data: <span class="dt">list</span>[<span class="dt">u8</span>]) -&gt; <span class="dt">int</span> {</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0</span></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> b <span class="kw">in</span> data {</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>        sum += b</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame: <span class="dt">list</span>[<span class="dt">u8</span>, <span class="dv">4</span>] = [<span class="dv">0x7E</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0x7F</span>]</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>print(total(frame))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>256</code></pre>
+<div class="why">
+<p>The length is part of the type, as in C’s
+<code>uint8_t buf[64]</code> and Rust’s <code>[u8; 64]</code>, because a
+mistake about it is then found before the program runs, not as an
+<code>IndexError</code> on a board. It is written as one more thing in
+the <code>[ ]</code> of <code>list</code> rather than as a new kind of
+list, because it is a list: one that cannot grow. (Decision 36.4.)</p>
+</div>
 <div class="summary">
 <p>A list holds values of one type, in order, from position 0. It grows
 with <code>append</code>, <code>insert</code> and <code>+=</code>,
@@ -619,8 +679,10 @@ shrinks with <code>pop</code> and <code>clear</code>, and is ordered
 with <code>sort</code> and <code>reverse</code>, all in place.
 <code>find</code>, <code>slice</code>, <code>join</code>,
 <code>map</code>, <code>filter</code> and <code>reduce</code> give new
-values. Comprehensions build lists in one line. A list is shared, never
-copied without being asked.</p>
+values. Comprehensions build lists in one line, and
+<code>[0] * 64</code> repeats one. A list is shared, never copied
+without being asked. A <code>list[u8, 64]</code> always has 64
+items.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -634,6 +696,9 @@ loop and <code>pop</code>, then with <code>filter</code>. Which is
 easier to get right, and why?</p></li>
 <li><p>Write a list of lists that is a 3 by 3 grid of zeros, set the
 middle to 1, and print it row by row.</p></li>
+<li><p>Make a ring buffer: a <code>list[int, 4]</code>, a position that
+goes round with <code>% 4</code>, and a loop that writes ten numbers
+into it. Which four are left at the end?</p></li>
 </ol>
 </div>
 </article>

@@ -108,41 +108,43 @@ class="number">20</span> Interfaces</a></li>
 class="number">21</span> Programs in Several Files</a></li>
 <li><a href="packages.html" id="toc-ch-packages"><span
 class="number">22</span> Packages</a></li>
+<li><a href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">23</span> Reading and Writing</a></li>
+class="number">24</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">24</span> Mathematics</a></li>
+class="number">25</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">25</span> Testing</a></li>
+class="number">26</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">26</span> The Tools</a></li>
+class="number">27</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">27</span> The Board</a></li>
+class="number">28</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">28</span> Compiling</a></li>
+class="number">29</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">29</span> Memory</a></li>
+class="number">30</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">30</span> Ownership</a></li>
+class="number">31</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">31</span> Firmware</a></li>
+class="number">32</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">32</span> Building with No Collector</a></li>
+class="number">33</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">33</span> Unsafe Code</a></li>
+class="number">34</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">34</span> A Program in a Web Page</a></li>
+class="number">35</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">35</span> Inside Zeno</a></li>
+class="number">36</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">36</span> Why Zeno Is as It Is</a></li>
+class="number">37</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -565,6 +567,16 @@ href="reading-writing.html#ch-reading-writing">23</a>)</td>
 <td style="text-align: left;">removes the file</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>read_bytes(path)</code></td>
+<td style="text-align: left;">the whole file, as a
+<code>list[u8]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>write_bytes(path, bytes)</code></td>
+<td style="text-align: left;">writes a <code>list[u8]</code>, one byte
+an item</td>
+</tr>
+<tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import program</code>
 (<a href="reading-writing.html#ch-reading-writing">23</a>)</td>
 </tr>
@@ -573,139 +585,153 @@ href="reading-writing.html#ch-reading-writing">23</a>)</td>
 <td style="text-align: left;">the words after the file</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>environment(name)</code></td>
+<td style="text-align: left;">what the environment says
+<code>name</code> is, or <code>none</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>warn(text)</code></td>
+<td style="text-align: left;">one line on the error stream</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>exit(code)</code></td>
+<td style="text-align: left;">ends the program with <code>code</code>, 0
+to 255; <code>ValueError</code> outside</td>
+</tr>
+<tr class="even">
 <td colspan="2" style="text-align: left;"><code>import json</code> (<a
 href="reading-writing.html#ch-reading-writing">23</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>parse(text)</code></td>
 <td style="text-align: left;">the value JSON text describes;
 <code>ValueError</code> if it is not JSON</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>write(value)</code></td>
 <td style="text-align: left;">a value, or an object field by field, as
 JSON on one line</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import web</code> (<a
 href="web.html#ch-web">34</a>)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>element(selector)</code></td>
 <td style="text-align: left;">the first element that answers to it</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>elements(selector)</code></td>
 <td style="text-align: left;">every one, as a list</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>create(tag, text)</code></td>
 <td style="text-align: left;">a new element, not yet on the page</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>after(t, f)</code></td>
 <td style="text-align: left;">call <code>f</code> once, <code>t</code>
 later; gives a <code>Timer</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>every(t, f)</code></td>
 <td style="text-align: left;">call <code>f</code> every <code>t</code>;
 gives a <code>Timer</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>timer.stop()</code></td>
 <td style="text-align: left;">call off what it was waiting to do</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>on_key(f)</code></td>
 <td style="text-align: left;">call <code>f</code> with the name of each
 key pressed</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>save(name, text)</code></td>
 <td style="text-align: left;">keep text for the next visit</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>load(name)</code>,
 <code>forget(name)</code></td>
 <td style="text-align: left;">the text kept, or <code>none</code>; keep
 it no more</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>fetch(address, f)</code></td>
 <td style="text-align: left;">ask the network;
 <code>f(status, body)</code> gets the answer</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>post(address, text, f)</code></td>
 <td style="text-align: left;">send text; <code>f(status, body)</code>
 gets the answer</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.text</code>,
 <code>e.value</code></td>
 <td style="text-align: left;">what it shows; what was typed into it</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.on(event, f)</code></td>
 <td style="text-align: left;">call <code>f</code> when that happens to
 it; <code>f</code> may take an <code>Event</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.fire(event)</code></td>
 <td style="text-align: left;">call what <code>on</code> was given,
 now</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.append(c)</code></td>
 <td style="text-align: left;">put <code>c</code> inside it, last</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.remove()</code>,
 <code>clear()</code></td>
 <td style="text-align: left;">take it, or what is in it, off the
 page</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.add_class(c)</code>,
 <code>remove_class(c)</code></td>
 <td style="text-align: left;">give it a class, or take one away</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.has_class(c)</code></td>
 <td style="text-align: left;">whether it has that class</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.show()</code>,
 <code>hide()</code></td>
 <td style="text-align: left;">whether it is shown</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.get(name)</code>,
 <code>set(name, v)</code></td>
 <td style="text-align: left;">an attribute</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.set_style(n, v)</code></td>
 <td style="text-align: left;">the style of this one element</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.get_style(n)</code></td>
 <td style="text-align: left;">a style that was set, or
 <code>none</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.draw_rect</code>,
 <code>draw_circle</code></td>
 <td style="text-align: left;">on a canvas: a filled rectangle or
 circle</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.draw_line</code>,
 <code>draw_text</code></td>
 <td style="text-align: left;">on a canvas: a line, or text</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.erase()</code></td>
 <td style="text-align: left;">the canvas is empty again</td>
 </tr>

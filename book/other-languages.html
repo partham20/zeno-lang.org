@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>23 Libraries of Other Languages · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="23 Libraries of Other Languages · The Zeno Book">
+<meta property="og:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/book/other-languages.html">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/book.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/book.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Zeno Book: the whole language, in one book.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="23 Libraries of Other Languages · The Zeno Book">
+<meta name="twitter:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+<meta name="twitter:image" content="https://zeno-lang.org/og/book.png">
+<meta name="twitter:image:alt" content="The Zeno Book: the whole language, in one book.">
+<link rel="canonical" href="https://zeno-lang.org/book/other-languages.html">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.5</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a class="here" href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">24</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">25</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">26</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">27</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">28</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">29</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">30</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">31</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">32</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">33</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">34</span> Unsafe Code</a></li>
+<li><a href="web.html" id="toc-ch-web"><span
+class="number">35</span> A Program in a Web Page</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">36</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">37</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Zeno Does Not Have Yet</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
+<a class="next" href="reading-writing.html" rel="next"><span class="number">24</span> Reading and Writing →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</h2>
+<p>A package of Zeno is written in Zeno. Most of the libraries in the
+world are not: Python has one for nearly everything, npm has more
+packages than any other place, and Java has a very large library of its
+own and a jar for whatever else. Since 0.5.2 a Zeno program can use all
+three as they are, with one line at the top:</p>
+<div class="zenofile">
+<p>mean.zeno</p>
+</div>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> statistics = python.module(<span class="st">&quot;statistics&quot;</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">21.5</span>, <span class="dv">22.0</span>, <span class="dv">23.5</span>, <span class="dv">22.5</span>]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(statistics.mean(readings), statistics.median(readings))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>22.375 22.25</code></pre>
+<p><code>python.module("statistics")</code> is what
+<code>import statistics</code> is in Python. What it gives is the
+module, and from there the program is written as it would be in Python:
+a dot for what the module has, brackets for a call.</p>
+<p>The three work the same way, and this chapter takes Python first,
+then says what is different about JavaScript and Java.</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Written</th>
+<th style="text-align: left;">Gives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>import python</code></td>
+<td style="text-align: left;"><code>python.module(name)</code> and
+<code>python.copy(value)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>import node</code></td>
+<td style="text-align: left;"><code>node.module(name)</code>,
+<code>node.global(name)</code>, <code>node.new(Class, ...)</code> and
+<code>node.copy(value)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>import java</code></td>
+<td style="text-align: left;"><code>java.type(name)</code>,
+<code>java.jar(path)</code> and <code>java.copy(value)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="note">
+<p>Nothing changes for a program that does not import one of these. They
+are added beside the language, and they are there only when they are
+asked for. The language that runs the library is started the first time
+the program calls into it, once, and stays until the program ends. A
+program that imports <code>python</code> and never calls it starts
+nothing.</p>
+</div>
+<h3 class="unnumbered" id="what-it-needs"><span
+class="number">23.1</span> What it needs</h3>
+<p>The other language must be on the computer, with the library
+installed for it:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Import</th>
+<th style="text-align: left;">Needs</th>
+<th style="text-align: left;">Zeno looks for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>python</code></td>
+<td style="text-align: left;">Python 3</td>
+<td style="text-align: left;"><code>python3</code>, then
+<code>python</code> (on Windows <code>python</code>,
+<code>python3</code>, then <code>py</code>); <code>ZENO_PYTHON</code>
+names another</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>node</code></td>
+<td style="text-align: left;">Node 22 or later</td>
+<td style="text-align: left;"><code>node</code>; <code>ZENO_NODE</code>
+names another</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>java</code></td>
+<td style="text-align: left;">Java 11 or later</td>
+<td style="text-align: left;"><code>java</code>, then in
+<code>JAVA_HOME</code>; <code>ZENO_JAVA</code> names another</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The Python that a virtual environment puts first, when it is active,
+is the one Zeno finds. A library is looked for where that language would
+look for it if the program were written in it and lay in the same place:
+so a <code>helper.py</code> beside the program is
+<code>python.module("helper")</code>, and an npm package is installed
+with <code>npm install</code> in the folder of the program. The program
+can then be run from anywhere.</p>
+<h3 class="unnumbered" id="values-go-across-in-two-ways"><span
+class="number">23.2</span> Values go across in two ways</h3>
+<p><strong><code>none</code>, a bool, a number and a str go as
+themselves.</strong> What the other language returns of these kinds is a
+value of Zeno at once, and what Zeno passes arrives as that language’s
+own:</p>
+<div class="zenofile">
+<p>day.zeno</p>
+</div>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> datetime = python.module(<span class="st">&quot;datetime&quot;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = datetime.date(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>print(day, day.year + <span class="dv">1</span>, day.strftime(<span class="st">&quot;%A&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2026-11-18 2027 Wednesday</code></pre>
+<p><code>day.year</code> is an int of Zeno, so <code>+ 1</code> is
+Zeno’s. <code>day.strftime("%A")</code> is a str of Zeno. Python’s
+<code>None</code> is <code>none</code>.</p>
+<p><strong>Everything else stays where it was made.</strong>
+<code>datetime</code> and <code>day</code> above are not copies of
+anything. Zeno holds a number that Python knows the value by, and each
+time the program writes a field, a call or an item of it, Zeno asks
+Python. When nothing in the program holds the value any more, Python is
+told, and lets it go.</p>
+<p>A value that stays in the other language can be used in these
+ways:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Written</th>
+<th style="text-align: left;">What the other language does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>thing.name</code></td>
+<td style="text-align: left;"><code>thing.name</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>thing.name = value</code></td>
+<td style="text-align: left;">the same</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>thing(1, 2, key=3)</code></td>
+<td style="text-align: left;">the call; what a named argument becomes is
+in the sections below</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>thing[index]</code></td>
+<td style="text-align: left;">the item, and
+<code>thing[index] = value</code> sets it</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>len(thing)</code></td>
+<td style="text-align: left;">how many items it has</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>for item in thing { }</code></td>
+<td style="text-align: left;">every item, taken when the loop
+begins</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>item in thing</code></td>
+<td style="text-align: left;">whether it holds the item</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>thing == other</code></td>
+<td style="text-align: left;">that language’s own test for equal</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>print(thing)</code>,
+<code>str(thing)</code></td>
+<td style="text-align: left;">the value as that language writes it</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>What it cannot be is the test of an <code>if</code>, because a
+condition in Zeno is <code>true</code> or <code>false</code> and nothing
+else. Write <code>len(thing) &gt; 0</code> or
+<code>thing is not none</code>. Nor can it be one side of <code>+</code>
+or <code>&lt;</code>: take a number of Zeno out of it first.</p>
+<div class="zenofile">
+<p>later.zeno</p>
+</div>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = python.module(<span class="st">&quot;datetime&quot;</span>).date(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> later = day.replace(month=<span class="dv">12</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>print(later.isoformat(), later == day, [day, later])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2026-12-18 false [datetime.date(2026, 11, 18), datetime.date(2026, 12, 18)]</code></pre>
+<p><code>month=12</code> is a keyword argument of Python. Inside a list,
+a value of Python is shown as Python writes it there, as a str of Zeno
+is shown with its quotes inside a list.</p>
+<h3 class="unnumbered" id="lists-and-dicts"><span
+class="number">23.3</span> Lists and dicts</h3>
+<p>A list of Python stays in Python too, and that is on purpose:</p>
+<div class="zenofile">
+<p>names.zeno</p>
+</div>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> builtins = python.module(<span class="st">&quot;builtins&quot;</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = builtins.<span class="dt">list</span>([<span class="st">&quot;cy&quot;</span>, <span class="st">&quot;ann&quot;</span>])</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>names.append(<span class="st">&quot;bob&quot;</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>names.sort()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>print(names, len(names), names[<span class="dv">0</span>], <span class="st">&quot;bob&quot;</span> <span class="kw">in</span> names)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> name <span class="kw">in</span> names {</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    print(name.upper())</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&#39;ann&#39;, &#39;bob&#39;, &#39;cy&#39;] 3 ann true
+ANN
+BOB
+CY</code></pre>
+<p><code>names</code> is the one list there is. <code>append</code> and
+<code>sort</code> are Python’s, and they change the list that Python
+has. If the list came across as a copy, <code>names.append("bob")</code>
+would add to the copy, Python would never see it, and nothing would say
+so. Each <code>name</code> in the loop is a str of Zeno, so
+<code>upper</code> is Zeno’s.</p>
+<p>When a list of Zeno is what the program wants, to pass to a function
+that takes <code>list[str]</code> or to use Zeno’s own methods on, the
+<code>copy</code> of the module makes one:</p>
+<div class="zenofile">
+<p>mine.zeno</p>
+</div>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = python.module(<span class="st">&quot;builtins&quot;</span>).sorted([<span class="st">&quot;cy&quot;</span>, <span class="st">&quot;ann&quot;</span>, <span class="st">&quot;bob&quot;</span>])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> mine = python.copy(names)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>mine.append(<span class="st">&quot;dee&quot;</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>print(mine, len(names))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;ann&quot;, &quot;bob&quot;, &quot;cy&quot;, &quot;dee&quot;] 3</code></pre>
+<p><code>copy</code> takes a list, a tuple or a dict of Python, and
+gives a list or a dict of Zeno, with every list and dict inside it
+copied as well. A dict whose keys are not all str or int cannot be a
+dict of Zeno, and <code>copy</code> raises a <code>ValueError</code>
+that names the key.</p>
+<p><strong>The other way is always a copy.</strong> A list or dict of
+Zeno passed to Python arrives as a new list or dict there:</p>
+<div class="zenofile">
+<p>shuffle.zeno</p>
+</div>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> xs = [<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>python.module(<span class="st">&quot;random&quot;</span>).shuffle(xs)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>print(xs)        <span class="co"># Python shuffled its copy</span></span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[3, 1, 2]</code></pre>
+<p>To have Python work on a list and see the result, make the list in
+Python (<code>builtins.list(xs)</code>) and copy it back.</p>
+<h3 class="unnumbered" id="errors"><span class="number">23.4</span>
+Errors</h3>
+<p>An error that the other language raises is an error of Zeno, and
+<code>try</code> catches it (<a
+href="errors.html#ch-errors">Errors</a>):</p>
+<div class="zenofile">
+<p>oops.zeno</p>
+</div>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> json = python.module(<span class="st">&quot;json&quot;</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    json.loads(<span class="st">&quot;{oops&quot;</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> error {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    print(error.message)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)</code></pre>
+<p>The message begins with what Python called the error when that is not
+the name of the kind. The kinds are matched like this:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">From</th>
+<th style="text-align: left;">Becomes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Python</td>
+<td style="text-align: left;"><code>OSError</code> and its kinds are a
+<code>FileError</code>; <code>ValueError</code>,
+<code>IndexError</code>, <code>KeyError</code>,
+<code>OverflowError</code> and <code>ZeroDivisionError</code> are the
+kind of the same name</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JavaScript</td>
+<td style="text-align: left;">an error the system gave (no such file, no
+network) is a <code>FileError</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Java</td>
+<td style="text-align: left;"><code>IOException</code> and its kinds are
+a <code>FileError</code>; <code>IndexOutOfBoundsException</code> is an
+<code>IndexError</code>; <code>IllegalArgumentException</code> is a
+<code>ValueError</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Anything else is an <code>Error</code>. Two things can go wrong
+before any library is reached, and both are a <code>FileError</code>:
+there is no Python (or Node, or Java) to run, or it has no module of
+that name. The message says which one Zeno found, and where it
+looked.</p>
+<div class="zenofile">
+<p>missing.zeno</p>
+</div>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> video = python.module(<span class="st">&quot;no_such_library&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught FileError: Python has no module `no_such_library` (No module named &#39;no_such_library&#39;). Is it installed for this Python? It is /usr/local/bin/python3
+ --&gt; missing.zeno:3:13
+  |
+3 | let video = python.module(&quot;no_such_library&quot;)
+  |             ^</code></pre>
+<p>What another language can raise is not known before the program runs.
+A function that declares what it raises (<a
+href="errors.html#ch-errors">Errors</a>) and calls into one says
+<code>raises Error</code>, which is every kind.</p>
+<h3 class="unnumbered" id="types"><span class="number">23.5</span>
+Types</h3>
+<p>What a module has is known when the program runs, and not before. So
+a value from another language has the type that <code>json.parse</code>
+gives (<a href="reading-writing.html#ch-reading-writing">Reading and
+Writing</a>): the checker lets everything through, and a wrong name is
+an error at its line when the program gets there. Give a value a type of
+Zeno where it lands, and from there on it is checked:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> title: <span class="dt">str</span> = about[<span class="st">&quot;title&quot;</span>]       <span class="co"># checked when it happens</span></span></code></pre></div>
+<p>For the same reason <code>zeno check --strict</code> refuses a
+program that imports one of the three.</p>
+<h3 class="unnumbered" id="javascript"><span class="number">23.6</span>
+JavaScript</h3>
+<p><code>node.module(name)</code> is what <code>require(name)</code> is
+in JavaScript. A module that comes with Node, such as <code>fs</code>,
+<code>path</code>, <code>os</code>, <code>crypto</code> or
+<code>zlib</code>, needs nothing more; a package from npm is installed
+in the program’s folder with <code>npm install</code>. A file of
+JavaScript beside the program is a module by its path,
+<code>node.module("./helper.js")</code>.</p>
+<p>Much of JavaScript is not in a module at all. <code>JSON</code>,
+<code>Math</code>, <code>Date</code> and <code>process</code> are there
+everywhere, and <code>node.global</code> gives them. JavaScript makes an
+object of a class with <code>new</code>, and Zeno with
+<code>node.new</code>:</p>
+<div class="zenofile">
+<p>globals.zeno</p>
+</div>
+<div class="sourceCode" id="cb18" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> node</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> path = node.module(<span class="st">&quot;path&quot;</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>print(path.basename(<span class="st">&quot;/home/ann/notes.txt&quot;</span>), path.extname(<span class="st">&quot;notes.txt&quot;</span>))</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> JSON = node.global(<span class="st">&quot;JSON&quot;</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> about = JSON.parse(<span class="st">&quot;{\&quot;name\&quot;: \&quot;ann\&quot;, \&quot;age\&quot;: 31}&quot;</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>print(about.name, about.age + <span class="dv">1</span>, about.email <span class="kw">is</span> <span class="cn">none</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> start = node.new(node.global(<span class="st">&quot;Date&quot;</span>), <span class="dv">2026</span>, <span class="dv">10</span>, <span class="dv">18</span>)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>print(start.getFullYear(), start.toDateString())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>notes.txt .txt
+ann 32 true
+2026 Wed Nov 18 2026</code></pre>
+<p><code>about.email</code> is <code>none</code>, and not an error: a
+field that an object of JavaScript does not have is
+<code>undefined</code>, and both <code>null</code> and
+<code>undefined</code> are <code>none</code> in Zeno.</p>
+<p>Four things are different from Python.</p>
+<ul>
+<li><p><strong>One kind of number.</strong> A number of JavaScript that
+is whole arrives as an int, and any other as a float. So
+<code>Math.sqrt(16.0)</code> is <code>4</code>, an int; where a float is
+needed, <code>float(x)</code> makes one.</p></li>
+<li><p><strong>Named arguments are the options.</strong> JavaScript has
+no named arguments. A function there takes its options as one object,
+its last argument, and so the named arguments of a call are gathered
+into that object:
+<code>fs.readFileSync("notes.txt", encoding="utf8")</code> is
+<code>readFileSync("notes.txt", {encoding: "utf8"})</code>.</p></li>
+<li><p><strong>What takes time is waited for.</strong> A call that gives
+a promise gives its answer, and the program goes on when it is there.
+There is no <code>await</code> to write, and a promise that fails is an
+error at the line of the call.</p></li>
+<li><p><strong>Equal is the same object.</strong> <code>==</code> is
+JavaScript’s <code>===</code>, so two arrays with the same items are not
+equal. Compare their copies:
+<code>node.copy(a) == node.copy(b)</code>.</p></li>
+</ul>
+<div class="zenofile">
+<p>waited.zeno</p>
+</div>
+<div class="sourceCode" id="cb20" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> node</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Math = node.global(<span class="st">&quot;Math&quot;</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>print(Math.max(<span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">4</span>), Math.sqrt(<span class="dv">16.0</span>), Math.sqrt(<span class="dv">2.0</span>))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> options = node.global(<span class="st">&quot;Object&quot;</span>)(recursive=<span class="cn">true</span>, retries=<span class="dv">3</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>print(options, options.retries + <span class="dv">1</span>)</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> crypto = node.module(<span class="st">&quot;crypto&quot;</span>)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>print(crypto.createHash(<span class="st">&quot;sha256&quot;</span>).update(<span class="st">&quot;zeno&quot;</span>).digest(<span class="st">&quot;hex&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>9 4 1.4142135623730951
+{ recursive: true, retries: 3 } 4
+988465d28db4d902b53d9e902ea5d7bba65489f4aafdb2df4c271a9e4f6364a4</code></pre>
+<p><code>node.global("Object")</code> called with named arguments makes
+such an object by itself, to keep or to add to. <code>node.copy</code>
+takes an array or a <code>Set</code> and gives a list, and a plain
+object or a <code>Map</code> and gives a dict.</p>
+<h3 class="unnumbered" id="java"><span class="number">23.7</span>
+Java</h3>
+<p><code>java.type(name)</code> is what <code>import</code> of a class
+is in Java, and the name is always the whole name that Java’s own
+documentation gives. A dot after a class is what is <code>static</code>
+in it, and calling a class makes an object, as <code>new</code> does
+there:</p>
+<div class="zenofile">
+<p>classes.zeno</p>
+</div>
+<div class="sourceCode" id="cb22" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> java</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Math = java.type(<span class="st">&quot;java.lang.Math&quot;</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>print(Math.max(<span class="dv">3</span>, <span class="dv">9</span>), Math.floorMod(-<span class="dv">7</span>, <span class="dv">3</span>))</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> LocalDate = java.type(<span class="st">&quot;java.time.LocalDate&quot;</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = LocalDate.of(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>print(day, day.getDayOfWeek(), day.plusMonths(<span class="dv">1</span>), day.getYear() + <span class="dv">1</span>)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> names = java.type(<span class="st">&quot;java.util.ArrayList&quot;</span>)([<span class="st">&quot;cy&quot;</span>, <span class="st">&quot;ann&quot;</span>])</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>names.add(<span class="st">&quot;bob&quot;</span>)</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>java.type(<span class="st">&quot;java.util.Collections&quot;</span>).sort(names)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>print(names, len(names), names[<span class="dv">0</span>], <span class="st">&quot;bob&quot;</span> <span class="kw">in</span> names, names == [<span class="st">&quot;ann&quot;</span>, <span class="st">&quot;bob&quot;</span>, <span class="st">&quot;cy&quot;</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>9 2
+2026-11-18 WEDNESDAY 2026-12-18 2027
+[ann, bob, cy] 3 ann true true</code></pre>
+<p>A list of Zeno passed to a class of Java arrives as a new
+<code>ArrayList</code>, and a dict as a <code>LinkedHashMap</code>: so
+<code>ArrayList(["cy", "ann"])</code> is the short way to make a
+collection of Java from what Zeno has. <code>==</code> is Java’s
+<code>equals</code>, so a list of Java equals a list of Zeno with the
+same items.</p>
+<p>What is different from Python:</p>
+<ul>
+<li><p><strong>A library is a jar.</strong>
+<code>java.jar("lib/gson-2.11.0.jar")</code> says where one is, counted
+from the folder of the <code>.zeno</code> file, and after it the classes
+of that jar are found. A folder in place of a jar is every jar in it.
+Kotlin, Scala and Clojure libraries are jars as well.</p></li>
+<li><p><strong>Java’s method decides.</strong> Java can have several
+methods of one name that take different types. The one that the
+arguments fit best is called, in the order Java itself would choose: an
+int is an <code>int</code> before it is a <code>long</code>, and a
+<code>long</code> before a <code>double</code>. When none fits, the
+error lists what there is.</p></li>
+<li><p><strong>No named arguments.</strong> Java has none, so a call
+with one is an error that says so.</p></li>
+<li><p><strong>The first run takes a second longer.</strong> Zeno’s own
+part on the Java side is compiled once, with <code>javac</code>, and
+kept in the folder for what can be made again
+(<code>~/.cache/zeno</code> on Linux).</p></li>
+</ul>
+<div class="zenofile">
+<p>valueof.zeno</p>
+</div>
+<div class="sourceCode" id="cb24" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> java</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> String = java.type(<span class="st">&quot;java.lang.String&quot;</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>print(String.valueOf(<span class="dv">5</span>), String.valueOf(<span class="dv">2.5</span>), String.valueOf(<span class="cn">true</span>))</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    java.type(<span class="st">&quot;java.lang.Integer&quot;</span>).parseInt(<span class="st">&quot;forty&quot;</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> error {</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    print(error.message)</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>5 2.5 true
+NumberFormatException: For input string: &quot;forty&quot;</code></pre>
+<p>Those are three different methods of Java, and Zeno picked each from
+the type of what it was given.</p>
+<div class="note">
+<p>One trap is Java’s own. A <code>List</code> has
+<code>remove(int)</code>, which takes out the item at a place, and
+<code>remove(Object)</code>, which takes out an item.
+<code>list.remove(30)</code> is the first, in Java as here. To take the
+number 30 out of a list of numbers, write
+<code>list.remove(list.indexOf(30))</code>.</p>
+</div>
+<h3 class="unnumbered" id="more-than-one-in-a-program"><span
+class="number">23.8</span> More than one in a program</h3>
+<p>A program can import all three. Each value stays where it was made. A
+str or a number that one gave can be passed to another, because by then
+it is a value of Zeno; a value that stayed in one cannot be given to
+another, and Zeno says so at the line:</p>
+<div class="zenofile">
+<p>both.zeno</p>
+</div>
+<div class="sourceCode" id="cb26" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> node</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = python.module(<span class="st">&quot;datetime&quot;</span>).date(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> JSON = node.global(<span class="st">&quot;JSON&quot;</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>print(JSON.stringify(day.isoformat()))</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>print(JSON.stringify(day))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>&quot;2026-11-18&quot;
+error: a Python value cannot be given to JavaScript. Each stays where it was made
+ --&gt; both.zeno:7:7
+  |
+7 | print(JSON.stringify(day))
+  |       ^</code></pre>
+<p>The first <code>print</code> works, because <code>isoformat()</code>
+gave a str of Zeno. The <code>copy</code> of each module makes a list or
+a dict of Zeno, and that can go anywhere.</p>
+<h3 class="unnumbered" id="a-name-that-is-a-word-of-zeno"><span
+class="number">23.9</span> A name that is a word of Zeno</h3>
+<p>Python has <code>re.match</code>, JavaScript has
+<code>Array.from</code>, and Java has <code>System.in</code>;
+<code>match</code>, <code>from</code> and <code>in</code> are words of
+Zeno, so none of them parses after a dot. Each language has its own way
+around it:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Language</th>
+<th style="text-align: left;">Write</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Python</td>
+<td
+style="text-align: left;"><code>builtins.getattr(re, "match")(p, text)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">JavaScript</td>
+<td style="text-align: left;"><code>Array["from"](items)</code>:
+brackets are a dot there</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Java</td>
+<td style="text-align: left;"><code>System["in"]</code>,
+<code>LocalDate["from"](other)</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 class="unnumbered" id="what-is-not-there-yet"><span
+class="number">23.10</span> What is not there yet</h3>
+<ul>
+<li><p><strong>A function of Zeno cannot be given to another
+language.</strong> A library that calls back, for progress, a sort key,
+an event or a request to a server, cannot call into Zeno yet, and Zeno
+says so at the line. Much of Node gives a promise instead, and that
+works.</p></li>
+<li><p><strong>A loop takes everything first.</strong>
+<code>for line in thing</code> asks for all the items, then loops. Over
+something that never ends, it never begins.</p></li>
+<li><p><strong>A class of Zeno cannot extend a class of Java</strong>,
+or be one of its interfaces.</p></li>
+<li><p><strong>Built programs.</strong> <code>zeno run</code> and
+<code>zeno test</code> have all three, with and without
+<code>--vm</code>. <code>zeno build</code>, in every form and for every
+target, refuses them, because a built program must run where the other
+language may not be.</p></li>
+</ul>
+<h3 class="unnumbered" id="how-it-is-built"><span
+class="number">23.11</span> How it is built</h3>
+<p>The other language runs as a program of its own, beside Zeno. A small
+helper for it is part of the <code>zeno</code> file, and the first call
+starts the language with it. Zeno opens a socket that only this computer
+can reach, and gives the helper its port and a word made up for this
+run; the helper connects, says the word, and only then is it listened
+to. Because the conversation has a line of its own, the other language
+keeps the screen and the keyboard: its <code>print</code>, a progress
+bar that redraws itself and <code>input()</code> all work as if it had
+been started by hand.</p>
+<p>Each question is one line of JSON, and so is each answer:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>{&quot;op&quot;:&quot;get&quot;,&quot;on&quot;:[&quot;p&quot;,3],&quot;name&quot;:&quot;year&quot;}                 day.year
+{&quot;ok&quot;: 2026}
+{&quot;op&quot;:&quot;call&quot;,&quot;on&quot;:[&quot;p&quot;,9],&quot;args&quot;:[&quot;{oops&quot;],&quot;named&quot;:[],&quot;free&quot;:[5,7]}
+{&quot;err&quot;: [&quot;ValueError&quot;, &quot;JSONDecodeError: Expecting ...&quot;]}</code></pre>
+<p><code>["p", 3]</code> is the value the helper keeps under the number
+3. <code>"free"</code> rides along with the next question: the numbers
+Zeno has let go of since the last one. In Zeno the value is one more
+kind of <code>Value</code>, which holds the number, and the operations
+that both engines share (a field, an item, <code>len</code>,
+<code>==</code>) ask over the socket when they meet it. Nothing on
+Zeno’s side knows Python but the name of the helper, so JavaScript and
+Java are each another helper that speaks the same lines. The reasons are
+chapters 26, 28 and 29 of <code>docs/decisions.md</code>.</p>
+<h3 class="unnumbered" id="things-to-try"><span
+class="number">23.12</span> Things to try</h3>
+<ol>
+<li><p>Run the first program of this chapter. Then misspell
+<code>statistics</code> and read the message. Which Python does it
+name?</p></li>
+<li><p>Print <code>python.module("sys").executable</code>. Start a
+virtual environment and run it again.</p></li>
+<li><p><code>builtins.sorted([3, 1, 2])</code> gives a list that stays
+in Python. Print it, then print <code>python.copy</code> of it. What is
+different about the two lines, and why?</p></li>
+<li><p>Write <code>function mean(xs: list[float]) -&gt; float</code> in
+Zeno, and pass it a list of Python with and without <code>copy</code>.
+What do the checker and the program say?</p></li>
+<li><p>With Node, read a file through
+<code>node.module("fs/promises")</code>. Where is the promise?</p></li>
+<li><p>With Java, call
+<code>java.type("java.util.ArrayList")().get(3)</code> inside a
+<code>try</code>. Which kind of error catches it?</p></li>
+</ol>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
+<a class="next" href="reading-writing.html" rel="next"><span class="number">24</span> Reading and Writing →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

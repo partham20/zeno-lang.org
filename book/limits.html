@@ -108,41 +108,43 @@ class="number">20</span> Interfaces</a></li>
 class="number">21</span> Programs in Several Files</a></li>
 <li><a href="packages.html" id="toc-ch-packages"><span
 class="number">22</span> Packages</a></li>
+<li><a href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">23</span> Reading and Writing</a></li>
+class="number">24</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">24</span> Mathematics</a></li>
+class="number">25</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">25</span> Testing</a></li>
+class="number">26</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">26</span> The Tools</a></li>
+class="number">27</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">27</span> The Board</a></li>
+class="number">28</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">28</span> Compiling</a></li>
+class="number">29</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">29</span> Memory</a></li>
+class="number">30</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">30</span> Ownership</a></li>
+class="number">31</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">31</span> Firmware</a></li>
+class="number">32</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">32</span> Building with No Collector</a></li>
+class="number">33</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">33</span> Unsafe Code</a></li>
+class="number">34</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">34</span> A Program in a Web Page</a></li>
+class="number">35</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">35</span> Inside Zeno</a></li>
+class="number">36</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">36</span> Why Zeno Is as It Is</a></li>
+class="number">37</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -194,10 +196,10 @@ Numbers</h3>
 <p>Sized numbers stop at 32 bits, and <code>int</code> is the 64-bit
 signed number (2.8d).</p>
 </dd>
-<dt>A <code>list[u8]</code> takes eight bytes an item.</dt>
+<dt>A list of a fixed length takes a block.</dt>
 <dd>
-<p>The type is checked as bytes, but stored as whole numbers
-(5.13a).</p>
+<p>A <code>list[u8, 64]</code> in a build with no collector is a block
+from the pool, as any list is, though its size is known (36.5).</p>
 </dd>
 <dt>Units made of units.</dt>
 <dd>
@@ -205,12 +207,8 @@ signed number (2.8d).</p>
 <code>V</code> times <code>A</code> into <code>W</code>, and a program
 cannot name a unit of its own (1.15).</p>
 </dd>
-<dt>No bytes from a file.</dt>
-<dd>
-<p>Files are read and written as text (6.16).</p>
-</dd>
 </dl>
-<h3 class="unnumbered" id="types"><span class="number">G.3</span>
+<h3 class="unnumbered" id="types-1"><span class="number">G.3</span>
 Types</h3>
 <dl>
 <dt>Unions.</dt>
@@ -235,11 +233,6 @@ The library</h3>
 <dt>Files in pieces.</dt>
 <dd>
 <p>A file is read whole, or as a list of lines (6.12, 6.20).</p>
-</dd>
-<dt><code>program.exit</code> and the environment.</dt>
-<dd>
-<p>A program ends at its last line or with an uncaught error, and cannot
-read environment variables (6.19).</p>
 </dd>
 <dt>The methods of text and lists written in Zeno.</dt>
 <dd>
