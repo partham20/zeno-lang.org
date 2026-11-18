@@ -88,7 +88,7 @@ def sample(name, title=None):
 # and the rest is about the project. On a narrow screen there is no menu:
 # all ten are one row that slides.
 NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Playground", "/playground/"), ("Packages", "/packages/"), ("Docs", "/docs/")]
-NAV_MORE = [("Book", "/book/"), ("Benchmarks", "/benchmarks/"), ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
+NAV_MORE = [("Book", "/book/"), ("Benchmarks", "/benchmarks/"), ("Decisions", "/decisions/"), ("History", "/history/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
 
 # The wordmark, "Almost": the name in lowercase strokes, and an o whose ring
 # stops just short of closing, with a dot where it would meet. Letters take
@@ -211,7 +211,7 @@ def layout(path, title, description, body, active=None, home=False):
   <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
     <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
-    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/history/">History</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="{GITHUB}">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
   </div>
   <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
@@ -439,6 +439,46 @@ def build_decisions():
 </article>
 </div>"""
     layout("/decisions/", "Design decisions", "Every design decision in the Zeno language, with the reason for it and the alternatives turned down.", page, "/decisions/")
+
+
+def build_history():
+    """/history/ is HISTORY.md of the language repository: every commit, under its release.
+
+    tools/history.py there writes the file from git. A checkout that does not
+    have it yet leaves the page as it is.
+    """
+    source = Path(ARGS.zeno) / "HISTORY.md"
+    if not source.exists():
+        if (SITE / "history" / "index.html").exists():
+            PAGES.append("/history/")
+        return
+    text = source.read_text()
+    body_md = re.sub(r"^# .+\n", "", text, count=1)
+    body_md, _, written = body_md.rpartition("\n---\n")       # the file's last lines say how it was written
+    body, toc = md_to_html(body_md, here="history")
+    foot, _ = md_to_html(written, here="history")
+    # A commit's short name is a link in code; the class lets the page set the list as a log.
+    body = re.sub(r'<li><a href="(%s/commit/[0-9a-f]+)"><code>([0-9a-f]+)</code></a> ' % re.escape(GITHUB),
+                  r'<li><a class="commit" href="\1"><code>\2</code></a><span>', body)
+    body = re.sub(r'(<li><a class="commit".*?)</li>', r"\1</span></li>", body, flags=re.S)
+    body = re.sub(r'<ul>\s*(<li><a class="commit")', r'<ul class="commits">\1', body)
+    body = re.sub(r"(</h[23]>\s*)<p><em>(.*?)</em></p>", r'\1<p class="when">\2</p>', body, flags=re.S)
+    commits = body.count('class="commit"')
+    releases = len(re.findall(r"^## Zeno ", text, re.M))
+    page = f"""<div class="doc-layout wide-toc">
+<aside class="doc-nav decisions-nav" aria-label="History">
+  <h4>Contents</h4>
+  {toc_html(toc, depth=2)}
+</aside>
+<article class="prose history">
+  <p class="eyebrow">{icon("clock")}History</p>
+  <h1>How Zeno was built</h1>
+  <p class="lede">{commits} commits and {releases} releases so far, from the first file to what is on main today.</p>
+  {body}
+  <div class="source">{foot}<p>This page is <a href="{GITHUB}/blob/main/HISTORY.md">HISTORY.md</a> in the language repository.</p></div>
+</article>
+</div>"""
+    layout("/history/", "History", "How the Zeno language was built: every commit, oldest first, under the release it went into, with a plain line on what each one changed.", page, "/history/")
 
 
 # --- Examples ----------------------------------------------------------------
@@ -1557,6 +1597,7 @@ def main():
     build_examples()
     build_docs()
     build_decisions()
+    build_history()
     build_roadmap()
     build_about()
     build_book()

@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>History · Zeno</title>
+<meta name="description" content="How the Zeno language was built: every commit, oldest first, under the release it went into, with a plain line on what each one changed.">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="History · Zeno">
+<meta property="og:description" content="How the Zeno language was built: every commit, oldest first, under the release it went into, with a plain line on what each one changed.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/history/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="History · Zeno">
+<meta name="twitter:description" content="How the Zeno language was built: every commit, oldest first, under the release it went into, with a plain line on what each one changed.">
+<meta name="twitter:image" content="https://zeno-lang.org/og/home.png">
+<meta name="twitter:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/history/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/playground/">Playground</a><a href="/packages/">Packages</a><a href="/docs/">Docs</a><div class="nav-more" id="nav-more"><button type="button" class="here" aria-expanded="false" aria-controls="nav-more-list">More<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5"/></svg></button><div class="nav-more-list" id="nav-more-list"><a href="/book/">Book</a><a href="/benchmarks/">Benchmarks</a><a href="/decisions/">Decisions</a><a href="/history/" aria-current="page">History</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></div></div></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout wide-toc">
+<aside class="doc-nav decisions-nav" aria-label="History">
+  <h4>Contents</h4>
+  <ul><li><a href="#the-releases">The releases</a></li><li><a href="#zeno-010">Zeno 0.1.0</a></li><li><a href="#zeno-020">Zeno 0.2.0</a></li><li><a href="#zeno-030">Zeno 0.3.0</a></li><li><a href="#zeno-040">Zeno 0.4.0</a></li><li><a href="#zeno-050">Zeno 0.5.0</a></li><li><a href="#zeno-051">Zeno 0.5.1</a></li><li><a href="#zeno-052">Zeno 0.5.2</a></li><li><a href="#unreleased">Unreleased</a></li></ul>
+</aside>
+<article class="prose history">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</p>
+  <h1>How Zeno was built</h1>
+  <p class="lede">306 commits and 7 releases so far, from the first file to what is on main today.</p>
+  <p>This page lists every commit in the Zeno repository, oldest first, under
+the release it went into. Read from the top, it is the story of how the
+language was built, from an empty folder on 14 November 2026 to what is on
+<code>main</code> today.</p>
+<p>Each line says in plain words what one commit changed. The letters and
+digits at its start are the commit's short name, and they open the commit on
+GitHub, with its full message and every line of code it touched. A release
+is a heading, with a few words under it on what the release brought. The
+last heading, Unreleased, is what is on <code>main</code> and in no release yet.</p>
+<p>Two other files go with this one. The reason for every choice in the
+language is in <a href="/decisions/"><code>docs/decisions.md</code></a>, and what is still
+to be built is in <a href="/docs/missing/"><code>docs/missing.md</code></a>.</p>
+<h2 id="the-releases">The releases</h2>
+<ul>
+<li><a href="#zeno-010"><strong>Zeno 0.1.0</strong></a>, 15 November 2026, 156 commits: the whole language, a book, and builds for ten kinds of machine</li>
+<li><a href="#zeno-020"><strong>Zeno 0.2.0</strong></a>, 16 November 2026, 19 commits: a program in a web page, installers and packages</li>
+<li><a href="#zeno-030"><strong>Zeno 0.3.0</strong></a>, 16 November 2026, 32 commits: speed, and a choice of how memory is freed</li>
+<li><a href="#zeno-040"><strong>Zeno 0.4.0</strong></a>, 16 November 2026, 18 commits: a build as fast as C and Rust</li>
+<li><a href="#zeno-050"><strong>Zeno 0.5.0</strong></a>, 17 November 2026, 12 commits: the program written in another language</li>
+<li><a href="#zeno-051"><strong>Zeno 0.5.1</strong></a>, 17 November 2026, 6 commits: the VM as fast as it was</li>
+<li><a href="#zeno-052"><strong>Zeno 0.5.2</strong></a>, 18 November 2026, 41 commits: four more targets, a registry, and the libraries of other languages</li>
+<li><a href="#unreleased"><strong>Unreleased</strong></a>, on <code>main</code> now, 22 commits: what firmware needs, and the libraries of five more languages</li>
+</ul>
+<h2 id="zeno-010">Zeno 0.1.0</h2>
+<p class="when">Released 15 November 2026 · 156 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.1.0">the release on GitHub</a></p>
+<p>The first release is the largest part of the story: the whole language was
+built on 14 and 15 November 2026. It begins with a README and a sketch of
+the syntax, and then goes stage by stage. A lexer, a parser, an interpreter
+and a type checker come first, then a compiler to C and a garbage collector,
+then builds for firmware that have no collector at all, a second engine (a
+bytecode VM) and a second backend (LLVM). After that come the library,
+programs in several files, packages, a formatter, a language server for
+editors, and tests written in Zeno.</p>
+<p>Most stages are three commits: the code, a walkthrough of it in <code>docs/</code>, and
+the reasons in <code>docs/decisions.md</code>. The release ends with The Zeno Book and
+with a workflow that builds <code>zeno</code> for ten kinds of machine. Writing the
+book and trying the release on a Mac and on Windows each found mistakes,
+and the mends are here too.</p>
+<h3 id="a-name-a-sketch-and-a-syntax">A name, a sketch and a syntax</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/de07d576adb39caeec2b4c2a56203039f2ae6638"><code>de07d57</code></a><span>The first commit: a README, an empty command-line program in Rust, and <code>hello.zeno</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8e8ea3627b08dca3f07bb259751b45c124e16343"><code>8e8ea36</code></a><span>The syntax is made to look like Python first, and the README lists what the language should be able to do.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8e5cda971e4b0f5a51a4baf7c9266f2772f83832"><code>8e5cda9</code></a><span>The syntax changes to the one Zeno kept: braces, <code>let</code> and <code>var</code>, and whole words for keywords.</span></li>
+</ul>
+<h3 id="reading-a-program-the-lexer-and-the-parser">Reading a program: the lexer and the parser</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/33669d790e9f86f91c5cf34590febc151cd12ca1"><code>33669d7</code></a><span>The lexer: it cuts a file into tokens and decides where a line ends, with tests.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9fea7757aae33c6b7f33732d0e8597dd3884d701"><code>9fea775</code></a><span><code>zeno tokens</code> prints the tokens of a file, and an error points at its place with a caret.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0ee6898e689ade868757a54aeeeb2fdab8593ac9"><code>0ee6898</code></a><span>A walkthrough of how the lexer works.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/861e3b638d39318d1d3883b91921789275de6ebf"><code>861e3b6</code></a><span>Every stage shares one kind of error, and a message names a token in words.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/37b02f5a8bb02afe5f573805b9f684c76a6bd3fd"><code>37b02f5</code></a><span>The parser: it turns the tokens into a syntax tree, and <code>zeno parse</code> prints the tree.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7e99c93d4519c3c4cd195caf2c5b5f282c543dc4"><code>7e99c93</code></a><span>A walkthrough of how the parser works.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/15f52e41b82e026cab369cc611de75b45a9ce3f0"><code>15f52e4</code></a><span>Comparisons chain as in Python (<code>0 &lt; x &lt; 10</code>), <code>//</code> divides whole numbers, and <code>is</code> is kept for <code>none</code>.</span></li>
+</ul>
+<h3 id="running-a-program-the-interpreter">Running a program: the interpreter</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8c90b90dd1ecfdd7bb04fa1a96733ad83caccf16"><code>8c90b90</code></a><span>The interpreter: <code>zeno run</code> runs a program for the first time.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/52e8edc722a39a5d96a2f47de18850170b70bb50"><code>52e8edc</code></a><span><code>docs/decisions.md</code> begins, the file that holds the reason for every choice, with a walkthrough of the interpreter.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8fc07ff74223239277ec295417551a44dab4acf2"><code>8fc07ff</code></a><span>Functions can be used as values, <code>map</code>, <code>filter</code> and <code>reduce</code> arrive, and the type of a field may be left out.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7a1956b8cc9814569f16048f2a4327677dfa7d9d"><code>7a1956b</code></a><span>The reasons for allowing several styles and optional types are written down, with an example.</span></li>
+</ul>
+<h3 id="checking-a-program-before-it-runs-the-type-checker">Checking a program before it runs: the type checker</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d30c75073ac65d8ab5637d86070c337ab739a3b4"><code>d30c750</code></a><span>The type checker: <code>zeno check</code> finds mistakes before a program runs, and strict mode asks for every type to be written.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/45eb543f4ea96a2d45c812de0f76a7a3a480784a"><code>45eb543</code></a><span>Tests for the checker, and a list that is written out is checked item by item.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a39031a07d50b9d13aa37a25ff3ded1ccf9dd30e"><code>a39031a</code></a><span>A walkthrough of the checker, and its reasons.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7873651c41647f97fcc68b035c0dcbf1ad960901"><code>7873651</code></a><span>A type can be a function (<code>function(int) -&gt; int</code>), a file can begin with <code>strict</code>, and units come from a fixed table, so a misspelt unit is caught.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/273b26079ce6e24b290717b8697e02c79c6f612a"><code>273b260</code></a><span>The checker works out the types of parameters and fields that have none written, by going over the program until nothing changes.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0f32d019f5ba75d9c916f5e8064d3f3f2ec73dbc"><code>0f32d01</code></a><span>The docs for function types, unit types, the <code>strict</code> line and worked-out types.</span></li>
+</ul>
+<h3 id="compiling-to-c">Compiling to C</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/26eb7eb240f4a042e1ce706d99c1e1220fe2cdba"><code>26eb7eb</code></a><span>The checker hands what it learned about each function to the stages after it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7ea2462a10d8521407a34d8854b540a4cebd3295"><code>7ea2462</code></a><span><code>zeno build</code>: numbers, text, functions and control flow are compiled to C. The tests compare a compiled program's output with the interpreter's, byte for byte.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/505e4fcfd102b244bb632b661f4f9336d8dfa72e"><code>505e4fc</code></a><span>A walkthrough of the C backend, and its reasons.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f470cb3b8651f759d0095002b1c685e707b22ad1"><code>f470cb3</code></a><span>An error caused by a worked-out type says which call the type came from, and units of one kind work together: <code>1 s + 500 ms</code> is <code>1500 ms</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6b5c1c5a93d634f3b1fcdeae3b9cc52e3e8c74d1"><code>6b5c1c5</code></a><span>The checker hands the types of classes, enums and lists to the compiler.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e38aaae615c79ab111f376568943b664ee93031b"><code>e38aaae</code></a><span>Classes, lists, enums and <code>match</code> compile to C.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/cb327251282f7e2860e32b0987fa3bcb582d6781"><code>cb32725</code></a><span>The docs for how classes, enums, <code>match</code> and lists compile.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/252e4b4394003055892e641dcac8bfe0d4c678e0"><code>252e4b4</code></a><span>The interpreter is tightened so that a compiled program can agree with it: a function value sees only what was in view where it was written, a raised object is caught by its class, and text methods know plain letters only.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/be1f7cc15b9e7923135b0896243f0752df4526eb"><code>be1f7cc</code></a><span><code>none</code>, errors (<code>try</code> and <code>raise</code>) and functions as values compile to C. The tour of the language now builds.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c4c718bffdb110e454bdc3798b9f8bef64b410d6"><code>c4c718b</code></a><span>The docs for how <code>none</code>, errors and function values compile.</span></li>
+</ul>
+<h3 id="memory-a-collector-a-firmware-build-and-owned-values">Memory: a collector, a firmware build, and owned values</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a199025de543c0d9aacbc3f025c81199e5d9e042"><code>a199025</code></a><span>Compiled programs free their memory with a mark-and-sweep garbage collector, and <code>--memory</code> reports what was used.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/feef6df4185a89943c82bb803b14fe60f8143efd"><code>feef6df</code></a><span>A walkthrough of the collector, and a plan to carry errors as plain values for firmware.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a31c5897832cbc097aca6e702c42695643cb90d5"><code>a31c589</code></a><span>The plan for the next two stages: owned values with borrows, and a firmware build with no collector.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/44f6cc865c8b1a8e59d709f37f88d53493962ffe"><code>44f6cc8</code></a><span><code>zeno build --firmware</code>: an error travels as a returned value, with no <code>setjmp</code>, as firmware rules such as MISRA C ask.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/83e3a58e88c86bfe79a6c07846db0e16232a982f"><code>83e3a58</code></a><span>A walkthrough of the firmware build, and its reasons.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/672487e6faae04bcf22cd9075d5db05cc82839dc"><code>672487e</code></a><span>Owned values: a value marked <code>owned</code> has one owner and is freed the moment its owner's block ends. A <code>borrow</code> parameter only looks.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/23fa3f5c68f76f8064e3309249f7e30d7703b680"><code>23fa3f5</code></a><span>A walkthrough of owned values, and decision 5.8.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/27471194c8ad98cbc55284c68fb557d04db12e3d"><code>2747119</code></a><span>The README and the older pages point at owned values.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/91fde19375494519e8e494f829618f461b00eb18"><code>91fde19</code></a><span><code>zeno build --no-collector</code>: a firmware build with no garbage collector in it. Anything that would take memory nobody gives back is refused when the program is built.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/bc5f77c1c2040c5946299aef624ee66155e02690"><code>bc5f77c</code></a><span>A walkthrough of the build with no collector, and decision 5.9.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/393c071a66ab633cdd5bad07852c3a1f91286ea2"><code>393c071</code></a><span>The README and the older pages point at the build with no collector.</span></li>
+</ul>
+<h3 id="a-second-engine-bytecode-and-a-vm">A second engine: bytecode and a VM</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/216e8525d93fefd33c9c6e99a93f4cc1c20ef254"><code>216e852</code></a><span>What each operator does moves to a file of its own, so that a second engine can share it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/b2ce2426e67f4ede24d3f29bbd7aa8ee3516e154"><code>b2ce242</code></a><span>A function sees what is declared above it and nothing below: a mistake in scoping, found while building the VM, is mended.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e7e94c07a6e7e01e278af02f3cfe73e32ae2548e"><code>e7e94c0</code></a><span>Bytecode: a program as a flat list of small instructions, and a compiler from the syntax tree to it. <code>zeno bytecode</code> prints it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9ff462c4e3aa55be0d4dada85528c047ccebbdd4"><code>9ff462c</code></a><span>The VM: <code>zeno run --vm</code> runs the bytecode, two to three times as fast as the interpreter. Every test now runs on both engines and must give the same output.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9a6e6ae745c1fb7c5e27cd99aaefb301f8a89ec0"><code>9a6e6ae</code></a><span>The bytecode listing names two hidden slots, and the help text lines up.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1eadece1c53886c642ab7f92cc064b28b94f75e2"><code>1eadece</code></a><span>A walkthrough of the bytecode VM, and its reasons.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6d108a89f30aeccbe68f2bad45b8f488c374eeab"><code>6d108a8</code></a><span>The checker refuses a function that is called before a variable it needs is declared.</span></li>
+</ul>
+<h3 id="a-second-backend-llvm">A second backend: LLVM</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/00513e117de723d52b3a1058dacabe9601da399b"><code>00513e1</code></a><span>The C backend's code for reading an f-string format is split off, so that another backend can use it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4a4f1de975ba86c3974fc0cd2cdbe7aa7d41f33f"><code>4a4f1de</code></a><span><code>zeno build --llvm</code>: numbers, text, functions and control flow are written as LLVM IR, as plain text and with no dependency.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2049bc3aeb74508f0434e1fb8ec5ff1adbe47fcb"><code>2049bc3</code></a><span>A walkthrough of the LLVM backend, and its reasons.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/798e928a43f04c72d0ff0390e3d84bb323e1307d"><code>798e928</code></a><span><code>//</code>, <code>%</code> and <code>/</code> are written in IR and no longer call the runtime, which makes a loop of them more than twice as fast.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/384b5d63656c5e3dbb17a315e56491106879a835"><code>384b5d6</code></a><span>The LLVM backend compiles the rest of the language: classes, enums, <code>match</code>, lists, <code>none</code>, errors, function values and units.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e5245547e369e5d9c001bd69d9ffb2137a00c271"><code>e524554</code></a><span>The walkthrough of the LLVM backend is rewritten for the whole language.</span></li>
+</ul>
+<h3 id="for-firmware-a-board-bits-sized-numbers-and-generics">For firmware: a board, bits, sized numbers and generics</h3>
+<p class="when">14 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/fa3961a648db8b500771acc92f036b099b874e2f"><code>fa3961a</code></a><span>The <code>board</code> and <code>time</code> modules: pins, <code>sleep</code> and <code>now</code>. <code>blink.zeno</code> runs on a simulated board and builds for a real one.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7f10b84168e98aaaff8f31aa7a86983a512b97a6"><code>7f10b84</code></a><span>The bit operators <code>&amp;</code>, <code>|</code>, <code>^</code>, <code>~</code>, <code>&lt;&lt;</code> and <code>&gt;&gt;</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c1f941bab94f1f57dbc3b653d780d8801c92e9d8"><code>c1f941b</code></a><span>Whole numbers with a size: <code>u8</code>, <code>u16</code>, <code>u32</code>, <code>i8</code>, <code>i16</code> and <code>i32</code>. A number that does not fit is an error and never a wrong answer.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2840eb6febcb9eef8b8c6b70ea4787280e70a204"><code>2840eb6</code></a><span>The docs for the bit operators and the sized numbers.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1ff13ec5759e5e34ffd002bc651f0b12dd296329"><code>1ff13ec</code></a><span><code>zeno tokens</code>, <code>parse</code> and <code>bytecode</code> end quietly when their output goes to a program that stops reading.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0c3ee4dbc5405e2a3e1087148fe5a3b0040e972f"><code>0c3ee4d</code></a><span>Generics: <code>function first[T](...)</code> and <code>class Stack[T]</code>. The checker works the type out from the call.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/01a85858ce1ea65649ea565c2d9710fe670c17ff"><code>01a8585</code></a><span>The docs for generics.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a90e33f493e34e499f20fcf14b3c9bc9367af2f9"><code>a90e33f</code></a><span><code>--llvm --firmware</code>: the LLVM backend carries errors as values too.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/66410c0d8b6bbb7c4e2acbde90357ac7804f4701"><code>66410c0</code></a><span>The docs for <code>--llvm --firmware</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/268c392578aabfef5fd0c1b221921a128c2088d8"><code>268c392</code></a><span><code>--llvm</code> with <code>--no-collector</code> and <code>--memory</code>: the LLVM backend frees owned values and can leave the collector out.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/b330867e8ea80949935eb9adc1cf0f2725816d5c"><code>b330867</code></a><span>The docs for <code>--llvm</code> with <code>--no-collector</code> and <code>--memory</code>.</span></li>
+</ul>
+<h3 id="no-collector-a-pool-text-that-is-kept-and-one-owner-for-every-value">No collector: a pool, text that is kept, and one owner for every value</h3>
+<p class="when">14 to 15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2788a33f1cdbce0fb25bfae3f013241882906fbf"><code>2788a33</code></a><span>With no collector, memory comes from one fixed pool and not from <code>malloc</code>. Taking a block and giving it back take constant time, and the pool cannot break up.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0e893465eb6d8a8dc70e85df6bbeaa1338610283"><code>0e89346</code></a><span>The docs for the memory pool.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e07dc43632d633463dbb4c7dec081f45440fb7cb"><code>e07dc43</code></a><span>With no collector, text can be kept: whatever stores a text has a copy of its own and frees it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/54031ad5962d32b6a1480cf2fa0905920a105b17"><code>54031ad</code></a><span>The docs for text that is kept, with an example.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ce6bf6a1d25e8e0a325dfac743342e420385f6f3"><code>ce6bf6a</code></a><span>A value made in the middle of a statement and given to nobody belongs to the statement, which frees it. So <code>split</code>, <code>map</code>, <code>filter</code> and <code>+</code> on lists work with no collector.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/418337a349f32ab7e34432b95eddee2245ca161d"><code>418337a</code></a><span>The docs for what a statement owns.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/51ebc9bd977dae2d5fb9bb88b75db963de7332bd"><code>51ebc9b</code></a><span>With no collector, every list and object has one owner without the word <code>owned</code>, and a list owns its items.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ac76f2ff24842cf3fc5794b575cfbb6be15f244e"><code>ac76f2f</code></a><span>A list cannot fill a type parameter where it has one owner, and the message for it is put right.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/96abe6b392fa4b73f621bf23de84c1742c129581"><code>96abe6b</code></a><span>A walkthrough of one owner.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a06f534bc627070029fe022fbf8f0dd8a2bb67cb"><code>a06f534</code></a><span>Decision 5.15: whoever receives a value owns it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/00cb81cdc351793d1afd8f1322c90824132d865d"><code>00cb81c</code></a><span>The older pages are brought up to date with one owner.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d01a74152814313207f703951aca5be1c3784182"><code>d01a741</code></a><span>An owner cannot be given a new value while a loop walks its list: a way to read freed memory is closed.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/49c97d85d304e89c698ef1f7c779afccfd3ea890"><code>49c97d8</code></a><span>With no collector, enum values and values that may be <code>none</code> have one owner too.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f3b8effea1c62faf9badea415c36dacea822b739"><code>f3b8eff</code></a><span>The docs for enums and <code>none</code> with one owner.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/082126b5cb5dc6a9071793317b6dc176282b3757"><code>082126b</code></a><span>The checker gives errors and function values one owner with no collector. They were the last two kinds of value without one.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2cd94d14a7fbdaa4f70d26493827d91a272d6eca"><code>2cd94d1</code></a><span>Both backends free errors and function values through their owner.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a626e312e25ecc7ad476574044cc582daaabec4a"><code>a626e31</code></a><span>The docs for functions and errors with one owner.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/914cc9984ef16dba654f284948a7e8fe9f7aea93"><code>914cc99</code></a><span>The older pages and the README are brought up to date.</span></li>
+</ul>
+<h3 id="memory-by-hand">Memory by hand</h3>
+<p class="when">15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9efd0f855d6e65724962447b5731524c513bae0f"><code>9efd0f8</code></a><span>Memory by hand: <code>unsafe</code> blocks, raw pointers, <code>allocate</code> and <code>free</code>, and registers at a fixed address. <code>zeno run</code> checks every use; a compiled program, like C, checks none.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d8e411a6b617455f90977c566ba19be8b8b1f644"><code>d8e411a</code></a><span>An <code>unsafe</code> block that ends in <code>return</code> ends the function: the C backend wrote a second <code>return</code> after it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c3a1d129cdd259430f2bfe85fb26b2ab5cc10bc5"><code>c3a1d12</code></a><span>A walkthrough of memory by hand, and its reasons.</span></li>
+</ul>
+<h3 id="the-audit-is-every-rule-unambiguous-and-intuitive">The audit: is every rule unambiguous and intuitive?</h3>
+<p class="when">15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/071435878f76a078bb565a24bc223f23d2dedd4c"><code>0714358</code></a><span>A plain parameter only looks at a value, and <code>take</code> marks the one that takes it over. <code>borrow</code> is gone.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a4c2d5f9a7d861aaddb035db1905249b7ee89d4c"><code>a4c2d5f</code></a><span>The docs follow that change, and <code>docs/audit.md</code> begins.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/41cef088985662edd50bceccbba93cdd2331a17f"><code>41cef08</code></a><span>Messages count in words: "1 argument", "2 arguments", and never "argument(s)".</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/cc2853a98ecd35fbd002bbebc8b258a7bf7680ef"><code>cc2853a</code></a><span><code>[1] + ["two"]</code> is refused, as <code>append</code> already refused it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/40258d292e5a8b39011375fb57785721c5f8cf1c"><code>40258d2</code></a><span>After <code>case none</code>, the later cases of a <code>match</code> know the value is there.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/eb5e05ba85247d82ff603354682ff01b7072c406"><code>eb5e05b</code></a><span>With no collector, every function can look at a <code>let</code> at the top of the file, which is how firmware keeps a table.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8d232e1ed8741fc1e067b05c2beea0a40bb07718"><code>8d232e1</code></a><span>A method can take out what its own object holds, as a queue does with <code>pop</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a0e4a6c3a24c888dcec496b9c6002f40123f3d2b"><code>a0e4a6c</code></a><span>A <code>var</code> that holds a function of the program can be given another function.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d9e6c8b9461de24a7c0a908a5267643db95bbc44"><code>d9e6c8b</code></a><span>A firmware build refuses a <code>raises</code> it cannot honour, and the audit is written up.</span></li>
+</ul>
+<h3 id="the-library">The library</h3>
+<p class="when">15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f4bf63a9429a459e9439b1a07945fb6d44a674cf"><code>f4bf63a</code></a><span>Text and lists get the methods every program reaches for: <code>find</code>, <code>slice</code>, <code>insert</code>, <code>reverse</code>, <code>sort</code>, <code>join</code> and more.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/26830bdc05ee74652104bdf4d566a2ec0c27044c"><code>26830bd</code></a><span>The docs for the first part of the library.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/92c2197906b575d34387943ab34b3d8fc1ac5815"><code>92c2197</code></a><span>Programs read and write: files, the keyboard (<code>input</code>), and the arguments they were started with.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/5163d9e13e1e1fc16f38f06d6387ba1fca8e84bd"><code>5163d9e</code></a><span>The docs for reading and writing.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/36a4e1752885ce4e712bc5bfb1edcc761b91ee97"><code>36a4e17</code></a><span>More of <code>math</code>: angles with units (<code>30 deg</code>), logarithms, <code>exp</code> and rounding.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/683df640f513a5c822a98a4ef4f4ca0156433d3c"><code>683df64</code></a><span>The docs for the new <code>math</code>, with an example of five instruments.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/689e9cf4530bc4f9e5c4faf7ad111f98894daa5d"><code>689e9cf</code></a><span>A dictionary type: <code>["Ada": 36]</code>, <code>[:]</code> for an empty one, and the type <code>dict[str, int]</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8fb13a3a044bde1e2809a963240dccc8ca1f77f3"><code>8fb13a3</code></a><span>The docs for the dictionary.</span></li>
+</ul>
+<h3 id="bigger-programs-modules-packages-a-formatter-and-a-language-server">Bigger programs: modules, packages, a formatter and a language server</h3>
+<p class="when">15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/5275c4d97d7165b5ffab0ba84c318a21c88d4275"><code>5275c4d</code></a><span>Programs in several files: <code>import shapes</code> reads <code>shapes.zeno</code> as a module.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/65b4bd531863a171ce2968a9d98530ddc90a6f50"><code>65b4bd5</code></a><span>The docs for programs in several files.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/54d4554827abc9ce7aa92ceb5493104084c422be"><code>54d4554</code></a><span>Packages: a <code>zeno.package</code> file says what a program needs, and <code>zeno fetch</code> gets it from git.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e235d96aec055c7b976d20b9e73fb0d75ec59c3d"><code>e235d96</code></a><span>The docs for packages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/49209cb37a111110794a2d4859b1ee3e965f6068"><code>49209cb</code></a><span><code>zeno format</code>: one layout for every Zeno file. It changes white space only, and checks that the program still means the same.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/bc6727ead9c8506cf5d282c3b009f9e399747a45"><code>bc6727e</code></a><span>The docs for the formatter.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d2a1edd5901ef9e273d827e648bcf46db8113d68"><code>d2a1edd</code></a><span><code>zeno lsp</code>: a language server, so that an editor shows mistakes as you type, with setup for VS Code, Vim, Neovim and Helix.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/580e8384755f059e62c65ed94f8e2fef444881ca"><code>580e838</code></a><span>The docs for the language server.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3d651dff33a6da7807a8c9c5ac3936ad470d446e"><code>3d651df</code></a><span>The language server answers "go to declaration" and hover, from what the checker knows.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1040b8e9eb9432bb6442adca43b20f0b820aec1c"><code>1040b8e</code></a><span>The docs for how the server knows what a name means.</span></li>
+</ul>
+<h3 id="the-finish-line-for-01">The finish line for 0.1</h3>
+<p class="when">15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1acd4f09943a1b8a2a34b7dc0e4edd4523ea0e59"><code>1acd4f0</code></a><span><code>private</code>: a declaration at the top of a file can be kept to that file.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c1cbf21202a84bad481b3b9531e7fb73da6878c6"><code>c1cbf21</code></a><span><code>private</code> fields and functions of a class.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9f9ae5d704bed97a8494a14aa27764cad88d26c5"><code>9f9ae5d</code></a><span>An example for <code>private</code>: a queue of a fixed size.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/20f04230cd19e0dfd8afa37b96b8d5d171bb6ff0"><code>20f0423</code></a><span>The docs for <code>private</code>, and the list of what is left for version 0.1.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/dcaef4e7c0d1998972cb7cdef250f152e9cb9dfc"><code>dcaef4e</code></a><span>Interfaces: <code>interface Shape { ... }</code> and <code>class Circle is Shape</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/04e918908f9ed98967d8b6deb29b56e051f1e2e8"><code>04e9189</code></a><span>The docs for interfaces.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d93b0b53abd22c435c2047877f34ef0c359e91b3"><code>d93b0b5</code></a><span>A dict can hold any kind of value, and a loop can have two names: <code>for key, value in ages</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e9fc6682b95841bd91beb9c07d783a6ea2ec18b2"><code>e9fc668</code></a><span>The docs for both.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/be3c6a69cc98e391eb9c1672792fe5992f256bc6"><code>be3c6a6</code></a><span><code>zeno test</code>: the tests of a program are written in Zeno, with <code>test "name" { ... }</code> and <code>assert</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6d3c3a30eb8a59304543cb72d03a7ea55f4f8cc2"><code>6d3c3a3</code></a><span>The docs for tests.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0f8d365d4d8e7293b775779f487ba7c0dc7e309e"><code>0f8d365</code></a><span><code>zeno new</code> makes a new program or package in one command.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6f353bb696d0166619fcae8c5798dea7ebee7987"><code>6f353bb</code></a><span>The docs for <code>zeno new</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/34078de73031210eb59c5ec8f8b1e5459f4a5895"><code>34078de</code></a><span>The last gaps: <code>+=</code> on a sized number, a format on a quantity (<code>{angle:.1f}</code>), the operators <code>//=</code>, <code>%=</code> and <code>**=</code>, and two mistakes in the order of <code>x += f()</code> mended.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/eb9c706ba995057f7134f9838bb4f2fc3028e954"><code>eb9c706</code></a><span>The docs for the last gaps.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0700a2e223c550aac22af87acb3b32553280a130"><code>0700a2e</code></a><span>The version is 0.1.0: the list for it is done. Also a clearer message for <code>as</code> after an import.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/702a6dedc333fce6ff34d3f1b257cbd9b6163468"><code>702a6de</code></a><span>Every decision once marked provisional is read again and settled, and <code>docs/version-0.1.md</code> says what 0.1 is.</span></li>
+</ul>
+<h3 id="the-zeno-book-and-a-release-for-ten-kinds-of-machine">The Zeno Book, and a release for ten kinds of machine</h3>
+<p class="when">15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/08d0d83c2e8eb359f5db3cf34d9e568372dafbed"><code>08d0d83</code></a><span>The Zeno Book begins: its LaTeX source, its build, and the first chapters.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c531678311f2a4056da698bb50be71181cddbd34"><code>c531678</code></a><span>Book: values, numbers, text, control flow, functions, lists and dicts.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e2d3ec3281aa647f702aa1893632e69dad435be6"><code>e2d3ec3</code></a><span>Book: classes, enums, <code>none</code>, errors and functions as values.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f5807d4269248d1f92510f78c94be0afe6093374"><code>f5807d4</code></a><span>Book: types, units, sized numbers and bits.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0b2272feed5e375aa44eebed28c5bcfc8a796624"><code>0b2272f</code></a><span>Book: generics, interfaces, modules and packages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4ca6d11864f4a92e568ac934ee6ff3e01e684030"><code>4ca6d11</code></a><span>Book: reading and writing, and mathematics.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/cdfed0c6020090675050472689373aa0d9299d4a"><code>cdfed0c</code></a><span>Book: testing and the tools.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4443627f7161a32fd40fd459f19f99037536f88e"><code>4443627</code></a><span>Book: the board and compiling.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0322055eb3507905158af2ec84c99e8bad3d7998"><code>0322055</code></a><span>Book: memory, ownership and firmware.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3762242a9fd17b311eddcc8c5959c09b154d0d02"><code>3762242</code></a><span>Book: building with no collector, and unsafe code.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f831a99915699434ab02729a43ccb463b39c2703"><code>f831a99</code></a><span>The release workflow: a tag builds <code>zeno</code> for ten kinds of machine (Linux, macOS and Windows, on several processors each) and checks every build.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4e090ebbe5405fb8f3a6cc94dea2644d8f03e230"><code>4e090eb</code></a><span>Book: Inside Zeno, and why Zeno is as it is.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ddf739e2ac263d2e7ff5a84ea75816780ccb700f"><code>ddf739e</code></a><span>The first trial of the release found that a compiled program rounded floats differently on a Mac. Compiled programs now round as <code>zeno run</code> does on every processor.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/903a7ddcbbad6a1997b6971b1eb551fe541e9ab8"><code>903a7dd</code></a><span>Book: the appendices, and the first full build: 226 pages of PDF and a page of HTML for each chapter, with all 300 samples run by the compiler.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3751da321e43fbdf472c5a7930e80261fc2610dd"><code>3751da3</code></a><span>Release workflow: the C build and the LLVM build are each checked in a step of their own.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ee19a6459980f6c22c80ae70a720b8a3f67288e6"><code>ee19a64</code></a><span>Release workflow: what a trial finds is written on the summary page of the run.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/814b9673adbb22a4afbc0d048864284e85fc7467"><code>814b967</code></a><span>The docs for how a release is made and how to install one.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c07f157a5034b097a7d26b31b0ab591d0dfacd5f"><code>c07f157</code></a><span>Release workflow: a release can be made from the Actions page on GitHub.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/642c040a16d0aa30eecf7112ddcb58f6555b44ad"><code>642c040</code></a><span>Writing the book found programs that <code>zeno check</code> accepted and that failed later. The checker now refuses them, and several messages say more.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/797556b3bde10c8c5b7328e484b96394f7d8cc9f"><code>797556b</code></a><span>Book: the samples follow the checker's new refusals.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1213f697a7d1ab77a275b6d7bed3eb289295c07d"><code>1213f69</code></a><span>Windows: a compiled program sleeps and reads the clock the Windows way, so <code>--llvm</code> builds there.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/da45a6689479265a339d5cc6e58769798db29134"><code>da45a66</code></a><span>A path that Zeno makes is written with <code>/</code> on every system.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6b3ed160b97946a0f1f9a80a846bc68e5f54609c"><code>6b3ed16</code></a><span>Windows: arguments arrive whole in any script (a word in Tamil had come out as <code>?????</code>), and a fetched package keeps its line ends.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9385ec0b978df48c745a3bf1fe6085995ed5b555"><code>9385ec0</code></a><span>The mend for Windows arguments is done again without the heap, so that a build with no collector stays without one.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7cc9fe96fd8d933677a9fa95d7e5f9f5679f78f6"><code>7cc9fe9</code></a><span>The docs for what Windows found. Every test passes there now.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/be2248e3e98a840ea44546b9fc2541d9c7015033"><code>be2248e</code></a><span>Three clearer messages that the book asked for.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/446d35525cf6ac393eec547ce388cd53b6bd5f23"><code>446d355</code></a><span>Book: Zeno builds on Windows too. <strong>This commit is Zeno 0.1.0.</strong></span></li>
+</ul>
+<h2 id="zeno-020">Zeno 0.2.0</h2>
+<p class="when">Released 16 November 2026 · 19 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.2.0">the release on GitHub</a></p>
+<p>A Zeno program can be a web page, and Zeno gets installers. <code>zeno build
+--web</code> puts a program, its page and Zeno itself (built as WebAssembly) into
+one HTML file that a browser opens. The same days brought a setup program
+for Windows and one line to paste for macOS and Linux, packages for apt,
+pacman, snap, flatpak, Homebrew and winget, a <code>json</code> module, the first
+playground, and the MIT licence. With this release the repository became
+public.</p>
+<h3 id="a-program-in-a-web-page">A program in a web page</h3>
+<p class="when">15 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/64e8f27538db2ee72b9ca5bc6fb164914911a935"><code>64e8f27</code></a><span>The <code>web</code> module and <code>zeno build --web</code>: a Zeno program becomes one HTML file that a browser opens. Zeno itself runs in the page, built as WebAssembly.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/90cc5660eb21744ba50d2ddd6e56640fb796db0d"><code>90cc566</code></a><span>The version moves to 0.2.0, with its release notes.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/5a2f9e25a13d92551cf96c6ba937ac30059366e1"><code>5a2f9e2</code></a><span>Book: install steps for ten machines, and a new chapter on web pages.</span></li>
+</ul>
+<h3 id="installers-packages-json-and-a-playground">Installers, packages, JSON and a playground</h3>
+<p class="when">16 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e3a17a169d5362826f17b0eb0d55e73f6c25bb61"><code>e3a17a1</code></a><span>Installers: a setup program for Windows, and one line to paste for macOS and Linux. <code>zeno build</code> finds the C compiler by itself.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6b9361f77bae69fed820a6da89236f9778a35ded"><code>6b9361f</code></a><span>A page can do more: events, styles, drawing on a canvas, text kept between visits, and the network. <code>zeno playground</code> writes a page in which programs are written and run in a browser.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c0a3563a988f6f055a9138c6ee0360c84ec9b439"><code>c0a3563</code></a><span>What 0.1 left: <code>min</code> and <code>max</code> of quantities, hover on a field in an editor, and <code>zeno test --only</code> to run tests by name.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a0a1254dbc406ac39dade449979cdb9cacc22775"><code>a0a1254</code></a><span>A workflow adds installers to a version that is already released, and 0.1.0 gets both.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/b200af8ec7749f58ede4a44ff2c1d29598651a9e"><code>b200af8</code></a><span>The <code>json</code> module: <code>json.parse</code> and <code>json.write</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d60f0bd0af9ac7f429512bd70995b31faee31035"><code>d60f0bd</code></a><span>Book: the bigger <code>web</code> module, JSON, the installers, and tests by name.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/be32a88abc81c2c059c8577febf3a801194a5d4e"><code>be32a88</code></a><span>Packages: a <code>.deb</code>, a snap, a flatpak, a pacman package, and recipes for Homebrew and winget.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4581bd7ac22a228ad47dd0fbdd3b3e4722bddad4"><code>4581bd7</code></a><span>Packages: the PKGBUILD goes into its folder and not into the archive beside it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0fe0238ed3ba1541735691880a1c1896d052b908"><code>0fe0238</code></a><span>A release now makes the packages and tries each one. Their walkthrough and their reasons.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/051062b19761f01eef37da28d5b7da76fe12a29b"><code>051062b</code></a><span>A timer that can be stopped: <code>web.after</code> and <code>web.every</code> give a <code>Timer</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/66a1d5e5754dc9683765b43ab6d58bd678a929d8"><code>66a1d5e</code></a><span>The Homebrew, pacman and winget recipes for 0.1.0, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1c8fce923f72f38609f8f09462001e5a4ae9b661"><code>1c8fce9</code></a><span>Book: the timer, and the whole <code>web</code> module in the library appendix.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/39d70e63afef96c923d7c5e4a1e29726fd08d6ed"><code>39d70e6</code></a><span>Book: installing with apt, pacman, snap, flatpak, Homebrew and winget.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f998247740e739ce41b71754179f888d10963477"><code>f998247</code></a><span>The playground is made ready for zeno-lang.org: an endless loop is stopped after 5 seconds, errors show under the output, and it fits a phone.</span></li>
+</ul>
+<h3 id="a-licence-and-a-public-repository">A licence, and a public repository</h3>
+<p class="when">16 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/db80267499ba1914d7ed52bfac825d423d43c61f"><code>db80267</code></a><span>Zeno gets the MIT licence, in the repository and in everything a release carries.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2367c89d375a1f74d9ea27f9ee3aa8dd313c4af3"><code>2367c89</code></a><span>The repository is made public, and the docs no longer say that the install line cannot download. <strong>This commit is Zeno 0.2.0.</strong></span></li>
+</ul>
+<h2 id="zeno-030">Zeno 0.3.0</h2>
+<p class="when">Released 16 November 2026 · 32 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.3.0">the release on GitHub</a></p>
+<p>This release is about speed. The garbage collector is rebuilt around pages
+and then given two generations, a program can ask for <code>memory owned</code> and
+have no collector, <code>--release</code> drops the overflow checks, and the VM gets
+faster. Six benchmarks against C, Rust and Python are added to measure all
+of it. Also here: <code>sort</code> with a function, a new playground with a real
+editor, and the groundwork for the package stores.</p>
+<p>The rehearsal of the release hung on macOS, so 0.3.0 went out with the two
+generations on Linux only. The cause was found in 0.4.0.</p>
+<h3 id="after-020-sort-with-a-function-a-new-playground-and-the-package-stores">After 0.2.0: sort with a function, a new playground, and the package stores</h3>
+<p class="when">16 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9a4825899396c0b70a9d69396b96cb8ac0f6e08e"><code>9a48258</code></a><span>The Homebrew, pacman and winget recipes for 0.2.0, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/85810650ca164482bc365dacfc9074d48417b41e"><code>8581065</code></a><span>Book: 0.2.0 is released, and chapter 1 installs it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6b54f7d08fead106cd2cff8f4e0ccde43c0e7220"><code>6b54f7d</code></a><span><code>sort</code> with a function: <code>people.sort(age_of)</code> orders a list of anything by a key. A crash in <code>map</code>, <code>filter</code> and <code>reduce</code> is mended.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/97410374e57121f90fd3abdeaf19e6b4d0f57db8"><code>9741037</code></a><span>Book: <code>sort</code> with a function.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4cea297de2df3c312cd0c5a33bc4aff92f657797"><code>4cea297</code></a><span>A new playground: an editor in colour that checks as you write, a Format button, problems that jump to their line, and fifteen examples.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9c9a488b2eb7325598deb70427f77edee1300937"><code>9c9a488</code></a><span>The stores workflow: signed lists for apt, the files for the AUR, and winget files in the current form.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/bad5ee257a8d9fef49abf939584acbe5b66e9c2f"><code>bad5ee2</code></a><span>The sketch example can be drawn with a finger on a phone.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3ad0c5e705fd695d4b8c738fdb2ae78029d95cb4"><code>3ad0c5e</code></a><span>On Arch Linux the package is named <code>zeno-lang-bin</code>, because the AUR already has another program called zeno.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/90558cea1b1e213a8ab709dfa0af4d3420b85698"><code>90558ce</code></a><span>The docs for the stores: where each package manager looks for Zeno, and what is left to do for each.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/664013446427dbb39513dc707cc8604db8022df5"><code>6640134</code></a><span>Book: the AUR name, and no Flathub.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a9ba7620f02a54ba1a8cd336db71878d7516ebd4"><code>a9ba762</code></a><span>Book: a line that ran into the margin is mended.</span></li>
+</ul>
+<h3 id="speed-a-faster-collector-a-choice-of-memory-and-benchmarks">Speed: a faster collector, a choice of memory, and benchmarks</h3>
+<p class="when">16 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8d205deed537ebba00242389ff9ea61aed31fe3d"><code>8d205de</code></a><span>A faster collector: blocks live in 64 KB pages that are found through a hash table. One benchmark went from 57.8 seconds to 12.0.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9219ac59109348532e7e1bbb62f5f71b307c43db"><code>9219ac5</code></a><span>A program chooses how its memory is freed: <code>memory owned</code> (one owner for each value, no collector) or <code>memory collector</code>. A <code>--release</code> build drops the overflow checks on whole numbers.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d11af7353abe2991f2833f30ac603529453c62be"><code>d11af73</code></a><span>Benchmarks: six programs in Zeno, C, Rust and Python, and a script that runs and checks them. A walkthrough of the memory modes.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/13210335e19b7cddf26eb9a9aed87e71ee8427f5"><code>1321033</code></a><span>winget: the recipe files in the newer form that Microsoft's list asks for.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8fc4af8a764a855a6486183d7aded93320694aee"><code>8fc4af8</code></a><span>Book: <code>memory owned</code>, <code>--owned</code>, <code>--collector</code>, <code>--release</code> and the paged collector.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3d1c6dbb3bec7ef06ff1cb6415288431cacc7237"><code>3d1c6db</code></a><span>Benchmark results after those changes.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/dca4974f5d9cf0ec3e2651fa3a60c75af9aadf24"><code>dca4974</code></a><span><code>for ch in text</code> walks the text and no longer makes a list of its characters first.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/79252adfa677a44c0a59d453838dae3ac01e7a21"><code>79252ad</code></a><span>A field that a function never writes is read once, and <code>math.sqrt</code> is inlined in the LLVM build.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8fba764f610cc3d3bce6d2f538d1181ff69404da"><code>8fba764</code></a><span>Benchmark results after those two.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9f0f67a6ed7bda9782a2ac111c13abede6ebf885"><code>9f0f67a</code></a><span><code>memory owned</code> at the top of a file makes the classes of that file owned, also in a program with a collector.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e15264e63aaaa588313e66f4775563f970b22d8e"><code>e15264e</code></a><span>The playground shows the C that <code>zeno build</code> writes for the program, in a tab of its own.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/49fb9dccad9af64482921c84d1983e1d50e55fea"><code>49fb9dc</code></a><span>The collector gets two generations, so that it need not go over old blocks at every collection. A leak in lists is ended on the way.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/54c9758f7023b2471a628a8038cdc10452504efc"><code>54c9758</code></a><span>Benchmark results after generations, and a script that keeps the times of each version.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/09fe44ca79a058dfb6458bc8d5560eff3327b095"><code>09fe44c</code></a><span>The VM gets faster: instructions joined into one, quick paths for int and float arithmetic, and fields found by their place.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9a04d9f701b95247cba368524eaa3f384b6696f9"><code>9a04d9f</code></a><span>The playground takes the one accent colour of the website, blue.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/40cfa4e0c521787014def56d566301103db11bb0"><code>40cfa4e</code></a><span>Benchmark records for 0.1.0 and 0.2.0, to compare later versions with.</span></li>
+</ul>
+<h3 id="releasing-030-and-a-hang-on-macos">Releasing 0.3.0, and a hang on macOS</h3>
+<p class="when">16 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/06d019532a37c041b243cc58039211eb6889d6dd"><code>06d0195</code></a><span>Release notes for 0.3.0.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1ff51bfa918cb031e54951c1aca7b6daf2500967"><code>1ff51bf</code></a><span>The rehearsal of 0.3.0 hung in the tests on macOS. Every workflow job gets a time limit, and a probe workflow is added to look into the hang.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/96305003faa7e61bcd043e1ea1412e4ea6270fc8"><code>9630500</code></a><span>Until the hang is understood, the two generations are used on Linux only.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c920cd860655c62168774154bb1fc51c0177ddbc"><code>c920cd8</code></a><span>The probe runs the test suite under a clock on macOS and says where a hung program is.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ca486cd23c93e878ddae0ac86cdb6ce4485da030"><code>ca486cd</code></a><span>The release notes say what 0.3.0 has: generations on Linux, and the paged collector on every system. <strong>This commit is Zeno 0.3.0.</strong></span></li>
+</ul>
+<h2 id="zeno-040">Zeno 0.4.0</h2>
+<p class="when">Released 16 November 2026 · 18 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.4.0">the release on GitHub</a></p>
+<p><code>zeno build --fast</code> is a build that runs as fast as C and Rust on the
+benchmarks. The release also ends the hunt for the hang on macOS that held
+0.3.0 back. It was a <code>try</code> that jumped with two C functions that do not
+match on a Mac. Once that was mended, the collector's two generations came
+back on macOS.</p>
+<h3 id="finding-the-hang-on-macos">Finding the hang on macOS</h3>
+<p class="when">16 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/354aea1d97061f0613d12a6fb10d111777a25f3c"><code>354aea1</code></a><span>The Homebrew, pacman and winget recipes for 0.3.0, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ba8aa278c6c7fc45b2ca6284b5a1713650b16a41"><code>ba8aa27</code></a><span>The benchmark record of 0.3.0.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/393212a5b416e436a6a80a786a56d29b714c023b"><code>393212a</code></a><span>The release had left the AUR's <code>.SRCINFO</code> file at 0.2.0, because a workflow drops files whose names begin with a dot. Mended.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/514613a707dd590adc5fd9103b77aa45e98cfff6"><code>514613a</code></a><span>The probe asks three questions of the runtime on macOS, to narrow the hang down.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9e28b91b5c39a22bb557069d72a7e26c4afef1f4"><code>9e28b91</code></a><span>The probe runs the two hung tests with a runtime that writes what it does, and looks at a hung program with a debugger.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/aae13f0624d85a2a29de469635dd17781d4318bb"><code>aae13f0</code></a><span>The probe tries the cause it suspects: an LLVM build enters a <code>try</code> with <code>_setjmp</code> and <code>raise</code> leaves it with <code>longjmp</code>, and on macOS the two do not match.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e548e7e3179914a39e4a5ed3f37ffe99ccbb67e4"><code>e548e7e</code></a><span>The mend: a <code>try</code> jumps with the matched pair <code>_setjmp</code> and <code>_longjmp</code>. The mismatch had left blocked the signal that the collector's two generations rely on.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/874449098e4b2dac8779820fe2d57d667169b865"><code>8744490</code></a><span>The probe checks that the whole suite passes on macOS with two generations.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3c270a3c4b1598941a67f71a22baf015f3cc7bf6"><code>3c270a3</code></a><span>The two generations are back on macOS.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c57afed2b08ad3946dff04624a24d9dba7c5db9b"><code>c57afed</code></a><span>Decision 22.11 records that.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2a2aaef38f280d0b50ebd3f38eae7ff518073aa7"><code>2a2aaef</code></a><span><code>main</code> becomes 0.3.1, with notes on what was mended.</span></li>
+</ul>
+<h3 id="zeno-build-fast"><code>zeno build --fast</code></h3>
+<p class="when">16 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6132e284639ab85794000ac17a355a6731cdac10"><code>6132e28</code></a><span><code>zeno build --fast</code>: a build with no checks on indexes, float division or square roots, compiled with <code>-O3</code>. Numbers become text without <code>snprintf</code>, and big owned lists grow with <code>realloc</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/b04f80f8df3d05eea4b2aa60e769ae3e74ee2801"><code>b04f80f</code></a><span>Benchmarks with <code>--fast</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3e492d1597928c417544a1d2c80ca7806e49522c"><code>3e492d1</code></a><span>The next version is named 0.4.0, since a new way to build is more than a mend.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1aa503b9fe574bd63715e36174071f7526343fd5"><code>1aa503b</code></a><span><code>--fast</code> uses C's own whole-number arithmetic, so the loop benchmark compiles to the same instructions as C. In every build, <code>//</code> and <code>%</code> by a power of two are a shift and a mask.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/af7a7386fb5f0bec63cc846209635832aeea448e"><code>af7a738</code></a><span>The benchmark script can count instructions, which is steadier than a clock, and timed runs go in rounds.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/5b44520eafc78d42cd75a91a0ecd66cc863e5c03"><code>5b44520</code></a><span>Decision 23.9: the overflow rule of <code>--fast</code> stays, with what dropping it would cost, measured.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d6b3debcb1bb848b17d44c3f447998b500fcc5de"><code>d6b3deb</code></a><span>Release notes for 0.4.0, and the README and the docs name its files. <strong>This commit is Zeno 0.4.0.</strong></span></li>
+</ul>
+<h2 id="zeno-050">Zeno 0.5.0</h2>
+<p class="when">Released 17 November 2026 · 12 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.0">the release on GitHub</a></p>
+<p>Zeno writes your program in another language. <code>zeno build --target</code> gives
+the same program in JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++
+or Rust, as a web page, or as WebAssembly, and each prints what <code>zeno run</code>
+prints. A review of every target found about thirty corners where a
+language did what is usual there and not what Zeno does. Each got a rule,
+and a test program that holds every target to it.</p>
+<h3 id="eleven-targets">Eleven targets</h3>
+<p class="when">16 to 17 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/79cf8322e1e1693b09698e4d27ea8b5ec0e48662"><code>79cf832</code></a><span>The Homebrew, pacman and winget recipes for 0.4.0, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e04368283e4377f73aac838a28860f1e03335f32"><code>e043682</code></a><span>The benchmark record of 0.4.0.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/52c030eff0e4fdc6f9dd2c003008c7093b5fb9d6"><code>52c030e</code></a><span><code>zeno build --target js</code>, <code>html</code> and <code>py</code>: Zeno writes the program in JavaScript or Python, and a script holds every target to what <code>zeno run</code> prints.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2a96152b69bb40cf16f0982ad92a098103f53ebe"><code>2a96152</code></a><span>Targets: Go, Java and C#.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/90d713bde510ea60538ff442a8d4a101e1a92d86"><code>90d713b</code></a><span>Targets: C++.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8939c1d4a7149b294ab2a7194b820ce6562a15c6"><code>8939c1d</code></a><span>Targets: Rust and WebAssembly, and a weekly check of every target against the newest version of its language.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/925d162dac16266cc689a34844e56d06c7d0cca3"><code>925d162</code></a><span>Book: rebuilt with a section on <code>zeno build --target</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/98c6603c5c02e956666c4fec67817026e589f8c4"><code>98c6603</code></a><span>Book: other languages are marked as new in 0.5.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/60c5416396a9ed8a7eed3a296a97ed3b272172d4"><code>60c5416</code></a><span>A review of every target found about thirty corners where a target did what its own language does and not what <code>zeno run</code> does: order, large numbers, text, JSON, names. Each now has a rule and a program that tests it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/52796d2fafd76feb3593d4559f99165ac8533342"><code>52796d2</code></a><span>Targets: TypeScript and PHP.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/5e88303d8c23f25fea63a090c673ae557c5e639f"><code>5e88303</code></a><span>The version moves to 0.5.0, with its release notes.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/878afd350e835e34a9901ffa81318d486e241873"><code>878afd3</code></a><span>The benchmarks can time the program written in each other language. The notes of 0.5.0 say how its speed compares with 0.4.0. <strong>This commit is Zeno 0.5.0.</strong></span></li>
+</ul>
+<h2 id="zeno-051">Zeno 0.5.1</h2>
+<p class="when">Released 17 November 2026 · 6 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.1">the release on GitHub</a></p>
+<p>A small release with one purpose. In 0.5.0, <code>zeno run --vm</code> had become a
+few percent slower, although no line of the VM had changed: with more code
+in the program, the Rust compiler had laid it out differently. 0.5.1 is
+0.5.0 built as one piece, and the VM is as fast as it was in 0.4.0.</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/655d4b793c8f61ab0060694fdcdaf9eb17e985b3"><code>655d4b7</code></a><span>The Homebrew, pacman and winget recipes for 0.5.0, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/662d72732876c25f77dfb033a7487a6b55105aa4"><code>662d727</code></a><span>Benchmarks: a program that stops without a word is reported as that, and the script no longer falls over.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ffbed008a140606f19eef7a6e9a471d25e79b116"><code>ffbed00</code></a><span>The benchmark record of 0.5.0, with the times of the program in nine other languages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8f3da1d060a1b68067a045dba786cdde21ab33d5"><code>8f3da1d</code></a><span><code>zeno run --vm</code> was 1 to 9 % slower in 0.5.0 with no line of it changed: the Rust compiler had cut the program up differently. A release is now built as one piece, and the version moves to 0.5.1.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e19e4f765a3d0c27c56f4e705cb885377e69fc10"><code>e19e4f7</code></a><span>Release notes for 0.5.1.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4acd51237ecc72a38e1652d279d812fdb85303d9"><code>4acd512</code></a><span>The README and the docs name the files of 0.5.1. <strong>This commit is Zeno 0.5.1.</strong></span></li>
+</ul>
+<h2 id="zeno-052">Zeno 0.5.2</h2>
+<p class="when">Released 18 November 2026 · 41 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.2">the release on GitHub</a></p>
+<p>This release adds to what is around the language and leaves the language
+as it was. There are four more target languages (Lua, Ruby, Dart and
+Kotlin), and a registry, so that a package is found by its name. <code>import
+python</code>, <code>import node</code> and <code>import java</code> let a Zeno program use the
+libraries of those languages. <code>zeno build --minimal</code> writes the least C
+that runs a program, <code>program.run</code> starts another program, and the first
+part of the library is written in Zeno itself.</p>
+<p>The repository moved to the zeno-src organization on GitHub. Two mistakes
+were mended: a float <code>%</code> that the C++ target got wrong, and a caught error
+that could stop a program built on Windows.</p>
+<h3 id="after-051-records-the-book-and-where-to-write">After 0.5.1: records, the book, and where to write</h3>
+<p class="when">17 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/bfae8a9dff61a57c0e9c3d0f8d1d9cf3a7d92ea7"><code>bfae8a9</code></a><span>The Homebrew, pacman and winget recipes for 0.5.1, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e23b2b74de544a1f897620ff7d83378cf02e81ed"><code>e23b2b7</code></a><span>The benchmark record of 0.5.1. A run that its host crashed is run again.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/441f3484aa313f47b48dc975d4cc1d0ca5c6e8b3"><code>441f348</code></a><span>Book: rebuilt for Zeno 0.5, with eleven target languages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7817c2efb13cf7ac74ee5fe58b5897a143c292fe"><code>7817c2e</code></a><span>Book: the title page names the version the book is for.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d0278499af2f909cf31978e7a73ebc1f1fa99e7a"><code>d027849</code></a><span>The install and release pages still named the files of old versions. They name 0.5.1 now.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/139f7573876e82b167130f3f845d88811d03f91e"><code>139f757</code></a><span><code>SECURITY.md</code>: where to report a security problem in private.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1380d3c4d51a82e5c39485b1361ceab28ec11a93"><code>1380d3c</code></a><span>An address at zeno-lang.org for each kind of mail: help, issues, security and contact.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1f8a079f0bb3e064d098858f6aa565f494f65c1e"><code>1f8a079</code></a><span>Book: a section on where to write when you are stuck.</span></li>
+</ul>
+<h3 id="starting-another-program-and-a-new-home-on-github">Starting another program, and a new home on GitHub</h3>
+<p class="when">17 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4d1a392b04310d9af4486bc31970c4b02cb6d784"><code>4d1a392</code></a><span><code>program.run(name, words)</code> starts another program and waits for it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/fae846cf2ea948faa5ff66a3d843ab2fbfeaea12"><code>fae846c</code></a><span>An example that saves a video with yt-dlp through <code>program.run</code>, with the walkthrough and the reasons.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f7611fd9de47b5ef1f5e2c1d780e10dfc5f13bf4"><code>f7611fd</code></a><span>The repository moved to the zeno-src organization on GitHub, and every link points there.</span></li>
+</ul>
+<h3 id="four-more-target-languages">Four more target languages</h3>
+<p class="when">17 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3e2c68fed20f4975d2609e199a2baa00823abdff"><code>3e2c68f</code></a><span><code>zeno build --target lua</code> and <code>--target ruby</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ab67e561a685214391796ff9f6f21d90ff06eb0c"><code>ab67e56</code></a><span><code>zeno build --target dart</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/76aff9b3556967c58c377e83b6c220e068ad9e34"><code>76aff9b</code></a><span><code>zeno build --target kotlin</code>, and a test program of awkward names for the four new languages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/966a2ad5691cccfa74ac81be4b9da72dee3f7e68"><code>966a2ad</code></a><span>The docs for Lua, Ruby, Dart and Kotlin.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/dc8230908fbb1ecf65d22118ea90c310cbca1a71"><code>dc82309</code></a><span>Book: Lua, Ruby, Dart and Kotlin are on their way.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/17959ff263c254b427a27d135f2d3c896f944e88"><code>17959ff</code></a><span>How fast the four new targets run.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c66ef68d8bb18ed02c751811ae30975a3424e619"><code>c66ef68</code></a><span>With a new compiler the C++ target printed a wrong float for <code>7.0 % 0.1</code>, and Go could do the same. Both are mended. The weekly check had stayed green with that failure in it, and now fails when a program differs.</span></li>
+</ul>
+<h3 id="a-registry-and-the-libraries-of-python-javascript-and-java">A registry, and the libraries of Python, JavaScript and Java</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ce5760dbaf0a76d47ace09684e8a38d81ebb13cc"><code>ce5760d</code></a><span>A registry: a package is found by its name (<code>needs units at "v1.2.0"</code>), with <code>zeno search</code> and <code>zeno publish</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/11eef173e763e4bfdc15ec6f4c7d8e5e2bc0c51a"><code>11eef17</code></a><span><code>import python</code>: a Zeno program uses the libraries of Python, which runs beside it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6257ea61f3865ad59e218f765cc5d2592689975d"><code>6257ea6</code></a><span>An example that uses yt-dlp as a library through <code>import python</code>, with the walkthrough and the plan for other languages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3998c64d8f06cc7ac160ca15ec18ebd4dd4a244f"><code>3998c64</code></a><span>The docs for the registry, and the book's chapter on packages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a3fa4bd40f9070366d4df04ff69256eddb76c443"><code>a3fa4bd</code></a><span>Book: rebuilt with the registry.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0b680e8ac8a5653ecc36aa747c23eef1ac64e08a"><code>0b680e8</code></a><span><code>import node</code>: a Zeno program uses the libraries of JavaScript.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/32732c665fd4a30767501496f4cbcd95a4f4aa67"><code>32732c6</code></a><span><code>import java</code>: a Zeno program uses the classes and jars of Java.</span></li>
+</ul>
+<h3 id="the-least-c">The least C</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8db60a787ea7047300d23136f7912c0518cf2209"><code>8db60a7</code></a><span><code>zeno build --minimal</code>: the least C that runs the program, with no checks and only the parts of the runtime the program uses.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1832b7b6fe1c0eb3efe2b88bd6be813a2f9aea44"><code>1832b7b</code></a><span>A script builds every test program with and without <code>--minimal</code> and compares the two.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4652734777f8e11a769655d21a2cbfa72b560cfe"><code>4652734</code></a><span>The docs for <code>--minimal</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4aabf71f112312d851679b42e519f06e10c689af"><code>4aabf71</code></a><span>Book: the least C, in the chapter on compiling.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9d151728a7a03f45d473a153537584a1c639a262"><code>9d15172</code></a><span>Book: rebuilt with it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/028e5577f920cd6d3c318c5ba2f0723622915734"><code>028e557</code></a><span>The <code>--minimal</code> comparison leaves out one sample whose result C does not define (memory given back twice).</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/49b0e49971db7005d9da2901144d02166f0648c8"><code>49b0e49</code></a><span>A field may have the name of a class or an enum: the C that <code>zeno build</code> wrote for it did not compile.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/1b8769072c1cc41d44de702d042ce3845be647a2"><code>1b87690</code></a><span>A <code>--minimal</code> test failed on Windows without a word. The trial workflow now builds such programs there and reports where one stops.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2f4fbac4e9837d9eb6672c6358eaa3be4fb4d484"><code>2f4fbac</code></a><span>The trial also reports how the program ended, at each level of the C compiler's optimising.</span></li>
+</ul>
+<h3 id="a-list-of-what-is-missing-a-mend-for-windows-and-a-library-written-in-zeno">A list of what is missing, a mend for Windows, and a library written in Zeno</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f907a951c2f1dcfb691c59fa61ae8fb35feccfdb"><code>f907a95</code></a><span><code>docs/missing.md</code>: what Zeno does not have yet, in the order to build it, firmware first.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/b1b4d82739c3db013eb88a592584620e70b9e82b"><code>b1b4d82</code></a><span>Adding <code>import java</code> had made a sort on the VM a tenth slower, with no line of the VM changed. The code of the bridge is kept apart from the functions every program runs, and the speed is back.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/fbf4aff5c46172e1a8936950c785b02b550e9e26"><code>fbf4aff</code></a><span>The failure on Windows is found and mended: a caught error could stop a program built there with gcc. A <code>try</code> is now a plain jump.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/3e677b47c958d384c481ed82f113e9e9e359fdae"><code>3e677b4</code></a><span>Part of the library is now written in Zeno itself: <code>math.hypot</code>, <code>sinh</code>, <code>cosh</code>, <code>tanh</code>, <code>gcd</code> and <code>clamp</code>, and a <code>random</code> module. Only the functions a program uses are added to it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/265c21d9390b8bf20429bddab903160d80b2b5bc"><code>265c21d</code></a><span>The docs for the library written in Zeno, with an example.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0c48e5f0629dd6b7493374a30d32181b5f8e4a86"><code>0c48e5f</code></a><span>Book: the functions written in Zeno, in the appendices.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/596a800e7a471fdc1e3cc01d327f14c755be6d2b"><code>596a800</code></a><span>The version is 0.5.2, with its release notes. Its speed was compared with 0.5.1 first. <strong>This commit is Zeno 0.5.2.</strong></span></li>
+</ul>
+<h2 id="unreleased">Unreleased</h2>
+<p class="when">Not in a release yet · 22 commits · 18 November 2026</p>
+<p>The work here follows
+<a href="/docs/missing/"><code>docs/missing.md</code></a>, the list of what Zeno still lacks,
+with firmware first: ending a program with a code, enums that stand for
+numbers, bytes, lists of a fixed length, <code>f32</code> and <code>u64</code>, units made of
+units, and on a board, inputs, a serial port and reading a voltage. Beside
+that, a Zeno program can now use the libraries of Ruby, PHP, Lua, .NET and
+C, and through C those of Go and Rust.</p>
+<h3 id="ending-a-program-enums-as-numbers-and-bytes">Ending a program, enums as numbers, and bytes</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/5135b88334320de91a99856bf65509c0a22412a8"><code>5135b88</code></a><span>The Homebrew, pacman and winget recipes for 0.5.2, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d7c378a6e198bf200358e2065dac50768cbd2d5f"><code>d7c378a</code></a><span><code>program.exit</code>, <code>program.environment</code> and <code>program.warn</code>. A case of an enum can stand for a number: <code>enum Reply { Ack = 6  Nak = 21 }</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/c1715a87d736982f1de86b548c67da3e366efb0c"><code>c1715a8</code></a><span>Bytes from and to a file: <code>files.read_bytes</code> and <code>files.write_bytes</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/446c228ece86a44d0ec2ab650c8663cf658b617c"><code>446c228</code></a><span>A <code>list[u8]</code> is stored one byte to an item. An 8 MB file read and written back takes 13 MB of memory where it took 64.</span></li>
+</ul>
+<h3 id="the-libraries-of-ruby-php-lua-and-net">The libraries of Ruby, PHP, Lua and .NET</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0f38b05e9895de1517b361d4542e25c90a8c8a0e"><code>0f38b05</code></a><span><code>import ruby</code>: the library of Ruby and its gems.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/216f9b039bbb6361f1388114feaa5ed265d59f0d"><code>216f9b0</code></a><span><code>import php</code>: what comes with PHP, and Composer packages.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/efc566813157d039a1ea32d256670366a71be179"><code>efc5668</code></a><span><code>import lua</code>: the library of Lua and its rocks.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e84a926085208d475e77db8fc3fae499dcc2590c"><code>e84a926</code></a><span><code>import csharp</code>: the types of .NET and the packages of NuGet.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/6c5b61d64fe44af8db0dafaa0dab20fbf33a18b5"><code>6c5b61d</code></a><span>The decisions for those four become chapters 37 to 40, since <code>main</code> had taken 34 to 36.</span></li>
+</ul>
+<h3 id="numbers-for-firmware-fixed-lists-f32-u64-and-units-made-of-units">Numbers for firmware: fixed lists, <code>f32</code>, <code>u64</code>, and units made of units</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/dacdeefe3c3cd09d64e03b9c96fbb4a8819dfcc3"><code>dacdeef</code></a><span>The benchmark record of 0.5.2.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/670f4a6565e9d60c8539216caa971ce52e1607f1"><code>670f4a6</code></a><span>A list of a fixed length, <code>list[u8, 64]</code>, and <code>[0] * 64</code> to fill one.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/b2f8ad4984744290450480c3098058e6a2aaa007"><code>b2f8ad4</code></a><span><code>docs/targets.md</code> records the last check of the targets: 349 programs in each language.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/778b5023d9d0345db0c27186ca064a7afe2ee9ee"><code>778b502</code></a><span><code>f32</code>, a float of 32 bits, as C's <code>float</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/399d7af3d28595fb332bf37b3a51c3dc63ab3e32"><code>399d7af</code></a><span>Book: a chapter on the libraries of Python, JavaScript and Java.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/222068f437d26836e9fa6cfd2538b437ecb2566b"><code>222068f</code></a><span><code>u64</code>, a whole number of 64 bits with no sign, and <code>.max</code> and <code>.min</code> on every whole type (<code>u8.max</code>).</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/dab0d00370c4217782c3b74c359c78a09488fbab"><code>dab0d00</code></a><span>Units made of units: voltage times current is power, so <code>3.3 V * 20 mA</code> is <code>0.066 W</code>.</span></li>
+</ul>
+<h3 id="the-libraries-of-c-and-of-go-and-rust-through-c">The libraries of C, and of Go and Rust through C</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/b747791124e022d94ba6bbfe2d8cedc0fd1c37bb"><code>b747791</code></a><span><code>import c</code>: a Zeno program calls libraries of C, and of Go and Rust through their C interface.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/564dae00b6c434ad770920fd41f83a54b763c184"><code>564dae0</code></a><span><code>zeno build</code> calls C directly: <code>import c</code> works in every C build, and the checker reads the declarations, so a wrong argument is found before the program runs.</span></li>
+</ul>
+<h3 id="on-a-board-inputs-a-serial-port-and-a-voltage">On a board: inputs, a serial port, and a voltage</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/96659826d4e63f5f8a2ebce61449045e56b7a922"><code>9665982</code></a><span>Inputs on a board: <code>input_pin(2, pull_up)</code> makes a pin that the program reads.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d21a4a334fb3f6d117c0ead8cc5dd5b04082d8c4"><code>d21a4a3</code></a><span>The WebAssembly and Rust targets could wake from <code>sleep</code> a fraction of a millisecond early. They now wait until the time has passed.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0635fba93cf53454bf603544ba6e88d4a4c0c9e1"><code>0635fba</code></a><span>A serial port on a board: <code>serial(1, 115200 baud)</code>, with <code>write</code>, <code>read_byte</code> and <code>has_byte</code>.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a2447a7e7a6e6b65df7d96e20acf6b4595d7ffc0"><code>a2447a7</code></a><span>Reading a voltage on a board: <code>analog_pin(0)</code> gives a pin whose <code>voltage()</code> is a quantity in volts.</span></li>
+</ul>
+  <div class="source"><p>This file is written by <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history.py"><code>tools/history.py</code></a> from the commits themselves and the notes in <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history-notes.txt"><code>tools/history-notes.txt</code></a>. It lists 306 commits, up to <code>a2447a7</code> of 18 November 2026. A commit that only brings this file or its notes up to date is not listed.</p><p>This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/HISTORY.md">HISTORY.md</a> in the language repository.</p></div>
+</article>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/history/">History</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>
