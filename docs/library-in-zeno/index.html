@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A library written in Zeno: math.hypot, and the module random · Zeno</title>
+<meta name="description" content="Until now everything that comes with Zeno was written in Rust, and again in C, and again for each language zeno build --target writes. This page adds a second kind of library: a file of Zeno, kept inside the zeno program, that every engine runs as…">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="A library written in Zeno: math.hypot, and the module random · Zeno">
+<meta property="og:description" content="Until now everything that comes with Zeno was written in Rust, and again in C, and again for each language zeno build --target writes. This page adds a second kind of library: a file of Zeno, kept inside the zeno program, that every engine runs as…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/library-in-zeno/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="A library written in Zeno: math.hypot, and the module random · Zeno">
+<meta name="twitter:description" content="Until now everything that comes with Zeno was written in Rust, and again in C, and again for each language zeno build --target writes. This page adds a second kind of library: a file of Zeno, kept inside the zeno program, that every engine runs as…">
+<meta name="twitter:image" content="https://zeno-lang.org/og/home.png">
+<meta name="twitter:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/library-in-zeno/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/playground/">Playground</a><a href="/packages/">Packages</a><a href="/docs/" aria-current="page">Docs</a><div class="nav-more" id="nav-more"><button type="button" aria-expanded="false" aria-controls="nav-more-list">More<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5"/></svg></button><div class="nav-more-list" id="nav-more-list"><a href="/book/">Book</a><a href="/benchmarks/">Benchmarks</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></div></div></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/" aria-current="page">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>A library written in Zeno: math.hypot, and the module random</h1>
+  
+  <p>Until now everything that comes with Zeno was written in Rust, and
+again in C, and again for each language <code>zeno build --target</code> writes.
+This page adds a second kind of library: a file of Zeno, kept inside
+the <code>zeno</code> program, that every engine runs as it runs your own files.</p>
+<pre><code class="zeno">import math
+import random
+
+let reading = 512 + random.between(-40, 40)
+print(math.clamp(reading, 0, 1023), math.hypot(3.0, 4.0), math.gcd(48, 18))</code></pre>
+<pre><code>540 5.0 6</code></pre>
+<p>It prints that on every run, and in every engine. Why the same on
+every run is at the end.</p>
+<p>The decisions are chapter 33 of <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="the-files">The files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>library/math.zeno</code></td>
+<td><code>hypot</code>, <code>sinh</code>, <code>cosh</code>, <code>tanh</code>, <code>gcd</code>, <code>clamp</code></td>
+</tr>
+<tr>
+<td><code>library/random.zeno</code></td>
+<td><code>seed</code>, <code>number</code>, <code>between</code>, <code>pick</code></td>
+</tr>
+<tr>
+<td><code>src/library.rs</code></td>
+<td>The list of those files, and their text, kept inside <code>zeno</code></td>
+</tr>
+<tr>
+<td><code>src/modules.rs</code></td>
+<td>Reads a part when a program asks, and joins in what the program reaches</td>
+</tr>
+<tr>
+<td><code>tools/targets/library.zeno</code></td>
+<td>A program that tries all of both, run by every engine, build and target</td>
+</tr>
+</tbody>
+</table>
+<p>Nothing else changed. There is no <code>hypot</code> in <code>builtins.rs</code>, in
+<code>checker.rs</code>, in <code>runtime.c</code>, in either compiler or in any target.</p>
+<h2 id="what-one-function-used-to-cost">What one function used to cost</h2>
+<p><code>math.log2</code> is in fifteen places: <code>builtins.rs</code> for <code>zeno run</code> and
+the VM, <code>runtime.c</code> for both compilers, and thirteen runtimes for the
+other languages. The checker has a line for it, and so has each
+compiler. Each of those is small. Together they are why
+<a href="/docs/math/"><code>math.md</code></a> left <code>hypot</code> out "until something needs it".</p>
+<p>Here is all of <code>gcd</code>:</p>
+<pre><code class="zeno">function gcd(a: int, b: int) -&gt; int {
+    var big = a
+    var small = b
+    if big &lt; 0 {
+        big = -big
+    }
+    if small &lt; 0 {
+        small = -small
+    }
+    while small != 0 {
+        let rest = big % small
+        big = small
+        small = rest
+    }
+    return big
+}</code></pre>
+<p>It is checked by the checker, because it is Zeno. It overflows the
+way Zeno overflows. It is compiled by <code>--firmware</code>, <code>--no-collector</code>,
+<code>--llvm</code>, <code>--minimal</code> and <code>--target lua</code>, because they compile Zeno.
+And it gives one answer everywhere, where the <code>hypot</code>s of fifteen
+libraries agree only nearly.</p>
+<h2 id="a-part-is-a-file-of-your-program">A part is a file of your program</h2>
+<p><a href="/docs/modules/"><code>modules.md</code></a> describes how <code>import shapes</code> works:
+<code>shapes.zeno</code> is read, every name it declares at its top gets
+<code>shapes.</code> in front, and its statements are put ahead of yours. One
+program comes out, and no stage after that knows there were two
+files.</p>
+<p>A part of the library is treated the same way. Ask Zeno to show you:</p>
+<pre><code>zeno join gcd.zeno</code></pre>
+<pre><code class="zeno">import math
+function math.gcd(a: int, b: int) -&gt; int
+    var big = a
+    ...
+    return big
+print(math.gcd(48, 18))</code></pre>
+<p>That is the program the checker and every engine are given. The name
+<code>math.gcd</code> is one word to them, as <code>shapes.area</code> is.</p>
+<p><code>src/library.rs</code> is the list of parts:</p>
+<pre><code>Part {
+    module: "math",
+    path: "library/math.zeno",
+    source: include_str!("../library/math.zeno"),
+    names: &amp;["hypot", "sinh", "cosh", "tanh", "gcd", "clamp"],
+    built_in_too: true,
+},</code></pre>
+<p><code>include_str!</code> puts the text of the file into <code>zeno</code> when <code>zeno</code> is
+built, so there is nothing to install beside it. <code>built_in_too</code> says
+that <code>math</code> also has <code>sqrt</code> and the rest, which the checker knows:
+a name the part does not declare is left alone for it.</p>
+<h2 id="only-what-you-use">Only what you use</h2>
+<p>A program for a board pays for every function in it. So of a part's
+functions, the program gets the ones it reaches, and no others:</p>
+<pre><code class="zeno">import math
+print(math.tanh(1.0))</code></pre>
+<p><code>zeno join</code> shows four functions: <code>tanh</code>, the <code>sinh</code> and <code>cosh</code> it is
+made of, and <code>size</code>, which both of those use and which is <code>private</code>
+to the file. <code>hypot</code>, <code>gcd</code> and <code>clamp</code> are not there.</p>
+<p>The stage that gives names their full names visits every use of
+every name. For a part it now writes down, for each function, the
+names that function used. <code>Loader::join</code> starts from the names your
+own files used and follows the list:</p>
+<pre><code>while let Some(name) = named.pop() {
+    ...
+    for names in by_function.get(&amp;name).into_iter().chain(rest) {
+        named.extend(names.used.iter().cloned());
+    }
+}</code></pre>
+<p>A function that was never reached is dropped before the checker sees
+it. What is not a function, such as the four numbers <code>random</code> keeps,
+comes whole with the first thing of the part that is reached.</p>
+<h2 id="a-program-that-uses-none-of-it-is-unchanged">A program that uses none of it is unchanged</h2>
+<p><code>names</code> in the list above has a second use. A file that does not
+spell <code>hypot</code>, <code>sinh</code>, <code>cosh</code>, <code>tanh</code>, <code>gcd</code> or <code>clamp</code> anywhere
+cannot be using them, and then the part is not even read. A file
+that spells one and means something else (<code>let clamp = 3</code>) has the
+part read, found to be of no use, and taken away again.</p>
+<p>So every program from before this page is joined into exactly the
+program it was. The parts are also the last files to be read, which
+keeps the numbers of your own files, and so every place a message
+can point at, what they would have been.</p>
+<h2 id="a-part-keeps-to-itself">A part keeps to itself</h2>
+<p>A program may have an <code>abs</code> of its own. <code>abs</code> is a name, and not a
+word of the language. Joined to such a program, a part that said
+<code>abs(x)</code> would call the program's. So the part of <code>math</code> does not
+say it:</p>
+<pre><code class="zeno">private function size(x: float) -&gt; float {
+    if x &lt; 0.0 {
+        return -x
+    }
+    return x
+}</code></pre>
+<p><code>random.pick</code> cannot avoid <code>len</code>. A program that has its own <code>len</code>
+and uses <code>pick</code> is told, at its <code>len</code>:</p>
+<pre class="out"><code>error: this program uses `random.pick`, which is written in Zeno and uses the `len`
+that comes with Zeno. So the program cannot give `len` a meaning of its own here.
+Give this one another name</code></pre>
+<h2 id="the-functions">The functions</h2>
+<p><code>hypot</code> is the root of <code>x * x + y * y</code>, which is exact where the
+answer is: <code>hypot(3.0, 4.0)</code> is <code>5.0</code>. For sides near 1e200 the
+squares do not fit in a float, so both sides are first multiplied by
+2**-600. Multiplying a float by a power of two changes none of its
+digits, so the answer is the one the plain sum would have given.</p>
+<p><code>sinh</code> is <code>(e**x - e**-x) / 2</code>, except near zero, where the two
+powers are nearly equal and the subtraction would keep few digits.
+There it adds up the first terms of <code>x + x**3/3! + x**5/5! + ...</code>.</p>
+<p><code>clamp</code> is written once, with a type parameter, for anything <code>&lt;</code>
+compares:</p>
+<pre><code class="zeno">print(math.clamp(300, 0, 255), math.clamp(6.2 V, 0.0 V, 5.0 V))</code></pre>
+<pre><code>255 5 V</code></pre>
+<h2 id="random"><code>random</code></h2>
+<pre><code class="zeno">import random
+
+print(random.between(1, 6))               # a die: 1 and 6 both come up
+print(random.number())                    # from 0.0 up to 1.0, never 1.0
+print(random.pick(["red", "amber", "green"]))
+random.seed(2026)                         # start again from a number</code></pre>
+<p>The numbers come from four whole numbers that are stirred each time
+one is asked for, with additions, shifts and one <code>^</code>:</p>
+<pre><code class="zeno">let sum = (a + b + d) &amp; 4294967295
+d = (d + 1) &amp; 4294967295
+a = b ^ (b &gt;&gt; 9)
+b = (c + (c &lt;&lt; 3)) &amp; 4294967295
+c = ((c &lt;&lt; 21) | (c &gt;&gt; 11)) &amp; 4294967295
+c = (c + sum) &amp; 4294967295
+return sum</code></pre>
+<p>There is no multiplication and no division in it, so it is quick on
+the smallest processor. It is good for a game, a test or a
+simulation. It is <strong>not</strong> for keys or passwords.</p>
+<p><strong>A program that does not seed gets the same numbers every time.</strong>
+A test that fails must fail again. A board has nothing to make a
+first number from. And it is one rule for every engine. A game that
+wants a different game each time calls <code>random.seed</code> with something
+that differs, and Zeno has nothing to offer for that yet: the time of
+day is on the list in <a href="/docs/missing/"><code>missing.md</code></a>.</p>
+<p><code>between</code> draws bits under a mask that just covers the span, and
+throws a draw away if it is above the span. <code>bits % 6</code> would be
+shorter, and would make 1 to 4 come up a little more often than 5
+and 6, because 4294967296 is not a multiple of 6.</p>
+<h2 id="two-mistakes-this-found">Two mistakes this found</h2>
+<ul>
+<li>Two files of one program could not both say <code>import math</code>. Joined,
+  the program said it twice, and the checker refused the second. The
+  part of <code>math</code> imports <code>math</code>, so this had to be mended first.</li>
+<li><code>let f = shapes.area</code>, a function of an imported file used as a
+  value, ran under <code>zeno run</code> and did not build: the C had a dot in a
+  name. <code>[1.0, 2.0].map(math.sinh)</code> found it.</li>
+</ul>
+<h2 id="the-tests">The tests</h2>
+<ul>
+<li><code>modules::tests</code>: the eight from
+  <code>a_part_of_the_library_is_joined_like_a_file_of_the_program</code> to
+  <code>two_files_can_import_one_module_that_comes_with_zeno</code>. One of
+  them, <code>the_parts_are_what_library_rs_says_they_are</code>, holds the list
+  in <code>library.rs</code> to the files.</li>
+<li><code>emit_c::tests::the_library_written_in_zeno_is_the_same_in_every_build</code>
+  runs <code>tools/targets/library.zeno</code> in the interpreter, the VM, and
+  the C and LLVM builds, with and without a collector.</li>
+<li><code>python3 tools/targets.py --only library</code> holds every target
+  language to what <code>zeno run</code> prints for that program.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Write a program that calls <code>math.cosh</code>, and run <code>zeno join</code> on it.
+   Which functions came with it? Add a call of <code>math.clamp</code> and look
+   again.</li>
+<li>Add <code>math.lcm(a, b)</code>, the least whole number that both divide, to
+   <code>library/math.zeno</code>. Run <code>cargo test modules</code>. One test fails and
+   tells you the one other place to change. Then build a program
+   that uses it with <code>--target py</code> and read the Python.</li>
+<li>Add <code>import math</code> to a second file of a program that already
+   imports it in the first, and run it with the <code>zeno</code> of version
+   0.5.1 and with this one.</li>
+<li>Write <code>function size(x: int) -&gt; int</code> in your own program and call
+   <code>math.hypot</code>. It works. Now write your own <code>len</code> and call
+   <code>random.pick</code>. Read the message. Why can the first be allowed and
+   not the second?</li>
+<li>Throw a die 6,000 times with <code>random.between(1, 6)</code> and count each
+   face. Then make your own <code>between</code> with <code>%</code> in place of the mask,
+   for a die of 3,000,000,000 faces, and count how many throws land
+   in the lower half.</li>
+<li>Run the program at the top of this page twice. Then give it
+   <code>random.seed(1)</code> as its first line. Find the paragraph of decision
+   33.8 that says why the first two runs agree, and say what a game
+   would have to do.</li>
+<li><code>random.number()</code> draws twice. Make one that draws once
+   (<code>bits() / 4294967296.0</code>) and print a few. How many different
+   floats can it give, and how many can the one with two draws?</li>
+<li><code>math.hypot(3, 4)</code> is refused and <code>math.sqrt(4)</code> is not. Read
+   decision 33.7, then find in <code>checker.rs</code> what lets <code>sqrt</code> take a
+   whole number.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/library-in-zeno.md">docs/library-in-zeno.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/math/"><span>Previous</span>The standard library, part 3: more of math</a><a class="next" href="/docs/dict/"><span>Next</span>The standard library, part 4: a dictionary</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-files">The files</a></li><li><a href="#what-one-function-used-to-cost">What one function used to cost</a></li><li><a href="#a-part-is-a-file-of-your-program">A part is a file of your program</a></li><li><a href="#only-what-you-use">Only what you use</a></li><li><a href="#a-program-that-uses-none-of-it-is-unchanged">A program that uses none of it is unchanged</a></li><li><a href="#a-part-keeps-to-itself">A part keeps to itself</a></li><li><a href="#the-functions">The functions</a></li><li><a href="#random">random</a></li><li><a href="#two-mistakes-this-found">Two mistakes this found</a></li><li><a href="#the-tests">The tests</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

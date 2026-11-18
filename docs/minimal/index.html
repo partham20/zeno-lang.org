@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The least C: zeno build --minimal · Zeno</title>
+<meta name="description" content="zeno build writes C that keeps every promise Zeno makes. An index is checked, a sum is checked for overflow, an error says the line it happened on, and the whole of Zeno&#x27;s runtime is written in front of the program in case it is needed. For a…">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="The least C: zeno build --minimal · Zeno">
+<meta property="og:description" content="zeno build writes C that keeps every promise Zeno makes. An index is checked, a sum is checked for overflow, an error says the line it happened on, and the whole of Zeno&#x27;s runtime is written in front of the program in case it is needed. For a…">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/minimal/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The least C: zeno build --minimal · Zeno">
+<meta name="twitter:description" content="zeno build writes C that keeps every promise Zeno makes. An index is checked, a sum is checked for overflow, an error says the line it happened on, and the whole of Zeno&#x27;s runtime is written in front of the program in case it is needed. For a…">
+<meta name="twitter:image" content="https://zeno-lang.org/og/home.png">
+<meta name="twitter:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/minimal/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/playground/">Playground</a><a href="/packages/">Packages</a><a href="/docs/" aria-current="page">Docs</a><div class="nav-more" id="nav-more"><button type="button" aria-expanded="false" aria-controls="nav-more-list">More<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5"/></svg></button><div class="nav-more-list" id="nav-more-list"><a href="/book/">Book</a><a href="/benchmarks/">Benchmarks</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></div></div></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/" aria-current="page">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>The least C: zeno build --minimal</h1>
+  
+  <p><code>zeno build</code> writes C that keeps every promise Zeno makes. An index is
+checked, a sum is checked for overflow, an error says the line it
+happened on, and the whole of Zeno's runtime is written in front of the
+program in case it is needed. For a program of one line that is about
+3,000 lines of C.</p>
+<p><code>zeno build --minimal</code> writes the other kind of C: the least that runs
+the program, close to what a person would write by hand.</p>
+<pre><code>zeno build --minimal primes.zeno      # writes primes.c, and builds ./primes from it</code></pre>
+<p>Nothing about <code>zeno build</code> without the option has changed. The C it
+writes is byte for byte what it was.</p>
+<h2 id="what-it-looks-like">What it looks like</h2>
+<p><code>examples/primes.zeno</code> counts the primes below 10,000:</p>
+<pre><code class="zeno">function is_prime(n) {
+    if n &lt; 2 {
+        return false
+    }
+    var d = 2
+    while d * d &lt;= n {
+        if n % d == 0 {
+            return false
+        }
+        d += 1
+    }
+    return true
+}</code></pre>
+<p><code>zeno build</code> writes this for it, after 3,000 lines of runtime:</p>
+<pre><code>static bool z_is_prime(int64_t z_n) {
+    if (z_n &lt; 2) {
+        return false;
+    }
+    int64_t z_d = 2;
+    while (zeno_mul(z_d, z_d, 15, 11) &lt;= z_n) {
+        if (zeno_mod(z_n, z_d, 16, 12) == 0) {
+            return false;
+        }
+        z_d = zeno_add(z_d, 1, 19, 9);
+    }
+    return true;
+}</code></pre>
+<p>and <code>zeno build --minimal</code> writes this, in a file of 100 lines:</p>
+<pre><code>static bool z_is_prime(int64_t z_n) {
+    if (z_n &lt; 2) {
+        return false;
+    }
+    int64_t z_d = 2;
+    while ((z_d * z_d) &lt;= z_n) {
+        if (zeno_mod(z_n, z_d) == 0) {
+            return false;
+        }
+        z_d += 1;
+    }
+    return true;
+}</code></pre>
+<p><code>zeno_mod</code> is still there, eight lines above it in the same file. That
+one is not a check. <code>-7 % 3</code> is 2 in Zeno and -1 in C, and a correct
+program may rely on it.</p>
+<p>The last lines of the program,</p>
+<pre><code class="zeno">print(f"primes below {limit}: {count_primes(limit)}")
+print(f"one in every {average_gap(limit):.2f} numbers")</code></pre>
+<p>are</p>
+<pre><code>printf("primes below %lld: %lld\n", (long long)t1, (long long)z_count_primes(z_limit));
+printf("one in every %.2f numbers\n", z_average_gap(z_limit));</code></pre>
+<h2 id="what-is-left-out">What is left out</h2>
+<p>Six things are done to the C. Decisions chapter 30 has the reason for
+each.</p>
+<ol>
+<li><strong>No check.</strong> The table below.</li>
+<li><strong>No place in the source.</strong> No function is told the line and column
+   it was called from.</li>
+<li><strong>Only what the program uses.</strong> Every function, type, variable,
+   <code>#define</code> and <code>#include</code> of the runtime that the program does not
+   reach is left out, and so is a function of the program that nothing
+   calls.</li>
+<li><strong><code>print</code> is <code>printf</code></strong>, or <code>puts</code> for words alone.</li>
+<li><strong>Statements the short way.</strong> <code>x += 1</code>, not <code>x = (x + 1)</code>, and the
+   top of the program is the body of <code>main</code>.</li>
+<li><strong><code>-Os</code>.</strong> The C compiler is asked for a small program.</li>
+</ol>
+<h2 id="what-you-give-up">What you give up</h2>
+<p>A mistake in the program does what it would do in C. The checked build
+stops and says what went wrong and where; this one does not.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th><code>zeno build</code></th>
+<th><code>zeno build --minimal</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xs[i]</code> with <code>i</code> out of range</td>
+<td><code>IndexError</code></td>
+<td>reads or writes whatever memory is there</td>
+</tr>
+<tr>
+<td><code>ages["Eve"]</code> with no such key</td>
+<td><code>KeyError</code></td>
+<td>reads an item that is not there</td>
+</tr>
+<tr>
+<td>overflow of <code>+ - *</code>, of <code>-n</code>, <code>abs(n)</code>, <code>**</code>, <code>sum</code></td>
+<td><code>OverflowError</code></td>
+<td>no defined result</td>
+</tr>
+<tr>
+<td><code>n // 0</code>, <code>n % 0</code></td>
+<td><code>ZeroDivisionError</code></td>
+<td>what the processor does: on a computer the system stops the program</td>
+</tr>
+<tr>
+<td><code>x / 0.0</code></td>
+<td><code>ZeroDivisionError</code></td>
+<td>infinity, or NaN</td>
+</tr>
+<tr>
+<td><code>math.sqrt(-1.0)</code>, <code>math.log(0.0)</code>, <code>math.asin(2.0)</code></td>
+<td><code>ValueError</code></td>
+<td>NaN or infinity</td>
+</tr>
+<tr>
+<td><code>u8(300)</code></td>
+<td><code>ValueError</code></td>
+<td>300 goes on as it is</td>
+</tr>
+<tr>
+<td><code>n &lt;&lt; 70</code>, <code>n &lt;&lt; -1</code></td>
+<td><code>ValueError</code></td>
+<td>no defined result</td>
+</tr>
+<tr>
+<td><code>xs.pop()</code> or <code>min(xs)</code> of an empty list, a slice from past the end</td>
+<td>an error</td>
+<td>no defined result</td>
+</tr>
+<tr>
+<td><code>int(x)</code> of infinity or NaN</td>
+<td><code>ValueError</code></td>
+<td>the biggest int, the smallest, or 0</td>
+</tr>
+<tr>
+<td>a variable that became <code>none</code> again after it was checked</td>
+<td>an error</td>
+<td>used as if it held a value</td>
+</tr>
+<tr>
+<td><code>free(p)</code> twice</td>
+<td>stops, and says so</td>
+<td>no defined result</td>
+</tr>
+</tbody>
+</table>
+<p>"No defined result" means what it means in C: a wrong number, a crash
+far from the line that caused it, or nothing you notice until later.
+The C compiler is also allowed to build on the mistake not happening.</p>
+<p>And an error that nothing catches no longer says where it was raised:</p>
+<pre class="out"><code>error: uncaught ValueError: cannot turn "ten" into an int</code></pre>
+<h2 id="what-you-keep">What you keep</h2>
+<ul>
+<li><strong>What the program prints.</strong> A correct program prints the same in a
+  minimal build as in any other, to the last digit of a float.</li>
+<li><strong>The errors a correct program can meet.</strong> <code>int("ten")</code> still raises
+  <code>ValueError</code>, a file that is not there still raises <code>FileError</code>,
+  <code>raise</code>, <code>try</code> and <code>except</code> work as they did, and running out of
+  memory still stops the program and says so. These come from outside
+  the program, and the program was written to deal with them.</li>
+<li><strong>What <code>%</code>, <code>//</code> and <code>**</code> mean in Zeno</strong>, for numbers below zero too.</li>
+<li><strong>How memory is freed.</strong> The collector, <code>--owned</code> and <code>--no-collector</code>
+  each work as they did.</li>
+</ul>
+<p>So: write the program and test it with <code>zeno run</code> and <code>zeno build</code>,
+which check everything. Build with <code>--minimal</code> when it is correct and
+you want the C.</p>
+<h2 id="with-the-other-options">With the other options</h2>
+<p><code>--minimal</code> goes with every build that writes C:</p>
+<pre><code>zeno build --minimal main.zeno                  # with the collector, if the program needs one
+zeno build --minimal --owned main.zeno          # one owner for each list and object, no collector
+zeno build --minimal --no-collector main.zeno   # the same, and memory from a pool of a fixed size
+zeno build --minimal --firmware main.zeno       # errors as values, no setjmp
+zeno build --minimal --memory main.zeno         # the program reports its memory as it ends
+zeno build --minimal --fast main.zeno           # -O3 in place of -Os</code></pre>
+<p>A program that never makes a list, an object or a piece of text has no
+memory management in it under any of these. One that does has what its
+kind of build needs: with the collector that is about 500 lines of C,
+and with <code>--owned</code> or <code>--no-collector</code> 100 to 200. For the smallest C,
+use one of those two (docs/memory-modes.md says what they ask of the
+program).</p>
+<p><code>--llvm</code>, <code>--web</code> and <code>--target</code> do not take it. <code>--release</code> adds
+nothing to it.</p>
+<h2 id="how-much-smaller">How much smaller</h2>
+<p><code>python3 tools/minimal.py --sizes</code> builds every example both ways and
+prints this table. Each cell is the checked build, then the minimal
+one. "Code" is the bytes of machine code and constants (<code>text</code>, as the
+<code>size</code> command counts it), the checked build compiled with <code>-O2</code> and
+the minimal one with <code>-Os</code>, which is how <code>zeno build</code> compiles each.
+"Held" is the memory the program has from start to end (<code>.data</code> +
+<code>.bss</code>). "Asked for" is the most bytes of lists, objects and text it
+had at one time (what <code>--memory</code> reports).</p>
+<table>
+<thead>
+<tr>
+<th>program</th>
+<th>build</th>
+<th>lines of C</th>
+<th>code</th>
+<th>held</th>
+<th>asked for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>hello</td>
+<td>collector</td>
+<td>3,028 → 23</td>
+<td>1,843 → 1,369</td>
+<td>632 → 608</td>
+<td>0 → 0</td>
+</tr>
+<tr>
+<td>blink</td>
+<td><code>--no-collector</code></td>
+<td>2,720 → 95</td>
+<td>1,842 → 1,733</td>
+<td>712 → 712</td>
+<td>runs for ever</td>
+</tr>
+<tr>
+<td>signal</td>
+<td><code>--no-collector</code></td>
+<td>2,805 → 180</td>
+<td>3,301 → 2,714</td>
+<td>824 → 800</td>
+<td>0 → 0</td>
+</tr>
+<tr>
+<td>primes</td>
+<td>collector</td>
+<td>3,073 → 100</td>
+<td>11,429 → 2,054</td>
+<td>1,936 → 632</td>
+<td>192 → 0</td>
+</tr>
+<tr>
+<td>primes</td>
+<td><code>--no-collector</code></td>
+<td>2,768 → 100</td>
+<td>5,936 → 2,054</td>
+<td>34,832 → 632</td>
+<td>46 → 0</td>
+</tr>
+<tr>
+<td>thermostat</td>
+<td>collector</td>
+<td>3,149 → 724</td>
+<td>13,345 → 8,034</td>
+<td>2,024 → 1,888</td>
+<td>1,360 → 240</td>
+</tr>
+<tr>
+<td>thermostat</td>
+<td><code>--no-collector</code></td>
+<td>2,852 → 284</td>
+<td>8,491 → 3,548</td>
+<td>34,904 → 33,772</td>
+<td>285 → 224</td>
+</tr>
+<tr>
+<td>ring</td>
+<td>collector</td>
+<td>3,158 → 809</td>
+<td>12,995 → 8,654</td>
+<td>1,944 → 1,888</td>
+<td>352 → 176</td>
+</tr>
+<tr>
+<td>ring</td>
+<td><code>--owned</code></td>
+<td>3,006 → 454</td>
+<td>8,717 → 5,189</td>
+<td>2,944 → 2,896</td>
+<td>170 → 147</td>
+</tr>
+<tr>
+<td>ring</td>
+<td><code>--no-collector</code></td>
+<td>2,875 → 383</td>
+<td>8,061 → 4,451</td>
+<td>34,856 → 34,776</td>
+<td>170 → 147</td>
+</tr>
+<tr>
+<td>scheduler</td>
+<td><code>--no-collector</code></td>
+<td>2,964 → 510</td>
+<td>10,569 → 7,156</td>
+<td>34,848 → 34,824</td>
+<td>527 → 527</td>
+</tr>
+<tr>
+<td>shapes</td>
+<td>collector</td>
+<td>3,161 → 853</td>
+<td>15,249 → 11,044</td>
+<td>2,008 → 1,968</td>
+<td>848 → 560</td>
+</tr>
+<tr>
+<td>words</td>
+<td>collector</td>
+<td>3,230 → 1,045</td>
+<td>16,490 → 12,826</td>
+<td>2,008 → 2,000</td>
+<td>2,432 → 2,400</td>
+</tr>
+<tr>
+<td>words</td>
+<td><code>--no-collector</code></td>
+<td>2,970 → 725</td>
+<td>13,079 → 9,265</td>
+<td>34,960 → 34,944</td>
+<td>529 → 529</td>
+</tr>
+</tbody>
+</table>
+<p>(Linux, x86-64, gcc 13, 2026-11-18. The 34 KB a <code>--no-collector</code> build
+holds is its pool, 32 KB unless the program is built with another
+size: docs/pool.md.)</p>
+<p>Three things to read from it:</p>
+<ul>
+<li><strong>The C is where the difference is.</strong> 23 lines for hello, about 100
+  for a program of numbers, 300 to 1,000 for a program with lists,
+  objects and text.</li>
+<li><strong>The program shrinks less: for most examples a quarter to a third of
+  its code.</strong> The C compiler never put an unused function into the
+  program of any build, so what a minimal build saves there is the
+  checks themselves, their messages, and what <code>-Os</code> finds. The file on
+  disk moves in steps of 4 KB and often does not move.</li>
+<li><strong>Memory changes where <code>print</code> made text</strong>, and where a program
+  turns out not to need the pool at all (<code>primes</code>).</li>
+</ul>
+<p>One number goes the other way. On Linux, a program whose <code>print</code> is
+now <code>printf</code> has about 250 KB more of the C library in memory while it
+runs, because <code>printf</code> is a large function that nothing ran before.
+That is the library's memory and not the program's, and a board does
+not page, but it is there in what the system reports.</p>
+<h2 id="how-it-is-checked">How it is checked</h2>
+<p><code>python3 tools/minimal.py</code> builds 363 programs (every example, the
+corner programs in <code>tools/targets/</code>, every sample of the book) both
+ways, for the collector, <code>--owned</code>, <code>--no-collector</code> and <code>--firmware</code>,
+and holds the minimal build to the checked one: the same text printed,
+the same end, the same message when an error stops it. A program that
+one of the checks stops is left out, since it has no defined result
+here. The C of each minimal build is also read with the C compiler's
+warnings on, and anything left in it that the program does not use is
+a failure.</p>
+<h2 id="the-files">The files</h2>
+<ul>
+<li><code>src/minimal.rs</code>: cuts C into its items, finds what the program
+  reaches, and puts the file together (<code>assemble</code>).</li>
+<li><code>src/emit_c.rs</code>: <code>Options { minimal }</code>; <code>Emitter::at</code>, <code>slot_at</code>,
+  <code>divided</code> and <code>print_direct</code> write the unchecked forms; <code>printf_of</code>
+  says what <code>printf</code> can show by itself; <code>tidy</code> shortens a statement.</li>
+<li><code>src/runtime.c</code>: what a minimal build leaves out is between <code>#ifndef
+  ZENO_MINIMAL</code> and <code>#endif /* ZENO_MINIMAL */</code>. The note at the top of
+  the file says how the marks are written.</li>
+<li><code>src/main.rs</code>: the option, what it does not go with, and <code>-Os</code>.</li>
+<li><code>tools/minimal.py</code>: the check, and <code>--sizes</code>.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Build <code>examples/hello.zeno</code> with and without <code>--minimal</code> and count
+   the lines of the two <code>hello.c</code> files.</li>
+<li>Write <code>let xs = [1, 2, 3]</code> and <code>print(xs[5])</code>. Run it with <code>zeno
+   run</code>, then build it both ways and run each. Do it twice.</li>
+<li>Build <code>examples/ring/main.zeno</code> with <code>--minimal</code>, then with
+   <code>--minimal --no-collector</code>. Which functions are in the first file
+   and not in the second?</li>
+<li>Find <code>zeno_float_text</code> in a minimal build of a program that prints
+   a float. Why does <code>print(0.1 + 0.2)</code> not use <code>%g</code>?</li>
+<li>Write a function that nothing calls and build with <code>--minimal</code>. Is
+   it in the C? Now call it.</li>
+<li>Run <code>python3 tools/minimal.py --sizes --only examples/primes</code> and
+   read the row beside the table above.</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/minimal.md">docs/minimal.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/llvm/"><span>Previous</span>How the LLVM backend works</a><a class="next" href="/docs/memory/"><span>Next</span>How memory is managed</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-it-looks-like">What it looks like</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#what-you-give-up">What you give up</a></li><li><a href="#what-you-keep">What you keep</a></li><li><a href="#with-the-other-options">With the other options</a></li><li><a href="#how-much-smaller">How much smaller</a></li><li><a href="#how-it-is-checked">How it is checked</a></li><li><a href="#the-files">The files</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Libraries of JavaScript · Zeno</title>
+<meta name="description" content="npm has more packages than any other place, and Node comes with a library of its own for files, the network, compression and cryptography. A Zeno program can use all of it as it is.">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="Libraries of JavaScript · Zeno">
+<meta property="og:description" content="npm has more packages than any other place, and Node comes with a library of its own for files, the network, compression and cryptography. A Zeno program can use all of it as it is.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/node/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Libraries of JavaScript · Zeno">
+<meta name="twitter:description" content="npm has more packages than any other place, and Node comes with a library of its own for files, the network, compression and cryptography. A Zeno program can use all of it as it is.">
+<meta name="twitter:image" content="https://zeno-lang.org/og/home.png">
+<meta name="twitter:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/node/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/playground/">Playground</a><a href="/packages/">Packages</a><a href="/docs/" aria-current="page">Docs</a><div class="nav-more" id="nav-more"><button type="button" aria-expanded="false" aria-controls="nav-more-list">More<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5"/></svg></button><div class="nav-more-list" id="nav-more-list"><a href="/book/">Book</a><a href="/benchmarks/">Benchmarks</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></div></div></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/" aria-current="page">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Libraries of JavaScript</h1>
+  
+  <p>npm has more packages than any other place, and Node comes with a
+library of its own for files, the network, compression and
+cryptography. A Zeno program can use all of it as it is.</p>
+<pre><code class="zeno">import node
+
+let path = node.module("path")
+print(path.basename("/home/ann/notes.txt"), path.extname("notes.txt"))</code></pre>
+<pre><code>notes.txt .txt</code></pre>
+<p><code>node.module("path")</code> is what <code>require("path")</code> is in JavaScript.
+What it gives is the module, and from there the program is written as
+it would be in JavaScript: a dot for what the module has, brackets for
+a call.</p>
+<p>This is the second language of three that work the same way. Python
+was the first (<a href="/docs/python/"><code>python.md</code></a>), and this page follows that
+one section by section. Nothing changes for a program that does not
+say <code>import node</code>. The decisions behind it are chapter 28 of
+<a href="/decisions/"><code>decisions.md</code></a>.</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>Gives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>node.module(name)</code></td>
+<td>the module of that name, as <code>require</code> finds it</td>
+</tr>
+<tr>
+<td><code>node.global(name)</code></td>
+<td>what JavaScript has under that name everywhere: <code>JSON</code>, <code>Math</code>, <code>Date</code>, <code>process</code></td>
+</tr>
+<tr>
+<td><code>node.new(Class, ...)</code></td>
+<td>a new object of the class, as <code>new Class(...)</code> makes it</td>
+</tr>
+<tr>
+<td><code>node.copy(value)</code></td>
+<td>an array or an object of JavaScript as a list or a dict of Zeno</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-it-needs">What it needs</h2>
+<p>Node on the computer. Zeno looks for <code>node</code>, and is tested with Node
+22 and 24. To use another one, name it:</p>
+<pre><code>ZENO_NODE=/opt/node-22/bin/node zeno run program.zeno</code></pre>
+<p>Node is started the first time <code>node.module</code> or <code>node.global</code> is
+called, once, and stays until the program ends. A program that imports
+<code>node</code> and never calls it starts nothing.</p>
+<h2 id="modules-and-packages">Modules and packages</h2>
+<p>A module that comes with Node needs nothing more: <code>fs</code>, <code>path</code>, <code>os</code>,
+<code>crypto</code>, <code>zlib</code>, <code>http</code>, <code>child_process</code>, <code>fs/promises</code> and the
+rest.</p>
+<p>A package from npm is looked for where Node would look for it if the
+program were a program of JavaScript in the same place: in
+<code>node_modules</code> of the folder the <code>.zeno</code> file is in, then of each
+folder above it. So a package is installed in the folder of the
+program, and the program can be run from anywhere:</p>
+<pre><code>npm install dayjs
+zeno run program.zeno</code></pre>
+<pre><code class="zeno">import node
+
+let dayjs = node.module("dayjs")
+let day = dayjs("2026-11-18")
+print(day.format("dddd"), day.year() + 1, day.add(1, "month").format("YYYY-MM-DD"))</code></pre>
+<pre><code>Wednesday 2027 2026-12-18</code></pre>
+<p>A package that JavaScript can only <code>import</code>, and not <code>require</code>, is
+loaded as well. What such a package calls its default is its
+<code>.default</code>: <code>node.module("chalk").default</code>.</p>
+<p>A file of JavaScript beside the program is a module too, by its path
+from the program: <code>node.module("./helper.js")</code>.</p>
+<h2 id="what-is-not-in-a-module">What is not in a module</h2>
+<p>Much of JavaScript is not in a module at all. <code>JSON</code>, <code>Math</code>, <code>Date</code>,
+<code>Intl</code>, <code>Buffer</code> and <code>process</code> are there everywhere, and
+<code>node.global</code> gives them. A class is made into an object with <code>new</code>
+in JavaScript, and with <code>node.new</code> here.</p>
+<pre><code class="zeno">let JSON = node.global("JSON")
+let about = JSON.parse("{\"name\": \"ann\", \"age\": 31, \"tags\": [\"a\", \"b\"]}")
+print(about.name, about.age + 1, about.tags, about.email is none)
+
+let Date = node.global("Date")
+let start = node.new(Date, 2026, 10, 18)
+print(start.getFullYear(), start.toDateString())</code></pre>
+<pre><code>ann 32 [ 'a', 'b' ] true
+2026 Wed Nov 18 2026</code></pre>
+<p><code>about.email</code> is <code>none</code> and not an error. That is JavaScript's rule:
+a field an object does not have is <code>undefined</code>. JavaScript's <code>null</code>
+and its <code>undefined</code> are both <code>none</code> in Zeno.</p>
+<h2 id="values-go-across-in-two-ways">Values go across in two ways</h2>
+<p><strong><code>none</code>, a bool, a number and a str go as themselves.</strong></p>
+<p>JavaScript has one kind of number where Zeno has two. A number that
+is whole arrives as an int, and any other as a float:</p>
+<pre><code class="zeno">let Math = node.global("Math")
+print(Math.max(3, 9, 4), Math.sqrt(16.0), Math.sqrt(2.0))</code></pre>
+<pre><code>9 4 1.4142135623730951</code></pre>
+<p><code>Math.sqrt(16.0)</code> is <code>4</code>, an int, because JavaScript does not keep
+whether a whole number was written with a point. Where a float is
+needed, <code>float(x)</code> makes one.</p>
+<p>A number of JavaScript is exact up to 9007199254740991 (2 to the power
+of 53, less one). A whole number past that arrives as a float, which
+says that it is no longer exact. An int of Zeno past that goes to
+JavaScript as a <code>BigInt</code>, which is how JavaScript writes an exact
+large number, and a <code>BigInt</code> comes back as an int.</p>
+<p><strong>Everything else stays in JavaScript.</strong> <code>path</code>, <code>about</code> and <code>start</code>
+above are not copies of anything. Zeno holds a number that Node knows
+the value by, and each time the program writes a field, a call or an
+item of it, Zeno asks Node. When nothing in the program holds the
+value any more, Node is told and lets it go.</p>
+<p>A value that stays in JavaScript can be:</p>
+<table>
+<thead>
+<tr>
+<th>Written</th>
+<th>What JavaScript does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>thing.name</code></td>
+<td><code>thing.name</code></td>
+</tr>
+<tr>
+<td><code>thing.name = value</code></td>
+<td>the same</td>
+</tr>
+<tr>
+<td><code>thing(1, 2)</code></td>
+<td>the call</td>
+</tr>
+<tr>
+<td><code>thing(1, key=3)</code></td>
+<td><code>thing(1, {key: 3})</code>: the named ones are one object, which goes last</td>
+</tr>
+<tr>
+<td><code>thing[index]</code>, <code>thing[index] = value</code></td>
+<td>the same; on a <code>Map</code>, <code>get</code> and <code>set</code></td>
+</tr>
+<tr>
+<td><code>len(thing)</code></td>
+<td><code>thing.length</code>, or <code>thing.size</code>, or how many keys an object has</td>
+</tr>
+<tr>
+<td><code>for item in thing { }</code></td>
+<td>every item, taken when the loop begins; of an object, its keys</td>
+</tr>
+<tr>
+<td><code>item in thing</code></td>
+<td><code>includes</code> of an array or a str, <code>has</code> of a <code>Set</code> or a <code>Map</code>, <code>in</code> of an object</td>
+</tr>
+<tr>
+<td><code>thing == other</code></td>
+<td><code>thing === other</code></td>
+</tr>
+<tr>
+<td><code>print(thing)</code>, <code>str(thing)</code>, <code>f"{thing}"</code></td>
+<td>what <code>console.log(thing)</code> shows, or what the value writes itself as (a date, an error, a URL)</td>
+</tr>
+</tbody>
+</table>
+<p><code>thing["name"]</code> is <code>thing.name</code> in JavaScript, and so it is here.
+That is the way to a name that is a word of Zeno:
+<code>Array["from"](items)</code>.</p>
+<p>Two objects are equal when they are the same object. Two arrays with
+the same items are not, as in JavaScript. To compare what is in them,
+compare their copies: <code>node.copy(a) == node.copy(b)</code>.</p>
+<p>What it cannot be: the test of an <code>if</code> (write <code>len(thing) &gt; 0</code> or
+<code>thing is not none</code>), or one side of <code>+</code> or <code>&lt;</code>.</p>
+<h2 id="named-arguments-are-the-options">Named arguments are the options</h2>
+<p>JavaScript has no named arguments. A function there takes its options
+as one object, which is its last argument. So the named arguments of
+a call are gathered into that object:</p>
+<pre><code class="zeno">let money = node.global("Intl").NumberFormat("en-IN", style="currency", currency="INR")
+print(money.format(1234567.5))
+
+let text = node.module("fs").readFileSync("notes.txt", encoding="utf8")</code></pre>
+<pre><code>₹12,34,567.50</code></pre>
+<p>The first is <code>Intl.NumberFormat("en-IN", {style: "currency",
+currency: "INR"})</code>.</p>
+<p>To make such an object by itself, to keep it or to add to it,
+JavaScript's own <code>Object</code> makes one from named arguments:</p>
+<pre><code class="zeno">let options = node.global("Object")(recursive=true, force=true, retries=3)
+print(options, options.retries + 1)</code></pre>
+<pre><code>{ recursive: true, force: true, retries: 3 } 4</code></pre>
+<p><code>node.new</code> takes no named arguments. A class that wants options is
+given such an object.</p>
+<h2 id="what-takes-time-is-waited-for">What takes time is waited for</h2>
+<p>Much of Node answers later: a function gives a promise, and the answer
+arrives in it. Zeno waits. A call that gives a promise gives its
+answer, and the program goes on when it is there.</p>
+<pre><code class="zeno">let files = node.module("fs/promises")
+let text = files.readFile("notes.txt", "utf8")
+print(len(text))</code></pre>
+<p><code>text</code> is a str. There is no <code>await</code> to write, and no promise to hold.
+A promise that fails is an error at the line of the call.</p>
+<h2 id="arrays-and-objects">Arrays and objects</h2>
+<p>An array of JavaScript stays in JavaScript, and that is on purpose.</p>
+<pre><code class="zeno">let Array = node.global("Array")
+let names = Array.of("cy", "ann")
+names.push("bob")
+names.sort()
+print(names, len(names), names[0], "bob" in names)
+for name in names {
+    print(name.upper())
+}</code></pre>
+<pre><code>[ 'ann', 'bob', 'cy' ] 3 ann true
+ANN
+BOB
+CY</code></pre>
+<p><code>names</code> is the one array there is. <code>push</code> and <code>sort</code> are JavaScript's,
+and they change the array that Node has. Each <code>name</code> in the loop is a
+str of Zeno, so <code>upper</code> is Zeno's.</p>
+<p>When a list of Zeno is what the program wants, <code>node.copy</code> makes one:</p>
+<pre><code class="zeno">let mine = node.copy(names)
+mine.append("dee")
+print(mine, len(names))</code></pre>
+<pre><code>["ann", "bob", "cy", "dee"] 3</code></pre>
+<p><code>copy</code> takes an array, a <code>Set</code> or an array of bytes and gives a list;
+it takes a plain object or a <code>Map</code> and gives a dict. Every array and
+object inside is copied as well. Whatever is not one of these, a date
+or an object of a class, stays in JavaScript inside the copy. A <code>Map</code>
+whose keys are not all str or int cannot be a dict of Zeno, and <code>copy</code>
+raises a <code>ValueError</code> that names the key.</p>
+<p><strong>The other way is always a copy.</strong> A list of Zeno that is passed to
+JavaScript arrives as a new array, and a dict as a new object:</p>
+<pre><code class="zeno">let xs = [3, 1, 2]
+Array.prototype.sort.call(xs)
+print(xs)                               # [3, 1, 2]: JavaScript sorted its copy</code></pre>
+<p>To have JavaScript work on a list and see the result, make the array
+there (<code>Array["from"](xs)</code>), and copy it back.</p>
+<h2 id="errors">Errors</h2>
+<p>An error that JavaScript throws is an error of Zeno, and <code>try</code> catches
+it.</p>
+<pre><code class="zeno">try {
+    node.global("JSON").parse("{oops")
+} except Error as error {
+    print(error.message)
+}
+try {
+    node.module("fs").readFileSync("/no/such/file")
+} except FileError as error {
+    print(error.message)
+}</code></pre>
+<pre><code>SyntaxError: Expected property name or '}' in JSON at position 1 (line 1 column 2)
+ENOENT: no such file or directory, open '/no/such/file'</code></pre>
+<table>
+<thead>
+<tr>
+<th>In JavaScript</th>
+<th>In Zeno</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>an error the system gave: no such file, no leave to read it, no network</td>
+<td><code>FileError</code></td>
+</tr>
+<tr>
+<td>anything else</td>
+<td><code>Error</code></td>
+</tr>
+</tbody>
+</table>
+<p>The message begins with what JavaScript called the error, unless that
+was only <code>Error</code>. JavaScript can throw a value that is not an error at
+all, and that is an <code>Error</code> whose message is <code>thrown:</code> and the value.</p>
+<p>JavaScript has no kinds of error that match Zeno's <code>ValueError</code> or
+<code>IndexError</code>. Reading past the end of an array is not an error there:
+it gives <code>undefined</code>, which is <code>none</code>.</p>
+<p>Two things can go wrong before any library is reached, and both are a
+<code>FileError</code>:</p>
+<pre><code>FileError: there is no Node to run. Zeno looked for `node`. `ZENO_NODE` can name one that is somewhere else
+FileError: Node has no module `yaml`. Is it installed in this folder (`npm install yaml`)? This folder is /home/ann/project</code></pre>
+<p>A function that declares what it raises and calls into JavaScript says
+<code>raises Error</code>, which is every kind.</p>
+<h2 id="types">Types</h2>
+<p>As for Python: a value from JavaScript has the type that <code>json.parse</code>
+gives. The checker lets everything through, a wrong name is found when
+the program gets there, and <code>zeno check --strict</code> refuses a program
+that uses <code>node</code>.</p>
+<h2 id="python-and-javascript-in-one-program">Python and JavaScript in one program</h2>
+<p>A program can import both. Each value stays where it was made: a str
+or a number that one gave can be passed to the other, because by then
+it is a value of Zeno. A value that stayed in Python cannot be given
+to JavaScript, or the other way:</p>
+<pre class="out"><code>error: a JavaScript value cannot be given to Python. Each stays where it was made</code></pre>
+<p><code>python.copy</code> or <code>node.copy</code> makes it a list or dict of Zeno first,
+and that can go anywhere.</p>
+<h2 id="what-is-not-there-yet">What is not there yet</h2>
+<ul>
+<li><strong>A function of Zeno cannot be given to JavaScript.</strong> Much of
+  JavaScript is written with callbacks: <code>items.map(f)</code>, <code>on("data",
+  f)</code>, a server that calls a function for each request. None of that
+  can call into Zeno yet, and Zeno says so at the line. What gives a
+  promise instead works (above), and most of Node has that form:
+  <code>fs/promises</code>, <code>timers/promises</code>, <code>fetch</code>.</li>
+<li><strong>Node ends when the program ends.</strong> A timer or a server that was
+  started in Node does not keep the program running after its last
+  line.</li>
+<li><strong>A loop takes everything first</strong>, as for Python.</li>
+<li><strong>Built programs.</strong> <code>zeno run</code> and <code>zeno test</code> have <code>node</code>, with and
+  without <code>--vm</code>. <code>zeno build</code>, in every form, refuses it.</li>
+</ul>
+<h2 id="the-example">The example</h2>
+<p><a href="/examples/checksum/"><code>examples/checksum.zeno</code></a> prints the
+SHA-256 of a file, the number a download page shows beside a file.
+Zeno has no SHA-256 of its own, and Node has one in <code>crypto</code>.</p>
+<pre><code>$ zeno run examples/checksum.zeno zeno.tar.gz
+43bc7d3552e7c8d65f1dcca8c0a5a02256158dc045769eb8f690189d096d0336  zeno.tar.gz</code></pre>
+<pre><code class="zeno">function sha256_of(name: str) -&gt; str raises Error {
+    let hash = node.module("crypto").createHash("sha256")
+    hash.update(node.module("fs").readFileSync(name))
+    return hash.digest("hex")
+}</code></pre>
+<p>The hash and the bytes of the file stay in JavaScript. Only the answer
+comes across, as a str.</p>
+<h2 id="how-it-is-built">How it is built</h2>
+<p>It is the bridge that Python uses (<a href="/docs/python/"><code>python.md</code></a>, "How it
+is built"), with another helper. <code>src/bridge.js</code> is a small JavaScript
+program that is part of the <code>zeno</code> file. The first call starts Node
+with it, and the two talk over a socket of this machine, one line of
+JSON each way, so Node keeps the screen and the keyboard:
+<code>console.log</code> and a progress bar work as if Node had been started by
+hand.</p>
+<p>The lines are the same, with three more:</p>
+<pre><code>{"op":"global","name":"JSON"}                          node.global("JSON")
+{"ok": ["p", 2]}
+
+{"op":"new","on":["p",4],"args":[2026,10,18],"named":[]}
+{"ok": ["p", 5]}
+
+{"op":"call","on":["p",7],"args":[["i","9007199254740993"]],"named":[]}</code></pre>
+<p><code>["i", "9007199254740993"]</code> is an int that JavaScript's own number
+cannot hold exactly, written as text so that nothing is lost on the
+way.</p>
+<p><strong>What a method is called on.</strong> In JavaScript <code>thing.name</code> gives a
+function that has forgotten <code>thing</code>. So the helper keeps, with each
+value, the object it was read from, and calls it on that.
+<code>start.getFullYear()</code> works, and so does <code>let year =
+start.getFullYear</code> with <code>year()</code> later.</p>
+<p><strong>One thing at a time.</strong> Node does many things at once by nature. The
+helper answers each line before it reads the next, and waits for a
+promise before it answers, so the program in Zeno stays one line after
+another.</p>
+<p>In <code>src/bridge.rs</code> the language is one value, <code>Lang</code>, that picks the
+helper, the program to start and the name used in messages. Everything
+else there is shared. The tests are in <code>interpreter.rs</code>
+(<code>a_module_of_node_is_used_from_zeno</code>,
+<code>what_is_not_a_number_or_text_stays_in_node</code>,
+<code>an_error_of_node_is_an_error_of_zeno</code>), in <code>checker.rs</code> and in
+<code>lower.rs</code>. Each test that runs a program runs it in both engines, and
+says nothing on a machine with no Node.</p>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>
+<p>Run the first program of this page. Then misspell <code>path</code> and read
+   the message. Which folder does it name?</p>
+</li>
+<li>
+<p>Print <code>node.global("process").version</code> and
+   <code>node.global("process").execPath</code>. Set <code>ZENO_NODE</code> to another Node
+   and run it again.</p>
+</li>
+<li>
+<p><code>node.global("Array").of(3, 1, 2)</code> gives an array that stays in
+   JavaScript. Print it, then print <code>node.copy</code> of it. What is
+   different about the two lines, and why?</p>
+</li>
+<li>
+<p>Print <code>node.global("Math").sqrt(16.0)</code> and
+   <code>node.global("Math").sqrt(2.0)</code>. One is an int and one a float.
+   Pass each to a function written <code>half(x: float) -&gt; float</code> and read
+   what happens.</p>
+</li>
+<li>
+<p>With <code>npm install dayjs</code>, print the day of the week you were born
+   on.</p>
+</li>
+<li>
+<p>Run <code>examples/checksum.zeno</code> on a file, then run <code>sha256sum</code> (or
+   <code>shasum -a 256</code>) on the same file and compare.</p>
+</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/node.md">docs/node.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/python/"><span>Previous</span>Libraries of Python</a><a class="next" href="/docs/java/"><span>Next</span>Libraries of Java</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-it-needs">What it needs</a></li><li><a href="#modules-and-packages">Modules and packages</a></li><li><a href="#what-is-not-in-a-module">What is not in a module</a></li><li><a href="#values-go-across-in-two-ways">Values go across in two ways</a></li><li><a href="#named-arguments-are-the-options">Named arguments are the options</a></li><li><a href="#what-takes-time-is-waited-for">What takes time is waited for</a></li><li><a href="#arrays-and-objects">Arrays and objects</a></li><li><a href="#errors">Errors</a></li><li><a href="#types">Types</a></li><li><a href="#python-and-javascript-in-one-program">Python and JavaScript in one program</a></li><li><a href="#what-is-not-there-yet">What is not there yet</a></li><li><a href="#the-example">The example</a></li><li><a href="#how-it-is-built">How it is built</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

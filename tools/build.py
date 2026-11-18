@@ -312,35 +312,11 @@ def toc_html(tokens, depth=2):
 UNRELEASED = {}
 # The same for a page that is only partly new: the label, and what to say.
 # Empty it, and UNRELEASED_TARGETS, when the release with them is published.
-UNRELEASED_PARTS = {
-    "targets": ("Four more coming",
-                "Lua, Ruby, Dart and Kotlin are on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
-                "build Zeno from source to try them, or wait for the release after 0.5.1. "
-                "The other eleven are in 0.5."),
-    "registry": ("Coming next",
-                 "Needing a package by its name, <code>zeno search</code> and <code>zeno publish</code> are on "
-                 "<a href=\"{GITHUB}\">main</a> and not in a release yet: build Zeno from source to try them, "
-                 "or wait for the release after 0.5.1. The registry itself is open."),
-    "using-packages": ("Coming next",
-                       "Needing a package by its name alone, <code>needs units at \"v1.2.0\"</code>, is on "
-                       "<a href=\"{GITHUB}\">main</a> and not in a release yet: build Zeno from source to try it, "
-                       "or wait for the release after 0.5.1. A folder and a git repository work in 0.5."),
-    "python": ("Coming next",
-               "<code>import python</code> is on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
-               "build Zeno from source to try it, or wait for the release after 0.5.1."),
-    "running-programs": ("Coming next",
-                         "<code>program.run</code> is on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
-                         "build Zeno from source to try it, or wait for the release after 0.5.1."),
-}
+UNRELEASED_PARTS = {}
 # Examples that need what no release has yet, and what to say under each.
-UNRELEASED_EXAMPLES = {
-    "video": "This program uses <code>import python</code>, which is on main and not in a release yet: "
-             "build Zeno from source to run it, or wait for the release after 0.5.1.",
-    "download": "This program uses <code>program.run</code>, which is on main and not in a release yet: "
-                "build Zeno from source to run it, or wait for the release after 0.5.1.",
-}
+UNRELEASED_EXAMPLES = {}
 # Targets of `zeno build --target` that are on main and in no release yet.
-UNRELEASED_TARGETS = {"lua", "ruby", "dart", "kotlin"}
+UNRELEASED_TARGETS = set()
 
 
 def coming(name):
@@ -363,23 +339,23 @@ DOC_GROUPS = [
     ("The front end", "From text to a checked program.",
      ["lexer", "parser", "checker"]),
     ("The engines", "Four ways to run the same program.",
-     ["interpreter", "vm", "compiler", "llvm"]),
+     ["interpreter", "vm", "compiler", "llvm", "minimal"]),
     ("Memory", "A collector, owners, and a fixed pool.",
-     ["memory", "ownership", "no-collector", "pool", "text", "temporaries", "one-owner", "enums-and-none", "functions-and-errors"]),
+     ["memory", "ownership", "no-collector", "pool", "text", "temporaries", "one-owner", "enums-and-none", "functions-and-errors", "memory-modes"]),
     ("Firmware and hardware", "Errors as values, pins and clocks, sized numbers.",
      ["firmware", "board", "sized-ints"]),
     ("The type system", "Generics, interfaces and what a module keeps to itself.",
      ["generics", "interfaces", "private"]),
     ("Memory by hand", "Pointers and registers, inside unsafe blocks.",
      ["unsafe"]),
-    ("The standard library", "Text, lists, files and input, maths, dictionaries and JSON.",
-     ["library", "reading-and-writing", "math", "dict", "json"]),
+    ("The standard library", "Text, lists, files and input, other programs, maths, random numbers, dictionaries and JSON.",
+     ["library", "reading-and-writing", "running-programs", "math", "library-in-zeno", "dict", "json"]),
     ("Programs in many files", "Modules, imports, packages of Zeno code, and the registry that finds one by its name.",
      ["modules", "using-packages", "registry"]),
     ("The web", "A program in a web page, built to WebAssembly.",
      ["web", "playground"]),
-    ("Other languages", "The program written in JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++, Rust, a web page or WebAssembly.",
-     ["targets"]),
+    ("Other languages", "The program written in fifteen other languages, from JavaScript to Kotlin, and the libraries of Python, JavaScript and Java used from Zeno.",
+     ["targets", "python", "node", "java"]),
     ("Tools", "Installers, packages for apt, Homebrew and the rest, releases, tests, the formatter and the language server.",
      ["install", "packages", "release", "new", "testing", "format", "lsp"]),
     ("The audit and 0.1", "Every feature checked, the gaps real programs found, and what 0.1 holds.",
@@ -591,18 +567,18 @@ GUIDE = [
 zeno new hello
 zeno run hello/main.zeno</code></pre></figure>
 <h3>Windows</h3>
-<p>Download <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.5.1/zeno-0.5.1-windows-setup.exe">zeno-0.5.1-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
+<p>Download <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.5.2/zeno-0.5.2-windows-setup.exe">zeno-0.5.2-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
 <h3>With a package manager</h3>
-<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.1">release page</a>, and a Homebrew tap:</p>
+<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.2">release page</a>, and a Homebrew tap:</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="pkg-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
-<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.5.1_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
-sudo pacman -U zeno-lang-bin-0.5.1-1-x86_64.pkg.tar.zst  # Arch, Manjaro
-sudo snap install --classic --dangerous zeno_0.5.1_amd64.snap
-flatpak install --user zeno-0.5.1-x86_64.flatpak
+<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.5.2_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
+sudo pacman -U zeno-lang-bin-0.5.2-1-x86_64.pkg.tar.zst  # Arch, Manjaro
+sudo snap install --classic --dangerous zeno_0.5.2_amd64.snap
+flatpak install --user zeno-0.5.2-x86_64.flatpak
 
 brew tap zeno-src/zeno-lang https://github.com/zeno-src/zeno-lang
 brew install zeno-src/zeno-lang/zeno                   # macOS and Linux</code></pre></figure>
-<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.1">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
+<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.5.2">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
 <h3>From source</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="src-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="src-cmd"><code>git clone https://github.com/zeno-src/zeno-lang
@@ -661,7 +637,7 @@ zeno build main.zeno                # compiled, every check kept
 zeno build --fast --owned main.zeno # as fast as C, no collector</code></pre></figure>
 <p>A wrong index in a <code>--fast</code> build is a wrong answer or a crash, exactly as in C, so build the ordinary way while a program is being written. <a href="/docs/memory-modes/">Choosing how memory is freed</a> and <a href="/benchmarks/">the benchmarks</a> say more.</p>"""),
     ("targets", "Other languages", None, """
-<p><code>zeno build --target</code> writes your program in another language: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++ or Rust, a web page, or a WebAssembly file. The file needs nothing else, and it prints what <code>zeno run</code> prints, down to the same error on the same line. Lua, Ruby, Dart and Kotlin come with the next release.</p>
+<p><code>zeno build --target</code> writes your program in another language: JavaScript, TypeScript, Python, PHP, Lua, Ruby, Dart, Kotlin, Go, Java, C#, C++ or Rust, a web page, or a WebAssembly file. The file needs nothing else, and it prints what <code>zeno run</code> prints, down to the same error on the same line.</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span></figcaption>
 <pre><code>zeno build --target py main.zeno    # writes main.py
 python3 main.py
@@ -773,10 +749,14 @@ DONE = [
     ("JSON", "<code>json.parse</code> and <code>json.write</code>.", "json"),
     ("Owners and the fast build (0.3, 0.4)", "<code>--owned</code>, a program with no collector, and <code>zeno build --fast</code>, as fast as C and Rust.", "memory-modes"),
     ("Other languages (0.5)", "<code>zeno build --target</code>: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++, Rust, a web page and WebAssembly, each printing what <code>zeno run</code> prints.", "targets"),
+    ("Four more languages (0.5.2)", "<code>zeno build --target</code> for Lua, Ruby, Dart and Kotlin: fifteen in all.", "targets"),
+    ("A registry of packages (0.5.2)", "<code>needs units at &quot;v1.2.0&quot;</code> finds a package by its name. The registry is a git repository with no server; <code>zeno search</code> lists it and <code>zeno publish</code> puts a package in.", "registry"),
+    ("The libraries of other languages (0.5.2)", "<code>import python</code>, <code>import node</code> and <code>import java</code>: the packages of pip and npm, and any jar, used as they are.", "python"),
+    ("Starting another program (0.5.2)", "<code>program.run</code> gives another program its words as a list, waits, and says how it ended.", "running-programs"),
+    ("The least C (0.5.2)", "<code>zeno build --minimal</code>: only the C the program needs, with no checks, for a program that is already correct.", "minimal"),
+    ("A library written in Zeno (0.5.2)", "Six more functions of <code>math</code> and the module <code>random</code>, written once in Zeno and the same in every engine, build and target.", "library-in-zeno"),
 ]
 NEXT = [
-    ("In the next release", "A registry of packages", "<code>needs units at \"v1.2.0\"</code> finds a package by its name. <a href=\"/packages/\">The registry</a> is a git repository with no server, <code>zeno search</code> lists it and <code>zeno publish</code> puts a package in. Written and tested, and waiting for the release after 0.5.1."),
-    ("In the next release", "Four more languages", "<code>zeno build --target</code> for Lua, Ruby, Dart and Kotlin. Written and checked on every example, and waiting for the release after 0.5.1."),
     ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
     ("Planned", "Bytes", "A <code>list[u8]</code> at one byte an item, <code>u64</code>, and files read as bytes."),
     ("Planned", "More with no collector", "Dicts of lists and objects, and <code>list[int or none]</code>."),
@@ -792,7 +772,7 @@ def build_roadmap():
         f'<li class="{s.split()[0].lower()}">{icon("clock" if s in ("In progress", "Next") else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
         for s, t, d in NEXT)
     body = page_head("Roadmap", "Where Zeno stands",
-                     "Zeno 0.5 is out: zeno build --target writes a program in eleven other languages, zeno build --fast makes it as fast as C and Rust, and a program can choose how its memory is freed. "
+                     "Zeno 0.5 is out: zeno build --target writes a program in fifteen other languages, zeno build --fast makes it as fast as C and Rust, and a program can choose how its memory is freed. "
                      "The goal is one language for every job you would reach for C, C++, Python, JavaScript, Java or Rust to do. "
                      "Each use case arrives with a piece of the compiler. This is the order they have come in, and the order the rest will.", "map") + f"""
 <div class="roadmap">
@@ -822,7 +802,7 @@ def build_about():
 <h2>The name</h2>
 <p>Zeno of Elea argued that Achilles can never catch a tortoise: before he reaches it he must cover half the distance, then half of what is left, forever. The quantum Zeno effect says a system watched closely enough never changes. Both suit a compiler that will always be almost finished. The bar at the top of every page closes half the distance that is left as you scroll, and never arrives.</p>
 <h2>Status</h2>
-<p>Zeno 0.5 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM, to a web page and to eleven other languages, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
+<p>Zeno 0.5 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM, to a web page and to fifteen other languages, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
 <p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">zeno-src/zeno-lang</a>, under the MIT licence. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 <h2 id="contact">Contact</h2>

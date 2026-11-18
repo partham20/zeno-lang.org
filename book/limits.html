@@ -241,15 +241,15 @@ The library</h3>
 <p>A program ends at its last line or with an uncaught error, and cannot
 read environment variables (6.19).</p>
 </dd>
-<dt>A few functions of mathematics.</dt>
+<dt>The methods of text and lists written in Zeno.</dt>
 <dd>
-<p>No <code>hypot</code>, no hyperbolic functions, no <code>gcd</code>
-or <code>clamp</code>, and no random numbers (6.21).</p>
-</dd>
-<dt>A library written in Zeno.</dt>
-<dd>
-<p>The library is built into the compiler, not written in Zeno
-itself.</p>
+<p>A part of the library is written in Zeno itself:
+<code>math.hypot</code>, the hyperbolic functions,
+<code>math.gcd</code>, <code>math.clamp</code> and the module
+<code>random</code> (33.1). The methods of text and lists are still
+built into the compiler (6.10). And <code>random</code> has no seed from
+the machine: a program gets the same numbers on every run until it calls
+<code>random.seed</code> (33.8).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="builds"><span class="number">G.5</span>

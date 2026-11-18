@@ -52,12 +52,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li><li><a href="#24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</a></li><li><a href="#25-starting-another-program">25. Starting another program</a></li><li><a href="#26-the-libraries-of-other-languages">26. The libraries of other languages</a></li><li><a href="#27-the-registry-a-package-by-its-name">27. The registry: a package by its name</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li><li><a href="#24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</a></li><li><a href="#25-starting-another-program">25. Starting another program</a></li><li><a href="#26-the-libraries-of-other-languages">26. The libraries of other languages</a></li><li><a href="#27-the-registry-a-package-by-its-name">27. The registry: a package by its name</a></li><li><a href="#28-the-libraries-of-javascript">28. The libraries of JavaScript</a></li><li><a href="#29-the-libraries-of-java">29. The libraries of Java</a></li><li><a href="#30-the-least-c-zeno-build-minimal">30. The least C: zeno build --minimal</a></li><li><a href="#31-a-field-with-the-name-of-a-type-in-c">31. A field with the name of a type, in C</a></li><li><a href="#32-a-try-on-windows-in-c">32. A try on Windows, in C</a></li><li><a href="#33-a-library-written-in-zeno">33. A library written in Zeno</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 515 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 561 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -9772,7 +9772,7 @@ rounds (24.29).</p>
   for the whole language, and it was decided once (5.19c).</li>
 <li>A loop that takes items one at a time, for what never ends.</li>
 <li><code>python</code> in a built program, and in <code>--target py</code> (26.9).</li>
-<li>JavaScript and Java, then the rest of 26.1.</li>
+<li>The rest of 26.1. JavaScript is chapter 28 and Java chapter 29.</li>
 </ul>
 <h2 id="27-the-registry-a-package-by-its-name">27. The registry: a package by its name</h2>
 <p>Partha asked (2026-11-18) for a central place to find packages, as
@@ -10006,6 +10006,926 @@ package is on the page a few minutes after it is published.</p>
 <li>Versions before a release (<code>v1.2.0-rc1</code>).</li>
 <li>Saying in the lock which registry a line came from.</li>
 </ul>
+<h2 id="28-the-libraries-of-javascript">28. The libraries of JavaScript</h2>
+<p>The second language of the first version (26.1): <code>import node</code>, for
+the library that comes with Node and for the packages of npm.
+<a href="/docs/node/"><code>node.md</code></a> is the walkthrough. Everything in chapter 26
+holds here unless this chapter says otherwise: Node runs beside the
+program (26.2), they talk over a socket (26.3), numbers and text cross
+and everything else stays (26.5), what Zeno gives is a copy (26.6), a
+value from there is not a condition (26.7), the types are known when
+the program runs (26.9), and nothing changes for a program that does
+not ask (26.11). What follows is what JavaScript made different.</p>
+<h3 id="281-the-module-is-called-node-and-the-values-javascript">28.1 The module is called <code>node</code>, and the values "JavaScript"</h3>
+<p><code>import node</code>, <code>node.module("fs")</code>. A message says "a JavaScript
+value".</p>
+<p><strong>Why <code>node</code>.</strong> It is the program that is started, and the one whose
+rules decide where a package is looked for. JavaScript in a browser
+has no <code>fs</code> and no npm. <code>import javascript</code> would promise more than
+is there, and <code>import npm</code> would name the place the packages come
+from and leave out the library Node has without it.</p>
+<p><strong>Why the values are "JavaScript".</strong> A message about a value speaks
+of the language the value is written in. <code>ZENO_NODE</code> names the Node
+to use, as <code>ZENO_PYTHON</code> does (26.10). Only <code>node</code> is looked for: it
+has no second name.</p>
+<h3 id="282-nodeglobal-and-nodenew-because-javascript-has-both">28.2 <code>node.global</code> and <code>node.new</code>, because JavaScript has both</h3>
+<p>Python has everything in a module, <code>builtins</code> included, and makes an
+object by calling its class. JavaScript has neither: <code>JSON</code>, <code>Math</code>,
+<code>Date</code> and <code>process</code> are in no module, and a class has to be given to
+<code>new</code>.</p>
+<p><code>node.global(name)</code> gives what JavaScript has under that name
+everywhere. <code>node.new(Class, a, b)</code> is <code>new Class(a, b)</code>.</p>
+<p><strong>Why not make <code>Class(a, b)</code> do <code>new</code>.</strong> Calling and <code>new</code> are two
+things in JavaScript, and one value can take both with different
+answers: <code>Date()</code> gives a str and <code>new Date()</code> a date. Guessing which
+was meant would be right most of the time, and wrong with nothing to
+say so.</p>
+<p><strong>Alternatives rejected.</strong> A module of pretend, <code>node.module("global")</code>:
+it reads like a package that might not be installed. A <code>new</code> word in
+the language: one module's need is not the language's.</p>
+<h3 id="283-a-number-that-is-whole-is-an-int">28.3 A number that is whole is an int</h3>
+<p>JavaScript has one kind of number. One that is whole arrives as an
+int, and any other as a float.</p>
+<p><strong>Why.</strong> Nearly every whole number a library returns is a count, a
+size, an index or a year, and in Zeno those are ints: <code>items[n]</code> needs
+one. Had every number arrived as a float, each of them would need
+<code>int(...)</code> around it. The other way round costs less: an int goes
+where a float is wanted.</p>
+<p><strong>The cost.</strong> <code>Math.sqrt(16.0)</code> is <code>4</code> and prints so, where Zeno's own
+would print <code>4.0</code>. JavaScript does not keep which was written, so
+there is nothing to go by.</p>
+<p><strong>Past what is exact.</strong> A whole number above 9007199254740991 arrives
+as a float: by then JavaScript's number is not exact, and an int would
+say that it is. An int of Zeno above that goes as a <code>BigInt</code>, since a
+number would silently round it, and a <code>BigInt</code> that fits 64 bits comes
+back as an int.</p>
+<p><strong><code>null</code> and <code>undefined</code> are both <code>none</code>.</strong> Zeno has one nothing. A
+field that an object does not have is therefore <code>none</code>, with no error.
+That is JavaScript's rule and it is kept, because a library's own
+documentation is written to it.</p>
+<h3 id="284-named-arguments-are-the-object-of-options">28.4 Named arguments are the object of options</h3>
+<p><code>thing(1, key=3)</code> is <code>thing(1, {key: 3})</code>.</p>
+<p><strong>Why.</strong> JavaScript has no named arguments, and its libraries agree
+on what stands in for them: one object, last. So the Zeno call reads
+as the same call does with Python (26.4), and a program does not have
+to build an object first for the common case.</p>
+<p><strong>Why refuse nothing.</strong> Whether a function takes options is not known
+before it is called. Giving named arguments to one that does not is
+one argument more than it reads, which JavaScript ignores.</p>
+<p><code>node.global("Object")(a=1, b="x")</code> makes such an object by itself,
+which is <code>python.module("builtins").dict(a=1, b="x")</code> for JavaScript.
+<code>node.new</code> takes no named arguments: no function that comes with Zeno
+takes any, and one exception would be a second rule.</p>
+<h3 id="285-a-promise-is-waited-for">28.5 A promise is waited for</h3>
+<p>A call or a field that gives a promise gives what the promise
+resolves to. One that is rejected is an error at that line.</p>
+<p><strong>Why.</strong> A Zeno program is one line after another. There is nothing
+it could do with a promise but wait for it, and writing that wait on
+every call would be a word that never changes. Because of it the
+whole promise side of Node works today: <code>fs/promises</code>,
+<code>timers/promises</code>, <code>fetch</code>.</p>
+<p><strong>The cost.</strong> A program cannot start two things and wait for both.
+That waits for the day a function of Zeno can be given to JavaScript
+(28.10).</p>
+<h3 id="286-what-a-method-is-called-on">28.6 What a method is called on</h3>
+<p><code>thing.name</code> in JavaScript gives a function that no longer knows
+<code>thing</code>. The helper keeps, with each value, the object it was read
+from, and calls it on that. So <code>start.getFullYear()</code> works, and so
+does keeping <code>start.getFullYear</code> in a name and calling it later, which
+in JavaScript itself fails.</p>
+<p><strong>Why go further than JavaScript does.</strong> In Zeno a method taken from
+an object stays that object's: <code>let get = box.get</code> and then <code>get()</code>
+is <code>box.get()</code>. A Zeno program that reads a method and calls it later
+is written to that rule.</p>
+<h3 id="287-is-the-same-object-print-is-what-the-console-shows">28.7 <code>==</code> is the same object; <code>print</code> is what the console shows</h3>
+<p><code>a == b</code> on two values of JavaScript is <code>a === b</code>.</p>
+<p><strong>Why not compare what is in them.</strong> JavaScript has no such
+comparison, and each library that needs one writes its own. Inventing
+one here would give answers no JavaScript program gets.
+<code>node.copy(a) == node.copy(b)</code> compares what is in them, by Zeno's
+rule, and says so.</p>
+<p><code>print(thing)</code> shows what <code>console.log(thing)</code> shows, because that is
+what a person who uses the library has seen. A value that writes
+itself, a date or an error or a URL, is shown as it writes itself:
+<code>str(thing)</code> should be the text the value means.</p>
+<h3 id="288-an-error-of-javascript-is-error-or-fileerror">28.8 An error of JavaScript is <code>Error</code>, or <code>FileError</code></h3>
+<p>What JavaScript throws is an <code>Error</code> of Zeno, and its message begins
+with JavaScript's name for it (<code>TypeError: ...</code>). An error that the
+system gave, which is one with an <code>errno</code> and a <code>syscall</code>, is a
+<code>FileError</code>. No Node, and no such module, are a <code>FileError</code> too
+(26.8).</p>
+<p><strong>Why no <code>ValueError</code> or <code>IndexError</code>.</strong> JavaScript's <code>RangeError</code>
+and <code>TypeError</code> do not mean what Zeno's kinds mean: <code>RangeError</code> is
+thrown for a bad length and for a stack that is too deep. Matching
+names that only look alike would make <code>except ValueError</code> catch
+things it was not written for. Reading past the end of an array is
+not an error in JavaScript at all.</p>
+<h3 id="289-a-module-is-looked-for-from-the-folder-of-the-program">28.9 A module is looked for from the folder of the program</h3>
+<p><code>node.module("dayjs")</code> looks in <code>node_modules</code> beside the <code>.zeno</code>
+file, then in each folder above. <code>node.module("./helper.js")</code> is a
+file beside the program. For Python the folder of the program is the
+first place looked in, before the installed packages, so a
+<code>helper.py</code> beside the program is <code>python.module("helper")</code>.</p>
+<p><strong>Why.</strong> It is where each language looks for a program of its own,
+and it is where Zeno's own <code>import</code> looks (7.1). A program then finds
+its modules wherever it is run from. Looking from the folder Zeno was
+started in, which is what a helper started with <code>-e</code> or <code>-c</code> does by
+itself, would make <code>zeno run project/main.zeno</code> fail for a program
+that runs when started inside <code>project</code>.</p>
+<p>This changed Python as chapter 26 first had it. It was in no release.</p>
+<h3 id="2810-left-for-later">28.10 Left for later</h3>
+<ul>
+<li>A function of Zeno given to JavaScript. More of JavaScript needs it
+  than of Python: <code>map</code>, <code>on("data", f)</code>, a server.</li>
+<li>Node ends when the program does. A server or a timer started there
+  does not keep the program alive.</li>
+<li>Starting two things and waiting for both (28.5).</li>
+<li><code>node</code> in a built program, and in <code>--target js</code>, as 26.9 has it for
+  Python.</li>
+</ul>
+<h2 id="29-the-libraries-of-java">29. The libraries of Java</h2>
+<p>The third language of the first version (26.1): <code>import java</code>, for the
+classes that come with Java and for libraries that are jars.
+<a href="/docs/java/"><code>java.md</code></a> is the walkthrough. Chapter 26 holds here as it
+does for JavaScript (28): Java runs beside the program, they talk over
+a socket, numbers and text cross and everything else stays, what Zeno
+gives is a copy, a value from there is not a condition, the types are
+known when the program runs, and nothing changes for a program that
+does not ask. What follows is what Java made different.</p>
+<h3 id="291-javatypename-gives-a-class-by-its-whole-name">29.1 <code>java.type(name)</code> gives a class, by its whole name</h3>
+<pre><code class="zeno">let ArrayList = java.type("java.util.ArrayList")</code></pre>
+<p><strong>Why <code>type</code> and not <code>class</code>.</strong> <code>class</code> is a word of Zeno and cannot
+follow a dot (5.19c). <code>type</code> is also what the bridges from JavaScript
+to Java call it (<code>Java.type</code> in Nashorn and GraalVM), so it is the
+word a person who has done this before looks for.</p>
+<p><strong>Why the whole name.</strong> Java's own short names come from an <code>import</code>
+at the top of each file, which this program does not have. One rule,
+the name the documentation gives, is less to know than a list of
+packages that are looked in without being asked.</p>
+<h3 id="292-calling-a-class-is-new">29.2 Calling a class is <code>new</code></h3>
+<p><code>ArrayList()</code> is <code>new ArrayList()</code>.</p>
+<p><strong>Why here and not for JavaScript (28.2).</strong> In JavaScript a class can
+also be called without <code>new</code>, with another answer, so the two had to
+be told apart. A class of Java cannot be called at all, so the call
+has one meaning. It is also how an object is made in Zeno itself, and
+in Python.</p>
+<h3 id="293-a-dot-after-a-class-is-what-is-static-a-method-is-kept-until-it-is-called">29.3 A dot after a class is what is <code>static</code>; a method is kept until it is called</h3>
+<p><code>Math.PI</code>, <code>Math.max(3, 9)</code>, <code>Thread.State.NEW</code>. On an object,
+<code>thing.name</code> is its public field, or its method.</p>
+<p><strong>What <code>java.type</code> gives is not Java's <code>Class</code> object.</strong> That object
+has methods of its own (<code>getName</code>, <code>getMethods</code>), and <code>Math.max</code> would
+have to be looked for among them. So the helper has a value of its
+own for "the class as its name is written" (<code>Type</code>), and gives Java
+the <code>Class</code> object when a method asks for one.
+<code>thing.getClass()</code> still gives Java's.</p>
+<p><strong>A method not yet called is a value too</strong> (<code>Bound</code>), because Zeno
+reads <code>names.add</code> before it calls it, and because a method can be
+kept in a name and called later, as in Zeno.</p>
+<p><strong>Only what is public.</strong> A program of Java outside the class could
+use nothing else, and a library's private parts are not its promise.</p>
+<h3 id="294-of-several-methods-with-one-name-the-arguments-choose">29.4 Of several methods with one name, the arguments choose</h3>
+<p>Java can have <code>valueOf(int)</code>, <code>valueOf(double)</code> and <code>valueOf(Object)</code>
+side by side. Each is given a number for how well the arguments of
+this call fit what it takes, and the lowest is called.</p>
+<p><strong>The order is Java's own</strong> as far as it has one: an int of Zeno is an
+<code>int</code> before a <code>long</code>, a <code>long</code> before a <code>double</code>, and a plain type
+before its boxed one; a method that takes its arguments one by one
+comes before one that gathers them (<code>Object...</code>).</p>
+<p><strong>Two that fit equally are an error</strong>, which lists what there is, and
+so is none that fits. A guess would call something, and the program
+would go on with the wrong answer.</p>
+<p><strong>Alternatives rejected.</strong> Saying the types in the call, as
+<code>thing.method["int", "Object"](1, x)</code>: it is exact, and it is a
+second language to learn for the few calls that need it. It can be
+added for those if they turn up. Taking the first method that fits:
+which is first is not something Java promises.</p>
+<h3 id="295-an-int-that-goes-as-an-object-is-an-integer-if-it-fits">29.5 An int that goes as an <code>Object</code> is an <code>Integer</code> if it fits</h3>
+<p>A collection of Java takes anything (<code>Object</code>), so the method does not
+say which whole number it wants. An int of Zeno goes as an <code>Integer</code>
+when it fits 32 bits and as a <code>Long</code> when it does not.</p>
+<p><strong>Why.</strong> It is what the number is when written in a Java program: <code>5</code>
+is an <code>int</code> there and <code>5000000000L</code> a <code>long</code>. A library compares what
+it is given with numbers of its own, and <code>Integer</code> 5 does not equal
+<code>Long</code> 5 in Java. Always <code>Long</code> would be simpler to say and would fail
+quietly inside <code>contains</code> and <code>get</code>.</p>
+<p><strong>Every whole number that comes back is an int</strong>, whatever its size
+in Java, and <code>float</code> and <code>double</code> are a float. A <code>float</code> is written
+the short way it prints, <code>0.1</code>, and not with the digits it gains as a
+<code>double</code>.</p>
+<h3 id="296-is-equals">29.6 <code>==</code> is <code>equals</code></h3>
+<p><strong>Why not the same object, as for JavaScript (28.7).</strong> Java has both,
+and its own <code>==</code> on objects is the one programs are told not to use
+for values: two <code>String</code>s or two <code>Integer</code>s with one value can be two
+objects. <code>equals</code> is what a class of Java says its equality is.</p>
+<p><code>print</code> shows <code>toString()</code>. An array has none worth reading
+(<code>[I@1b6d3586</code>), so its items are shown.</p>
+<h3 id="297-an-exception-of-java-is-an-error-of-zeno">29.7 An exception of Java is an error of Zeno</h3>
+<p><code>IndexOutOfBoundsException</code> is <code>IndexError</code>,
+<code>IllegalArgumentException</code> is <code>ValueError</code>, <code>IOException</code> is
+<code>FileError</code>, each with the kinds built on it, and every other is
+<code>Error</code>. The message begins with Java's name for it.</p>
+<p><strong>Why these and no more.</strong> Each of the three means in Java what the
+kind means in Zeno, by Java's own description of it. That is not so
+for <code>ArithmeticException</code>, which is both a division by zero and an
+overflow, two kinds in Zeno; it stays an <code>Error</code> (28.8 has the same
+reasoning for JavaScript).</p>
+<h3 id="298-a-library-is-a-jar-and-the-program-says-where-it-is">29.8 A library is a jar, and the program says where it is</h3>
+<p><code>java.jar("lib/gson.jar")</code>, or a folder: every jar in it.</p>
+<p><strong>Why the program says it.</strong> Python and Node each have one place
+where <code>install</code> puts packages, and each finds them there by itself.
+Java has none: a jar is found only if the class path names it. So
+the program names it, at a line that can be read, with a path from
+its own folder (28.9).</p>
+<p><code>CLASSPATH</code> is read as Java reads it, and with none the folder of the
+program is looked in for classes, which is what <code>java Main</code> does in
+that folder.</p>
+<p><strong>Alternatives rejected.</strong> Every jar beside the program, without
+being asked: which jars are used would depend on what happens to lie
+in the folder. A name as Maven writes it
+(<code>com.google.code.gson:gson:2.11.0</code>), found in Maven's own folder: a
+library there usually needs others, and which ones is worked out by
+Maven from files Zeno would have to read as Maven does. A folder
+filled by Maven or by hand, and named, is whole.</p>
+<h3 id="299-the-helper-is-compiled-once-and-kept">29.9 The helper is compiled once, and kept</h3>
+<p>Java runs classes and not source. The helper's source is in the
+<code>zeno</code> file; the first run makes classes of it with <code>javac</code>, in the
+folder this machine has for what can be made again (the registry's,
+27), and later runs start those.</p>
+<p><strong>Why.</strong> Compiling takes about a second and starting takes a fifth of
+one. Paying the second on every run would make a short program slow
+for good.</p>
+<p><strong>How it stays right.</strong> The folder is named by a number worked out
+from the source, so another version of Zeno makes its own. The
+classes are made in a folder of the run's own and given their name
+when whole, so two runs at once never share half of them. They are
+compiled for Java 11, so a later Java runs them as they are.</p>
+<p><strong>With no <code>javac</code></strong>, Java is given the source, which Java 11 and
+later compile as they start. With no folder to keep them in, they are
+made in a folder of this run's own and taken away after.</p>
+<p><strong>Alternative rejected.</strong> The classes inside the <code>zeno</code> file, ready
+made: building Zeno would then need Java, and Zeno is built with
+Rust and nothing else.</p>
+<h3 id="2910-a-name-in-brackets-where-a-word-of-zeno-is-in-the-way">29.10 A name in brackets, where a word of Zeno is in the way</h3>
+<p><code>System.in</code> does not parse (5.19c). On a class, and on an object that
+has no items of its own, <code>thing["name"]</code> is <code>thing.name</code>:
+<code>System["in"]</code>.</p>
+<p><strong>Why this is safe to mean two things.</strong> It is taken so only where
+<code>[ ]</code> has no other meaning: a class has no items, and neither has an
+object that is not an array, a list, a map or text. For JavaScript the
+same writing is the language's own rule (<a href="/docs/node/"><code>node.md</code></a>).</p>
+<h3 id="2911-the-bridge-is-kept-out-of-the-functions-every-program-runs">29.11 The bridge is kept out of the functions every program runs</h3>
+<p>Every function of <code>bridge.rs</code> that the rest of Zeno calls is marked
+<code>#[cold]</code> and <code>#[inline(never)]</code>, and so is what letting go of a value
+from another language calls.</p>
+<p><strong>What happened.</strong> With Java added, a sort on <code>zeno run --vm</code> took a
+tenth longer than in 0.5.1 (3.63 s to 4.02 s for a million numbers,
+best of 8 rounds each), while the count of instructions was 1 % lower.
+No line of the VM had changed. The places that hand a value to the
+bridge are <code>ops::item</code>, <code>ops::set_item</code>, <code>ops::field</code> and
+<code>value::equal</code>, which every program runs through, and the compiler
+had folded the bridge into them. So their code changed, and moved,
+each time the bridge did: <code>ops::item</code> was 2170 bytes with JavaScript
+added and 2129 with Java. It is 1800 with the bridge kept out, and
+does not change when the bridge does.</p>
+<p><strong>Why this is the fix and not a patch.</strong> 26.11 promises that a
+program which asks for no other language runs the code it ran before.
+The source said so already; the compiled program did not. <code>#[cold]</code>
+tells the compiler that these calls are rare, which they are in every
+program without the import and cheap beside the trip to another
+program in one with it.</p>
+<p><strong>After it.</strong> The same sort is within 2 % of 0.5.1. All six
+benchmarks, both engines, timed in alternating rounds against 0.5.1,
+are between 6 % faster and 4 % slower. The 4 % is nbody on the VM
+(16.51 s to 17.08 s); about half of it was there before the bridge
+was begun, and the rest is no more than this machine gives for one
+build timed twice (24.29).</p>
+<p><strong>What it does not fix.</strong> Where the compiler puts the VM's own loop
+still moves by a few bytes when code is added anywhere, and that
+alone is worth a few percent on one benchmark or another. Stable Rust
+has no way to pin it.</p>
+<h3 id="2912-left-for-later">29.12 Left for later</h3>
+<ul>
+<li>A function of Zeno given to Java: lambdas, <code>Comparator</code>, <code>Runnable</code>.</li>
+<li>A class of Zeno that extends a class of Java.</li>
+<li>Saying the types of a call where two methods fit equally (29.4).</li>
+<li>Zeno's checker reading Java's types, which Java has.</li>
+<li><code>java</code> in a built program, and in <code>--target java</code>, as 26.9 has it
+  for Python.</li>
+</ul>
+<h2 id="30-the-least-c-zeno-build-minimal">30. The least C: <code>zeno build --minimal</code></h2>
+<p>Partha asked (2026-11-18) for one more way to build: one that goes
+past the checks and writes only the C the program itself needs, so that
+the file is small and easy to read, with everything that is there now
+kept as it is. <code>zeno build</code> writes about 3,000 lines of C for a program
+of one line, because the whole runtime is pasted in front of it and
+every operation goes through a function that checks it.</p>
+<h3 id="301-a-new-option-and-the-builds-that-were-there-do-not-change">30.1 A new option, and the builds that were there do not change</h3>
+<p><code>zeno build --minimal</code> writes the least C that runs the program. Six
+things are done, each with its own section below: no check of any kind
+(30.2), no place in the source carried along (30.4), only the parts of
+the runtime the program uses (30.5), <code>print</code> as C's <code>printf</code> (30.6),
+each statement written the short way (30.7), and the C compiler asked
+for a small program (30.8). docs/minimal.md is the walkthrough.</p>
+<p><strong>Why a new option.</strong> He asked for what is there to stay. The C that
+every other build writes is, byte for byte, what it was before this
+chapter: 2,028 C files were compared, the 363 programs of the check
+(30.10) built nine ways, with the compiler before and after.</p>
+<p><strong>Why the word <code>minimal</code>.</strong> It is his word for it ("the minimum code"),
+and it says what the option is for, which is how <code>--fast</code> was named
+(23.1). <code>--small</code> promises a small program, and it is the C that gets
+small (30.11). <code>--unchecked</code> names one of the six things. <code>--bare</code> and
+<code>--direct</code> say less than <code>minimal</code> does to someone who has not read
+this.</p>
+<p><strong>Why not <code>--target c</code>.</strong> <code>--target</code> writes the program in another
+language with the rules of Zeno carried along in a runtime (24.2),
+checks and all. This is the opposite promise, and it is the same C
+backend as <code>zeno build</code>, so it is an option of that.</p>
+<h3 id="302-no-check-of-any-kind-a-mistake-does-what-the-c-does">30.2 No check of any kind: a mistake does what the C does</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>other builds</th>
+<th><code>--minimal</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>xs[i]</code> with <code>i</code> out of range</td>
+<td><code>IndexError</code></td>
+<td>reads or writes whatever memory is there</td>
+</tr>
+<tr>
+<td><code>ages["Eve"]</code> with no such key</td>
+<td><code>KeyError</code></td>
+<td>reads an item that is not there</td>
+</tr>
+<tr>
+<td>overflow of <code>+ - *</code>, of <code>-n</code>, <code>abs(n)</code>, <code>**</code>, <code>sum</code></td>
+<td><code>OverflowError</code></td>
+<td>no defined result</td>
+</tr>
+<tr>
+<td><code>n // 0</code>, <code>n % 0</code></td>
+<td><code>ZeroDivisionError</code></td>
+<td>what the processor does: on a computer the system stops the program</td>
+</tr>
+<tr>
+<td><code>x / 0.0</code></td>
+<td><code>ZeroDivisionError</code></td>
+<td>infinity, or NaN</td>
+</tr>
+<tr>
+<td><code>math.sqrt(-1.0)</code>, <code>math.log(0.0)</code>, <code>math.asin(2.0)</code></td>
+<td><code>ValueError</code></td>
+<td>NaN or infinity</td>
+</tr>
+<tr>
+<td><code>u8(300)</code></td>
+<td><code>ValueError</code></td>
+<td>300 goes on as it is</td>
+</tr>
+<tr>
+<td><code>n &lt;&lt; 70</code>, <code>n &lt;&lt; -1</code></td>
+<td><code>ValueError</code></td>
+<td>no defined result</td>
+</tr>
+<tr>
+<td><code>xs.pop()</code>, <code>min(xs)</code> of an empty list, a slice from past the end</td>
+<td>an error</td>
+<td>no defined result</td>
+</tr>
+<tr>
+<td><code>int(x)</code> of infinity or NaN</td>
+<td><code>ValueError</code></td>
+<td>the biggest int, the smallest, or 0</td>
+</tr>
+<tr>
+<td>a variable that became <code>none</code> again after it was checked</td>
+<td>an error</td>
+<td>used as if it held a value</td>
+</tr>
+<tr>
+<td><code>free(p)</code> twice</td>
+<td>stops, and says so</td>
+<td>no defined result</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why further than <code>--fast</code>.</strong> <code>--fast</code> is about time. It leaves out the
+checks that cost something in a tight loop and keeps the rest: a key
+that is not there, a whole number divided by zero. <code>--minimal</code> is about
+what is in the file. A check brings its message, the message is put
+together from pieces of text, and text needs memory: one check left in
+keeps <code>zeno_fail</code>, the error value, <code>zeno_join</code>, <code>zeno_str_int</code> and an
+allocator in a program that adds two numbers. It is all of them or the
+file is not small.</p>
+<p><strong>Why a whole number divided by zero is not caught here, when <code>--fast</code>
+catches it (23.1).</strong> There the reason was that the check is nearly free
+beside a division. Here the cost is not time. The table says plainly
+what happens, and it is what a C programmer expects of <code>/</code>.</p>
+<p><strong>What is not a check, and stays.</strong> <code>-7 % 3</code> is 2 in Zeno and -1 in C,
+and <code>-7 // 2</code> is -4 and not -3. A correct program relies on that, so
+<code>%</code> and <code>//</code> are still the runtime's <code>zeno_mod</code> and <code>zeno_floordiv</code>,
+each a few lines with the check taken out. <code>x // 8</code> and <code>x % 8</code> are
+still a shift and a mask (23.5).</p>
+<h3 id="303-the-errors-a-correct-program-can-meet-stay">30.3 The errors a correct program can meet stay</h3>
+<p><code>int("ten")</code> raises <code>ValueError</code>, a file that is not there raises
+<code>FileError</code>, <code>raise</code> raises, <code>try</code> and <code>except</code> catch, and an error
+that nothing catches stops the program and says what it was. Running
+out of memory still stops the program and says so.</p>
+<p><strong>Why.</strong> These are not mistakes in the program. What a person types
+and whether a file is there are known only when the program runs, and
+the program was written to deal with them. A minimal build of a
+correct program must do what the checked build does (30.10), and it
+could not if these went.</p>
+<h3 id="304-no-place-in-the-source">30.4 No place in the source</h3>
+<p>A runtime function that can stop the program takes the line and the
+column it was called from as its last two arguments, for the message.
+In a minimal build no function has those two parameters and no call
+passes them, and the table of file names is gone. An error nothing
+caught prints its kind and its message:</p>
+<pre class="out"><code>error: uncaught ValueError: cannot turn "ten" into an int</code></pre>
+<p><strong>Why.</strong> Two numbers at every call are code at every call, and they are
+the first thing that makes the C look unlike C a person writes. With
+the checks gone, the only reader left for them was an error the
+program raised itself.</p>
+<p><strong>What it costs.</strong> That message does not say where. The checked build
+does: build that way to find it.</p>
+<p><strong>How it is done.</strong> The emitter writes a mark in place of <code>line, col</code>
+(a byte no C has in it), and the mark goes with the comma before it
+when the file is put together. In the runtime the parameters and
+arguments are taken out by name, token by token (<code>without_positions</code>
+in src/minimal.rs); the test that compiles the whole runtime for each
+kind of build holds that to being C.</p>
+<h3 id="305-only-what-the-program-uses">30.5 Only what the program uses</h3>
+<p>The runtime and the program are cut into items (a function, a type, a
+variable, a <code>#define</code>, an <code>#include</code>), each asked for by its name.
+Starting from the statements at the top of the program, every item
+that is named is kept, and every item those name, until nothing new is
+named. The rest is not written. A header is kept when one of the names
+it brings is used. Comments between items are dropped, since they
+explain the runtime across all its builds; comments inside a function
+stay with it. A function is declared ahead only if something written
+before it names it.</p>
+<p><strong>Why not leave it to the C compiler.</strong> It already does this for the
+machine code: an unused <code>static</code> function is not in the program of any
+build, which is why the program shrinks much less than the C (30.11).
+What was asked for is the file: C that can be read, reviewed, and
+carried to another project.</p>
+<p><strong>Why the program's own unused functions go too.</strong> One rule, "what the
+program uses". Every function Zeno writes is <code>static</code>, so nothing
+outside the file could have called it.</p>
+<p><strong>Why by name, and not with a C parser.</strong> The runtime is ours and is
+written one way. Three things hold the cutting to its word: a unit
+test gives the whole minimal runtime of each kind of build to the C
+compiler; <code>tools/minimal.py</code> reads the C of every build it makes with
+the compiler's warnings on, and a function or variable left in unused,
+or used and not declared, is a failure; and the programs then have to
+run right.</p>
+<p><strong>The marks.</strong> What a minimal build leaves out of the runtime is
+between <code>#ifndef ZENO_MINIMAL</code> and <code>#endif /* ZENO_MINIMAL */</code>, with
+what stands in its place after <code>#else /* ZENO_MINIMAL */</code>. They are
+decided when the C is written, as the marks of <code>ZENO_FIRMWARE</code> are, so
+no built program has them in it, and every other build gets the text
+between them unchanged.</p>
+<h3 id="306-print-is-printf">30.6 <code>print</code> is <code>printf</code></h3>
+<pre><code class="zeno">print(f"{n} is prime")
+print("total", total, "of", len(xs))</code></pre>
+<pre><code>printf("%lld is prime\n", (long long)z_n);
+printf("total %lld of %lld\n", (long long)z_total, (long long)z_xs-&gt;len);</code></pre>
+<p>Words written in the program go into the format. A whole number is
+<code>%lld</code>, text and a bool are <code>%s</code>, and <code>print</code> of words alone is <code>puts</code>.
+<code>{n:5}</code>, <code>{n:&lt;5}</code>, <code>{n:05}</code> and <code>{x:8.2f}</code> are <code>printf</code>'s own. A float
+is <code>%s</code> of <code>zeno_float_text(x, (char[64]){0})</code>, which writes it into
+bytes of the statement's own, because <code>printf</code> has no format for "the
+fewest digits that read back as the same float". <code>{n:x}</code> and
+<code>{reg:08b}</code> are written the same way by <code>zeno_radix_text</code>, and a
+quantity is <code>%s ms</code>. What <code>printf</code> would print differently is left to
+the runtime, and shown with <code>%s</code>: text lined up to a width (Zeno
+counts characters, <code>printf</code> bytes), <code>^</code>, a float filled with zeros
+(<code>printf</code> does not fill <code>inf</code>), and a list, a dict or an object.</p>
+<p><strong>Why.</strong> <code>print</code> in every other build turns each value into text first,
+and text takes memory, so <code>print(n)</code> brought an allocator into a
+program that otherwise has none. With <code>printf</code>, a program of numbers
+has no runtime in it: <code>examples/primes.zeno</code> is 100 lines of C, and
+hello is one <code>puts</code>.</p>
+<p><strong>What it costs, measured.</strong> <code>printf</code> is a large function. On Linux a
+program whose <code>print</code> never ran it before has about 250 KB more of the
+C library in memory while it runs (<code>ring</code>: 1,564 KB to 1,812 KB):
+pages of the library that nothing had touched. What the program
+itself asks for goes down (30.11). On a board nothing is paged, and
+the function is in the image of the checked build as well, which
+writes its error messages with <code>fprintf</code>; there the cost is the stack
+<code>printf</code> uses while it runs. A program that prints words alone gets
+<code>puts</code>, and has no <code>printf</code> in it at all.</p>
+<h3 id="307-statements-the-short-way-and-what-stays-as-it-was">30.7 Statements the short way, and what stays as it was</h3>
+<p><code>x = (x + 1);</code> is written <code>x += 1;</code>, and <code>return (a * b);</code> is <code>return a
+* b;</code>. The emitter puts every operation in brackets so that what is
+around it cannot change its meaning; around a whole statement nothing
+is left that could (<code>tidy</code> in src/emit_c.rs). The statements at the
+top of the program are the body of <code>main</code>, unless the program has a
+collector in it, which has to find the program's variables on the
+stack below <code>main</code> (docs/memory.md).</p>
+<p><strong>What stays.</strong> Names keep their <code>z_</code>: a Zeno program may call a
+variable <code>printf</code>, <code>main</code> or <code>int</code>. A whole number is still <code>int64_t</code>,
+because that is what an int is in Zeno. A temporary is still written
+where two values have to be worked out in the order Zeno gives them. A
+list still holds <code>zeno_slot</code>s and not an array of <code>int64_t</code> (30.12).</p>
+<h3 id="308-the-c-compiler-is-asked-for-a-small-program">30.8 The C compiler is asked for a small program</h3>
+<p><code>-Os</code> in place of <code>-O2</code>. With <code>--fast</code> as well it is <code>-O3
+-fno-math-errno</code>, since that was asked for by name.</p>
+<h3 id="309-what-it-goes-with">30.9 What it goes with</h3>
+<p>Every kind of build that writes C: the collector, <code>--owned</code>,
+<code>--no-collector</code>, <code>--firmware</code>, and <code>--memory</code> and <code>--fast</code> beside
+them. <code>--release</code> adds nothing to it. <code>--llvm</code>, <code>--web</code> and <code>--target</code>
+refuse it with a sentence that says why.</p>
+<p><strong>Why not LLVM.</strong> Nobody reads the IR, so the half of this that is for
+a reader has no reader there, and the half that is for the machine
+<code>--fast --llvm</code> already does.</p>
+<p><strong>The smallest.</strong> <code>--minimal --no-collector</code> or <code>--minimal --owned</code>. A
+program that makes a list has to free it somehow, and with the
+collector that is about 500 lines of C that no option can make small.</p>
+<h3 id="3010-how-it-is-held-to-its-word">30.10 How it is held to its word</h3>
+<p><code>tools/minimal.py</code> builds every program of the check of the targets
+(24.9: the examples, the corner programs, every sample of the book)
+both ways for each of the four kinds of build, and the two must print
+the same, end the same way, and stop with the same message. A program
+that a check stops has no defined result in a minimal build, so it is
+found and left out: the C of the checked build is given a line that
+writes a mark in <code>zeno_fail</code> and <code>zeno_bug</code>, where every check ends.
+On 2026-11-18: 213, 193, 193 and 210 programs for the four kinds, all
+the same, and 17 to 20 left out for each. It runs on GitHub on a push
+that changes the C backend (.github/workflows/minimal.yml), on Linux
+with gcc and on macOS with clang.</p>
+<h3 id="3011-what-it-buys-measured">30.11 What it buys, measured</h3>
+<p><code>python3 tools/minimal.py --sizes</code> makes the table in docs/minimal.md.
+In short, for the examples:</p>
+<ul>
+<li><strong>The C</strong> is 23 lines for hello, about 100 for a program of numbers,
+  and 300 to 1,000 for a program with lists, objects and text, from
+  about 3,000 every time. Over all the programs of the check it is 7%
+  of the bytes with no collector and 14% with one.</li>
+<li><strong>The program</strong> shrinks less, because the C compiler never put an
+  unused function in it. Its code and constants (<code>text</code>, as <code>size</code>
+  counts it) are a quarter to a third smaller for most of the examples:
+  <code>ring</code> 8.1 KB to 4.5 KB with no collector, <code>words</code> 16.5 KB to 12.8
+  KB. At the ends, <code>blink</code> loses 6% (it had almost nothing to lose) and
+  <code>primes</code> 82%, 11.4 KB to 2.1 KB. The file on disk moves in steps of
+  4 KB and often does not move at all.</li>
+<li><strong>Memory.</strong> What the program holds from start to end changes little,
+  unless the program stops needing the pool (<code>primes</code>: 34.8 KB to 0.6
+  KB). What it asks for while it runs goes down wherever <code>print</code> made
+  text: <code>thermostat</code> 1,360 bytes to 240.</li>
+</ul>
+<h3 id="3012-left-for-later">30.12 Left for later</h3>
+<ul>
+<li>A list of whole numbers as an array of <code>int64_t</code>, and an object's
+  fields read without a slot, which is what a person would write.</li>
+<li>A top-level <code>let</code> of a number as <code>static const</code>, with its value.</li>
+<li><code>%</code> as C's own where both sides are known not to be below zero.</li>
+<li>A <code>print</code> for a board with no <code>printf</code>.</li>
+<li>The uncaught error's place, for a build that wants only that back.</li>
+</ul>
+<h2 id="31-a-field-with-the-name-of-a-type-in-c">31. A field with the name of a type, in C</h2>
+<p>Found while <code>zeno build --minimal</code> was checked (2026-11-18):
+<code>tools/targets/edge-names.zeno</code> ran with <code>zeno run</code> and every
+<code>--target</code>, and <code>zeno build</code> wrote C for it that the C compiler
+refused.</p>
+<h3 id="311-the-parameter-steps-aside-and-the-field-keeps-its-name">31.1 The parameter steps aside, and the field keeps its name</h3>
+<p>A class may have a field with the name of a class or an enum:</p>
+<pre><code class="zeno">class point {
+    point: int
+}</code></pre>
+<p>Zeno has no rule against it, and <code>zeno run</code> runs it. In C a class is a
+type <code>z_point</code>, and the function that makes an object had one parameter
+for each field, called as the field is in the struct: <code>z_point</code>. Inside
+that function the parameter hid the type, so <code>z_point *self</code> was read
+as a multiplication. A field named as another class broke the list of
+parameters itself, and a case of an enum that carries such a value
+broke the same way. <code>edge-names.zeno</code> has it by another road: its class
+<code>new_</code> is <code>z_new</code> in C, which is what its field <code>new</code> is.</p>
+<p><strong>Decision.</strong> Such a parameter is <code>z2_point</code>. The field stays
+<code>z_point</code> in the struct, where C keeps the names of fields apart from
+the names of types, so <code>self-&gt;z_point = z2_point;</code> is right.</p>
+<p><strong>Why <code>z2_</code>.</strong> It is how a second variable of one name is already
+written (<code>z2_x</code>), so nothing new is to be learned when reading the C.
+And no type can have that name: every type begins with <code>z_</code>.</p>
+<p><strong>Why only where the names meet.</strong> For every program without such a
+field the C is what it was, byte for byte: 2,028 C files compared, the
+363 programs of the corpus built nine ways, and only the nine of
+<code>edge-names.zeno</code> differ. The names of all classes and enums are
+gathered before the first class is written, because the type may be
+written below the class that has the field.</p>
+<p><strong>Why not an error.</strong> "The entire language must be unambiguous and
+intuitive": a name that is right for <code>zeno run</code> and wrong for <code>zeno
+build</code> would be a rule of C showing through. Two classes that C would
+know by one name are still refused (<code>same_in_c</code>), since there a name
+would have to be made up for a type the program prints and compares.</p>
+<h2 id="32-a-try-on-windows-in-c">32. A <code>try</code> on Windows, in C</h2>
+<p>Found while 0.5.2 was got ready (2026-11-18): the test
+<code>a_minimal_build_prints_what_zeno_run_prints_for_a_correct_program</code>
+passed on Linux and macOS and failed on Windows. The program it builds
+stopped at its first caught error and said nothing.</p>
+<h3 id="321-under-mingw-a-try-is-a-plain-jump">32.1 Under MinGW a <code>try</code> is a plain jump</h3>
+<p>A <code>try</code> in C is <code>setjmp</code>, and an error is <code>longjmp</code> back to it (5.5i).
+On Windows <code>setjmp</code> is a macro, and MinGW writes it as
+<code>_setjmp(place, the frame of this function)</code>. <code>longjmp</code> then does not
+only jump. It walks the stack back to that frame with the machinery
+Windows has for the exceptions of C++ (<code>RtlUnwindEx</code>), so that the
+functions it passes can clean up.</p>
+<p>On GitHub's Windows machine, with gcc 15.2 and <code>-Os</code>, that walk failed.
+The program of the test, built with <code>--minimal</code> and the collector,
+ended with the number 0xC0000028 (Windows' "bad stack") where
+<code>int("4x2")</code> is caught. A debugger showed the place: <code>longjmp</code>, then
+<code>RtlUnwindEx</code>, then the stop. The same C built with <code>-O0</code>, <code>-O1</code> and
+<code>-O2</code> ran to its end, and so did five examples with <code>-Os</code>. The same C
+built by gcc 13 ran under Wine at every level.</p>
+<p><strong>Decision.</strong> Under MinGW for x86-64 the runtime says
+<code>_setjmp(place, NULL)</code>. With no frame, <code>longjmp</code> puts the registers
+back and jumps, and walks nothing. Every C build has these lines, and
+they do something only there.</p>
+<p><strong>Why.</strong> A Zeno program has nothing for the walk to do: its C has no
+clean-up code between a <code>raise</code> and its <code>try</code>. The walk can only go
+wrong, and where it went wrong the program could not say so. A plain
+jump is what <code>_setjmp</code> and <code>_longjmp</code> are on Linux and macOS (22.14),
+and what the LLVM build has asked for on Windows since it first ran
+there (12.8). So this makes the C build the same as
+the other, and Windows the same as the other systems.</p>
+<p><strong>Why not find what gcc 15 did.</strong> It was looked for and not found from
+here: no machine at hand has that compiler, and a build on GitHub's
+takes ten minutes. The reason above does not depend on it. Whatever
+made the walk fail, a program that does not walk cannot meet it.</p>
+<p><strong>Why not only with <code>--minimal</code>.</strong> <code>-Os</code> is where it was seen, and
+only <code>--minimal</code> asks for <code>-Os</code>. But the checked build has the same
+<code>setjmp</code> in the same functions, and nothing says <code>-O2</code> is safe by more
+than luck with where the compiler put things. One way to jump, in
+every build.</p>
+<p><strong>What is left as it was.</strong> 32-bit MinGW already asked for no walk
+(<code>_setjmp3(place, NULL)</code> is its macro). Windows on ARM64 has only the
+<code>setjmp</code> that walks, and other compilers on Windows say <code>setjmp</code> in
+their own way, so those keep the macro. The trial workflow now builds
+six programs with <code>--minimal</code> on the machine it tries, and says where
+one that fails stopped.</p>
+<h2 id="33-a-library-written-in-zeno">33. A library written in Zeno</h2>
+<p>6.10 said of the methods of text and lists: "Once modules exist, what
+can be written in Zeno will be." Modules have existed since chapter 7,
+and since then Zeno has gained a VM, a second compiler and fifteen
+other languages to write a program in. A function of the library was
+by now written once for each: <code>math.log2</code> is in <code>builtins.rs</code>, in
+<code>runtime.c</code>, and in thirteen other runtimes. That is why
+<a href="/docs/missing/"><code>missing.md</code></a> puts this first: every small gap of the
+library costs that much, until the library can be written in Zeno.</p>
+<p>This chapter is the way to do it, the first functions written that
+way (6.21 had left them out "until something needs it"), and two
+mistakes that it found. <a href="/docs/library-in-zeno/"><code>library-in-zeno.md</code></a>
+walks through the code.</p>
+<h3 id="331-a-module-that-comes-with-zeno-may-have-a-part-written-in-zeno">33.1 A module that comes with Zeno may have a part written in Zeno</h3>
+<p>The folder <code>library/</code> holds one <code>.zeno</code> file for each such module:
+<code>library/math.zeno</code>, <code>library/random.zeno</code>. The files are kept inside
+the <code>zeno</code> program (<code>src/library.rs</code>), so there is nothing to install
+beside it and nothing to find when a program runs.</p>
+<p><code>math</code> has both kinds of part. <code>math.sqrt</code> is built in, as before, and
+<code>math.hypot</code> is written in Zeno. A program does not see the
+difference: <code>import math</code>, then <code>math.sqrt(x)</code> and <code>math.hypot(x, y)</code>,
+or <code>from math import sqrt, hypot</code>.</p>
+<p><strong>Why inside <code>zeno</code>, and not a folder beside it.</strong> A folder that has
+to be found is a way for it not to be found: a <code>zeno</code> that was copied
+to another machine, a folder of an older version. Every installer
+would have had to carry it. The files are small text.</p>
+<p><strong>Why one module can have both kinds.</strong> <code>hypot</code> belongs with <code>sqrt</code>.
+A second module, <code>math2</code> or <code>mathx</code>, would make the reader learn
+which function lives where, for a reason that is about how Zeno is
+built and not about mathematics.</p>
+<p><strong>Turned down: writing these in Rust and C like the rest.</strong> <code>hypot</code>
+is one line of C. It is also a line in each of fifteen other
+runtimes, each with its own test, and the answers would differ in
+the last digit, because each language has its own <code>hypot</code>. Written in
+Zeno it is the same arithmetic everywhere, so it prints the same
+everywhere, and that is checked by the tests there already are.</p>
+<h3 id="332-the-part-is-joined-like-a-file-of-the-program">33.2 The part is joined like a file of the program</h3>
+<p><code>modules.rs</code> reads the part when a file of the program imports its
+module, gives its names the module's name in front (<code>math.hypot</code>),
+and puts its statements ahead of the program's own. From there on it
+is a file like <code>shapes.zeno</code>: the checker checks it, the interpreter
+and the VM run it, both compilers and every target compile it, and
+none of them was changed for it.</p>
+<p>The part begins with <code>strict</code>, so every type in it is written, as
+every kind of build asks. It may keep things to itself with <code>private</code>.
+It imports the built-in part of its own module (<code>import math</code>, for
+<code>math.sqrt</code>), and nothing else.</p>
+<p>In a message it is named <code>library/math.zeno</code>, with its own line
+numbers, like any file. <code>zeno join</code> shows it, which is a way to read
+the library.</p>
+<p><strong>Why last among the files, and first among the statements.</strong> A place
+in a message is a file's number and a line. The parts are read after
+every file of the program, so the program's files keep the numbers
+they would have had. Their statements still go first: a part uses
+nothing of the program's, and the top of any file may use the part.</p>
+<h3 id="333-only-what-the-program-reaches-is-joined">33.3 Only what the program reaches is joined</h3>
+<p>Of a part's functions, the program gets the ones its files name, the
+ones those name, and so on. A program that calls <code>math.gcd</code> has
+<code>math.gcd</code> in it, and not <code>hypot</code>, <code>sinh</code> or <code>clamp</code>.</p>
+<p>What is not a function comes whole when anything of the part is
+reached: the four numbers of <code>random</code>.</p>
+<p><strong>Why.</strong> A program for a board pays for every function in it. A
+library that came whole would be a reason to avoid it there, and
+firmware is what Zeno is for. The C compiler would drop most unused
+functions if asked, but the fifteen targets would not, and <code>zeno
+build</code> shows its C to be read.</p>
+<p><strong>How.</strong> The stage that gives names their full names already visits
+every use of a name. It now also notes which full names each function
+of a part uses, and <code>Loader::join</code> follows those from what the
+program's own files name.</p>
+<h3 id="334-a-program-that-names-nothing-of-a-part-is-the-program-it-was">33.4 A program that names nothing of a part is the program it was</h3>
+<p>A file that spells none of the names a part offers cannot be using
+it, and the part is then not read at all. If a file does spell one
+(<code>let clamp = 3</code>) and turns out not to mean the part's, the part is
+taken off the end of the files again. Either way the joined program
+is, to the last statement, what it was before parts existed.</p>
+<p><strong>Why it matters.</strong> "Nothing existing may change" is how every
+feature since 0.1 has been added. Here it holds by construction for
+every program that was accepted before: <code>math.hypot</code> and <code>import
+random</code> were both refused. <code>tools/minimal.py</code> and the test
+<code>a_program_that_names_nothing_of_a_part_is_the_program_it_was</code> hold
+it there.</p>
+<p><strong>The one thing that does change</strong>, as for <code>json</code>, <code>web</code> and <code>python</code>
+before it (26.11): <code>random</code> is now the name of a module that comes
+with Zeno, so a file of a program called <code>random.zeno</code> can no longer
+be imported under that name.</p>
+<h3 id="335-a-part-means-the-names-that-come-with-zeno">33.5 A part means the names that come with Zeno</h3>
+<p>A program may give <code>abs</code>, <code>len</code> or <code>max</code> a meaning of its own: they
+are names, and not words of the language. Joined to such a program,
+a part that says <code>abs(x)</code> would call the program's <code>abs</code>. What
+<code>math.hypot</code> does would then depend on who calls it.</p>
+<p>Two things keep that from happening.</p>
+<ol>
+<li><strong>A part uses no such name where it can do without.</strong> The part of
+   <code>math</code> has its own private <code>size</code> in place of <code>abs</code>. <code>random</code>
+   keeps its four numbers as plain whole numbers and cuts them to 32
+   bits with <code>&amp; 4294967295</code>, so it needs no <code>u32.wrap</code>.</li>
+<li><strong>Where it cannot, the program is told.</strong> <code>random.pick</code> needs the
+   length of a list, and <code>len</code> is the only way to ask. A program that
+   has a <code>len</code> of its own and reaches <code>pick</code> is refused, at its <code>len</code>:
+   "this program uses <code>random.pick</code>, which is written in Zeno and uses
+   the <code>len</code> that comes with Zeno. So the program cannot give <code>len</code> a
+   meaning of its own here. Give this one another name". A program
+   that does not reach <code>pick</code> keeps its <code>len</code>.</li>
+</ol>
+<p><strong>Why a refusal, and not a fix.</strong> The fix is a way for a part to say
+"the <code>len</code> that comes with Zeno" that nothing can hide. That is a
+change to how every engine looks a name up, and it is worth making
+once, for the files of a program as well: an imported file has the
+same trouble today, and is refused the same way (7.7). Until then
+the refusal is honest, rare, and can be lifted without changing any
+program.</p>
+<h3 id="336-import-random-goes-at-the-top-of-a-file">33.6 <code>import random</code> goes at the top of a file</h3>
+<p>A module that comes with Zeno can be imported inside a function,
+where the import of a file cannot (7.5). A part written in Zeno is joined to the file, as a file of the
+program is, so its import belongs where theirs do. <code>import random</code>
+inside a function is refused with a message that says so. <code>import
+math</code> inside a function still gives the built-in part, and
+<code>math.hypot</code> there says to move the import to the top.</p>
+<h3 id="337-what-math-gained">33.7 What <code>math</code> gained</h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>math.hypot(x, y)</code></td>
+<td>the distance of the point (x, y) from (0, 0)</td>
+</tr>
+<tr>
+<td><code>math.sinh(x)</code>, <code>math.cosh(x)</code>, <code>math.tanh(x)</code></td>
+<td>the hyperbolic functions</td>
+</tr>
+<tr>
+<td><code>math.gcd(a, b)</code></td>
+<td>the greatest whole number that divides both</td>
+</tr>
+<tr>
+<td><code>math.clamp(value, low, high)</code></td>
+<td>the value, kept between the two</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>hypot</code> takes floats.</strong> <code>math.hypot(3, 4)</code> is refused, with the
+message every function written in Zeno gives: write <code>3.0</code>. <code>math.sqrt</code>
+takes a whole number because the checker has a rule for it by name. A
+function written in Zeno has the rules of the language and no others,
+and "an int does not become a float by itself" is one of them.</p>
+<p><strong><code>hypot</code> is the root of the sum of the squares, and exact where that
+is.</strong> <code>math.hypot(3.0, 4.0)</code> is <code>5.0</code>. Sides whose squares would not
+fit in a float are first multiplied by 2<strong>-600, and tiny ones by
+2</strong>600, which changes no digit of a float. <em>Turned down:</em> dividing
+by the longer side, which is the usual way and gives 13.000000000000002
+for (5.0, 12.0).</p>
+<p><strong><code>sinh</code> near zero is a series.</strong> <code>(e**x - e**-x) / 2</code> takes one
+number from another that is nearly equal, and loses most of its
+digits. Below 0.25 the first six terms of the series are used. The
+three functions are made from <code>math.exp</code>, so their last digit is the
+machine's <code>exp</code>'s, as <code>exp</code>'s own is.</p>
+<p><strong><code>gcd</code> is never negative, and <code>gcd(0, 0)</code> is 0</strong>, as in Python, C++
+and Go.</p>
+<p><strong><code>clamp</code> is written once for every type that <code>&lt;</code> compares</strong>: whole
+numbers, floats, quantities in one unit, text. The three are of one
+type. The value is held against <code>low</code> first, so with <code>low</code> above
+<code>high</code>, which is a mistake in the program, the answer is <code>low</code> for a
+value below it and <code>high</code> otherwise. <em>Turned down:</em> an error for that
+case, as Rust and Java give. A function written in Zeno that raises
+must say <code>raises</code>, and then every <code>clamp</code> in every program would need
+a <code>try</code>.</p>
+<h3 id="338-random">33.8 <code>random</code></h3>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>What it gives</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>random.between(low, high)</code></td>
+<td>a whole number from <code>low</code> to <code>high</code>, both included</td>
+</tr>
+<tr>
+<td><code>random.number()</code></td>
+<td>a float from 0.0 up to 1.0, never 1.0</td>
+</tr>
+<tr>
+<td><code>random.pick(items)</code></td>
+<td>one of the items of a list</td>
+</tr>
+<tr>
+<td><code>random.seed(n)</code></td>
+<td>starts the numbers again from <code>n</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>The same numbers on every run, until the program seeds.</strong> A program
+that never calls <code>seed</code> gets the numbers of <code>random.seed(0)</code>.</p>
+<p><em>Why.</em> A test that fails must fail again when it is run again. A
+simulation is compared with yesterday's. A board has nothing to make
+a first number from. And it is one rule for <code>zeno run</code>, a compiled
+program and every target, where "different each time" would be
+fifteen ways of asking a machine for something unpredictable. C does
+the same. Python, JavaScript and Go do not, and a game written in
+Zeno has to seed itself. It has nothing to seed from yet: the time of
+day is in <a href="/docs/missing/"><code>missing.md</code></a>, and <code>random.seed</code> of it will be
+the line to write.</p>
+<p><em>This cannot be changed later</em> without changing what programs print,
+so it is decided now and not left open.</p>
+<p><strong>Why sfc32.</strong> It needs four whole numbers of 32 bits, additions,
+shifts and one <code>^</code>: no multiplication and no division, so it is quick
+on a processor that has neither. It passes the usual tests of
+randomness, which the short generators that C libraries use do not.
+It is written with nothing but operators, so it is the same on every
+engine. It is not for keys or passwords, and the file says so.</p>
+<p><strong><code>between</code> includes both ends</strong>, so a die is <code>between(1, 6)</code>. The
+ends can be given in either order. Every number is as likely as any
+other: bits are drawn under a mask that just covers the span, and a
+draw above it is thrown away, where the short way (<code>bits % span</code>)
+makes the low numbers come up a little more often. <code>high - low</code> must
+fit in an int, or the subtraction is an OverflowError like any other.</p>
+<p><strong><code>number</code> has 53 bits</strong>, made from two draws as Python makes it, so
+every float it can give is as likely as any other.</p>
+<p><strong><code>pick</code> of an empty list is an IndexError</strong>: there is no item to
+give.</p>
+<p><strong>Left out for now.</strong> <code>shuffle</code>, which takes items out of a list it
+was only lent (5.15e). A seed from the machine. Numbers that follow
+a bell curve.</p>
+<h3 id="339-two-mistakes-this-found">33.9 Two mistakes this found</h3>
+<p><strong>Two files could not both import a module that comes with Zeno.</strong>
+<code>main.zeno</code> and <code>shapes.zeno</code> each say <code>import math</code>. Joined, the
+program said it twice, and the checker answered "<code>math</code> is already
+declared in this block". No example had two such files. Now, as the
+files are joined, an import that an earlier file already made is
+left out. Twice in one file is still refused. The part of <code>math</code>
+imports <code>math</code> itself, so every program that used it would have met
+this.</p>
+<p><strong>A function of an imported file, used as a value, did not build.</strong>
+<code>let f = shapes.area</code> ran under <code>zeno run</code>, and <code>zeno build</code> wrote
+<code>zeno_wrap_shapes.area</code>, which is not a name in C. The wrapper is now
+named from the function's name in C, <code>zeno_wrap_z_shapes_area</code>. A
+function of the first file keeps the name it had, so the C of every
+program that built before is unchanged. <code>[1.0, 2.0].map(math.sinh)</code>
+is how it was found.</p>
+<p><strong>One thing seen and left.</strong> A file can use <code>math</code> without importing
+it, when another file of the program does: the joined program has
+one set of names. It is the other side of the first mistake, and
+mending it means the checker knowing which file a line is in.</p>
+<h3 id="3310-what-can-be-written-this-way-next">33.10 What can be written this way next</h3>
+<p>What is only arithmetic and control: <code>factorial</code>, a search in a
+sorted list, a queue. JSON in a compiled program (18.5) is text and
+lists, and can be.</p>
+<p>What cannot: anything that asks the machine. <code>program.exit</code>, the
+environment and the time of day need each engine. And the methods of
+text and lists stay built in, for the reason of 6.10: they are called
+as <code>xs.insert(...)</code>, and they take items out of a list they were lent.</p>
   <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>

@@ -421,14 +421,10 @@ The short way to need it is by its name:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>package logger
 
 needs units at &quot;v1.2.0&quot;</code></pre>
-<p>The name is looked up in the <em>registry</em>: a list that says, for
-each name, which repository the package is and which commit of it each
-version is. <code>zeno search</code> shows what the registry has, and
-under each package the line to write:</p>
-<p><span><em>The registry is on its way and not yet released: the line
-with only a name, <code>zeno search</code> and <code>zeno publish</code>
-are in Zeno built from its source today, and in the release after
-0.5.1.</em></span></p>
+<p>The name is looked up in the <em>registry</em>, which is new in Zeno
+0.5.2: a list that says, for each name, which repository the package is
+and which commit of it each version is. <code>zeno search</code> shows
+what the registry has, and under each package the line to write:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno search lengths
 1 package in the registry https://github.com/zeno-src/packages:
 

@@ -462,209 +462,250 @@ href="math.html#ch-math">24</a>)</td>
 class="math inline"><em>e</em></span> and logarithms</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><code>hypot(x, y)</code></td>
+<td style="text-align: left;">the distance of the point (x, y) from (0,
+0)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>sinh(x)</code>,
+<code>cosh(x)</code>, <code>tanh(x)</code></td>
+<td style="text-align: left;">the hyperbolic functions</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>gcd(a, b)</code></td>
+<td style="text-align: left;">the greatest whole number that divides
+both</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>clamp(value, low, high)</code></td>
+<td style="text-align: left;">the value, kept between the two</td>
+</tr>
+<tr class="even">
+<td colspan="2"
+style="text-align: left;"><code>import random</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>between(low, high)</code></td>
+<td style="text-align: left;">a whole number from <code>low</code> to
+<code>high</code>, both included</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>number()</code></td>
+<td style="text-align: left;">a float from 0.0 up to 1.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>pick(items)</code></td>
+<td style="text-align: left;">one of the items of a list</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>seed(n)</code></td>
+<td style="text-align: left;">starts the numbers again from
+<code>n</code></td>
+</tr>
+<tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import time</code> (<a
 href="units.html#ch-units">17</a>)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>sleep(t)</code></td>
 <td style="text-align: left;">waits; <code>t</code> has a unit of
 time</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>now()</code></td>
 <td style="text-align: left;">a clock that only goes forward, in
 <code>ms</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td colspan="2" style="text-align: left;"><code>import board</code> (<a
 href="board.html#ch-board">27</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>led</code></td>
 <td style="text-align: left;">the pin of the LED</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>pin(n)</code></td>
 <td style="text-align: left;">the pin with that number</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>register(T, address)</code></td>
 <td style="text-align: left;">a register of size <code>T</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>p.on()</code>, <code>off()</code>,
 <code>toggle()</code>, <code>is_on()</code>, <code>number</code></td>
 <td style="text-align: left;">what a <code>Pin</code> does</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>r.read()</code>,
 <code>r.write(v)</code>, <code>r.address</code></td>
 <td style="text-align: left;">what a <code>Register</code> does, inside
 <code>unsafe</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td colspan="2" style="text-align: left;"><code>import files</code> (<a
 href="reading-writing.html#ch-reading-writing">23</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>read(path)</code></td>
 <td style="text-align: left;">the whole file, as text</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>write(path, text)</code>,
 <code>append(path, text)</code></td>
 <td style="text-align: left;">writes, or adds to the end</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>exists(path)</code></td>
 <td style="text-align: left;"><code>bool</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>remove(path)</code></td>
 <td style="text-align: left;">removes the file</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import program</code>
 (<a href="reading-writing.html#ch-reading-writing">23</a>)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>arguments()</code></td>
 <td style="text-align: left;">the words after the file</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import json</code> (<a
 href="reading-writing.html#ch-reading-writing">23</a>)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>parse(text)</code></td>
 <td style="text-align: left;">the value JSON text describes;
 <code>ValueError</code> if it is not JSON</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>write(value)</code></td>
 <td style="text-align: left;">a value, or an object field by field, as
 JSON on one line</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td colspan="2" style="text-align: left;"><code>import web</code> (<a
 href="web.html#ch-web">34</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>element(selector)</code></td>
 <td style="text-align: left;">the first element that answers to it</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>elements(selector)</code></td>
 <td style="text-align: left;">every one, as a list</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>create(tag, text)</code></td>
 <td style="text-align: left;">a new element, not yet on the page</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>after(t, f)</code></td>
 <td style="text-align: left;">call <code>f</code> once, <code>t</code>
 later; gives a <code>Timer</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>every(t, f)</code></td>
 <td style="text-align: left;">call <code>f</code> every <code>t</code>;
 gives a <code>Timer</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>timer.stop()</code></td>
 <td style="text-align: left;">call off what it was waiting to do</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>on_key(f)</code></td>
 <td style="text-align: left;">call <code>f</code> with the name of each
 key pressed</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>save(name, text)</code></td>
 <td style="text-align: left;">keep text for the next visit</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>load(name)</code>,
 <code>forget(name)</code></td>
 <td style="text-align: left;">the text kept, or <code>none</code>; keep
 it no more</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>fetch(address, f)</code></td>
 <td style="text-align: left;">ask the network;
 <code>f(status, body)</code> gets the answer</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>post(address, text, f)</code></td>
 <td style="text-align: left;">send text; <code>f(status, body)</code>
 gets the answer</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.text</code>,
 <code>e.value</code></td>
 <td style="text-align: left;">what it shows; what was typed into it</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.on(event, f)</code></td>
 <td style="text-align: left;">call <code>f</code> when that happens to
 it; <code>f</code> may take an <code>Event</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.fire(event)</code></td>
 <td style="text-align: left;">call what <code>on</code> was given,
 now</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.append(c)</code></td>
 <td style="text-align: left;">put <code>c</code> inside it, last</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.remove()</code>,
 <code>clear()</code></td>
 <td style="text-align: left;">take it, or what is in it, off the
 page</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.add_class(c)</code>,
 <code>remove_class(c)</code></td>
 <td style="text-align: left;">give it a class, or take one away</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.has_class(c)</code></td>
 <td style="text-align: left;">whether it has that class</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.show()</code>,
 <code>hide()</code></td>
 <td style="text-align: left;">whether it is shown</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.get(name)</code>,
 <code>set(name, v)</code></td>
 <td style="text-align: left;">an attribute</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.set_style(n, v)</code></td>
 <td style="text-align: left;">the style of this one element</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.get_style(n)</code></td>
 <td style="text-align: left;">a style that was set, or
 <code>none</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.draw_rect</code>,
 <code>draw_circle</code></td>
 <td style="text-align: left;">on a canvas: a filled rectangle or
 circle</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>e.draw_line</code>,
 <code>draw_text</code></td>
 <td style="text-align: left;">on a canvas: a line, or text</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>e.erase()</code></td>
 <td style="text-align: left;">the canvas is empty again</td>
 </tr>
