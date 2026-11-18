@@ -379,6 +379,11 @@ object has one owner, and memory comes from a pool of a fixed size (<a
 href="no-collector.html#ch-no-collector">Building with No
 Collector</a>)</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;"><code>--minimal</code></td>
+<td style="text-align: left;">the least C that runs the program, with no
+checks (the next section; after 0.5.1, and not yet released)</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -399,8 +404,137 @@ $ ./lists
 memory: 12 blocks made (16388 bytes), at most 12320 bytes in use at once, 0 collections, 8 blocks freed without the collector</code></pre>
 <p><a href="memory.html#ch-memory">Memory</a> explains the
 report.</p>
+<h3 class="unnumbered" id="the-least-c"><span class="number">28.6</span>
+The least C</h3>
+<p>The C that <code>zeno build</code> writes keeps every promise Zeno
+makes, and that takes room. Each sum is checked, each index is checked,
+each error can say its line, and the whole runtime stands in front of
+the program in case it is needed: about 3,000 lines of C for a program
+of one line. Once a program is correct, <code>--minimal</code> writes
+the other kind of C: the least that runs it, close to what a person
+would write by hand.</p>
+<div class="zenofile">
+<p>multiples.zeno</p>
+</div>
+<div class="sourceCode" id="cb8" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> total(limit: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> n <span class="kw">in</span> range(limit) {</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> n % <span class="dv">3</span> == <span class="dv">0</span> {</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>            sum += n * <span class="dv">2</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;the total is {total(1000)}&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --minimal multiples.zeno
+Wrote multiples.c
+Built multiples. Run it with ./multiples
+$ ./multiples
+the total is 333666
+$ grep -c &quot;&quot; multiples.c
+44
+$ grep -A18 &quot;^static int64_t z_total&quot; multiples.c
+static int64_t z_total(int64_t z_limit) {
+    int64_t z_sum = 0;
+    int64_t t1 = z_limit;
+    for (int64_t z_n = 0; z_n &lt; t1; z_n++) {
+        if (zeno_mod(z_n, 3) == 0) {
+            z_sum += z_n * 2;
+        }
+    }
+    return z_sum;
+}
+
+int main(void) {
+    printf(&quot;the total is %lld\n&quot;, (long long)z_total(1000));
+    return 0;
+}</code></pre>
+<p>The number after the answer is how many lines the C file has, and the
+rest is the program, whole. <code>n * 2</code> is C’s own
+<code>*</code>, with nothing checking it. <code>print</code> is
+<code>printf</code>. No call ends in a line and a column. Of the
+runtime, one function is left, a few lines above <code>z_total</code> in
+the file: <code>zeno_mod</code>, because <code>-7 % 3</code> is 2 in
+Zeno and <span class="math inline"> − 1</span> in C, and that is not a
+check but what <code>%</code> means.</p>
+<p>What is given up is every check. In a minimal build a mistake does
+what it would do in C:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;"></th>
+<th style="text-align: left;"><code>zeno build</code></th>
+<th style="text-align: left;"><code>zeno build --minimal</code></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">an index out of range</td>
+<td style="text-align: left;"><code>IndexError</code></td>
+<td style="text-align: left;">reads or writes whatever memory is
+there</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">a key the dict does not have</td>
+<td style="text-align: left;"><code>KeyError</code></td>
+<td style="text-align: left;">reads an item that is not there</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a whole number that overflows</td>
+<td style="text-align: left;"><code>OverflowError</code></td>
+<td style="text-align: left;">no defined result</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">a whole number divided by zero</td>
+<td style="text-align: left;"><code>ZeroDivisionError</code></td>
+<td style="text-align: left;">what the processor does; on a computer the
+program is stopped</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a float divided by zero</td>
+<td style="text-align: left;"><code>ZeroDivisionError</code></td>
+<td style="text-align: left;">infinity, or NaN</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>u8(300)</code></td>
+<td style="text-align: left;"><code>ValueError</code></td>
+<td style="text-align: left;">300 goes on as it is</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">an error nothing catches</td>
+<td style="text-align: left;">says what, and the line</td>
+<td style="text-align: left;">says what</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>What is kept is everything a correct program can meet.
+<code>int("ten")</code> still raises a <code>ValueError</code> and a
+file that is not there a <code>FileError</code>, <code>try</code> and
+<code>except</code> work as they did, and the program prints what it
+printed before, to the last digit of a float.</p>
+<p><code>--minimal</code> goes with <code>--firmware</code>,
+<code>--owned</code> and <code>--no-collector</code>. A program that
+makes a list still needs something to free it, and the garbage collector
+is some 500 lines of C that no option makes small, so the smallest C for
+such a program comes from <code>--minimal --no-collector</code>. The
+file gets much smaller, 23 lines for a program that prints one line; the
+program the C compiler makes of it gets a little smaller, since the C
+compiler never put an unused function into it in the first place.</p>
+<div class="why">
+<p>Two readers want two things from the C. While a program is being
+written, the C should stop at the first mistake and say where. When it
+is done and its C is to be read, reviewed or carried into another
+project, every line that is not the program is in the way. So there are
+two builds, and the one that checks is the one you get without asking.
+(Decisions 30.1 to 30.12; <code>docs/minimal.md</code> has the whole
+table and the sizes.)</p>
+</div>
 <h3 class="unnumbered" id="through-llvm"><span
-class="number">28.6</span> Through LLVM</h3>
+class="number">28.7</span> Through LLVM</h3>
 <p><code>zeno build --llvm</code> writes the program in LLVM’s
 intermediate language, the one Clang, Rust and Swift compile through,
 and hands it to <code>clang</code>. The program is the same, and prints
@@ -416,7 +550,7 @@ brings its own optimiser and every processor it knows. <a
 href="inside.html#ch-inside">Inside Zeno</a> shows a piece of
 it.</p>
 <h3 class="unnumbered" id="for-another-processor"><span
-class="number">28.7</span> For another processor</h3>
+class="number">28.8</span> For another processor</h3>
 <p><code>zeno build</code> compiles for the computer it runs on. For a
 microcontroller, take the C file it wrote and give it to the
 microcontroller’s own C compiler, with the board’s header (<a
@@ -430,21 +564,21 @@ know. Zeno’s part ends at a C file that compiles anywhere. (Decision
 5.12c.)</p>
 </div>
 <h3 class="unnumbered" id="what-does-not-compile-yet"><span
-class="number">28.8</span> What does not compile yet</h3>
+class="number">28.9</span> What does not compile yet</h3>
 <p>Nearly the whole language compiles. A few corners do not, and
 <code>zeno build</code> names each one and points at the line, while
 <code>zeno run</code> still runs the program:</p>
 <div class="zenofile">
 <p>inner.zeno</p>
 </div>
-<div class="sourceCode" id="cb10" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">2</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> inner()</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
+<div class="sourceCode" id="cb12" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">2</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> inner()</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build inner.zeno
 error: `zeno build` cannot compile a function inside a function or block yet. `zeno run` can still run this program
  --&gt; inner.zeno:2:5
@@ -455,7 +589,7 @@ error: `zeno build` cannot compile a function inside a function or block yet. `z
 <code>let inner = function() { ... }</code>, does compile. <a
 href="limits.html#app-limits">Appendix G</a> has the full list.</p>
 <h3 class="unnumbered" id="in-another-language-new-in-0.5"><span
-class="number">28.9</span> In another language (new in 0.5)</h3>
+class="number">28.10</span> In another language (new in 0.5)</h3>
 <p><code>zeno build --target</code> writes the program in another
 language: a file you can read, keep, and run with that language’s own
 tools. The languages are <code>js</code> (JavaScript, for Node),
@@ -471,13 +605,13 @@ in the release after 0.5.1.</em></span></p>
 <div class="zenofile">
 <p>area.zeno</p>
 </div>
-<div class="sourceCode" id="cb12" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> math</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> area(r: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> math.pi * r * r</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>print(area(<span class="dv">2.0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb14" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> math</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> area(r: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> math.pi * r * r</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>print(area(<span class="dv">2.0</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --target js area.zeno
 Wrote area.js. Run it with `node area.js`
 $ node area.js
@@ -528,8 +662,10 @@ compiler, and keeps both. The compiled program prints what
 A build is always strict. <code>--llvm</code> goes through LLVM;
 <code>--memory</code>, <code>--firmware</code> and
 <code>--no-collector</code> are for the board. For another processor,
-the C goes to that processor’s compiler. <code>--target</code> writes
-the program in another language instead.</p>
+the C goes to that processor’s compiler. <code>--minimal</code> writes
+the least C for a program that is already correct, with no checks in it.
+<code>--target</code> writes the program in another language
+instead.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -541,6 +677,9 @@ built program on the primes example, with a larger limit.</p></li>
 message the same as <code>zeno run</code>’s?</p></li>
 <li><p>Build with <code>--llvm</code>, open the <code>.ll</code> file,
 and find <code>is_prime</code>.</p></li>
+<li><p>Build the primes example with <code>--minimal</code> and read the
+whole of <code>primes.c</code>. Then read a list past its end in a small
+program, and build that both ways.</p></li>
 <li><p>Build the area example with <code>--target go</code> and
 <code>--target java</code>. Find <code>area</code> in each, and compare
 the two with the Python.</p></li>

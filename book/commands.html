@@ -371,12 +371,21 @@ divided by zero or of a square root below zero, overflow with no defined
 result (as in C), and <code>-O3</code></td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><code>--minimal</code></td>
+<td style="text-align: left;"><code>build</code></td>
+<td style="text-align: left;">the least C that runs the program: no
+check of any kind, only the parts of the runtime the program uses,
+<code>print</code> as <code>printf</code>, and <code>-Os</code> (<a
+href="compiling.html#ch-compiling">Compiling</a>; after 0.5.1, and
+not yet released)</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><code>--llvm</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">write LLVM IR in place of C and hand it to
 <code>clang</code>. Goes with the three options around it</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>--web</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">write a web page that runs the program:
@@ -384,7 +393,7 @@ result (as in C), and <code>-O3</code></td>
 inside, as <code>name.web.html</code> (<a href="web.html#ch-web">A
 Program in a Web Page</a>). Goes with no other build option</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--target</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">write the program in another language:
@@ -395,24 +404,24 @@ href="compiling.html#ch-compiling">Compiling</a>; new in 0.5), and
 after 0.5.1 <code>lua</code>, <code>ruby</code>, <code>dart</code> and
 <code>kotlin</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>--memory</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">the program reports, as it ends, how much
 memory it used (<a href="memory.html#ch-memory">Memory</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--check</code></td>
 <td style="text-align: left;"><code>format</code></td>
 <td style="text-align: left;">change nothing; name the files that are
 not laid out, and fail if there are any</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>--package</code></td>
 <td style="text-align: left;"><code>new</code></td>
 <td style="text-align: left;">make a package, not a program</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--update</code></td>
 <td style="text-align: left;"><code>fetch</code></td>
 <td style="text-align: left;">look every version up again, and not at

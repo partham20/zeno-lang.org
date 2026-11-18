@@ -541,6 +541,11 @@ none.</p>
 <p>Use <code>--fast</code> for a program whose tests pass, when every
 last bit of speed matters; build it the ordinary way while it is being
 written. (Decisions 23.1 and 23.6.)</p>
+<p><code>--minimal</code> is about the C and not about speed. It leaves
+out every check, the ones <code>--fast</code> keeps too, and every part
+of the runtime the program does not use, so that the C file is short
+enough to read whole (<a
+href="compiling.html#ch-compiling">Compiling</a>).</p>
 <p>Memory a program asks for itself with <code>allocate</code> is apart
 from all of these: the collector never looks at it, and the program
 gives it back with <code>free</code> (<a
