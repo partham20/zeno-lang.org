@@ -77,6 +77,23 @@ compiler diagram pulses along the path a program takes, tabs slide to
 show what changed. Nothing fades in just for arriving. Everything stops
 for reduced motion.
 
+## The bar at the top
+
+Five places and a "More": Learn, Examples, Playground, Packages, Docs,
+and behind More the Book, Benchmarks, Decisions, Roadmap and About. Ten
+in a row was too many to read (Partha, 2026-11-18). The five are what
+somebody comes to do; what is behind More is about the project, and the
+footer lists all of it too. Below 58rem there is no menu: the ten are one
+row that slides, because a menu inside a sliding row would be cut off.
+
+## The packages page
+
+Laid out as crates.io, PyPI and npm are: a plain heading that says what
+the place is, then the search box as the biggest thing on the page, then
+the list. A package has a page of its own (`/packages/?p=name`) with the
+line to copy, its versions and where it lives. No tag line (Partha,
+2026-11-18).
+
 ## Avoided on purpose
 
 Gradient text, a coloured word inside a headline, all-caps labels above

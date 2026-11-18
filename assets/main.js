@@ -257,6 +257,29 @@ for (const button of document.querySelectorAll("[data-copy]")) {
   });
 }
 
+// --- "More" in the bar at the top ----------------------------------------------
+// One word that opens on the places about the project. A click opens and
+// closes it; so does Escape, and a click anywhere else closes it.
+
+{
+  const more = document.getElementById("nav-more");
+  const button = more?.querySelector("button");
+  const set = (open) => {
+    more.classList.toggle("open", open);
+    button.setAttribute("aria-expanded", String(open));
+  };
+  button?.addEventListener("click", () => set(!more.classList.contains("open")));
+  document.addEventListener("click", (event) => {
+    if (more && !more.contains(event.target)) set(false);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && more?.classList.contains("open")) {
+      set(false);
+      button.focus();
+    }
+  });
+}
+
 // --- Theme ------------------------------------------------------------------
 
 document.getElementById("theme")?.addEventListener("click", () => {

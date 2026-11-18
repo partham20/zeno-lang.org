@@ -82,8 +82,13 @@ def sample(name, title=None):
 
 # --- Layout ------------------------------------------------------------------
 
-NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Packages", "/packages/"), ("Book", "/book/"), ("Playground", "/playground/"), ("Benchmarks", "/benchmarks/"), ("Docs", "/docs/"),
-       ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
+# The bar at the top has five places and a "More" that opens on the rest.
+# Ten in a row was too many to read (Partha, 2026-11-18): the five are what
+# somebody comes for (learn it, see it, try it, get packages, look it up),
+# and the rest is about the project. On a narrow screen there is no menu:
+# all ten are one row that slides.
+NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Playground", "/playground/"), ("Packages", "/packages/"), ("Docs", "/docs/")]
+NAV_MORE = [("Book", "/book/"), ("Benchmarks", "/benchmarks/"), ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
 
 # The wordmark, "Almost": the name in lowercase strokes, and an o whose ring
 # stops just short of closing, with a dot where it would meet. Letters take
@@ -150,9 +155,14 @@ def add_social(file, path):
 
 
 def layout(path, title, description, body, active=None, home=False):
-    nav = "".join(
-        f'<a href="{href}"{" aria-current=\"page\"" if href == active else ""}>{name}</a>'
-        for name, href in NAV)
+    def links(places):
+        return "".join(
+            f'<a href="{href}"{" aria-current=\"page\"" if href == active else ""}>{name}</a>'
+            for name, href in places)
+    here = ' class="here"' if any(href == active for _, href in NAV_MORE) else ""
+    nav = (links(NAV) + f'<div class="nav-more" id="nav-more"><button type="button"{here} aria-expanded="false" '
+           f'aria-controls="nav-more-list">More{icon("down")}</button>'
+           f'<div class="nav-more-list" id="nav-more-list">{links(NAV_MORE)}</div></div>')
     full_title = title if home else f"{title} · Zeno"
     page = f"""<!doctype html>
 <html lang="en">
@@ -1076,23 +1086,45 @@ def build_packages():
     # Inside a <script>, the one thing that must not appear is its own end.
     data = text.replace("</", "<\\/")
     counted = "1 package" if count == 1 else f"{count} packages"
-    body = f"""{page_head("Packages", "Other people's code, by name.", "The registry lists packages that anybody can use in a Zeno program. Write one line in your <code>zeno.package</code>, run <code>zeno fetch</code>, and import it.", "package")}
+    body = f"""{page_head("The registry", "Zeno packages", "Find a package, add one line to your program, and <code>zeno fetch</code> brings it. Or publish your own.", "package")}
 <section class="pk">
-  <div class="pk-find">
-    <label>{icon("scan")}<input id="pk-search" type="search" placeholder="Search by name, or by what a package is for" aria-label="Search the packages" autocomplete="off" spellcheck="false"></label>
-    <p class="pk-count" id="pk-count" aria-live="polite">{counted}</p>
+  <div class="pk-all" id="pk-all">
+    <div class="pk-find">
+      <label>{icon("search")}<input id="pk-search" type="search" placeholder="Search packages" aria-label="Search the packages by name, or by what a package is for" autocomplete="off" spellcheck="false"></label>
+      <p class="pk-count" id="pk-count" aria-live="polite">{counted}</p>
+      <label class="pk-sort" id="pk-sort-box" hidden>Show <select id="pk-sort"><option value="new">newest first</option><option value="name">A to Z</option></select></label>
+    </div>
+    <div class="pk-empty" id="pk-empty"{"" if count == 0 else " hidden"}>
+      <h2>No packages yet</h2>
+      <p>The registry opened in November 2026, and nothing has been published to it so far. Yours can be the first: <a href="#publish">how to publish</a>.</p>
+    </div>
+    <ul class="pk-list" id="pk-list"></ul>
   </div>
-  <div class="pk-empty" id="pk-empty"{"" if count == 0 else " hidden"}>
-    <h2>No packages yet</h2>
-    <p>The registry opened in November 2026, and nothing has been published to it so far. Yours can be the first: the steps are below.</p>
-  </div>
-  <ul class="pk-list" id="pk-list"></ul>
+  <article class="pk-one" id="pk-one" hidden>
+    <a class="pk-back" id="pk-back" href="/packages/">{icon("back")}All packages</a>
+    <div class="pk-one-head"><h2 id="pk-one-name"></h2><span class="pk-version" id="pk-one-version"></span></div>
+    <p class="pk-one-about" id="pk-one-about"></p>
+    <div class="pk-one-body" id="pk-one-body">
+      <div class="pk-one-main">
+        <h3>Use it</h3>
+        <p>Add this line to the <code>zeno.package</code> of your program, and run <code>zeno fetch</code>.</p>
+        <div class="pk-need"><code id="pk-one-line"></code><button class="pk-copy" id="pk-one-copy" type="button">Copy</button></div>
+        <h3>Versions</h3>
+        <table class="pk-versions"><thead><tr><th>Version</th><th>Published</th><th>Commit</th></tr></thead><tbody id="pk-one-versions"></tbody></table>
+      </div>
+      <dl class="pk-one-facts">
+        <dt>Repository</dt><dd id="pk-one-repository"></dd>
+        <dt>Published by</dt><dd id="pk-one-owner"></dd>
+        <dt>Newest version</dt><dd id="pk-one-dated"></dd>
+      </dl>
+    </div>
+  </article>
   {coming("registry")}
   <noscript><p class="muted">The list is drawn by a script. Without one, read it in the <a href="{REGISTRY}/tree/main/index">registry itself</a>, or run <code>zeno search</code>.</p></noscript>
 </section>
 <section class="pk-how">
   <div>
-    <h2>{icon("download")}Use a package</h2>
+    <h2 id="use">{icon("download")}Use a package</h2>
     <p>A package is named by its name and one exact version. There are no ranges: the version you write is the version you get.</p>
     <ol>
       <li>Add the line to the <code>zeno.package</code> of your program.
@@ -1108,7 +1140,7 @@ print(filters.mean([18.2, 18.9, 19.6]))</code></pre></li>
     </ol>
   </div>
   <div>
-    <h2>{icon("package")}Publish yours</h2>
+    <h2 id="publish">{icon("package")}Publish a package</h2>
     <p>A package stays in your own git repository. The registry records where it is, and which commit each version is.</p>
     <ol>
       <li>Say what it is for, in its <code>zeno.package</code>.
