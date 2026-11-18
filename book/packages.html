@@ -234,8 +234,9 @@ class="number">G</span> What Zeno Does Not Have Yet</a></li>
 class="number">22</span> Packages</h2>
 <p>Modules put one program into several files. A <em>package</em> lets a
 program use files that are not its own: a folder of modules that lives
-somewhere else, beside the program or in somebody else’s git
-repository.</p>
+somewhere else. It may be beside the program, in somebody else’s git
+repository, or in the <em>registry</em>, where a package is found by its
+name alone.</p>
 <h3 class="unnumbered" id="starting-a-program-with-zeno-new"><span
 class="number">22.1</span> Starting a program with zeno new</h3>
 <p><code>zeno new</code> makes a folder with a small program in it, laid
@@ -266,7 +267,7 @@ comments, which say what can be written, and then one line:</p>
 </div>
 <div class="sourceCode" id="cb2" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> weather</span></code></pre></div>
-<p>There are three kinds of line, and that is all the file can say:</p>
+<p>These are the lines there are, and that is all the file can say:</p>
 <div class="center">
 <table>
 <thead>
@@ -287,12 +288,28 @@ style="text-align: left;"><code>needs filters in "../filters"</code></td>
 counted from this file’s folder. Nothing is copied</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>needs units at "v1.2.0"</code></td>
+<td style="text-align: left;">it needs that version of the package the
+registry calls <code>units</code></td>
+</tr>
+<tr class="even">
 <td
 style="text-align: left;"><code>needs units from "address" at "v1.2.0"</code></td>
 <td style="text-align: left;">it needs the package in that git
 repository, at that tag, branch or commit</td>
 </tr>
+<tr class="odd">
+<td
+style="text-align: left;"><code>about "Filters for noisy readings"</code></td>
+<td style="text-align: left;">what the package is for, in one line. A
+package needs it to be published</td>
+</tr>
 <tr class="even">
+<td style="text-align: left;"><code>registry "address"</code></td>
+<td style="text-align: left;">look names up in that registry, and not in
+Zeno’s own</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><code>memory owned</code></td>
 <td style="text-align: left;">how the program frees memory:
 <code>owned</code> (one owner for each value, no collector) or
@@ -399,12 +416,34 @@ uses it, so the same package works in every program, and can be run and
 tested on its own.</p>
 <h3 class="unnumbered" id="other-peoples-packages-zeno-fetch"><span
 class="number">22.4</span> Other people’s packages: zeno fetch</h3>
-<p>A package that somebody else keeps is named by its git repository and
-by one exact version of it:</p>
+<p>A package that somebody else keeps is in a git repository of theirs.
+The short way to need it is by its name:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>package logger
 
-needs units from &quot;https://github.com/someone/zeno-units&quot; at &quot;v1.2.0&quot;</code></pre>
-<p><code>at</code> is a tag, a branch or a commit. There are no ranges
+needs units at &quot;v1.2.0&quot;</code></pre>
+<p>The name is looked up in the <em>registry</em>: a list that says, for
+each name, which repository the package is and which commit of it each
+version is. <code>zeno search</code> shows what the registry has, and
+under each package the line to write:</p>
+<p><span><em>The registry is on its way and not yet released: the line
+with only a name, <code>zeno search</code> and <code>zeno publish</code>
+are in Zeno built from its source today, and in the release after
+0.5.1.</em></span></p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno search lengths
+1 package in the registry https://github.com/zeno-src/packages:
+
+units v1.2.0    Lengths, masses and times that the checker keeps apart
+    needs units at &quot;v1.2.0&quot;
+    https://github.com/someone/zeno-units
+    older: v1.0.0</code></pre>
+<p>The same list, with a box to search it, is at <a
+href="https://zeno-lang.org/packages/"
+class="uri">https://zeno-lang.org/packages/</a>.</p>
+<p>A package that is in no registry is named by its repository:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>needs units from &quot;https://github.com/someone/zeno-units&quot; at &quot;v1.2.0&quot;</code></pre>
+<p>In this line <code>at</code> is a tag, a branch or a commit of that
+repository. In the line with only a name it is a version, which is
+written as the letter v and three numbers. In neither are there ranges
 such as <code>^1.2</code>: the version written is the version used.
 Then, in the program’s folder:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno run main.zeno
@@ -412,28 +451,33 @@ error: the package `units` has not been fetched: there is no file
 `packages/units/zeno.package`. Run `zeno fetch` in the folder of the program
 
 $ zeno fetch
+Asked the registry https://github.com/zeno-src/packages
 Fetched units v1.2.0 (1c4e326) into packages/units
-Fetched prefix main (d4461d9) into packages/prefix
+Fetched prefix v1.0.0 (d4461d9) into packages/prefix
 Wrote zeno.lock
 
 $ zeno run main.zeno
 42.0</code></pre>
-<p>Three things happened.</p>
+<p>Four things happened.</p>
 <ul>
 <li><p><strong>Running never fetches.</strong> <code>zeno run</code>,
 <code>check</code> and <code>build</code> read files and nothing else.
-Only <code>zeno fetch</code> uses the network, with the <code>git</code>
+Only <code>zeno fetch</code> gets packages, with the <code>git</code>
 that is on the machine.</p></li>
+<li><p><strong>The registry was asked once</strong>, for the names that
+had no address. A line that names its repository does not need
+it.</p></li>
 <li><p><strong>What a package needs comes too.</strong>
 <code>units</code> needs <code>prefix</code>, so that was fetched as
 well. All of them go into one folder, <code>packages/</code>, beside the
 program’s <code>zeno.package</code>, and a program has one package of
 each name.</p></li>
-<li><p><strong>zeno.lock was written.</strong> It holds the exact commit
-each package was at. A branch moves, but the next
+<li><p><strong>zeno.lock was written.</strong> It holds the repository
+and the exact commit of each package. A branch moves, but the next
 <code>zeno fetch</code>, here or on another machine, gets the commit in
-the lock. <code>zeno fetch --update</code> looks every version up again
-and writes the lock afresh.</p></li>
+the lock, and asks no registry to find it.
+<code>zeno fetch --update</code> looks every version up again and writes
+the lock afresh.</p></li>
 </ul>
 <p>Keep <code>zeno.package</code> and <code>zeno.lock</code> with the
 program. The folder <code>packages/</code> can be made again from them
@@ -447,8 +491,85 @@ there is no solver to understand. Fetching only when asked means a build
 never depends on the network, which a factory build machine may not
 have. (Decisions 8.4, 8.9 and 8.10.)</p>
 </div>
+<h3 class="unnumbered" id="the-registry-and-publishing-to-it"><span
+class="number">22.5</span> The registry, and publishing to it</h3>
+<p>The registry is not a server. It is a git repository, <a
+href="https://github.com/zeno-src/packages"
+class="uri">https://github.com/zeno-src/packages</a>, with one small
+file for each package. This is the file for <code>units</code>:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>package units
+about &quot;Lengths, masses and times that the checker keeps apart&quot;
+from &quot;https://github.com/someone/zeno-units&quot;
+owner &quot;someone&quot;
+
+version &quot;v1.0.0&quot; commit &quot;0123abc...&quot; dated &quot;2026-11-02&quot;
+version &quot;v1.2.0&quot; commit &quot;9f8e7d6...&quot; dated &quot;2026-11-18&quot;</code></pre>
+<p>The package itself stays in its author’s repository. The registry
+says where that is, and which commit each version is.
+<code>zeno fetch</code> checks out that commit, so a version that has
+been published stays what it was, even if somebody moves the tag
+afterwards.</p>
+<p>To publish a package of your own, it needs three things: a git
+repository of its own that anybody can fetch from, an <code>about</code>
+line in its <code>zeno.package</code>, and a tag on the commit that is
+the version.</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>package filters
+about &quot;Filters for noisy readings&quot;</code></pre>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ git tag v1.0.0
+$ git push origin main v1.0.0
+$ zeno publish
+`filters` v1.0.0 (32a7444) is ready to be published, from https://github.com/someone/zeno-filters
+
+Open this address, signed in to GitHub, and press the button under the form:
+
+    https://github.com/zeno-src/packages/issues/new?template=publish.yml&amp;...
+
+The registry checks the package and answers on that page, most often within a few minutes.</code></pre>
+<p><code>zeno publish</code> changes nothing. It checks the package, and
+what it finds wrong it says, with what to do: a change that is not
+committed, a tag that is not pushed, a <code>needs</code> line that
+points at a folder nobody else would have. When everything is in order
+it gives the address of a form, already filled in. Sending the form is
+the publishing, and the registry does the rest: it fetches the
+repository at the tag, checks it again, writes the package’s file and
+answers.</p>
+<p>Three rules keep the registry something that can be relied on.</p>
+<ul>
+<li><p><strong>A name is small letters</strong>, digits and
+<code>_</code>, 2 to 40 of them, so that <code>Units</code> and
+<code>units</code> can never be two packages.</p></li>
+<li><p><strong>The first to publish a name owns it.</strong> Its later
+versions are taken only from the same repository, asked for by the same
+GitHub account, and you publish only from a repository that is
+yours.</p></li>
+<li><p><strong>A published version never changes.</strong> To change
+something, publish a new version.</p></li>
+</ul>
+<div class="why">
+<p>A registry is usually a server that packages are uploaded to, with
+accounts and tokens of its own. This one needs none of that. It is a
+repository that <code>zeno</code> reads with git, the accounts are
+GitHub’s, and nothing is uploaded, because a package is fetched from
+where it already is. So it costs nothing to keep, and anybody can read
+all of it. (Decisions 27.3, 27.4, 27.10 and 27.11.)</p>
+</div>
+<h4 class="unnumbered" id="a-registry-of-your-own">A registry of your
+own</h4>
+<p>Since a registry is any git repository, a company can keep one for
+packages that are not for the world. A program names it, and every name
+in that program is then looked up there:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>package logger
+registry &quot;https://git.example.com/zeno-packages&quot;
+
+needs units at &quot;v1.2.0&quot;</code></pre>
+<p>Whoever keeps such a registry adds a package to a clone of it with
+<code>zeno registry accept</code>, which is the command Zeno’s own
+registry runs when a form arrives, and then commits and pushes:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno registry accept . https://git.example.com/units v1.2.0 --owner ada
+Accepted units v1.2.0 (9f8e7d6) from https://git.example.com/units
+Wrote index/units and index.json</code></pre>
 <h3 class="unnumbered" id="what-can-go-wrong"><span
-class="number">22.5</span> What can go wrong</h3>
+class="number">22.6</span> What can go wrong</h3>
 <p>Each mistake in a <code>zeno.package</code> is shown with its file
 and line, as a mistake in a program is. A few of the messages:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: this does not say which version of `units` is needed. Add `at` and a tag,
@@ -458,15 +579,21 @@ error: the package in `lib` is called `filters`, not `filter`. Write `needs filt
 
 error: two packages called `b` are needed: the one in `a/b` and the one in `b`.
 A program has one package of each name. Make the `needs` lines agree</code></pre>
+<p>And <code>zeno fetch</code> says what the registry has when it does
+not have what was asked for:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>zeno: the registry has no version `v9.0.0` of `units`. It has v1.2.0 and v1.0.0</code></pre>
 <div class="summary">
 <p><code>zeno new</code> starts a program,
 <code>zeno new --package</code> a package. <code>zeno.package</code>
 names a package and lists what it needs: a folder with <code>in</code>,
-or a git repository and one exact version with <code>from</code> and
+a package of the registry by its name and a version with
+<code>at</code>, or a git repository with <code>from</code> and
 <code>at</code>. An import whose first word is a needed package reads
-that package’s folder. <code>zeno fetch</code> gets git packages into
-<code>packages/</code> and pins them in <code>zeno.lock</code>; nothing
-else touches the network.</p>
+that package’s folder. <code>zeno fetch</code> gets packages into
+<code>packages/</code> and pins them in <code>zeno.lock</code>; running
+and building never touch the network. <code>zeno search</code> lists the
+registry, and <code>zeno publish</code> checks a package and says how to
+ask the registry to take it.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -480,6 +607,13 @@ line, and read the message.</p></li>
 href="testing.html#ch-testing">Testing</a>).</p></li>
 <li><p>Put a package of yours in a git repository, tag it, and need it
 from a program with <code>from</code> and <code>at</code>.</p></li>
+<li><p>Give that package an <code>about</code> line and run
+<code>zeno publish</code> in its folder before the tag is pushed. Read
+what it says, do what it asks, and run it again.</p></li>
+<li><p>Make a registry of your own in a folder
+(<code>git init --bare</code>), take your package into a clone of it
+with <code>zeno registry accept</code>, and need the package by its name
+from a program with a <code>registry</code> line.</p></li>
 </ol>
 </div>
 </article>

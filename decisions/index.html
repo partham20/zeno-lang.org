@@ -39,7 +39,7 @@
 <div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
 <header class="nav">
   <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
-  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/benchmarks/">Benchmarks</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/benchmarks/">Benchmarks</a><a href="/docs/">Docs</a><a href="/decisions/" aria-current="page">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
   <div class="nav-end">
     <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
       <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
@@ -52,12 +52,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="Decisions">
   <h4>Contents</h4>
-  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li><li><a href="#24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</a></li><li><a href="#25-starting-another-program">25. Starting another program</a></li></ul>
+  <ul><li><a href="#the-principles">The principles</a></li><li><a href="#0-what-kind-of-language-zeno-is">0. What kind of language Zeno is</a></li><li><a href="#1-syntax">1. Syntax</a></li><li><a href="#2-numbers-and-operators">2. Numbers and operators</a></li><li><a href="#3-variables-functions-and-data">3. Variables, functions and data</a></li><li><a href="#4-errors">4. Errors</a></li><li><a href="#5-how-it-is-built">5. How it is built</a></li><li><a href="#6-the-standard-library">6. The standard library</a></li><li><a href="#7-programs-in-several-files">7. Programs in several files</a></li><li><a href="#8-packages">8. Packages</a></li><li><a href="#9-editor-support">9. Editor support</a></li><li><a href="#10-what-real-programs-needed">10. What real programs needed</a></li><li><a href="#11-version-01-every-provisional-decision-read-again">11. Version 0.1: every provisional decision, read again</a></li><li><a href="#12-releases">12. Releases</a></li><li><a href="#13-what-writing-the-book-found">13. What writing the book found</a></li><li><a href="#14-a-program-in-a-web-page">14. A program in a web page</a></li><li><a href="#15-installing">15. Installing</a></li><li><a href="#16-a-page-that-does-more">16. A page that does more</a></li><li><a href="#17-what-01-left-taken-up">17. What 0.1 left, taken up</a></li><li><a href="#18-json">18. JSON</a></li><li><a href="#19-a-timer-that-can-be-stopped">19. A timer that can be stopped</a></li><li><a href="#20-the-playground-on-zeno-langorg">20. The playground on zeno-lang.org</a></li><li><a href="#21-sort-with-a-function">21. sort with a function</a></li><li><a href="#22-speed-choosing-how-memory-is-freed-release-and-a-faster-collector">22. Speed: choosing how memory is freed, --release, and a faster collector</a></li><li><a href="#23-04-a-build-as-fast-as-c-and-rust">23. 0.4: a build as fast as C and Rust</a></li><li><a href="#24-05-the-program-written-in-other-languages">24. 0.5: the program written in other languages</a></li><li><a href="#25-starting-another-program">25. Starting another program</a></li><li><a href="#26-the-libraries-of-other-languages">26. The libraries of other languages</a></li><li><a href="#27-the-registry-a-package-by-its-name">27. The registry: a package by its name</a></li></ul>
 </aside>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M7 20h10M5 8h14M5 8l-2.5 6a2.5 2.5 0 0 0 5 0zM19 8l-2.5 6a2.5 2.5 0 0 0 5 0z"/></svg>Design decisions</p>
   <h1>Why Zeno is the way it is</h1>
-  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 488 decisions so far. Ones marked <em>provisional</em> may still change.</p>
+  <p class="lede">Every choice in the language, the reason for it, and what was turned down. 515 decisions so far. Ones marked <em>provisional</em> may still change.</p>
   <p>Every choice in Zeno, and the reason for it. If a choice has no good reason,
 it should not be here; and if a better reason turns up for the opposite
 choice, the choice should change.</p>
@@ -4541,7 +4541,8 @@ modules that lives somewhere else: beside the program, or in somebody
 else's git repository. This section says how a program names the
 packages it needs, how an import finds a module of one, and how
 <code>zeno fetch</code> gets them. The walk through the code is in
-<a href="/docs/packages/"><code>packages.md</code></a>.</p>
+<a href="/docs/using-packages/"><code>using-packages.md</code></a>. Finding a package by its
+name alone came later, in chapter 27.</p>
 <p><strong>Checked against "unambiguous and intuitive".</strong> The project file is
 read aloud as it is written (8.2). A version is one exact thing, never
 a range that something has to solve (8.4). An import still names one
@@ -4634,7 +4635,8 @@ So <code>zeno fetch</code> runs <code>git</code>, and Zeno still links nothing.<
 TLS library, its first dependency. A central registry with short
 names (<code>needs units "1.2"</code>): see above. <em>(Was provisional (11.4): a registry
 could be added later as a third kind of line. The two here would stay
-as they are.)</em></p>
+as they are.)</em> <em>(Added in chapter 27: <code>needs units at "v1.2.0"</code>, and the
+two here are as they were.)</em></p>
 <h3 id="84-a-version-is-one-exact-thing-what-stands-after-at">8.4 A version is one exact thing: what stands after <code>at</code></h3>
 <p><code>at "v1.2.0"</code> is a tag, a branch or a commit, looked for in that
 order. There are no ranges (<code>^1.2</code>, <code>&gt;=1.0</code>), and a <code>zeno.package</code>
@@ -4731,7 +4733,7 @@ are refused when the loader meets them:</p>
 </tr>
 </tbody>
 </table>
-<h3 id="89-only-zeno-fetch-uses-the-network">8.9 Only <code>zeno fetch</code> uses the network</h3>
+<h3 id="89-only-zeno-fetch-uses-the-network-widened-in-277">8.9 Only <code>zeno fetch</code> uses the network <em>(widened in 27.7)</em></h3>
 <pre><code>zeno fetch              in the folder of the program
 zeno fetch --update     look every version up again</code></pre>
 <p><code>zeno run</code>, <code>zeno check</code> and <code>zeno build</code> read files and nothing
@@ -6455,7 +6457,7 @@ it. (5.13, <a href="/docs/sized-ints/"><code>sized-ints.md</code></a>.)</p>
 <tr>
 <td>8.3</td>
 <td>No registry of packages with short names</td>
-<td>Settled for 0.1</td>
+<td>Settled for 0.1. Added since, in chapter 27</td>
 <td>A package is a folder or a git address. A registry could be added as a third kind of <code>needs</code> line, and the two that exist would stay as they are</td>
 </tr>
 <tr>
@@ -9609,6 +9611,401 @@ no other programs.</p>
 <li><code>program.exit(n)</code>: <code>download.zeno</code> can say in words that the
   download failed, and cannot yet end with a number that says so.</li>
 </ul>
+<h2 id="26-the-libraries-of-other-languages">26. The libraries of other languages</h2>
+<p>Partha asked (2026-11-18): "Why should I leave Python?" A program in
+Zeno should be able to use what <code>pip install</code> put on the computer, and
+then the same for "every single language", done "without affecting the
+existing": whatever runs today runs the same, and the rest is there
+only "when we use some specific words, or import something". This
+chapter is the plan and its first part, Python.
+<a href="/docs/python/"><code>python.md</code></a> is the walkthrough.</p>
+<h3 id="261-three-versions-in-the-order-the-languages-allow">26.1 Three versions, in the order the languages allow</h3>
+<ol>
+<li>Python, JavaScript (npm) and Java.</li>
+<li>The other languages with an interpreter of their own: Ruby, PHP,
+   C#, Lua.</li>
+<li>C, Go and Rust.</li>
+</ol>
+<p><strong>Why this split.</strong> The first two groups have a runtime that can load
+a library by its name while it runs, so one way of working serves them
+all: start that runtime beside the program and talk to it (26.2).
+C, Go and Rust have none. A Rust crate is compiled into the program
+that uses it, and its generic functions do not exist until then. For
+those the way in is the C interface: Zeno declares the types of a
+function and calls a compiled library. That is a different piece of
+work, and it belongs to <code>zeno build</code>, which already writes C.</p>
+<p><strong>Why Python first.</strong> It is what was asked for, and its helper is the
+shortest. The other two of the first version use the same lines.</p>
+<h3 id="262-python-runs-beside-the-program-as-a-program-of-its-own">26.2 Python runs beside the program, as a program of its own</h3>
+<p><code>import python</code> does not put Python inside Zeno and does not turn
+Python into Zeno. The first <code>python.module</code> starts the Python that is
+installed, and the two programs talk.</p>
+<p><strong>Why.</strong> Zeno is one file with nothing to install beside it. Python
+inside it would mean finding the Python library of each machine and
+loading it, which differs between Linux, macOS and Windows and
+between one version of Python and the next; a fault inside a library
+written in C would then end Zeno too. Started as a program, any Python
+3 that is on the machine works, with every package it has, and a crash
+there is an error here.</p>
+<p><strong>The cost.</strong> Every field read and every call goes to another program
+and back, some tens of microseconds each. A loop of a million small
+calls is slow; a call that does real work, which is what a library is
+for, does not notice.</p>
+<p><strong>Alternatives rejected.</strong> Python inside Zeno (above). Rewriting
+libraries in Zeno, by hand or by a translator: most of what makes them
+worth having is written in C underneath. Only in <code>--target py</code> builds,
+where the program is Python anyway: <code>zeno run</code> could then not run the
+program, and running is how a program is written.</p>
+<h3 id="263-they-talk-over-a-socket-of-this-machine-so-python-keeps-the-screen">26.3 They talk over a socket of this machine, so Python keeps the screen</h3>
+<p>Zeno listens on a port that only this computer can reach, and hands
+Python the port and a word made up for the run. Python connects, says
+the word, and is listened to. Anything else that connects is hung up
+on.</p>
+<p><strong>Why not the two pipes every program has.</strong> They are Python's
+keyboard and screen. If the conversation used them, a <code>print</code> inside a
+library would be a line of the conversation, a progress bar would have
+no screen to redraw, and <code>input()</code> would read Zeno's questions. Each
+of those can be patched around, and each patch is something a library
+can see through. With a line of their own to talk on, Python's screen
+and keyboard are the user's, as they are when Python is started by
+hand, and as they are for a program that <code>program.run</code> starts (25.4).</p>
+<p><strong>Why JSON, one line each way.</strong> Every language of 26.1 can read and
+write it with what it comes with, and a line can be read by a person
+when something goes wrong.</p>
+<h3 id="264-pythonmodulename-and-from-there-what-is-written-is-what-python-does">26.4 <code>python.module(name)</code>, and from there what is written is what Python does</h3>
+<pre><code class="zeno">let yt = python.module("yt_dlp")
+let downloader = yt.YoutubeDL(options)
+downloader.download([address])</code></pre>
+<p><strong>Why a function, and not <code>import python.yt_dlp</code>.</strong> <code>import a.b</code> is a
+file of the program, <code>a/b.zeno</code>, found and checked before the program
+runs (7.1). A module of Python is found when Python is asked, and may
+not be there. A call that can raise says that; an <code>import</code> that can
+fail at run time would be a second meaning for one word.</p>
+<p><strong>Why nothing more than a dot and brackets.</strong> <code>thing.name</code>,
+<code>thing(...)</code> and <code>thing[...]</code> already mean a field, a call and an
+item. On a value of Python they mean Python's. There is no second way
+to write them and nothing to learn but the library.</p>
+<p><strong>A named argument is a keyword argument</strong>, <code>dict(quiet=true)</code>,
+because that is what it is in both languages.</p>
+<h3 id="265-numbers-and-text-cross-as-themselves-everything-else-stays-where-it-is">26.5 Numbers and text cross as themselves; everything else stays where it is</h3>
+<p><code>none</code>, a bool, an int, a float and a str are the same thing in both
+languages and cannot be changed in place, so a copy is the value.
+Anything else that Python returns stays in Python, and Zeno holds the
+number it is kept under.</p>
+<p><strong>Why a list stays too.</strong> A list can be changed. If
+<code>sys.path.append(folder)</code> ran on a copy of <code>sys.path</code>, Python's list
+would not change, and nothing would say so. Bridges between languages
+that copied lists across have that trap, and the later ones do not
+copy. So <code>append</code> on a list of Python is Python's <code>append</code>, on the one
+list.</p>
+<p><strong><code>python.copy(value)</code> when a list of Zeno is wanted.</strong> It says in the
+program that a copy is made, at the line where it is made.</p>
+<p><strong>What is exact.</strong> Only Python's own <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code> and
+<code>None</code> cross by value, not kinds built on them. A number of a library
+that is not one of these stays in Python, and <code>builtins.float(x)</code>
+makes a float of it. An int too big for Zeno's 64 bits stays as well.</p>
+<h3 id="266-what-zeno-gives-python-is-a-copy">26.6 What Zeno gives Python is a copy</h3>
+<p>A list or dict of Zeno that is passed arrives as a new list or dict of
+Python, with what is in it.</p>
+<p><strong>Why not the same list.</strong> For Python to hold a list of Zeno, Python
+would have to call into Zeno each time it reads an item, and Zeno is
+waiting for Python's answer at that moment. That is the same piece of
+work as a function of Zeno called from Python (26.11).</p>
+<h3 id="267-a-python-value-is-not-a-condition-and-not-a-number">26.7 A Python value is not a condition, and not a number</h3>
+<p><code>if thing { }</code> is refused as it is for any value that is not a bool
+(2.4), and so is <code>thing + 1</code>.</p>
+<p><strong>Why.</strong> Python decides for itself what counts as true: an empty list
+is false, a number is false when it is zero, and a class can say what
+it likes. Zeno has one rule, and a second rule for values that came
+from elsewhere would be the thing the language was made to leave out.
+<code>len(thing) &gt; 0</code> and <code>thing is not none</code> say which test is meant.</p>
+<h3 id="268-an-error-of-python-is-an-error-of-zeno">26.8 An error of Python is an error of Zeno</h3>
+<p>Python's <code>ValueError</code>, <code>IndexError</code>, <code>KeyError</code>, <code>ZeroDivisionError</code>
+and <code>OverflowError</code>, and the kinds built on them, are Zeno's kinds of
+the same names. <code>OSError</code> and its kinds are <code>FileError</code>. Every other
+is an <code>Error</code>. The message begins with Python's name for the error
+when that is not the kind's own name.</p>
+<p><strong>Why.</strong> A program should not have to know which language raised
+<code>ValueError</code> to catch it. And <code>except Error</code> catches everything
+already, with the name in the message for whoever reads it.</p>
+<p><strong>No Python, or no such module, is a <code>FileError</code></strong>, like a program
+that is not installed (25.5): it is the same fact, something that was
+looked for on this computer and is not there.</p>
+<h3 id="269-the-types-are-known-when-the-program-runs-provisional-where-marked">26.9 The types are known when the program runs (provisional where marked)</h3>
+<p>A value from Python has the type <code>json.parse</code> gives (18.1). The
+checker lets it through, and <code>--strict</code> refuses it.</p>
+<p><code>zeno run</code> and <code>zeno test</code> have <code>python</code>, in both engines. <code>zeno
+build</code> in C and LLVM, <code>--firmware</code> and every <code>--target</code> refuse it. In
+a page it is a <code>FileError</code>.</p>
+<p><strong>Provisional:</strong> <code>--target py</code>. A program written out as Python could
+import the module directly, with no helper. It would have to behave as
+<code>zeno run</code> does at every line, which needs the same care as the rest
+of that target.</p>
+<h3 id="2610-which-python">26.10 Which Python</h3>
+<p><code>python3</code>, then <code>python</code>; on Windows <code>python</code>, <code>python3</code>, then <code>py</code>.
+<code>ZENO_PYTHON</code> names one outright. A name that may be something else
+(<code>python</code> can be Python 2, and on Windows a stand-in that only says
+where to get Python) is asked quietly for its version first.</p>
+<p><strong>Why the first on the <code>PATH</code>.</strong> It is the one the user's <code>pip
+install</code> installed into, and the one an active virtual environment
+puts first.</p>
+<h3 id="2611-nothing-changes-for-a-program-that-does-not-ask">26.11 Nothing changes for a program that does not ask</h3>
+<p><code>import python</code> itself starts nothing. Python is started by the first
+<code>python.module</code>, once. A program without the import runs the code it
+ran before: the new kind of value is one more case in places that
+already ask what kind of value they have.</p>
+<p><strong>The one thing that does change.</strong> <code>python</code> is now the name of a
+module that comes with Zeno, so a file of the program called
+<code>python.zeno</code> can no longer be imported under that name, and a package
+cannot have it. It is what happened to <code>json</code> and <code>web</code> when they were
+added, and it is the price of any new module. The message that
+lists the modules has one more name in it.</p>
+<p><strong>How that is held to.</strong> Every test from before passes, with that
+message as the only line changed in them, and before a release the
+speed is compared with the release before, by count and by timed
+rounds (24.29).</p>
+<h3 id="2612-left-for-later">26.12 Left for later</h3>
+<ul>
+<li>A function of Zeno given to Python: progress callbacks, sort keys.</li>
+<li>A name that is a word of Zeno (<code>re.match</code>). For now Python's own
+  <code>getattr</code> reaches it. Whether a word may follow a dot is a question
+  for the whole language, and it was decided once (5.19c).</li>
+<li>A loop that takes items one at a time, for what never ends.</li>
+<li><code>python</code> in a built program, and in <code>--target py</code> (26.9).</li>
+<li>JavaScript and Java, then the rest of 26.1.</li>
+</ul>
+<h2 id="27-the-registry-a-package-by-its-name">27. The registry: a package by its name</h2>
+<p>Partha asked (2026-11-18) for a central place to find packages, as
+crates.io is for Rust and npm for JavaScript. Until now a <code>needs</code>
+line said where a package is: a folder, or a git repository (8.3).
+8.3 turned a registry down for 0.1, and said one could come later as
+a third kind of line with the two others left as they are. This is
+that. <a href="/docs/registry/"><code>registry.md</code></a> is the walkthrough.</p>
+<p><strong>Checked against "unambiguous and intuitive".</strong> The new line is an
+old line with the address left out (27.1). A version is still one
+exact thing, and now it cannot even move (27.2, 27.4). A name is
+looked up in one registry, which the program's own file names
+(27.13). A command that uses the network is one that was typed to do
+that (27.7). And publishing has one step that changes something, and
+it is the registry's, not the one on your machine (27.10).</p>
+<h3 id="271-needs-units-at-v120-a-name-and-a-version">27.1 <code>needs units at "v1.2.0"</code>: a name, and a version</h3>
+<pre><code>needs filters in "../filters"
+needs units from "https://github.com/someone/zeno-units" at "v1.2.0"
+needs units at "v1.2.0"</code></pre>
+<p>The third line names no place. The registry says which repository
+<code>units</code> is, and which commit of it is <code>v1.2.0</code>.</p>
+<p><strong>Why this spelling.</strong> It is the second line without <code>from</code> and its
+address. <code>at</code> means what it meant, and nothing new has to be learned:
+somebody who moves a package into the registry deletes an address
+from the lines that need it. A line with a name and nothing else is
+refused, with both ways to finish it.</p>
+<p><strong>Alternatives rejected.</strong> <code>needs units "1.2"</code> (the first idea, in
+8.3): two texts side by side in the git line would then mean an
+address and a version by their order alone. <code>needs units from
+registry at "v1.2.0"</code>: a word that says what the missing address
+already says. A separate file for registry needs: 8.2 again.</p>
+<h3 id="272-a-version-in-the-registry-is-the-letter-v-and-three-numbers">27.2 A version in the registry is the letter v and three numbers</h3>
+<p><code>v1.2.0</code>. It is a tag of the package's repository, exactly as
+written. No number has a zero in front, so a version has one
+spelling.</p>
+<p><strong>Why the v.</strong> What stands after <code>at</code> is then the same text in the
+git line and in the registry line, and the same text as the tag that
+<code>git tag</code> made. With <code>1.2.0</code> in one line and <code>v1.2.0</code> in the other,
+one version would have two spellings, and somebody would have to
+remember which line takes which.</p>
+<p><strong>Why three numbers and nothing else.</strong> A registry has to say which
+version is the newest, so versions need an order, and three numbers
+have one that everybody knows. <code>main</code> or a commit after <code>at</code> is still
+possible, in the line that names the repository: those are things a
+repository has, not things a registry lists.</p>
+<p><strong>Alternatives rejected.</strong> <code>1.2</code> standing for the newest <code>1.2.x</code>: a
+range under another name, and 8.4 has no ranges. Any tag at all:
+then "the newest version" has no meaning. <code>-rc1</code> and the like: left
+out until somebody needs one.</p>
+<h3 id="273-the-registry-is-a-git-repository-with-one-small-file-for-each-package">27.3 The registry is a git repository with one small file for each package</h3>
+<p>The packages stay in their authors' repositories. The registry holds
+<code>index/&lt;name&gt;</code> for each: its name, what it is for, where it is, who
+published it, and a line for each version with its commit.</p>
+<p><strong>Why.</strong> 8.3 gave four reasons against a registry: a server,
+accounts, uploads, and people taking names. This shape answers the
+first three and leaves the fourth small.</p>
+<ul>
+<li><em>No server.</em> A git repository on GitHub is free to host and is
+  kept running by somebody else. Zeno has no library for encrypted
+  connections (8.3), and needs none: it reads the registry with the
+  <code>git</code> it already uses for every package.</li>
+<li><em>No accounts of its own.</em> Whoever publishes is somebody with an
+  account where the registry is hosted (27.11).</li>
+<li><em>No uploads.</em> A package is fetched from where it already is. The
+  registry never holds anybody's code, so it stays a few hundred
+  bytes a package, and there is nothing to store, scan or pay for.</li>
+<li><em>Names.</em> See 27.11.</li>
+</ul>
+<p>It is also something a reader can understand whole: open the
+repository and read a file.</p>
+<p><strong>Why one file for each package.</strong> Two people who publish at the same
+time change two files, and git joins that by itself. A version is one
+line added to one file, which is what a history of the registry
+should look like.</p>
+<p><strong>Why in Zeno's plain words.</strong> The file is read by the lexer that
+reads <code>zeno.package</code> and <code>zeno.lock</code>, so there is no second reader
+(8.2).</p>
+<p><strong>Alternatives rejected.</strong> A server that packages are uploaded to
+(crates.io, npm, PyPI): the usual shape, and all four of the reasons
+above. An index in git plus archives on a server (crates.io's own
+split): still the server. One big file: every change touches it.</p>
+<h3 id="274-the-registry-names-the-commit-and-a-published-version-never-changes">27.4 The registry names the commit, and a published version never changes</h3>
+<p>The line for a version holds the commit the tag named on the day it
+was published. <code>zeno fetch</code> checks out that commit. It does not ask
+the repository what the tag names today.</p>
+<p><strong>Why.</strong> A tag can be moved, by mistake or on purpose. With the
+commit written down, moving it changes nothing for anybody: the
+version everybody has is the version everybody keeps getting. This
+is what an upload gives a registry with a server, and here it costs
+forty letters. Taking the same version in a second time is refused,
+and the message says so if the tag has moved.</p>
+<p>If the repository no longer has the commit, the fetch stops and says
+that, and uses nothing.</p>
+<h3 id="275-the-lock-line-begins-as-its-needs-line-does-and-with-a-lock-nobody-is-asked">27.5 The lock line begins as its <code>needs</code> line does, and with a lock nobody is asked</h3>
+<pre><code>units at "v1.2.0" from "https://github.com/someone/zeno-units" commit "9f8e7d6..."</code></pre>
+<p><strong>Why this order.</strong> A line of <code>zeno.lock</code> is the <code>needs</code> line it is
+for, without the <code>needs</code>, and then what <code>zeno fetch</code> found. For a
+line with an address that was the commit. For a line with a name it
+is the address and the commit, both from the registry.</p>
+<p><strong>Why the address is in the lock.</strong> So that a fetch with a lock does
+not need the registry. The lock already answers "what exactly is
+built?" (8.10), and where it comes from is part of the answer. A
+program with its lock builds next year, whatever has become of the
+registry.</p>
+<h3 id="276-this-machine-keeps-one-copy-of-the-registry-where-things-are-kept-that-can-be-fetched-again">27.6 This machine keeps one copy of the registry, where things are kept that can be fetched again</h3>
+<p><code>~/.cache/zeno</code> on Linux, <code>~/Library/Caches/zeno</code> on macOS,
+<code>%LOCALAPPDATA%\zeno</code> on Windows, or the folder <code>ZENO_CACHE</code> names.
+Only the newest state is kept. It is brought up to date when a name
+has to be looked up, once in a run.</p>
+<p><strong>Why not in the program's folder</strong>, where <code>packages/</code> is. <code>zeno
+search</code> is run where there is no program yet. And each program would
+fetch its own copy of the same list.</p>
+<p><strong>Why this is not 8.6 again.</strong> 8.6 turned down a file "in a folder
+you may not know is there" that changes what a program means. This
+copy changes nothing: it is a copy of what the registry says, the
+first line <code>zeno fetch</code> prints says the registry was asked, and
+deleting the folder only makes the next fetch get it again.</p>
+<h3 id="277-three-commands-use-the-network-and-each-is-typed-to-do-that-widens-89">27.7 Three commands use the network, and each is typed to do that <em>(widens 8.9)</em></h3>
+<p><code>zeno fetch</code>, <code>zeno search</code> and <code>zeno publish</code>. <code>run</code>, <code>check</code>,
+<code>build</code> and <code>test</code> still read files and nothing else.</p>
+<p><code>zeno search</code> with no network shows the copy from last time, and
+begins by saying that this is what it shows.</p>
+<h3 id="278-about-one-line-that-says-what-a-package-is-for">27.8 <code>about "..."</code>: one line that says what a package is for</h3>
+<p>A new line of <code>zeno.package</code>, at most 120 characters. A package
+needs it to be published, and not before.</p>
+<p><strong>Why.</strong> A list of names tells a searcher nothing. The line is in
+the package's own file, so it travels with the version: the registry
+shows the one of the newest version.</p>
+<p><strong>Alternatives rejected.</strong> Asking for it in the form: then it is in
+the registry and not in the package. The first line of a README: a
+second file with a rule about its first line.</p>
+<h3 id="279-a-name-in-the-registry-is-small-letters-digits-and-_">27.9 A name in the registry is small letters, digits and <code>_</code></h3>
+<p>2 to 40 of them, starting with a letter. Not a word of the language,
+and not a module that comes with Zeno.</p>
+<p><strong>Why small letters.</strong> The registry is a folder of files named after
+packages, and Windows and macOS take <code>Units</code> and <code>units</code> for one
+file. And nobody can publish a <code>Units</code> to be mistaken for somebody
+else's <code>units</code>. A package that is never published may still be
+called what any name of the language may be.</p>
+<h3 id="2710-zeno-publish-checks-and-changes-nothing">27.10 <code>zeno publish</code> checks, and changes nothing</h3>
+<p>It checks the package (the table in <code>registry.md</code>), and ends with
+how to ask the registry: the address of a form, for a registry on
+GitHub, or the line for whoever keeps one that is elsewhere.</p>
+<p><strong>Why it does not do the publishing itself.</strong> To add to a registry,
+<code>zeno</code> would have to hold something that proves who you are: a token
+in a file on your machine, a <code>zeno login</code>, and an encrypted
+connection to send it over. That is a secret to leak and Zeno's first
+dependency. As it is, the only thing that proves who you are is that
+you are signed in to GitHub in your own browser.</p>
+<p>It also keeps the command honest. <code>zeno publish</code> can be run as often
+as you like, at any stage, to see what is still missing.</p>
+<p><strong>Alternatives rejected.</strong> Pushing a branch to a fork of the
+registry and opening a pull request: needs the fork, and GitHub's
+API to open the request. <code>zeno login</code>: above.</p>
+<h3 id="2711-zenos-own-registry-is-asked-by-a-form-on-github-and-the-first-to-publish-a-name-owns-it">27.11 Zeno's own registry is asked by a form on GitHub, and the first to publish a name owns it</h3>
+<p>The form is an issue with two answers: the repository and the
+version. A workflow reads it and runs <code>zeno registry accept</code> (27.12).</p>
+<ul>
+<li><strong>Who is asking</strong> is the account that sent the form. GitHub says
+  so, and it cannot be typed in.</li>
+<li><strong>They must publish their own repository</strong>: one that belongs to
+  that account, or to an organization that shows them as a member.</li>
+<li><strong>The first to publish a name owns it.</strong> Later versions come from
+  the same repository and the same account.</li>
+</ul>
+<p><strong>Why.</strong> This is the answer to "accounts" and to most of "people
+taking names" (8.3). Nobody can publish another person's repository
+under a name they would then own, and nobody can add a version to a
+package that is not theirs. What is left is somebody taking a good
+name for an empty package of their own. No rule stops that at the
+door without a person reading every request, so that is for a keeper
+of the registry to undo when it is reported.</p>
+<p><strong>Why a form and not a pull request</strong> (as Homebrew and winget do).
+A pull request has the asker write the registry's file, which then
+has to be checked line by line, by a program or a person. A form has
+two answers, and the registry writes its own file.</p>
+<p><strong>Provisional.</strong> The form takes repositories on GitHub. A package
+that lives elsewhere is added by a keeper by hand. And an owner is
+one account: handing a package on is a keeper's edit.</p>
+<h3 id="2712-zeno-registry-accept-is-part-of-zeno">27.12 <code>zeno registry accept</code> is part of <code>zeno</code></h3>
+<pre><code>zeno registry accept &lt;folder&gt; &lt;address&gt; &lt;version&gt; --owner &lt;who&gt;</code></pre>
+<p>It fetches the repository at the tag, checks the package, and writes
+<code>index/&lt;name&gt;</code> and <code>index.json</code> in a clone of a registry. It commits
+nothing.</p>
+<p><strong>Why in <code>zeno</code>.</strong> What a package must be to be published is asked
+twice: by <code>zeno publish</code>, of a folder, and by the registry, of what
+the repository really holds. Both ask the same function (<code>fits</code>),
+and both read <code>zeno.package</code> with the one reader there is. A script
+in the registry's repository would be a second reader of that file,
+to keep in step by hand.</p>
+<p><strong>Why it commits nothing.</strong> Who commits, and how, belongs to whoever
+keeps the registry: a workflow for Zeno's own, a person with a
+terminal for a small one.</p>
+<p><strong>Why <code>--owner</code> is a word and not an account.</strong> What an owner is
+depends on where the registry is. The workflow passes the GitHub
+account; a company's registry can pass whatever it calls its people.</p>
+<h3 id="2713-a-program-can-name-another-registry-and-there-is-one-for-each-program">27.13 A program can name another registry, and there is one for each program</h3>
+<pre><code>registry "https://git.example.com/zeno-packages"</code></pre>
+<p>Every name in the program is looked up there, in place of Zeno's
+own. It is the line in the program's own <code>zeno.package</code> that counts,
+as with <code>memory</code>.</p>
+<p><strong>Why.</strong> A company's packages are often not for the world. Since a
+registry is any git repository, one of your own costs nothing.</p>
+<p><strong>Why in the file, and not a setting of the machine.</strong> What <code>needs
+units at "v1.2.0"</code> means would then depend on a variable somebody
+set last year. In the file, whoever reads the program can see where
+its names come from.</p>
+<p><strong>Why one, and not a list to look through in order.</strong> With two
+registries, a name that is in both has two meanings, and which one a
+program gets depends on the order. That is how a package published
+in public under the name of a private one ends up in a company's
+build. One registry for a program, and a name has one meaning.</p>
+<p><strong>Alternatives rejected.</strong> A registry on each <code>needs</code> line. A list
+of registries. An environment variable (<code>ZENO_CACHE</code> is one, but it
+says where a copy is kept, and changes what no program means).</p>
+<h3 id="2714-indexjson-is-the-same-list-for-a-browser-and-the-page-reads-it-there">27.14 <code>index.json</code> is the same list for a browser, and the page reads it there</h3>
+<p><code>zeno registry accept</code> writes <code>index.json</code> beside <code>index</code>: every
+package on a line of its own. zeno-lang.org/packages reads it from
+the registry when the page is opened.</p>
+<p><strong>Why.</strong> A page in a browser cannot run git. And a page that read the
+list when the site was built would be out of date until the site was
+built again, which is a step somebody has to take. This way a
+package is on the page a few minutes after it is published.</p>
+<p><code>zeno</code> itself does not read <code>index.json</code>.</p>
+<h3 id="2715-left-for-later">27.15 Left for later</h3>
+<ul>
+<li>Taking a version out, or marking one as not to be used.</li>
+<li>Handing a package to another owner, and more than one owner.</li>
+<li>The form for packages that are not on GitHub.</li>
+<li>A licence line, and running a package's tests before it is taken.</li>
+<li>Versions before a release (<code>v1.2.0-rc1</code>).</li>
+<li>Saying in the lock which registry a line came from.</li>
+</ul>
   <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/decisions.md">docs/decisions.md</a> in the language repository.</p>
 </article>
 </div>
@@ -9622,7 +10019,7 @@ no other programs.</p>
   <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
   <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
-    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
   </div>

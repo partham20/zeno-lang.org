@@ -234,42 +234,60 @@ for other programs to need, and no <code>main.zeno</code></td>
 folder or a named one</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>zeno search words</code></td>
+<td style="text-align: left;">list the packages of the registry that
+have these words in their name or in what they are for; with no word,
+all of them</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>zeno publish</code></td>
+<td style="text-align: left;">check that the package in this folder is
+ready for the registry, and say how to ask the registry to take it. A
+version after it, <code>zeno publish v1.2.0</code>, says which tag</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>zeno registry accept</code></td>
+<td style="text-align: left;">for whoever keeps a registry: take a
+version of a package into a clone of it (<a
+href="packages.html#ch-packages">Packages</a>)</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>zeno tokens f.zeno</code></td>
 <td style="text-align: left;">show the tokens the lexer finds (<a
 href="inside.html#ch-inside">Inside Zeno</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>zeno parse f.zeno</code></td>
 <td style="text-align: left;">show the syntax tree the parser builds,
 with brackets around every expression</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>zeno join f.zeno</code></td>
 <td style="text-align: left;">show the one program that the file and
 every file it imports are joined into</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>zeno bytecode f.zeno</code></td>
 <td style="text-align: left;">show the bytecode that
 <code>zeno run --vm</code> runs</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>zeno playground</code></td>
 <td style="text-align: left;">write <code>playground.html</code>, a page
 in which Zeno programs are written and run in a browser, with nothing
 installed (<a href="web.html#ch-web">A Program in a Web
 Page</a>)</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>zeno lsp</code></td>
 <td style="text-align: left;">the language server. An editor starts it,
 to show mistakes as you type; you do not run it yourself</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>zeno --version</code></td>
 <td style="text-align: left;">print the version</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>zeno --help</code></td>
 <td style="text-align: left;">print the list of commands and
 options</td>

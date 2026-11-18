@@ -1,0 +1,400 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Using packages: modules from another folder · Zeno</title>
+<meta name="description" content="modules.md put a program into several files. This page lets a program use files that are not its own: a package is a folder of modules that lives somewhere else, beside the program or in somebody else&#x27;s git repository.">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="Using packages: modules from another folder · Zeno">
+<meta property="og:description" content="modules.md put a program into several files. This page lets a program use files that are not its own: a package is a folder of modules that lives somewhere else, beside the program or in somebody else&#x27;s git repository.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/using-packages/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Using packages: modules from another folder · Zeno">
+<meta name="twitter:description" content="modules.md put a program into several files. This page lets a program use files that are not its own: a package is a folder of modules that lives somewhere else, beside the program or in somebody else&#x27;s git repository.">
+<meta name="twitter:image" content="https://zeno-lang.org/og/home.png">
+<meta name="twitter:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/using-packages/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">Book</a><a href="/playground/">Playground</a><a href="/benchmarks/">Benchmarks</a><a href="/docs/" aria-current="page">Docs</a><a href="/decisions/">Decisions</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/" aria-current="page">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/memory-modes/">Choosing how memory is freed</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Using packages: modules from another folder</h1>
+  
+  <p><a href="/docs/modules/"><code>modules.md</code></a> put a program into several files. This page
+lets a program use files that are not its own: a <strong>package</strong> is a
+folder of modules that lives somewhere else, beside the program or in
+somebody else's git repository.</p>
+<p>A package can also be found by its name alone, in the registry. That
+came later and has a page of its own, <a href="/docs/registry/"><code>registry.md</code></a>;
+this page is what the registry is built on. (Zeno as a package for
+apt, Homebrew and the rest is another matter:
+<a href="/docs/packages/"><code>packages.md</code></a>.)</p>
+<pre><code>cargo run -- run examples/thermostat/main.zeno</code></pre>
+<pre><code>read  18.2  smoothed  18.2  heater On
+read  18.9  smoothed  18.5  heater On
+...
+read  23.1  smoothed  22.2  heater Off
+mean 20.44, heater on for 7 of 10 minutes</code></pre>
+<p>Two folders in <code>examples/</code> make this program:</p>
+<pre><code>examples/thermostat/         the program
+    zeno.package             its name, and what it needs
+    main.zeno                the file the program starts in
+    control.zeno             the module `control`, a file of the program
+examples/filters/            a package
+    zeno.package             its name
+    filters.zeno             the module `filters`
+    lowpass.zeno             the module `filters.lowpass`
+    main.zeno                a small program that tries the package</code></pre>
+<p>The decisions are 8.1 to 8.11 in <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="the-project-file">The project file</h2>
+<p>A folder is a package when it has a file called <code>zeno.package</code> in it.
+This is the thermostat's:</p>
+<pre><code># What this program is called, and the packages it needs.
+package thermostat
+
+needs filters in "../filters"</code></pre>
+<p>These are the lines it can have, and that is all the file can say:</p>
+<table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>package thermostat</code></td>
+<td>the name of this package. The first line that is not a comment</td>
+</tr>
+<tr>
+<td><code>needs filters in "../filters"</code></td>
+<td>it needs the package in that folder. The folder is counted from this file's folder. Nothing is copied</td>
+</tr>
+<tr>
+<td><code>needs units from "address" at "v1.2.0"</code></td>
+<td>it needs the package in that git repository, at that tag, branch or commit. <code>zeno fetch</code> gets it</td>
+</tr>
+<tr>
+<td><code>needs units at "v1.2.0"</code></td>
+<td>it needs that version of the package the registry calls <code>units</code> (<a href="/docs/registry/"><code>registry.md</code></a>)</td>
+</tr>
+<tr>
+<td><code>about "Filters for noisy readings"</code></td>
+<td>what the package is for, in one line. A package needs it to be published</td>
+</tr>
+<tr>
+<td><code>registry "address"</code></td>
+<td>names are looked up in that registry, and not in Zeno's own</td>
+</tr>
+<tr>
+<td><code>memory owned</code></td>
+<td>how the program frees memory (<a href="/docs/memory-modes/"><code>memory-modes.md</code></a>)</td>
+</tr>
+</tbody>
+</table>
+<p>A program with no <code>zeno.package</code> is still a program: <code>examples/station</code>
+has none. The file is there from the day the program needs a package.</p>
+<h2 id="importing-from-a-package">Importing from a package</h2>
+<pre><code class="zeno">import filters              # filters.zeno in the package's folder
+import filters.lowpass      # lowpass.zeno in the package's folder
+import control              # control.zeno, a file of the thermostat
+
+let smooth = filters.lowpass.start(0.4, readings[0])
+print(filters.mean(readings))</code></pre>
+<p>The rule has one step more than the rule for modules:</p>
+<ol>
+<li><strong>If the first word of the import is a package this file's
+   <code>zeno.package</code> needs</strong>, the rest is a file in that package's
+   folder. <code>import filters.lowpass</code> is <code>lowpass.zeno</code> there. <code>import
+   filters</code> with nothing after it is the file with the package's own
+   name, <code>filters.zeno</code>.</li>
+<li><strong>Otherwise</strong> it is a file of the package the importing file is
+   in. For <code>main.zeno</code> that is the thermostat's own folder.</li>
+</ol>
+<p>Everything else is as it was. What is written at the import is
+written at the use. <code>from filters.lowpass import Lowpass</code> brings in
+one name. A type is <code>filters.lowpass.Lowpass</code>.</p>
+<p><strong>Inside the package the same rule holds, from the package's own
+side.</strong> <code>lowpass.zeno</code> wants <code>clamp</code> from its neighbour, and writes:</p>
+<pre><code class="zeno">from filters import clamp       # filters.zeno, in this package's folder</code></pre>
+<p>It does not matter which program is using the package. A package sees
+its own files and the packages its own <code>zeno.package</code> needs, and
+nothing of the program that needs it. So a package can also be run on
+its own:</p>
+<pre><code>cargo run -- run examples/filters/main.zeno</code></pre>
+<h2 id="other-peoples-packages-zeno-fetch">Other people's packages: <code>zeno fetch</code></h2>
+<p>A package that somebody else keeps is named by where its git
+repository is, and by a version of it:</p>
+<pre><code>package logger
+
+needs units from "https://github.com/someone/zeno-units" at "v1.2.0"</code></pre>
+<p><code>at</code> is a tag, a branch or a commit. It is one exact thing: there are
+no ranges such as <code>^1.2</code> (decision 8.4). Then, in the program's
+folder:</p>
+<pre><code>$ zeno run main.zeno
+error: the package `units` has not been fetched: there is no file
+`packages/units/zeno.package`. Run `zeno fetch` in the folder of the program
+ --&gt; zeno.package:3:1
+
+$ zeno fetch
+Fetched units v1.2.0 (1c4e326) into packages/units
+Fetched prefix main (d4461d9) into packages/prefix
+Wrote zeno.lock
+
+$ zeno run main.zeno
+42.0</code></pre>
+<p>Three things to see:</p>
+<ul>
+<li><strong>Running never fetches.</strong> <code>zeno run</code>, <code>check</code> and <code>build</code> read
+  files and nothing else. Only <code>zeno fetch</code> uses the network, and it
+  does so with the <code>git</code> that is on the machine (8.9).</li>
+<li><strong><code>units</code> needed <code>prefix</code>, and that came too.</strong> A fetched package
+  has its own <code>zeno.package</code>, and what it needs is fetched as well.
+  All of them go into one folder, <code>packages/</code>, beside the program's
+  <code>zeno.package</code>. There is one package of each name in a program
+  (8.7).</li>
+<li><strong><code>zeno.lock</code> was written.</strong> It holds the commit each package was
+  at:</li>
+</ul>
+<pre><code>prefix from "https://.../zeno-prefix" at "main" commit "d4461d9976d7..."
+units from "https://.../zeno-units" at "v1.2.0" commit "1c4e3266dcc4..."</code></pre>
+<p><code>prefix</code> follows the branch <code>main</code>, and a branch moves. The next
+  <code>zeno fetch</code>, here or on another machine, still gets <code>d4461d9</code>,
+  because the lock says so. <code>zeno fetch --update</code> looks every <code>at</code> up
+  again and writes the lock afresh (8.10). Keep <code>zeno.lock</code> with the
+  program. The folder <code>packages/</code> can be made again from it at any
+  time.</p>
+<h2 id="what-can-go-wrong-and-what-zeno-says">What can go wrong, and what Zeno says</h2>
+<pre class="out"><code>error: this does not say which version of `units` is needed. Add `at` and a tag,
+a branch or a commit of that repository, as in `needs units from "..." at "v1.0.0"`
+
+error: the package in `lib` is called `filters`, not `filter`. Write `needs filters ...`
+
+error: two packages called `b` are needed: the one in `a/b` and the one in `b`.
+A program has one package of each name. Make the `needs` lines agree
+
+error: the package `filters` has no module `lowpas`. `import filters.lowpas` reads
+the file `../filters/lowpas.zeno`, and there is no such file
+
+error: `import filters` has two readings here: the file `filters.zeno`, and the file
+`../filters/filters.zeno` of the package `filters` that `zeno.package` needs.
+Give the first another name</code></pre>
+<p>A mistake in a <code>zeno.package</code> is shown as a mistake in any file is:
+the file, the line, and the line itself with a mark under it.</p>
+<h2 id="how-it-works">How it works</h2>
+<p>Two files do the work. <code>src/package.rs</code> reads <code>zeno.package</code> and
+<code>zeno.lock</code>, and is <code>zeno fetch</code>. <code>src/modules.rs</code>, the loader from
+the last stage, learned which file an import names when there are
+packages.</p>
+<h3 id="reading-zenopackage">Reading <code>zeno.package</code></h3>
+<p>The file is split into words by Zeno's own lexer, the one that reads
+programs. That is why a comment starts with <code>#</code> and a string is
+written as in a program, and it is why this reader is short:</p>
+<pre><code>for line in tokens.split(|token| matches!(token.kind, TokenKind::Newline | TokenKind::Eof)) {
+    ...
+    match words.as_slice() {
+        [_, TokenKind::Ident(package)] if word(0, "package") =&gt; { ... }
+        [_, TokenKind::Ident(need), rest @ ..] if word(0, "needs") =&gt; {
+            let source = match rest {
+                [TokenKind::In, TokenKind::Str { value, .. }] =&gt; Source::Folder(value.clone()),
+                [TokenKind::From, TokenKind::Str { value: url, .. }, _, TokenKind::Str { value: at, .. }]
+                    if word(4, "at") =&gt; Source::Git { url: url.clone(), at: at.clone() },
+                ...</code></pre>
+<p>A line is a list of tokens, and each kind of line is one pattern over
+that list. <code>in</code> and <code>from</code> are already keywords of Zeno, so they
+arrive as <code>TokenKind::In</code> and <code>TokenKind::From</code>. <code>package</code>, <code>needs</code>
+and <code>at</code> are ordinary words, matched by their text. What comes out is
+a <code>Manifest</code>: a name, and a list of <code>Need</code>.</p>
+<h3 id="finding-the-packages">Finding the packages</h3>
+<p><code>Loader</code> in <code>src/modules.rs</code> got a list of packages. The first is the
+program itself:</p>
+<pre><code>struct Package {
+    name: String,                    // empty for a program with no zeno.package
+    folder: PathBuf,
+    needs: HashMap&lt;String, usize&gt;,   // name -&gt; which package in the list
+}</code></pre>
+<p>Before the first import is followed, <code>packages_needed</code> reads the
+program's <code>zeno.package</code>, and <code>need</code> follows each <code>needs</code> line to the
+<code>zeno.package</code> it points at, and so on down. A <code>needs ... in</code> folder
+is counted from the folder of the file that says it. A <code>needs ...
+from</code> package is always in <code>packages/&lt;name&gt;</code> of the <em>program</em>,
+whichever package asked for it. If a name is met a second time it
+must be the same folder, or the program would have two packages of
+one name.</p>
+<p>Each <code>zeno.package</code> that is read becomes one of the program's files,
+with a number like any other (see "One number says the file and the
+line" in <code>modules.md</code>). That is all it takes for a mistake in one to
+be shown with its file and line.</p>
+<h3 id="which-file-an-import-names">Which file an import names</h3>
+<p><code>find</code> is the two-step rule from above, in code:</p>
+<pre><code>let own = file(&amp;self.packages[from].folder, &amp;parts);
+let Some(&amp;needed) = self.packages[from].needs.get(parts[0]) else {
+    return Some(Found { module: self.full(from, written), package: from, path: own });
+};
+...
+let inside = if parts.len() == 1 { &amp;parts[..] } else { &amp;parts[1..] };
+let path = file(&amp;self.packages[needed].folder, inside);</code></pre>
+<p><code>from</code> is the package the importing file is in. If the first word is
+not one of its needs, the import is a file of that same package.
+Otherwise the words after the first are a file of the needed package.</p>
+<h3 id="one-name-in-the-whole-program">One name in the whole program</h3>
+<p>Inside <code>filters</code>, the file writes <code>import lowpass</code>. In the thermostat,
+the same file is <code>import filters.lowpass</code>. The joined program needs
+one name for it, and <code>full</code> gives it: a module of the program keeps
+its name, and a module of another package gets the package's name in
+front.</p>
+<pre><code>lowpass.start           written in examples/filters/main.zeno ...
+filters.lowpass.start   ... and in examples/thermostat/main.zeno
+filters.lowpass.start   is what both are in the thermostat's joined program</code></pre>
+<p>So the renamer of the last stage now keeps two names for each
+imported module: the one the file wrote, which is what it looks for
+in the source, and the one the program uses, which is what it writes
+into the tree. See it with <code>join</code>:</p>
+<pre><code>cargo run -- join examples/thermostat/main.zeno</code></pre>
+<pre><code class="zeno">function filters.clamp(value: float, low: float, high: float) -&gt; float
+...
+class filters.lowpass.Lowpass
+...
+function filters.lowpass.start(weight: float, first: float) -&gt; filters.lowpass.Lowpass
+    return filters.lowpass.Lowpass(filters.clamp(weight, 0.0, 1.0), first)</code></pre>
+<p>In <code>lowpass.zeno</code> that last line is <code>Lowpass(clamp(weight, 0.0, 1.0),
+first)</code>. After this point nothing knows there were packages: the type
+checker, the interpreter, the VM and both compilers got one ordinary
+program, as they did with modules.</p>
+<h3 id="zeno-fetch"><code>zeno fetch</code></h3>
+<p><code>fetch</code> in <code>src/package.rs</code> walks the same <code>needs</code> lines, and for each
+one with <code>from</code> runs git:</p>
+<pre><code>git clone &lt;address&gt; packages/&lt;name&gt;         if it is not there yet
+git fetch --tags origin                     if it is
+git rev-parse refs/tags/&lt;at&gt;                is `at` a tag? else a branch? else a commit?
+git checkout --detach &lt;commit&gt;</code></pre>
+<p>A line with a name and no address (<code>needs units at "v1.2.0"</code>) first
+asks the registry for the address and the commit, and then goes the
+same way (<a href="/docs/registry/"><code>registry.md</code></a>).</p>
+<p>If <code>zeno.lock</code> has a line for the same package, address and <code>at</code>, the
+commit in that line is used and <code>at</code> is not looked up. Then the
+fetched package's own <code>zeno.package</code> is read, its needs join the
+queue, and at the end the lock is written, sorted by name so that it
+is the same file whichever order things were fetched in.</p>
+<p>The test for all this (<code>fetch_gets_what_is_needed_and_pins_it</code>) makes
+two small git repositories in a temporary folder and fetches from
+them by <code>file://</code> address, so it needs no network.</p>
+<h2 id="what-is-left-out">What is left out</h2>
+<ul>
+<li><em>(A registry and short names were left out when this page was
+  written, and have come since: <a href="/docs/registry/"><code>registry.md</code></a>.)</em></li>
+<li><strong>No version ranges.</strong> <code>at</code> names one tag, branch or commit, and two
+  packages that need the same package must name the same one (8.4,
+  8.7).</li>
+<li><strong>No <code>zeno add</code>.</strong> The project file is a few kinds of line, written
+  by hand (8.9). <code>zeno new</code> writes the first one, and shows the
+  others in a comment (<a href="/docs/new/"><code>new.md</code></a>).</li>
+<li><strong>A package is a whole repository.</strong> One that sits in a subfolder
+  of a repository cannot be fetched yet.</li>
+<li><strong><code>packages/</code> is not tidied.</strong> A package that is no longer needed
+  stays in the folder until you remove it. It is not read.</li>
+<li><strong>An edit inside <code>packages/</code> is not noticed.</strong> <code>zeno fetch</code> compares
+  commits, not files. To change a fetched package, make it a folder
+  package (<code>needs ... in</code>) while you work on it.</li>
+<li><strong>Everything is still compiled together</strong>, packages included.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>Run <code>cargo run -- join examples/thermostat/main.zeno</code>. Find a name
+   that starts with <code>filters.lowpass.</code>, then open
+   <code>examples/filters/lowpass.zeno</code> and see how the file itself
+   wrote it.</li>
+<li>Run <code>cargo run -- run examples/filters/main.zeno</code>, then <code>join</code> it.
+   The same <code>start</code> has another name now. Which, and why? (Read
+   <code>Loader::full</code>.)</li>
+<li>In <code>examples/thermostat/main.zeno</code>, change <code>import filters.lowpass</code>
+   to <code>import lowpass</code>. Read the message: which file did Zeno look
+   for, and in which folder?</li>
+<li>In <code>examples/thermostat/zeno.package</code>, change the folder to
+   <code>"../filter"</code>. Which file and line does the message point at? Put
+   it back.</li>
+<li>In the same file, call the package <code>filter</code> in the <code>needs</code> line
+   (and leave the folder right). Read the message.</li>
+<li>Add the line <code>import control</code> to the top of
+   <code>examples/filters/lowpass.zeno</code> and run the thermostat. The
+   thermostat has a <code>control.zeno</code>. Why is it not found? (Decision
+   8.6.) Take the line out again.</li>
+<li>Add a function <code>lowpass()</code> to <code>examples/filters/filters.zeno</code> and
+   run the thermostat. Read the message, then read decision 8.11.
+   Take it out again.</li>
+<li>Make a package of your own. In an empty folder make <code>zeno.package</code>
+   with <code>package greet</code> and a file <code>greet.zeno</code> with a function
+   <code>hello(name: str) -&gt; str</code>. In a second folder beside it write a
+   program that needs it and prints <code>greet.hello("Zeno")</code>.</li>
+<li>Now fetch it. In the <code>greet</code> folder run <code>git init</code>, <code>git add .</code>,
+   <code>git commit -m first</code> and <code>git tag v1</code>. In the program's
+   <code>zeno.package</code> write
+   <code>needs greet from "file:///full/path/to/greet" at "v1"</code>, run
+   <code>zeno fetch</code>, and look at <code>packages/</code> and <code>zeno.lock</code>.</li>
+<li>Change <code>hello</code> in the <code>greet</code> folder, commit, and run <code>zeno fetch</code>
+    again. Nothing moves: why? Tag the new commit <code>v2</code>, change <code>at</code> to
+    <code>"v2"</code>, and fetch once more. What changed in <code>zeno.lock</code>?</li>
+<li>Build the thermostat with no collector:
+    <code>cargo run -- build --no-collector --memory examples/thermostat/main.zeno</code>
+    and run <code>./main</code>. How many blocks are left at the end?</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/using-packages.md">docs/using-packages.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/modules/"><span>Previous</span>Programs in several files</a><a class="next" href="/docs/registry/"><span>Next</span>The registry: a package by its name</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#the-project-file">The project file</a></li><li><a href="#importing-from-a-package">Importing from a package</a></li><li><a href="#other-peoples-packages-zeno-fetch">Other people's packages: zeno fetch</a></li><li><a href="#what-can-go-wrong-and-what-zeno-says">What can go wrong, and what Zeno says</a></li><li><a href="#how-it-works">How it works</a></li><li><a href="#what-is-left-out">What is left out</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

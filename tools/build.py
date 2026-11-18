@@ -82,7 +82,7 @@ def sample(name, title=None):
 
 # --- Layout ------------------------------------------------------------------
 
-NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Book", "/book/"), ("Playground", "/playground/"), ("Benchmarks", "/benchmarks/"), ("Docs", "/docs/"),
+NAV = [("Learn", "/learn/"), ("Examples", "/examples/"), ("Packages", "/packages/"), ("Book", "/book/"), ("Playground", "/playground/"), ("Benchmarks", "/benchmarks/"), ("Docs", "/docs/"),
        ("Decisions", "/decisions/"), ("Roadmap", "/roadmap/"), ("About", "/about/")]
 
 # The wordmark, "Almost": the name in lowercase strokes, and an o whose ring
@@ -200,7 +200,7 @@ def layout(path, title, description, body, active=None, home=False):
   <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
   <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
   <div class="foot-links">
-    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
     <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/roadmap/">Roadmap</a></div>
     <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="{GITHUB}">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
   </div>
@@ -307,6 +307,10 @@ UNRELEASED_PARTS = {
                 "Lua, Ruby, Dart and Kotlin are on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
                 "build Zeno from source to try them, or wait for the release after 0.5.1. "
                 "The other eleven are in 0.5."),
+    "registry": ("Coming next",
+                 "Needing a package by its name, <code>zeno search</code> and <code>zeno publish</code> are on "
+                 "<a href=\"{GITHUB}\">main</a> and not in a release yet: build Zeno from source to try them, "
+                 "or wait for the release after 0.5.1. The registry itself is open."),
     "running-programs": ("Coming next",
                          "<code>program.run</code> is on <a href=\"{GITHUB}\">main</a> and not in a release yet: "
                          "build Zeno from source to try it, or wait for the release after 0.5.1."),
@@ -351,8 +355,8 @@ DOC_GROUPS = [
      ["unsafe"]),
     ("The standard library", "Text, lists, files and input, maths, dictionaries and JSON.",
      ["library", "reading-and-writing", "math", "dict", "json"]),
-    ("Programs in many files", "Modules, imports, folders and packages of Zeno code.",
-     ["modules"]),
+    ("Programs in many files", "Modules, imports, packages of Zeno code, and the registry that finds one by its name.",
+     ["modules", "using-packages", "registry"]),
     ("The web", "A program in a web page, built to WebAssembly.",
      ["web", "playground"]),
     ("Other languages", "The program written in JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++, Rust, a web page or WebAssembly.",
@@ -752,6 +756,7 @@ DONE = [
     ("Other languages (0.5)", "<code>zeno build --target</code>: JavaScript, TypeScript, Python, PHP, Go, Java, C#, C++, Rust, a web page and WebAssembly, each printing what <code>zeno run</code> prints.", "targets"),
 ]
 NEXT = [
+    ("In the next release", "A registry of packages", "<code>needs units at \"v1.2.0\"</code> finds a package by its name. <a href=\"/packages/\">The registry</a> is a git repository with no server, <code>zeno search</code> lists it and <code>zeno publish</code> puts a package in. Written and tested, and waiting for the release after 0.5.1."),
     ("In the next release", "Four more languages", "<code>zeno build --target</code> for Lua, Ruby, Dart and Kotlin. Written and checked on every example, and waiting for the release after 0.5.1."),
     ("Next", "Reading from a board", "Pins, an ADC and a UART read on real hardware: the one item held back from 0.1."),
     ("Planned", "Bytes", "A <code>list[u8]</code> at one byte an item, <code>u64</code>, and files read as bytes."),
@@ -1029,6 +1034,99 @@ def build_privacy():
 <p class="muted">Questions: write to <a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a>.</p>
 </div>"""
     layout("/privacy/", "Privacy", "Zeno, its installers and this website collect nothing about you.", body)
+
+
+# --- Packages ------------------------------------------------------------------
+
+REGISTRY = "https://github.com/zeno-src/packages"
+REGISTRY_LIST = "https://raw.githubusercontent.com/zeno-src/packages/main/index.json"
+REGISTRY_CACHE = TOOLS / "packages.json"
+
+
+def registry_list():
+    """The registry's list of packages, as text. Read from the registry when
+    the build can reach it, and kept in tools/packages.json for when it cannot.
+    The page reads the list again in the browser, so this only has to be what
+    shows for the first moment, and to somebody with scripts turned off."""
+    import json, urllib.request
+    try:
+        with urllib.request.urlopen(urllib.request.Request(REGISTRY_LIST, headers={"User-Agent": "zeno-lang.org build"}), timeout=15) as r:
+            text = r.read().decode()
+        json.loads(text)
+        REGISTRY_CACHE.write_text(text)
+        return text
+    except Exception as e:
+        print(f"  packages: the registry is not reachable ({e}); using tools/packages.json")
+        return REGISTRY_CACHE.read_text()
+
+
+def build_packages():
+    import json
+    text = registry_list()
+    count = len(json.loads(text)["packages"])
+    # Inside a <script>, the one thing that must not appear is its own end.
+    data = text.replace("</", "<\\/")
+    counted = "1 package" if count == 1 else f"{count} packages"
+    body = f"""{page_head("Packages", "Other people's code, by name.", "The registry lists packages that anybody can use in a Zeno program. Write one line in your <code>zeno.package</code>, run <code>zeno fetch</code>, and import it.", "package")}
+<section class="pk">
+  <div class="pk-find">
+    <label>{icon("scan")}<input id="pk-search" type="search" placeholder="Search by name, or by what a package is for" aria-label="Search the packages" autocomplete="off" spellcheck="false"></label>
+    <p class="pk-count" id="pk-count" aria-live="polite">{counted}</p>
+  </div>
+  <div class="pk-empty" id="pk-empty"{"" if count == 0 else " hidden"}>
+    <h2>No packages yet</h2>
+    <p>The registry opened in November 2026, and nothing has been published to it so far. Yours can be the first: the steps are below.</p>
+  </div>
+  <ul class="pk-list" id="pk-list"></ul>
+  {coming("registry")}
+  <noscript><p class="muted">The list is drawn by a script. Without one, read it in the <a href="{REGISTRY}/tree/main/index">registry itself</a>, or run <code>zeno search</code>.</p></noscript>
+</section>
+<section class="pk-how">
+  <div>
+    <h2>{icon("download")}Use a package</h2>
+    <p>A package is named by its name and one exact version. There are no ranges: the version you write is the version you get.</p>
+    <ol>
+      <li>Add the line to the <code>zeno.package</code> of your program.
+<pre><code>package thermostat
+
+needs filters at "v1.0.0"</code></pre></li>
+      <li>Fetch it, in the program's folder. The packages it needs come too, and <code>zeno.lock</code> records the exact commit of each.
+<pre><code>zeno fetch</code></pre></li>
+      <li>Import it.
+<pre><code class="zeno">import filters
+
+print(filters.mean([18.2, 18.9, 19.6]))</code></pre></li>
+    </ol>
+  </div>
+  <div>
+    <h2>{icon("package")}Publish yours</h2>
+    <p>A package stays in your own git repository. The registry records where it is, and which commit each version is.</p>
+    <ol>
+      <li>Say what it is for, in its <code>zeno.package</code>.
+<pre><code>package filters
+about "Filters for noisy readings"</code></pre></li>
+      <li>Tag a commit with its version, and push it.
+<pre><code>git tag v1.0.0
+git push origin main v1.0.0</code></pre></li>
+      <li>Check it, and get the address of the form that asks the registry to take it.
+<pre><code>zeno publish</code></pre></li>
+      <li>Open that address, signed in to GitHub, and press the button. The registry checks the package and answers there.</li>
+    </ol>
+  </div>
+</section>
+<section class="pk-rules">
+  <h2>What the registry promises</h2>
+  <ul>
+    <li><b>A published version never changes.</b> The registry keeps the commit a tag named on the day it was published, and that commit is what everybody gets.</li>
+    <li><b>A name has one owner.</b> The first to publish a name publishes its later versions, from the same repository.</li>
+    <li><b>Nothing is hidden.</b> The registry is a <a href="{REGISTRY}">git repository</a> with one small text file for each package. There is no server and no account to make.</li>
+    <li><b>Only <code>zeno fetch</code> uses the network.</b> Running and building a program read files and nothing else.</li>
+  </ul>
+  <p class="note-small">How it works, line by line: <a href="/docs/registry/">the registry walkthrough</a>. A package from a git repository that is in no registry, or from a folder beside the program, works as before.</p>
+</section>
+<script type="application/json" id="pk-data">{data}</script>
+<script src="/assets/packages.js"></script>"""
+    layout("/packages/", "Packages", "The Zeno package registry: search the packages anybody can use in a Zeno program, and publish your own.", body, "/packages/")
 
 
 # --- Benchmarks ----------------------------------------------------------------
@@ -1443,6 +1541,7 @@ def main():
     build_book()
     build_playground()
     build_download()
+    build_packages()
     build_benchmarks()
     build_privacy()
     build_404()
