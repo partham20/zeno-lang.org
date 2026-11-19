@@ -50,7 +50,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/" aria-current="page">How the board and the clock work</a><a href="/docs/inputs/">Inputs: a pin the program reads</a><a href="/docs/serial/">A serial port</a><a href="/docs/analog/">Reading a voltage: an analog pin</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><a href="/docs/f32/">f32: a float of 32 bits</a><a href="/docs/u64/">u64: a whole number of 64 bits with no sign</a><a href="/docs/fixed-lists/">A list of a fixed length</a><a href="/docs/bytes/">Bytes from and to a file</a><a href="/docs/enum-numbers/">An enum whose cases stand for numbers</a><a href="/docs/units-made/">Units made of units: V  A is W</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/ending-a-program/">Ending a program, its environment, and the error stream</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><a href="/docs/ruby/">Libraries of Ruby</a><a href="/docs/php/">Libraries of PHP</a><a href="/docs/lua/">Libraries of Lua</a><a href="/docs/csharp/">Libraries of C# and .NET</a><a href="/docs/c/">Libraries of C, Go and Rust</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/" aria-current="page">How the board and the clock work</a><a href="/docs/inputs/">Inputs: a pin the program reads</a><a href="/docs/serial/">A serial port</a><a href="/docs/analog/">Reading a voltage: an analog pin</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><a href="/docs/f32/">f32: a float of 32 bits</a><a href="/docs/u64/">u64: a whole number of 64 bits with no sign</a><a href="/docs/fixed-lists/">A list of a fixed length</a><a href="/docs/bytes/">Bytes from and to a file</a><a href="/docs/enum-numbers/">An enum whose cases stand for numbers</a><a href="/docs/units-made/">Units made of units: V  A is W</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/ending-a-program/">Ending a program, its environment, and the error stream</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><a href="/docs/ruby/">Libraries of Ruby</a><a href="/docs/php/">Libraries of PHP</a><a href="/docs/lua/">Libraries of Lua</a><a href="/docs/csharp/">Libraries of C# and .NET</a><a href="/docs/c/">Libraries of C, Go and Rust</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/board-build/">One step to a board: zeno build --board</a><a href="/docs/interrupts/">Interrupts: the board counts a pin's edges</a><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/pwm/">A PWM signal: a pin on for a share of the time</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a><a href="/docs/ticker/">A ticker: a steady beat</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>How the board and the clock work</h1>
@@ -115,6 +115,21 @@ Zeno. This page is about how both of those work.</p>
 <td></td>
 <td><code>analog_pin(0)</code></td>
 <td>the pin with that number, as one whose voltage is read (<a href="/docs/analog/"><code>analog.md</code></a>)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>pwm_pin(9, 1 kHz)</code></td>
+<td>the pin with that number, switched at that frequency and on for a share of the time (<a href="/docs/pwm/"><code>pwm.md</code></a>)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>ticker(10 ms)</code></td>
+<td>a steady beat a loop waits for, which says when the loop was late (<a href="/docs/ticker/"><code>ticker.md</code></a>)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>button.interrupt(falling)</code></td>
+<td>the edges of an input pin, counted by the board; <code>rising</code>, <code>falling</code> and <code>either</code> say which (<a href="/docs/interrupts/"><code>interrupts.md</code></a>)</td>
 </tr>
 <tr>
 <td><code>time</code></td>
@@ -257,8 +272,10 @@ is the part worth reading slowly:</p>
 knows about hardware. A program that reads a pin needs a fifth,
 <code>zeno_board_input(pin, pull)</code>, and only such a program calls it
 (<a href="/docs/inputs/"><code>inputs.md</code></a>, decision 45.4). One with a serial port
-needs four more, and one that reads a voltage two, by the same rule
-(<a href="/docs/serial/"><code>serial.md</code></a>, <a href="/docs/analog/"><code>analog.md</code></a>). What the program calls is written on top of them
+needs four more, one that reads a voltage two, one that makes a
+PWM signal one, and one that counts a pin's edges three, by the same
+rule (<a href="/docs/serial/"><code>serial.md</code></a>, <a href="/docs/analog/"><code>analog.md</code></a>,
+<a href="/docs/pwm/"><code>pwm.md</code></a>, <a href="/docs/interrupts/"><code>interrupts.md</code></a>). What the program calls is written on top of them
 once, for every board:</p>
 <pre><code>static void zeno_pin_on(int64_t pin) { zeno_board_write((int)pin, true); }
 static void zeno_pin_off(int64_t pin) { zeno_board_write((int)pin, false); }
@@ -279,6 +296,45 @@ there unless something else is asked for:</p>
 Without that, <code>./blink | cat</code> shows nothing for a long time and then
 everything at once, because C saves up output that is not going to a
 terminal.</p>
+<h2 id="printing-reading-and-stopping">Printing, reading and stopping</h2>
+<p>Pins are one way a program reaches outside itself. There are four
+more, and on a computer the C library does them: <code>print</code> is a write
+to a stream, a warning and the message of an error go to the error
+stream, <code>input</code> reads a stream, and a program that stops calls <code>exit</code>.
+A chip has no streams. A board's header may bring the four itself,
+with one line that says so (decision 52):</p>
+<pre><code>#define ZENO_BOARD_PRINTS
+
+static void zeno_board_print(const char *bytes, size_t count);  /* what the program prints */
+static void zeno_board_warn(const char *bytes, size_t count);   /* a warning, an error's message */
+static int  zeno_board_typed(void);    /* the next byte typed, waiting for it; -1 if none can come */
+static void zeno_board_stop(int status);   /* the program is over: 0, its own number, 1 after an error */</code></pre>
+<p>With that line nothing in <code>runtime.c</code> writes, reads or stops through
+the C library: every such place goes through five small functions at
+the top of the file (<code>zeno_out</code>, <code>zeno_out_now</code>, <code>zeno_say</code>,
+<code>zeno_typed</code>, <code>zeno_stop</code>), and they are written once, below the
+board, as the board's four or as the C library's. Without the line a
+header builds as it always did.</p>
+<p>Three things to know when writing the four:</p>
+<ul>
+<li><strong>All four must be there</strong>, also for a program that never reads.
+  A board with nothing to read from answers -1, and <code>input</code> gives
+  <code>none</code>. A board with one wire writes <code>zeno_board_warn</code> as a call to
+  <code>zeno_board_print</code>.</li>
+<li><strong>A program that reaches its last line is not stopped.</strong> <code>main</code>
+  returns 0 to the board's start-up file, which says what comes next.
+  <code>zeno_board_stop</code> is for <code>program.exit</code> and for an error.</li>
+<li><strong>A header may count on</strong> <code>&lt;stdint.h&gt;</code>, <code>&lt;stdbool.h&gt;</code>, <code>&lt;stddef.h&gt;</code>
+  and <code>ZENO_LED</code>. Anything else it includes itself.</li>
+</ul>
+<p>What is left of the C library on such a board is <code>memcpy</code>, <code>memset</code>,
+<code>strlen</code> and their like, and the functions of <code>math</code> a program calls.
+A number with a fraction is made into text, and read out of text, by
+the runtime itself, with whole numbers and no <code>snprintf</code> or <code>strtod</code>
+(decision 53). <code>--memory</code> does not go with such a board yet: the C
+says so when it is compiled.</p>
+<p><a href="https://github.com/zeno-src/zeno-lang/blob/main/boards/lm3s6965evb"><code>boards/lm3s6965evb</code></a> is a whole board written
+this way, and <a href="/docs/board-build/"><code>board-build.md</code></a> walks through it.</p>
 <h2 id="what-blink-compiles-to">What <code>blink</code> compiles to</h2>
 <p>All of <code>zeno_program</code> in <code>blink.c</code>:</p>
 <pre><code>while (true) {
@@ -339,9 +395,21 @@ static bool zeno_board_read(int pin) {
 }
 static void zeno_board_sleep(double seconds) { HAL_Delay((uint32_t)(seconds * 1000.0)); }
 static double zeno_board_now(void) { return (double)HAL_GetTick(); }</code></pre>
-<p><code>zeno build</code> does not run the cross compiler for you. It writes C, and
-building C for a target is a job the target's own tools already do well
-(decision 5.12c). The reasons for the four functions are in 5.12.</p>
+<p>The <code>cc</code> line above is for a computer. For a chip the line is longer:
+the chip's own compiler, its flags, a start-up file and a linker
+script. They are the same for every program on one board, so they are
+written once, in a folder, and <code>zeno build --board &lt;folder&gt;</code> types the
+line (<a href="/docs/board-build/"><code>board-build.md</code></a>, chapter 51 of the
+decisions). The folder names the header too:</p>
+<pre><code>zeno build --board boards/qemu-cortex-m3 examples/blink.zeno</code></pre>
+<p>That board is an ARM Cortex-M3 that QEMU emulates. It has no header of
+its own, so its pins are the simulated ones, on a real processor's
+instructions. Beside it is the same chip with a header,
+<a href="https://github.com/zeno-src/zeno-lang/blob/main/boards/lm3s6965evb"><code>boards/lm3s6965evb</code></a>: there a pin is a bit of
+one of the chip's ports, the clock is its SysTick timer, and <code>print</code>
+goes out of its UART with no <code>printf</code> under it. QEMU emulates those
+registers, and that is the only place the header has run. The reasons
+for the four functions are in 5.12.</p>
 <h2 id="the-tests">The tests</h2>
 <ul>
 <li><code>pins_and_the_clock_match</code> runs one program through everything: the
@@ -351,6 +419,13 @@ building C for a target is a job the target's own tools already do well
   caught and uncaught, at the same line and column everywhere.</li>
 <li><code>a_board_of_its_own_can_be_put_underneath</code> is the header above, on
   all three kinds of C build.</li>
+<li><code>a_board_can_print_read_and_stop_by_itself</code> is a header with
+  <code>ZENO_BOARD_PRINTS</code> that crosses the two streams, so that anything
+  which still went through the C library would come out of the wrong
+  one. Every kind of build, and the minimal ones.</li>
+<li><code>a_program_prints_through_the_registers_of_a_cortex_m3</code> runs a
+  program on <code>boards/lm3s6965evb</code> in QEMU: pins driven and read back,
+  the clock, a serial port, a line typed to <code>input</code>, and an error.</li>
 <li><code>blink_is_three_lines_of_c_and_needs_no_collector</code> holds the C for
   <code>blink</code> to exactly the three lines shown.</li>
 <li><code>examples/signal.zeno</code>, a traffic light as a state machine, is built
@@ -365,20 +440,25 @@ as <code>now() - start &gt;= 200 ms</code> after sleeping that long.</p>
 <ul>
 <li><strong>Pressing a button under <code>zeno run</code>.</strong> Inputs can be made and read
   (<a href="/docs/inputs/"><code>inputs.md</code></a>), and a board header can press them, but
-  the simulated board has no way to. Nor can a program wait for an
-  edge yet.</li>
-<li><strong>Everything else on a microcontroller</strong>: interrupts, timers, PWM.
-  (A serial port and reading a voltage are there:
-  <a href="/docs/serial/"><code>serial.md</code></a>, <a href="/docs/analog/"><code>analog.md</code></a>.) Each would be a few more functions in the board
+  the simulated board has no way to: the only edges it counts are the
+  ones the program drives itself (<a href="/docs/interrupts/"><code>interrupts.md</code></a>).</li>
+<li><strong>Everything else on a microcontroller</strong>: a function of the program
+  run by an interrupt, the time of an edge, I2C and SPI.
+  (A serial port, reading a voltage, a PWM signal, a steady beat and
+  counted edges are there: <a href="/docs/serial/"><code>serial.md</code></a>,
+  <a href="/docs/analog/"><code>analog.md</code></a>, <a href="/docs/pwm/"><code>pwm.md</code></a>,
+  <a href="/docs/ticker/"><code>ticker.md</code></a>, <a href="/docs/interrupts/"><code>interrupts.md</code></a>.) Each would be a few more functions in the board
   layer. Until then a program can reach the hardware itself, through
   registers at the addresses the data sheet gives
   (<a href="/docs/unsafe/"><code>unsafe.md</code></a>).</li>
-<li><strong>The runtime is still a desktop runtime.</strong> A firmware build with no
-  collector has no <code>setjmp</code>, no garbage collector and no <code>malloc</code>
-  (<a href="/docs/pool/"><code>pool.md</code></a>), but it still calls <code>printf</code> and <code>exit</code>
-  (<a href="/docs/no-collector/"><code>no-collector.md</code></a>).
-  The board layer is the first piece of a port, and not the whole of
-  it.</li>
+<li><strong>A float costs flash on a chip with no floating point.</strong> A
+  firmware build with no collector has no <code>setjmp</code>, no garbage
+  collector and no <code>malloc</code> (<a href="/docs/pool/"><code>pool.md</code></a>), on a board that
+  prints itself it has no <code>printf</code> and no <code>exit</code> either (above), and
+  a float is made into text by the runtime itself, in 1 to 4 KB
+  (decision 53; it was 28 KB of the C library). The sums on floats
+  are the compiler's own functions there, some 3 KB, and they are
+  slow.</li>
 <li><strong><code>now()</code> is a <code>double</code></strong> of milliseconds. That is exact for
   thousands of years, and slow on a processor with no floating point.
   Whole numbers with a size, such as <code>u32</code>, came in the stage after
@@ -421,7 +501,7 @@ as <code>now() - start &gt;= 200 ms</code> after sleeping that long.</p>
   <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/board.md">docs/board.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/firmware/"><span>Previous</span>How a firmware build handles errors</a><a class="next" href="/docs/inputs/"><span>Next</span>Inputs: a pin the program reads</a></nav>
 </article>
-<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#two-modules">Two modules</a></li><li><a href="#a-pin-is-a-number">A pin is a number</a></li><li><a href="#the-simulated-board">The simulated board</a></li><li><a href="#four-functions">Four functions</a></li><li><a href="#what-blink-compiles-to">What blink compiles to</a></li><li><a href="#putting-a-real-board-underneath">Putting a real board underneath</a></li><li><a href="#the-tests">The tests</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#two-modules">Two modules</a></li><li><a href="#a-pin-is-a-number">A pin is a number</a></li><li><a href="#the-simulated-board">The simulated board</a></li><li><a href="#four-functions">Four functions</a></li><li><a href="#printing-reading-and-stopping">Printing, reading and stopping</a></li><li><a href="#what-blink-compiles-to">What blink compiles to</a></li><li><a href="#putting-a-real-board-underneath">Putting a real board underneath</a></li><li><a href="#the-tests">The tests</a></li><li><a href="#what-it-does-not-do-yet">What it does not do yet</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
 </div>
 </main>
 <footer class="foot">

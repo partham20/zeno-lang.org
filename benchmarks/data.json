@@ -1041,6 +1041,116 @@
      "run": 64.313
     }
    }
+  },
+  {
+   "version": "0.6.0",
+   "date": "2026-11-19",
+   "released": true,
+   "big": {
+    "fib": {
+     "c": 0.188,
+     "rust": 0.274,
+     "zeno": 0.652,
+     "zeno-llvm": 0.618,
+     "zeno-nc": 0.536,
+     "zeno-release": 0.175,
+     "zeno-owned": 0.176,
+     "zeno-fast": 0.192,
+     "zeno-fast-gc": 0.197
+    },
+    "loop": {
+     "c": 0.997,
+     "rust": 1.033,
+     "zeno": 1.428,
+     "zeno-llvm": 1.301,
+     "zeno-nc": 1.422,
+     "zeno-release": 1.052,
+     "zeno-owned": 1.075,
+     "zeno-fast": 1.01,
+     "zeno-fast-gc": 0.968
+    },
+    "sort": {
+     "c": 1.232,
+     "rust": 1.302,
+     "zeno": 1.6,
+     "zeno-llvm": 2.318,
+     "zeno-nc": 1.516,
+     "zeno-release": 1.571,
+     "zeno-owned": 1.344,
+     "zeno-fast": 1.23,
+     "zeno-fast-gc": 1.46
+    },
+    "strings": {
+     "c": 1.053,
+     "rust": 0.754,
+     "zeno": 0.805,
+     "zeno-llvm": 1.149,
+     "zeno-release": 0.817,
+     "zeno-owned": 0.865,
+     "zeno-fast": 0.784,
+     "zeno-fast-gc": 0.846
+    },
+    "trees": {
+     "c": 6.549,
+     "rust": 7.887,
+     "zeno": 8.291,
+     "zeno-llvm": 9.158,
+     "zeno-nc": 5.58,
+     "zeno-release": 7.717,
+     "zeno-owned": 4.32,
+     "zeno-fast": 4.101,
+     "zeno-fast-gc": 7.248
+    },
+    "nbody": {
+     "c": 0.503,
+     "rust": 0.397,
+     "zeno": 0.563,
+     "zeno-llvm": 0.603,
+     "zeno-nc": 0.554,
+     "zeno-release": 0.594,
+     "zeno-owned": 0.566,
+     "zeno-fast": 0.525,
+     "zeno-fast-gc": 0.498
+    }
+   },
+   "small": {
+    "fib": {
+     "c": 0.005,
+     "python": 0.313,
+     "vm": 0.798,
+     "run": 3.249
+    },
+    "loop": {
+     "c": 0.099,
+     "python": 13.02,
+     "vm": 8.331,
+     "run": 32.923
+    },
+    "sort": {
+     "c": 0.11,
+     "python": 2.485,
+     "vm": 3.905,
+     "run": 14.655
+    },
+    "strings": {
+     "c": 0.103,
+     "python": 0.48,
+     "vm": 1.693,
+     "run": 3.174
+    },
+    "trees": {
+     "c": 0.236,
+     "python": 4.13,
+     "vm": 10.089,
+     "run": 25.168
+    },
+    "nbody": {
+     "c": 0.056,
+     "python": 4.414,
+     "vm": 16.528,
+     "run": 57.762
+    }
+   }
   }
  ]
 }
