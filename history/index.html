@@ -52,12 +52,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="History">
   <h4>Contents</h4>
-  <ul><li><a href="#the-releases">The releases</a></li><li><a href="#zeno-010">Zeno 0.1.0</a></li><li><a href="#zeno-020">Zeno 0.2.0</a></li><li><a href="#zeno-030">Zeno 0.3.0</a></li><li><a href="#zeno-040">Zeno 0.4.0</a></li><li><a href="#zeno-050">Zeno 0.5.0</a></li><li><a href="#zeno-051">Zeno 0.5.1</a></li><li><a href="#zeno-052">Zeno 0.5.2</a></li><li><a href="#unreleased">Unreleased</a></li></ul>
+  <ul><li><a href="#the-releases">The releases</a></li><li><a href="#zeno-010">Zeno 0.1.0</a></li><li><a href="#zeno-020">Zeno 0.2.0</a></li><li><a href="#zeno-030">Zeno 0.3.0</a></li><li><a href="#zeno-040">Zeno 0.4.0</a></li><li><a href="#zeno-050">Zeno 0.5.0</a></li><li><a href="#zeno-051">Zeno 0.5.1</a></li><li><a href="#zeno-052">Zeno 0.5.2</a></li><li><a href="#zeno-060">Zeno 0.6.0</a></li><li><a href="#unreleased">Unreleased</a></li></ul>
 </aside>
 <article class="prose history">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</p>
   <h1>How Zeno was built</h1>
-  <p class="lede">306 commits and 7 releases so far, from the first file to what is on main today.</p>
+  <p class="lede">319 commits and 8 releases so far, from the first file to what is on main today.</p>
   <p>This page lists every commit in the Zeno repository, oldest first, under
 the release it went into. Read from the top, it is the story of how the
 language was built, from an empty folder on 14 November 2026 to what is on
@@ -79,7 +79,8 @@ to be built is in <a href="/docs/missing/"><code>docs/missing.md</code></a>.</p>
 <li><a href="#zeno-050"><strong>Zeno 0.5.0</strong></a>, 17 November 2026, 12 commits: the program written in another language</li>
 <li><a href="#zeno-051"><strong>Zeno 0.5.1</strong></a>, 17 November 2026, 6 commits: the VM as fast as it was</li>
 <li><a href="#zeno-052"><strong>Zeno 0.5.2</strong></a>, 18 November 2026, 41 commits: four more targets, a registry, and the libraries of other languages</li>
-<li><a href="#unreleased"><strong>Unreleased</strong></a>, on <code>main</code> now, 22 commits: what firmware needs, and the libraries of five more languages</li>
+<li><a href="#zeno-060"><strong>Zeno 0.6.0</strong></a>, 19 November 2026, 33 commits: the release for firmware, and the libraries of five more languages</li>
+<li><a href="#unreleased"><strong>Unreleased</strong></a>, on <code>main</code> now, 2 commits: what has come since 0.6.0</li>
 </ul>
 <h2 id="zeno-010">Zeno 0.1.0</h2>
 <p class="when">Released 15 November 2026 · 156 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.1.0">the release on GitHub</a></p>
@@ -526,15 +527,19 @@ that could stop a program built on Windows.</p>
 <li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0c48e5f0629dd6b7493374a30d32181b5f8e4a86"><code>0c48e5f</code></a><span>Book: the functions written in Zeno, in the appendices.</span></li>
 <li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/596a800e7a471fdc1e3cc01d327f14c755be6d2b"><code>596a800</code></a><span>The version is 0.5.2, with its release notes. Its speed was compared with 0.5.1 first. <strong>This commit is Zeno 0.5.2.</strong></span></li>
 </ul>
-<h2 id="unreleased">Unreleased</h2>
-<p class="when">Not in a release yet · 22 commits · 18 November 2026</p>
-<p>The work here follows
+<h2 id="zeno-060">Zeno 0.6.0</h2>
+<p class="when">Released 19 November 2026 · 33 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.6.0">the release on GitHub</a></p>
+<p>The release for firmware. The work follows
 <a href="/docs/missing/"><code>docs/missing.md</code></a>, the list of what Zeno still lacks,
-with firmware first: ending a program with a code, enums that stand for
-numbers, bytes, lists of a fixed length, <code>f32</code> and <code>u64</code>, units made of
-units, and on a board, inputs, a serial port and reading a voltage. Beside
-that, a Zeno program can now use the libraries of Ruby, PHP, Lua, .NET and
-C, and through C those of Go and Rust.</p>
+with firmware first. A program can now read a board: a button on an input
+pin, bytes on a serial port, a voltage on an analog pin. It has the numbers
+firmware works in: <code>f32</code>, <code>u64</code>, lists of a fixed length, bytes, enums that
+stand for numbers, and units made of units. Beside that, a Zeno program can
+use the libraries of Ruby, PHP, Lua, .NET and C, and through C those of Go
+and Rust, and it can end with a number for the shell.</p>
+<p>The last hours before the release went on trying all of it on Windows and
+macOS, and on making sure that a program which uses none of the new things
+runs as fast as it did in 0.5.2.</p>
 <h3 id="ending-a-program-enums-as-numbers-and-bytes">Ending a program, enums as numbers, and bytes</h3>
 <p class="when">18 November 2026</p>
 <ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/5135b88334320de91a99856bf65509c0a22412a8"><code>5135b88</code></a><span>The Homebrew, pacman and winget recipes for 0.5.2, with its checksums.</span></li>
@@ -572,7 +577,27 @@ C, and through C those of Go and Rust.</p>
 <li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/0635fba93cf53454bf603544ba6e88d4a4c0c9e1"><code>0635fba</code></a><span>A serial port on a board: <code>serial(1, 115200 baud)</code>, with <code>write</code>, <code>read_byte</code> and <code>has_byte</code>.</span></li>
 <li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/a2447a7e7a6e6b65df7d96e20acf6b4595d7ffc0"><code>a2447a7</code></a><span>Reading a voltage on a board: <code>analog_pin(0)</code> gives a pin whose <code>voltage()</code> is a quantity in volts.</span></li>
 </ul>
-  <div class="source"><p>This file is written by <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history.py"><code>tools/history.py</code></a> from the commits themselves and the notes in <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history-notes.txt"><code>tools/history-notes.txt</code></a>. It lists 306 commits, up to <code>a2447a7</code> of 18 November 2026. A commit that only brings this file or its notes up to date is not listed.</p><p>This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/HISTORY.md">HISTORY.md</a> in the language repository.</p></div>
+<h3 id="ready-for-060-windows-macos-and-the-speed-of-052">Ready for 0.6.0: Windows, macOS, and the speed of 0.5.2</h3>
+<p class="when">18 to 19 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d41ce8a083d849f158572d449fd10c3d1040dd91"><code>d41ce8a</code></a><span><code>import c</code> on Windows and macOS: a file of C beside the program is found on Windows, and on macOS a library that is missing is named in the error.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/9c4ae2523516711ffb827c818878f7fc836fd24d"><code>9c4ae25</code></a><span>Adding <code>program.exit</code> had made the VM run 1 to 3 % more instructions on every benchmark. The exit is carried another way now, and the VM is as fast as in 0.5.2.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/14b9d1bf04b501adac7d28da66a9baf72c0f43d5"><code>14b9d1b</code></a><span>On Windows and macOS a function that a library of C does not have is named, as on Linux. On Windows a built program reads its environment whole in any script.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/032ced2a970d28985d98fadc1c4f302bb106d3dd"><code>032ced2</code></a><span>The trial workflow reports what Ruby said when it stopped.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4a6b5599fdc3bdc3222a66eb0297cf37337a6774"><code>4a6b559</code></a><span><code>import ruby</code> did not start on Windows, where Ruby cut its command line short. The helper is handed over as a file there.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/92db930d2998a4fc9102011eaf6425331385329b"><code>92db930</code></a><span><code>==</code> and the tests for <code>f32</code> and <code>u64</code> are made cheap again, so the new numbers cost older programs nothing.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/2af235cd281cb7f33ba1810d3390a384c0c49260"><code>2af235c</code></a><span>With no collector, a list that is the default of a field (<code>items: list[str] = []</code>) was freed while the new object still pointed at it. It now belongs to the object.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/f11a77a953a416deffe132f398e192f3cfcc8adb"><code>f11a77a</code></a><span>The VM keeps the output, the board, the page and the keyboard behind one pointer, so that adding to them cannot slow its loop. One benchmark had become 6 % slower by the clock.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/bc8a2a1ba369ee3fdba6ada93199fefc90cdb9ab"><code>bc8a2a1</code></a><span>Sums of two ints or two floats take a short path in the interpreter too, which now runs fewer instructions than in 0.5.2.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4268b0896c8048e1243213df8d4b1909117a76aa"><code>4268b08</code></a><span>The version is 0.6.0, with its release notes.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/356e780568da6234f3de1967104de5fd68c0f00d"><code>356e780</code></a><span>Book: rebuilt for Zeno 0.6. <strong>This commit is Zeno 0.6.0.</strong></span></li>
+</ul>
+<h2 id="unreleased">Unreleased</h2>
+<p class="when">Not in a release yet · 2 commits · 18 to 19 November 2026</p>
+<p>What is on <code>main</code> since 0.6.0 was released.</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8d44bb10b792f1bc60d33284b7cf85dac4d4238d"><code>8d44bb1</code></a><span>The Homebrew, pacman and winget recipes for 0.6.0, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/40ae73a158ab3d10ba2475fcfd55ca5824f41243"><code>40ae73a</code></a><span><code>HISTORY.md</code>, this page: every commit under its release, written by <code>tools/history.py</code> from git and a file of notes. The website shows it at <code>/history/</code>.</span></li>
+</ul>
+  <div class="source"><p>This file is written by <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history.py"><code>tools/history.py</code></a> from the commits themselves and the notes in <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history-notes.txt"><code>tools/history-notes.txt</code></a>. It lists 319 commits, up to <code>40ae73a</code> of 18 November 2026. A commit that only brings this file or its notes up to date is not listed.</p><p>This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/HISTORY.md">HISTORY.md</a> in the language repository.</p></div>
 </article>
 </div>
 </main>
