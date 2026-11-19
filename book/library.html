@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.5</span>
+  <span class="version">Zeno 0.6</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -538,6 +538,35 @@ href="board.html#ch-board">27</a>)</td>
 <td style="text-align: left;"><code>p.on()</code>, <code>off()</code>,
 <code>toggle()</code>, <code>is_on()</code>, <code>number</code></td>
 <td style="text-align: left;">what a <code>Pin</code> does</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>input_pin(n)</code>,
+<code>input_pin(n, pull_up)</code>, <code>pull_down</code></td>
+<td style="text-align: left;">a pin the program reads</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>b.is_high()</code>,
+<code>is_low()</code>, <code>number</code></td>
+<td style="text-align: left;">what an <code>InputPin</code> does</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>analog_pin(n)</code></td>
+<td style="text-align: left;">a pin whose voltage is read</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>a.voltage()</code>,
+<code>count()</code>, <code>max_count</code>, <code>number</code></td>
+<td style="text-align: left;">what an <code>AnalogPin</code> does</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>serial(n, 115200 baud)</code></td>
+<td style="text-align: left;">a serial port</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>s.write(text)</code>,
+<code>write_bytes(bytes)</code>, <code>read_byte()</code>,
+<code>has_byte()</code></td>
+<td style="text-align: left;">what a <code>Serial</code> does</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>r.read()</code>,

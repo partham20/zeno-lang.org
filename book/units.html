@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.5</span>
+  <span class="version">Zeno 0.6</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -310,6 +310,10 @@ apart from it</td>
 <td style="text-align: left;">rotation</td>
 <td style="text-align: left;"><code>rpm</code></td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">speed of a serial line</td>
+<td style="text-align: left;"><code>baud</code></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -477,36 +481,64 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <pre class="Output" data-language="Output" style="outputstyle"><code>[  3.30 V] [30.5 deg]</code></pre>
 <p>The width counts the unit too, so a column of quantities lines up on
 the right, as numbers do.</p>
-<h3 class="unnumbered" id="what-units-leave-out"><span
-class="number">17.8</span> What units leave out</h3>
-<p>In version 0.1 there are no derived units: <code>V * A</code> is not
-<code>W</code>, and quantities of two kinds cannot be multiplied. A
-program that needs power works it out from the bare numbers and puts the
-unit back:</p>
+<h3 class="unnumbered" id="units-made-of-units"><span
+class="number">17.8</span> Units made of units</h3>
+<p>Two quantities of the right kinds make a third, so Ohm’s law, power,
+energy and periods are written as they are on paper:</p>
 <div class="sourceCode" id="cb27" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> volts = <span class="dv">12.0</span> V</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> amps = <span class="dv">2.0</span> A</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> power = (volts / <span class="dv">1</span> V) * (amps / <span class="dv">1</span> A) * <span class="dv">1</span> W</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>print(power)</span></code></pre></div>
-<pre class="Output" data-language="Output" style="outputstyle"><code>24 W</code></pre>
-<p>There are no units of a program’s own either; that is on the list in
-<a href="limits.html#app-limits">Appendix G</a>.</p>
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> supply = <span class="dv">3.3</span> V</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> draw = <span class="dv">20</span> mA</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> power = supply * draw</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>print(power, power.mW)</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>print(supply / draw, <span class="dv">2</span> mA * <span class="dv">4.7</span> kohm)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>print(<span class="dv">5</span> W * <span class="dv">2</span> h, (<span class="dv">5</span> W * <span class="dv">2</span> h).Wh)</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>print(<span class="dv">1</span> / <span class="dv">2</span> ms, <span class="dv">10</span> ms * <span class="dv">1</span> kHz)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>0.066 W 66 mW
+165 ohm 9.4 V
+36000 J 10 Wh
+500 Hz 10.0</code></pre>
+<p>Voltage times current is power, current times resistance is voltage,
+and power times time is energy, either way round; each divides back. A
+number over a time is a frequency, a number over a frequency is a time,
+and a time times a frequency is a plain number, the count of cycles. The
+answer is in the unit of its kind with no prefix: <code>W</code>,
+<code>A</code>, <code>V</code>, <code>ohm</code>, <code>J</code>,
+<code>s</code> or <code>Hz</code>, and <code>.mW</code> or
+<code>.Wh</code> changes it, as for any quantity.</p>
+<p>Any other pair is refused, with the list of what works:</p>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> area = <span class="dv">2</span> m * <span class="dv">3</span> m</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `*` does not work between a quantity in m and a quantity in m. The units Zeno makes from others are V * A is W, A * ohm is V, W * s is J, V / A is ohm, V / ohm is A, W / V is A, J / s is W, 1 / s is Hz
+ --&gt; main.zeno:1:12
+  |
+1 | let area = 2 m * 3 m
+  |            ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>An algebra of dimensions would make <code>m * m</code> a unit, and
+<code>V * V</code> too, and show them as <code>m^2</code>. A short list
+keeps the rule that every unit has a name, so <code>V * V</code>, which
+is far more often a slip than a sum, is still caught. (Decision 43.)</p>
+</div>
+<p>There are no units of a program’s own yet; that is on the list in <a
+href="limits.html#app-limits">Appendix G</a>.</p>
 <p><code>min</code> and <code>max</code> take quantities, as long as all
 of them are in one unit, because the answer is one of the values as it
 was given. <code>sum</code> takes plain numbers only; add quantities
 with <code>+</code>:</p>
-<div class="sourceCode" id="cb29" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">3.1</span> V, <span class="dv">2.9</span> V, <span class="dv">3.4</span> V]</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>print(min(readings), max(readings))</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> total = <span class="dv">0.0</span> V</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> r <span class="kw">in</span> readings {</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    total += r</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>print(total)</span></code></pre></div>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">3.1</span> V, <span class="dv">2.9</span> V, <span class="dv">3.4</span> V]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>print(min(readings), max(readings))</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> total = <span class="dv">0.0</span> V</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> r <span class="kw">in</span> readings {</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>    total += r</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>print(total)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>2.9 V 3.4 V
 9.4 V</code></pre>
-<div class="sourceCode" id="cb31" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>print(min(<span class="dv">1</span> V, <span class="dv">200</span> mV))</span></code></pre></div>
+<div class="sourceCode" id="cb33" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>print(min(<span class="dv">1</span> V, <span class="dv">200</span> mV))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `min` needs quantities in one unit, but these are in V and in mV. Turn one into the other first, as in `x.V`
  --&gt; main.zeno:1:7
   |

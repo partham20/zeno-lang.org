@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.5</span>
+  <span class="version">Zeno 0.6</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -182,30 +182,33 @@ On a board</h3>
 <dl>
 <dt>Inputs.</dt>
 <dd>
-<p>Reading a pin, an analogue converter or a serial port, and interrupts
-and timers. This was the one item taken off the list for 0.1, because it
-has to be designed against real hardware. The simulated board can write
-pins and registers and read registers.</p>
+<p>A pin can be read (<code>input_pin</code>, 45), a serial port used
+(<code>serial</code>, 46) and a voltage read (<code>analog_pin</code>,
+47), but nothing presses a button or feeds a voltage under
+<code>zeno run</code> (45.5), and none of it has been tried on a real
+board. PWM, interrupts and timers are still to come.</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="numbers"><span class="number">G.2</span>
 Numbers</h3>
 <dl>
-<dt>No <code>u64</code>.</dt>
+<dt>A <code>u64</code> in a few places.</dt>
 <dd>
-<p>Sized numbers stop at 32 bits, and <code>int</code> is the 64-bit
-signed number (2.8d).</p>
+<p>A <code>u64</code> is not yet a key of a dict, an index, a count for
+<code>range</code>, or something <code>json.write</code> can write;
+<code>int( )</code> makes one an <code>int</code> (42.10).</p>
 </dd>
 <dt>A list of a fixed length takes a block.</dt>
 <dd>
 <p>A <code>list[u8, 64]</code> in a build with no collector is a block
 from the pool, as any list is, though its size is known (36.5).</p>
 </dd>
-<dt>Units made of units.</dt>
+<dt>Units of a program’s own.</dt>
 <dd>
-<p>Two quantities cannot be multiplied or divided into a third, as
-<code>V</code> times <code>A</code> into <code>W</code>, and a program
-cannot name a unit of its own (1.15).</p>
+<p>Units make units only from a closed list (<code>V * A</code> is
+<code>W</code>, <code>1 / 2 ms</code> is <code>Hz</code>), and a program
+cannot name a unit of its own, or use charge (<code>mAh</code>) or speed
+yet (43.6).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="types-1"><span class="number">G.3</span>
