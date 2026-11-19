@@ -1332,7 +1332,7 @@ def bench_targets_html(programs):
                  f'<td><span class="bench-bar {tone}" style="width:{width(mean)}%"></span><b>{mean:.0f}× C</b><i>on average</i></td>{cells}</tr>')
     return f"""<section class="b-section" id="targets">
   <h2>The program in other languages</h2>
-  <p class="b-sub">New in 0.5: <a href="/docs/targets/"><code>zeno build --target</code></a> writes a program in another language. Here each one is run with that language's own tools, at the small sizes, so the times include starting Node, the JVM or .NET. Every cell is a time divided by the time of the same program in C. Smaller is faster. From the record of {esc(version)}.</p>
+  <p class="b-sub">Since 0.5: <a href="/docs/targets/"><code>zeno build --target</code></a> writes a program in another language. Here each one is run with that language's own tools, at the small sizes, so the times include starting Node, the JVM or .NET. Every cell is a time divided by the time of the same program in C. Smaller is faster. From the record of {esc(version)}.</p>
   <div class="bench-table"><table><thead><tr><th></th><th>Average</th>{head}</tr></thead><tbody>{body}</tbody></table></div>
   <p class="b-note">A written program carries Zeno's rules with it, so it does what <code>zeno run</code> does, checks and all, in a language that was not built for them. <code>zeno run --vm</code> is in the table as a guide. The targets are for reading, keeping and running a program where Zeno is not; for speed, <code>zeno build --fast</code> is the way.</p>
 </section>
