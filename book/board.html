@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>28 The Board · The Zeno Book</title>
+  <title>29 The Board · The Zeno Book</title>
   <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@
   </style>
   <link rel="stylesheet" href="book.css">
 <meta property="og:site_name" content="Zeno">
-<meta property="og:title" content="28 The Board · The Zeno Book">
+<meta property="og:title" content="29 The Board · The Zeno Book">
 <meta property="og:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/book/board.html">
@@ -103,7 +103,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Zeno Book: the whole language, in one book.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="28 The Board · The Zeno Book">
+<meta name="twitter:title" content="29 The Board · The Zeno Book">
 <meta name="twitter:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta name="twitter:image" content="https://zeno-lang.org/og/book.png">
 <meta name="twitter:image:alt" content="The Zeno Book: the whole language, in one book.">
@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.6</span>
+  <span class="version">Zeno 0.7</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -174,41 +174,43 @@ class="number">21</span> Programs in Several Files</a></li>
 class="number">22</span> Packages</a></li>
 <li><a href="other-languages.html" id="toc-ch-other-languages"><span
 class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">24</span> Reading and Writing</a></li>
+class="number">25</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">25</span> Mathematics</a></li>
+class="number">26</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">26</span> Testing</a></li>
+class="number">27</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">27</span> The Tools</a></li>
+class="number">28</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a class="here" href="board.html" id="toc-ch-board"><span
-class="number">28</span> The Board</a></li>
+class="number">29</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">29</span> Compiling</a></li>
+class="number">30</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">30</span> Memory</a></li>
+class="number">31</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">31</span> Ownership</a></li>
+class="number">32</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">32</span> Firmware</a></li>
+class="number">33</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">33</span> Building with No Collector</a></li>
+class="number">34</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">34</span> Unsafe Code</a></li>
+class="number">35</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">35</span> A Program in a Web Page</a></li>
+class="number">36</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">36</span> Inside Zeno</a></li>
+class="number">37</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">37</span> Why Zeno Is as It Is</a></li>
+class="number">38</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -229,17 +231,17 @@ class="number">G</span> What Zeno Does Not Have Yet</a></li>
 <main>
 <nav class="pager top">
 <a class="prev" href="zeno-on-a-machine.html" rel="previous">← Zeno on a Machine</a>
-<a class="next" href="compiling.html" rel="next"><span class="number">29</span> Compiling →</a>
+<a class="next" href="compiling.html" rel="next"><span class="number">30</span> Compiling →</a>
 </nav>
 <article>
 <h2 class="chapter unnumbered" id="ch-board"><span
-class="number">28</span> The Board</h2>
+class="number">29</span> The Board</h2>
 <p>Zeno is for programs that run on a board: a microcontroller with pins
 that drive LEDs and relays, registers that control its peripherals, and
 a clock. This chapter is about the <code>board</code> module, which is
 how a program reaches them, and about the simulated board that lets the
 same program run on a computer.</p>
-<h3 class="unnumbered" id="blink"><span class="number">28.1</span>
+<h3 class="unnumbered" id="blink"><span class="number">29.1</span>
 Blink</h3>
 <p>The program Zeno was made for, written on the first day, before there
 was a compiler, is this:</p>
@@ -256,7 +258,7 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 half second, until Ctrl-C stops it. Compiled for a microcontroller, the
 same lines blink the LED.</p>
 <h3 class="unnumbered" id="the-simulated-board"><span
-class="number">28.2</span> The simulated board</h3>
+class="number">29.2</span> The simulated board</h3>
 <p>A computer has no LED on pin 13, so <code>zeno run</code> gives the
 program a <em>simulated</em> board. It has 64 pins, all low to begin
 with, with the LED on pin 13, where an Arduino Uno has it. It prints a
@@ -276,7 +278,7 @@ led off
 false</code></pre>
 <p>The second <code>led.on()</code> printed nothing, because the pin was
 already high and did not move.</p>
-<h3 class="unnumbered" id="pins"><span class="number">28.3</span>
+<h3 class="unnumbered" id="pins"><span class="number">29.3</span>
 Pins</h3>
 <p><code>led</code> is the pin the LED is on, and <code>pin(n)</code> is
 the pin with that number. A pin can do four things:</p>
@@ -347,7 +349,7 @@ blinking an LED should not need one. A pin is a kind of its own to the
 checker, and a plain number in the compiled program, so it costs what an
 <code>int</code> costs. Units work the same way. (Decision 3.15.)</p>
 </div>
-<h3 class="unnumbered" id="inputs"><span class="number">28.4</span>
+<h3 class="unnumbered" id="inputs"><span class="number">29.4</span>
 Inputs</h3>
 <p>A button, a switch or a sensor that says yes or no is a pin the
 program reads. <code>input_pin(n)</code> makes the pin with that number
@@ -429,7 +431,7 @@ can take one. (Decision 45.)</p>
 <p>The example <code>examples/doorbell.zeno</code> counts presses of a
 button and rings a bell for each.</p>
 <h3 class="unnumbered" id="reading-a-voltage"><span
-class="number">28.5</span> Reading a voltage</h3>
+class="number">29.5</span> Reading a voltage</h3>
 <p>Most of what a board measures arrives as a voltage: a potentiometer,
 a thermistor, a battery through two resistors.
 <code>analog_pin(n)</code> gives an <code>AnalogPin</code>, read by the
@@ -494,8 +496,241 @@ of the scale or a lookup table. (Decision 47.)</p>
 </div>
 <p>The example <code>examples/battery.zeno</code> watches a battery
 through a divider and lights the LED when it is low.</p>
+<h3 class="unnumbered" id="a-pin-on-for-a-share-of-the-time"><span
+class="number">29.6</span> A pin on for a share of the time</h3>
+<p>A pin is only ever high or low. Switched fast by a timer of the chip,
+it dims a lamp, sets the speed of a motor and tells a servo where to
+turn. The signal is called PWM, and <code>pwm_pin(n, frequency)</code>
+gives a <code>PwmPin</code> that makes it:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Written</th>
+<th style="text-align: left;">Does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>p.duty(0.25)</code></td>
+<td style="text-align: left;">on for that share of the time,
+<code>0.0</code> to <code>1.0</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>p.pulse(1500 us)</code></td>
+<td style="text-align: left;">on for that long in each period</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>p.number</code></td>
+<td style="text-align: left;">which pin it is</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The frequency has a unit, and so has the time of a pulse:</p>
+<div class="sourceCode" id="cb14" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> pwm_pin</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> lamp = pwm_pin(<span class="dv">9</span>, <span class="dv">1</span> kHz)</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>lamp.duty(<span class="dv">0.25</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>lamp.duty(<span class="dv">1.0</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> servo = pwm_pin(<span class="dv">10</span>, <span class="dv">50</span> Hz)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>servo.pulse(<span class="dv">1500</span> us)</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>servo.pulse(<span class="dv">2</span> ms)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>pin 9 pwm 0.25 at 1000 Hz
+pin 9 pwm 1.0 at 1000 Hz
+pin 10 pwm 0.075 at 50 Hz
+pin 10 pwm 0.1 at 50 Hz</code></pre>
+<p>A new pin is off. On a computer no timer makes the signal, so each
+change of it is printed, as turning a pin on is. A lamp or a motor is
+given a share with <code>duty</code>. A servo is given a time with
+<code>pulse</code>: 1 ms is one end of its turn and 2 ms the other,
+whatever the period.</p>
+<p>A share above <code>1.0</code> or below <code>0.0</code> is a
+<code>ValueError</code>, and so is a pulse longer than one period:</p>
+<div class="sourceCode" id="cb16" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> pwm_pin</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> motor = pwm_pin(<span class="dv">3</span>, <span class="dv">20</span> kHz)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    motor.duty(<span class="dv">1.5</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> error {</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    print(error.message)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>a duty is from 0.0 to 1.0, and this is 1.5. For a quarter of the time on, write 0.25</code></pre>
+<div class="why">
+<p>Arduino’s <code>analogWrite(pin, 64)</code> takes a count out of 255,
+which is one timer’s width and says “a quarter” to nobody, at a
+frequency the board picked. Here the share is a share, the frequency is
+written where the pin is made, since it belongs to what is wired there,
+and both times have their units. A share that is too large is refused
+and not taken as full power: the wrong sum should stop a motor, not run
+it flat out. (Decision 48.)</p>
+</div>
+<p>The example <code>examples/dimmer.zeno</code> fades a lamp and sweeps
+a servo.</p>
+<h3 class="unnumbered" id="a-steady-beat"><span
+class="number">29.7</span> A steady beat</h3>
+<p>A loop that ends with <code>sleep(10 ms)</code> takes 10 ms and the
+time its work took, so it runs slow, by a different amount each round.
+<code>ticker(10 ms)</code> gives a <code>Ticker</code>, whose ticks are
+10 ms apart whatever the work takes:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Written</th>
+<th style="text-align: left;">Gives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>t.wait()</code></td>
+<td style="text-align: left;">waits for the next tick; how many ticks
+have come</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>t.ticks()</code></td>
+<td style="text-align: left;">the same count with no waiting;
+<code>0</code> if none has</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>t.restart()</code></td>
+<td style="text-align: left;">the next tick is one period from now</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>t.period</code></td>
+<td style="text-align: left;">from one tick to the next, in
+<code>ms</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A loop that waits for the ticks runs at a steady rate, and is told
+when it was late:</p>
+<div class="sourceCode" id="cb18" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> ticker</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> time <span class="kw">import</span> sleep</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> beat = ticker(<span class="dv">5</span> ms)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>print(beat, beat.period)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> ticks = <span class="dv">0</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> round <span class="kw">in</span> range(<span class="dv">4</span>) {</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> came = beat.wait()</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    ticks += came</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> round == <span class="dv">1</span> {</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        sleep(<span class="dv">12</span> ms)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>print(ticks &gt;= <span class="dv">5</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Ticker(5 ms) 5 ms
+true</code></pre>
+<p>The second round takes 12 ms, more than two periods. The next
+<code>wait()</code> does not wait: it gives 2 or more, the ticks that
+came meanwhile. They are counted and not run one after another, so a
+program that fell behind is told by how much and does not rush to catch
+up. The count is on the computer’s clock here, so the program prints
+only what any clock makes true.</p>
+<p><code>ticks()</code> is for a loop with several beats, which waits
+for none of them, and <code>restart()</code> makes a ticker measure
+quiet: started again at each press of a button, it has a tick only when
+nothing was pressed for a whole period.</p>
+<div class="why">
+<p>An Arduino sketch writes <code>if (millis() - last &gt;= 10)</code>
+and <code>last += 10</code> by hand, and almost never checks whether it
+fell behind. A ticker is that sum written once. It gives a count where a
+yes or no would lose the ticks that came while the program was busy: a
+clock adds the count and stays right, and a control loop knows a round
+ran over. It asks the board for nothing new, only its clock and its
+sleep. It is not called a timer because <code>Timer</code> is what
+<code>web.every</code> gives, and because a chip’s timers do five other
+things. (Decision 49.)</p>
+</div>
+<p>The example <code>examples/steady.zeno</code> is a loop that notices
+the round that took too long.</p>
+<h3 class="unnumbered" id="interrupts"><span class="number">29.8</span>
+Interrupts</h3>
+<p>A pulse from a wheel sensor is over in a millisecond. A program that
+looks at the pin now and then misses most of them. A chip’s answer is
+the interrupt: the hardware notices each edge by itself, whatever the
+program is doing. In Zeno the board counts the edges, and the program
+asks for the count. <code>button.interrupt(falling)</code> gives an
+<code>Interrupt</code>:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Written</th>
+<th style="text-align: left;">Gives</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>i.wait()</code></td>
+<td style="text-align: left;">waits for an edge; how many have come</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>i.edges()</code></td>
+<td style="text-align: left;">the same count with no waiting;
+<code>0</code> if none has</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>i.number</code></td>
+<td style="text-align: left;">which pin it is</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The edge is <code>rising</code>, <code>falling</code> or
+<code>either</code>, from the <code>board</code> module. On a computer
+nothing is wired to a pin, so the edges are the ones the program drives
+on it itself, as if a wire joined the two:</p>
+<div class="sourceCode" id="cb20" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> input_pin, pin, rising</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> sensor = input_pin(<span class="dv">3</span>)</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> turns = sensor.interrupt(rising)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> wheel = pin(<span class="dv">3</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>wheel.on()</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>wheel.off()</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>wheel.on()</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>print(turns, turns.edges())</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>print(turns.edges())</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>wheel.off()</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>wheel.on()</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>print(turns.wait(), sensor.is_high())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>pin 3 on
+pin 3 off
+pin 3 on
+Interrupt(3) 2
+0
+pin 3 off
+pin 3 on
+1 true</code></pre>
+<p>Each count is taken when it is asked for, so the second
+<code>edges()</code> gives 0. <code>wait()</code> on a board puts the
+chip to sleep until an edge comes. On a computer nothing can drive a pin
+while the program waits, so a <code>wait()</code> with no edge counted
+would never end, and is a <code>ValueError</code> that says so.</p>
+<div class="why">
+<p>In C a function of the program runs inside the interrupt, and shares
+its variables with the loop it broke into. The programmer marks them
+<code>volatile</code>, and <code>count += 1</code> in the loop still
+loses the edge that lands between its read and its write, once a week.
+Zeno’s rule is one sentence: the program’s own code never runs inside an
+interrupt. The board’s handler counts, which is what nearly every
+handler does, and the program asks when it chooses to. So there is no
+shared variable to get wrong. What needs an answer within microseconds,
+inside the interrupt itself, stays in C. (Decision 50.)</p>
+</div>
+<p>The example <code>examples/tachometer.zeno</code> counts the turns of
+a wheel in each stretch of time.</p>
 <h3 class="unnumbered" id="a-serial-port"><span
-class="number">28.6</span> A serial port</h3>
+class="number">29.9</span> A serial port</h3>
 <p>A serial port is how a board talks: to a terminal on a computer, to a
 GPS module, to a modem. <code>serial(n, speed)</code> opens the port
 with that number, at a speed in <code>baud</code>, and gives a
@@ -541,18 +776,18 @@ come any more. On a board that is never; on a computer it is the end of
 what was typed, because there every serial port is the terminal itself,
 as a serial monitor is. A program that must not wait asks
 <code>has_byte</code> first.</p>
-<div class="sourceCode" id="cb14" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> serial</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> port = serial(<span class="dv">1</span>, <span class="dv">115200</span> baud)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>port.write(<span class="st">&quot;ready\n&quot;</span>)</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> byte = port.read_byte()</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> line = <span class="st">&quot;&quot;</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> byte <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> <span class="kw">and</span> byte != <span class="dv">10</span> {</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    line = line + char(byte)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    byte = port.read_byte()</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>port.write(<span class="st">f&quot;got {line}\n&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> serial</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> port = serial(<span class="dv">1</span>, <span class="dv">115200</span> baud)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>port.write(<span class="st">&quot;ready\n&quot;</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> byte = port.read_byte()</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> line = <span class="st">&quot;&quot;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="kw">while</span> byte <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> <span class="kw">and</span> byte != <span class="dv">10</span> {</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    line = line + char(byte)</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    byte = port.read_byte()</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>port.write(<span class="st">f&quot;got {line}\n&quot;</span>)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>ready
 got on</code></pre>
 <div class="why">
@@ -566,38 +801,38 @@ byte waits, which is what a console or a modem wants, and
 </div>
 <p>The example <code>examples/console.zeno</code> is a small command
 line over a serial port that drives the LED.</p>
-<h3 class="unnumbered" id="the-clock"><span class="number">28.7</span>
+<h3 class="unnumbered" id="the-clock"><span class="number">29.10</span>
 The clock</h3>
 <p><code>sleep</code> waits for a time with a unit, and
 <code>now()</code> reads a clock that only goes forward, in
 milliseconds, from a moment such as when the board was switched on (<a
 href="units.html#ch-units">Numbers with Units</a>). Only the
 difference of two readings means anything:</p>
-<div class="sourceCode" id="cb16" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> time <span class="kw">import</span> sleep, now</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> start = now()</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>sleep(<span class="dv">50</span> ms)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> took = now() - start</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;took at least 50 ms:&quot;</span>, took &gt;= <span class="dv">50</span> ms)</span></code></pre></div>
+<div class="sourceCode" id="cb24" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> time <span class="kw">import</span> sleep, now</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> start = now()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>sleep(<span class="dv">50</span> ms)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> took = now() - start</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;took at least 50 ms:&quot;</span>, took &gt;= <span class="dv">50</span> ms)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>took at least 50 ms: true</code></pre>
-<h3 class="unnumbered" id="registers"><span class="number">28.8</span>
+<h3 class="unnumbered" id="registers"><span class="number">29.11</span>
 Registers</h3>
 <p>A microcontroller’s peripherals, its timers, serial ports and
 converters, are controlled through <em>registers</em>: words of memory
 at fixed addresses, given in the data sheet.
 <code>register(u32, address)</code> names one, with its size:</p>
-<div class="sourceCode" id="cb18" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> register</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> control = register(<span class="dt">u32</span>, <span class="dv">0x4000_4400</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> data = register(<span class="dt">u8</span>, <span class="dv">0x4000_440C</span>)</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">unsafe</span> {</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    control.write(<span class="dt">u32</span>(control.read() | <span class="dv">1</span> &lt;&lt; <span class="dv">0</span>))</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    data.write(<span class="dv">0x41</span>)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    print(control.read(), data.read())</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb26" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> register</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> control = register(<span class="dt">u32</span>, <span class="dv">0x4000_4400</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> data = register(<span class="dt">u8</span>, <span class="dv">0x4000_440C</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="kw">unsafe</span> {</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    control.write(<span class="dt">u32</span>(control.read() | <span class="dv">1</span> &lt;&lt; <span class="dv">0</span>))</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>    data.write(<span class="dv">0x41</span>)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>    print(control.read(), data.read())</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>register 0x40004400 = 0x00000001
 register 0x4000440c = 0x41
 1 65</code></pre>
@@ -609,10 +844,10 @@ Bits</a>), so <code>u32(...)</code> puts it back, with a check.</p>
 <code>unsafe { }</code>, because a wrong address or a wrong bit can stop
 a chip, and Zeno cannot check either. The block marks the lines a
 reviewer should read twice:</p>
-<div class="sourceCode" id="cb20" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> register</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> data = register(<span class="dt">u8</span>, <span class="dv">0x4000_440C</span>)</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>data.write(<span class="dv">0x41</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> register</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> data = register(<span class="dt">u8</span>, <span class="dv">0x4000_440C</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>data.write(<span class="dv">0x41</span>)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: writing a register goes inside `unsafe { }`. Zeno cannot check that it is right, so the block marks the lines where a mistake can damage memory
  --&gt; main.zeno:3:1
   |
@@ -625,85 +860,85 @@ written, and each write is printed. On a real board it is the real
 address. <a href="unsafe.html#ch-unsafe">Unsafe Code</a> is about
 <code>unsafe</code> and memory by hand.</p>
 <h3 class="unnumbered" id="a-traffic-light"><span
-class="number">28.9</span> A traffic light</h3>
+class="number">29.12</span> A traffic light</h3>
 <p>This program from the <code>examples</code> folder is a traffic light
 on three pins, written as a state machine with an enum. Its times are
 short, so the whole run takes a fifth of a second:</p>
 <div class="zenofile">
 <p>examples/signal.zeno</p>
 </div>
-<div class="sourceCode" id="cb22" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># signal.zeno: a traffic light on three pins, written as a state machine.</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     zeno run examples/signal.zeno      run it on the simulated board</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     zeno build --firmware --no-collector examples/signal.zeno</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                                        the build for a microcontroller:</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                                        no setjmp, no garbage collector</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co"># On a computer the board is simulated. A line such as `pin 2 on` is what</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co"># a logic analyser clipped to that pin would show. The times are short so</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># that the whole run takes a fifth of a second.</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> pin, led</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> time <span class="kw">import</span> sleep, now</span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Light {</span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a>    Red</span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>    Green</span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>    Amber</span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> red = pin(<span class="dv">2</span>)</span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> amber = pin(<span class="dv">3</span>)</span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> green = pin(<span class="dv">4</span>)</span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Switch the lamps over: the old one off, then the new one on.</span></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> show(light: Light) {</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> light {</span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Red {</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a>            amber.off()</span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a>            red.on()</span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Green {</span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>            red.off()</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>            green.on()</span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Amber {</span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a>            green.off()</span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a>            amber.on()</span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> after(light: Light) -&gt; Light {</span>
-<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> light {</span>
-<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Red { <span class="kw">return</span> Green }</span>
-<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Green { <span class="kw">return</span> Amber }</span>
-<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Amber { <span class="kw">return</span> Red }</span>
-<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="co"># How long each light stays. The unit is part of the type: a function</span></span>
-<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a><span class="co"># that returned `40` here would not compile.</span></span>
-<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> hold(light: Light) -&gt; ms {</span>
-<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> light {</span>
-<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Red { <span class="kw">return</span> <span class="dv">40</span> ms }</span>
-<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Green { <span class="kw">return</span> <span class="dv">30</span> ms }</span>
-<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Amber { <span class="kw">return</span> <span class="dv">10</span> ms }</span>
-<span id="cb22-58"><a href="#cb22-58" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb22-59"><a href="#cb22-59" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> start = now()</span>
-<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> light = Red</span>
-<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> step <span class="kw">in</span> range(<span class="dv">7</span>) {</span>
-<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a>    show(light)</span>
-<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a>    led.toggle()                 <span class="co"># a heartbeat: the program is alive</span></span>
-<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a>    sleep(hold(light))</span>
-<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a>    light = after(light)</span>
-<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Seven steps hold for 200 ms in all. `now` only ever goes forward.</span></span>
-<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;took at least 200 ms:&quot;</span>, now() - start &gt;= <span class="dv">200</span> ms)</span></code></pre></div>
+<div class="sourceCode" id="cb30" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># signal.zeno: a traffic light on three pins, written as a state machine.</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">#     zeno run examples/signal.zeno      run it on the simulated board</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">#     zeno build --firmware --no-collector examples/signal.zeno</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co">#                                        the build for a microcontroller:</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">#                                        no setjmp, no garbage collector</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># On a computer the board is simulated. A line such as `pin 2 on` is what</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co"># a logic analyser clipped to that pin would show. The times are short so</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co"># that the whole run takes a fifth of a second.</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> pin, led</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> time <span class="kw">import</span> sleep, now</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Light {</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>    Red</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    Green</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    Amber</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> red = pin(<span class="dv">2</span>)</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> amber = pin(<span class="dv">3</span>)</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> green = pin(<span class="dv">4</span>)</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Switch the lamps over: the old one off, then the new one on.</span></span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> show(light: Light) {</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> light {</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Red {</span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>            amber.off()</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>            red.on()</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Green {</span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a>            red.off()</span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>            green.on()</span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Amber {</span>
+<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a>            green.off()</span>
+<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a>            amber.on()</span>
+<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> after(light: Light) -&gt; Light {</span>
+<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> light {</span>
+<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Red { <span class="kw">return</span> Green }</span>
+<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Green { <span class="kw">return</span> Amber }</span>
+<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Amber { <span class="kw">return</span> Red }</span>
+<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-50"><a href="#cb30-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-51"><a href="#cb30-51" aria-hidden="true" tabindex="-1"></a><span class="co"># How long each light stays. The unit is part of the type: a function</span></span>
+<span id="cb30-52"><a href="#cb30-52" aria-hidden="true" tabindex="-1"></a><span class="co"># that returned `40` here would not compile.</span></span>
+<span id="cb30-53"><a href="#cb30-53" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> hold(light: Light) -&gt; ms {</span>
+<span id="cb30-54"><a href="#cb30-54" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> light {</span>
+<span id="cb30-55"><a href="#cb30-55" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Red { <span class="kw">return</span> <span class="dv">40</span> ms }</span>
+<span id="cb30-56"><a href="#cb30-56" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Green { <span class="kw">return</span> <span class="dv">30</span> ms }</span>
+<span id="cb30-57"><a href="#cb30-57" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Amber { <span class="kw">return</span> <span class="dv">10</span> ms }</span>
+<span id="cb30-58"><a href="#cb30-58" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb30-59"><a href="#cb30-59" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-60"><a href="#cb30-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-61"><a href="#cb30-61" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> start = now()</span>
+<span id="cb30-62"><a href="#cb30-62" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> light = Red</span>
+<span id="cb30-63"><a href="#cb30-63" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> step <span class="kw">in</span> range(<span class="dv">7</span>) {</span>
+<span id="cb30-64"><a href="#cb30-64" aria-hidden="true" tabindex="-1"></a>    show(light)</span>
+<span id="cb30-65"><a href="#cb30-65" aria-hidden="true" tabindex="-1"></a>    led.toggle()                 <span class="co"># a heartbeat: the program is alive</span></span>
+<span id="cb30-66"><a href="#cb30-66" aria-hidden="true" tabindex="-1"></a>    sleep(hold(light))</span>
+<span id="cb30-67"><a href="#cb30-67" aria-hidden="true" tabindex="-1"></a>    light = after(light)</span>
+<span id="cb30-68"><a href="#cb30-68" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-69"><a href="#cb30-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-70"><a href="#cb30-70" aria-hidden="true" tabindex="-1"></a><span class="co"># Seven steps hold for 200 ms in all. `now` only ever goes forward.</span></span>
+<span id="cb30-71"><a href="#cb30-71" aria-hidden="true" tabindex="-1"></a>print(<span class="st">&quot;took at least 200 ms:&quot;</span>, now() - start &gt;= <span class="dv">200</span> ms)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>pin 2 on
 led on
 pin 2 off
@@ -726,7 +961,7 @@ pin 2 on
 led on
 took at least 200 ms: true</code></pre>
 <h3 class="unnumbered" id="a-real-board-underneath"><span
-class="number">28.10</span> A real board underneath</h3>
+class="number">29.13</span> A real board underneath</h3>
 <p>A compiled program meets the hardware in four C functions, and these,
 with the number of pins, are everything Zeno knows about a board:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>zeno_board_write(pin, level)   drive a pin high or low
@@ -741,13 +976,32 @@ of ports: <code>zeno_board_serial_open</code>, <code>_write</code>,
 <code>_ready</code> and <code>_read</code>. One that reads a voltage
 needs <code>zeno_board_analog</code> and
 <code>zeno_board_analog_read</code>, with the converter’s bits and
-reference. Only a program that uses them calls them, so a header with
-four still builds every other program.</p>
+reference. One that makes a PWM signal needs
+<code>zeno_board_pwm</code>, which takes the pin, the hertz and the
+duty. One with an interrupt needs three:
+<code>zeno_board_interrupt</code>, <code>zeno_board_edges</code> and
+<code>zeno_board_edges_wait</code>. Only a program that uses them calls
+them, so a header with four still builds every other program.</p>
 <p>The simulated board is these four, written for a computer. For a real
 microcontroller they are written once, over the vendor’s library, in a
 header, and the C compiler is told where it is. <a
 href="firmware.html#ch-firmware">Firmware</a> shows how, with a
 sketch for an STM32. The Zeno program does not change by a line.</p>
+<p>The chip’s compiler, its flags, its start-up file and its linker
+script are written down once as well, in the board’s folder, and
+<code>zeno build --board</code> builds a program for the board in one
+step (<a href="compiling.html#ch-compiling">Compiling</a>).</p>
+<p>Pins are not the only way out of a program. It prints, it warns and
+says what error stopped it, it reads what is typed, and it stops. On a
+computer the C library does those four, and a chip has no C library to
+speak of. A header that says <code>#define ZENO_BOARD_PRINTS</code>
+brings them itself:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>zeno_board_print(bytes, count)   what the program prints
+zeno_board_warn(bytes, count)    a warning, and an error&#39;s message
+zeno_board_typed()               the next byte typed, or -1 if none can come
+zeno_board_stop(status)          the program is over</code></pre>
+<p>Then <code>print("Hello")</code> is a few hundred bytes of flash and
+not ten thousand, because no <code>printf</code> comes with it.</p>
 <div class="why">
 <p>Four functions is the smallest surface a port can have: a board is
 working the day those four are. The checks, such as a pin that does not
@@ -755,13 +1009,13 @@ exist or a wait below zero, are done once above them, for every board,
 so the four can be four lines each. (Decision 5.12.)</p>
 </div>
 <h3 class="unnumbered" id="what-the-board-does-not-have-yet"><span
-class="number">28.11</span> What the board does not have yet</h3>
-<p>A button can be read, but nothing waits for it: a program looks at
-the pin as often as it needs to. On a computer nothing can press it yet.
-Nor can a voltage be fed to a pin there. Interrupts, timers and PWM are
-not in the <code>board</code> module yet. Until they are, a program
-reaches them through their registers, at the addresses the data sheet
-gives. <a href="limits.html#app-limits">Appendix G</a> lists
+class="number">29.14</span> What the board does not have yet</h3>
+<p>On a computer nothing can press a button yet, and no voltage can be
+fed to a pin there. No function of the program runs by itself when a pin
+changes or a tick comes: the board counts, and the program asks. I2C and
+SPI are not in the <code>board</code> module yet. Until they are, a
+program reaches them through their registers, at the addresses the data
+sheet gives. <a href="limits.html#app-limits">Appendix G</a> lists
 these.</p>
 <div class="summary">
 <p><code>from board import led, pin, register</code>. A pin is driven
@@ -770,13 +1024,19 @@ with <code>is_on</code>; <code>Pin</code> is a type.
 <code>input_pin(n, pull_up)</code> gives an <code>InputPin</code>, read
 with <code>is_high</code> and <code>is_low</code>.
 <code>analog_pin(n)</code> gives an <code>AnalogPin</code>, whose
-<code>voltage()</code> is in volts. <code>serial(n, 115200 baud)</code>
-gives a <code>Serial</code>, which writes text and bytes and reads a
-byte at a time. <code>sleep</code> and <code>now</code> keep time with
-units. A register is read and written inside <code>unsafe</code>.
-<code>zeno run</code> simulates the board and prints each change; a
-compiled program sits on four C functions that a real board
-provides.</p>
+<code>voltage()</code> is in volts. <code>pwm_pin(n, 1 kHz)</code> gives
+a <code>PwmPin</code>, on for a share of the time with <code>duty</code>
+or for a time with <code>pulse</code>. <code>ticker(10 ms)</code> gives
+a <code>Ticker</code>: <code>wait()</code> waits for its next tick and
+says how many have come. <code>button.interrupt(falling)</code> gives an
+<code>Interrupt</code>: the board counts the edges, and
+<code>wait()</code> and <code>edges()</code> give the count.
+<code>serial(n, 115200 baud)</code> gives a <code>Serial</code>, which
+writes text and bytes and reads a byte at a time. <code>sleep</code> and
+<code>now</code> keep time with units. A register is read and written
+inside <code>unsafe</code>. <code>zeno run</code> simulates the board
+and prints each change; a compiled program sits on four C functions that
+a real board provides.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -796,7 +1056,7 @@ than half a second.</p></li>
 </article>
 <nav class="pager bottom">
 <a class="prev" href="zeno-on-a-machine.html" rel="previous">← Zeno on a Machine</a>
-<a class="next" href="compiling.html" rel="next"><span class="number">29</span> Compiling →</a>
+<a class="next" href="compiling.html" rel="next"><span class="number">30</span> Compiling →</a>
 </nav>
 <footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
 </main>

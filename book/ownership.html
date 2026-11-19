@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>31 Ownership · The Zeno Book</title>
+  <title>32 Ownership · The Zeno Book</title>
   <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@
   </style>
   <link rel="stylesheet" href="book.css">
 <meta property="og:site_name" content="Zeno">
-<meta property="og:title" content="31 Ownership · The Zeno Book">
+<meta property="og:title" content="32 Ownership · The Zeno Book">
 <meta property="og:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/book/ownership.html">
@@ -103,7 +103,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Zeno Book: the whole language, in one book.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="31 Ownership · The Zeno Book">
+<meta name="twitter:title" content="32 Ownership · The Zeno Book">
 <meta name="twitter:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta name="twitter:image" content="https://zeno-lang.org/og/book.png">
 <meta name="twitter:image:alt" content="The Zeno Book: the whole language, in one book.">
@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.6</span>
+  <span class="version">Zeno 0.7</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -174,41 +174,43 @@ class="number">21</span> Programs in Several Files</a></li>
 class="number">22</span> Packages</a></li>
 <li><a href="other-languages.html" id="toc-ch-other-languages"><span
 class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">24</span> Reading and Writing</a></li>
+class="number">25</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">25</span> Mathematics</a></li>
+class="number">26</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">26</span> Testing</a></li>
+class="number">27</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">27</span> The Tools</a></li>
+class="number">28</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">28</span> The Board</a></li>
+class="number">29</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">29</span> Compiling</a></li>
+class="number">30</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">30</span> Memory</a></li>
+class="number">31</span> Memory</a></li>
 <li><a class="here" href="ownership.html" id="toc-ch-ownership"><span
-class="number">31</span> Ownership</a></li>
+class="number">32</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">32</span> Firmware</a></li>
+class="number">33</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">33</span> Building with No Collector</a></li>
+class="number">34</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">34</span> Unsafe Code</a></li>
+class="number">35</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">35</span> A Program in a Web Page</a></li>
+class="number">36</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">36</span> Inside Zeno</a></li>
+class="number">37</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">37</span> Why Zeno Is as It Is</a></li>
+class="number">38</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -228,12 +230,12 @@ class="number">G</span> What Zeno Does Not Have Yet</a></li>
 </aside>
 <main>
 <nav class="pager top">
-<a class="prev" href="memory.html" rel="previous">← <span class="number">30</span> Memory</a>
-<a class="next" href="firmware.html" rel="next"><span class="number">32</span> Firmware →</a>
+<a class="prev" href="memory.html" rel="previous">← <span class="number">31</span> Memory</a>
+<a class="next" href="firmware.html" rel="next"><span class="number">33</span> Firmware →</a>
 </nav>
 <article>
 <h2 class="chapter unnumbered" id="ch-ownership"><span
-class="number">31</span> Ownership</h2>
+class="number">32</span> Ownership</h2>
 <p>A collector has two costs that firmware notices. It pauses the
 program when it runs, and memory comes back at no particular moment. A
 buffer filled a thousand times a second inside a control loop wants
@@ -242,7 +244,7 @@ value has exactly one owner, and is freed the moment its owner’s block
 ends, at a line you can point to.</p>
 <p>Shared values stay the default. Nothing changes for a program that
 does not say <code>owned</code>.</p>
-<h3 class="unnumbered" id="three-words"><span class="number">31.1</span>
+<h3 class="unnumbered" id="three-words"><span class="number">32.1</span>
 Three words</h3>
 <div class="sourceCode" id="cb1" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">owned</span> <span class="kw">class</span> Packet {</span>
@@ -278,7 +280,7 @@ over. A parameter without it only <em>looks</em>: the function may read
 the value and change what is inside it, and may not keep it.</p></li>
 </ul>
 <p>There are no lifetimes to write, and no <code>&amp;</code>.</p>
-<h3 class="unnumbered" id="the-rules-2"><span class="number">31.2</span>
+<h3 class="unnumbered" id="the-rules-2"><span class="number">32.2</span>
 The rules</h3>
 <h4 class="unnumbered" id="one-owner.">1. One owner.</h4>
 <p>A variable, a parameter, or a field of an owned object holds the
@@ -364,7 +366,7 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <p>An owned list owns its items, and frees them with itself. A
 <code>Packet or none</code> can own a packet or nothing.</p>
 <h3 class="unnumbered" id="branches-and-loops"><span
-class="number">31.3</span> Branches and loops</h3>
+class="number">32.3</span> Branches and loops</h3>
 <p>The checker follows each path. After an <code>if</code>, a value is
 gone if any branch gave it away, unless that branch left with
 <code>return</code>:</p>
@@ -399,7 +401,7 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 the <code>except</code> starts with everything the body gives away
 already gone.</p>
 <h3 class="unnumbered" id="seeing-the-frees"><span
-class="number">31.4</span> Seeing the frees</h3>
+class="number">32.4</span> Seeing the frees</h3>
 <p>This program from the <code>examples</code> folder makes 120 frames
 of 600 samples each, sends some and skips others. Every list and object
 in it is owned:</p>
@@ -521,7 +523,7 @@ default. (Decisions 5.8 and 5.15, and the audit, which made looking the
 default.)</p>
 </div>
 <h3 class="unnumbered" id="what-owned-values-cannot-do"><span
-class="number">31.5</span> What owned values cannot do</h3>
+class="number">32.5</span> What owned values cannot do</h3>
 <p>In version 0.1 an owned value cannot sit in a function type, be taken
 out of a field (that would leave a hole the type does not admit to), be
 replaced through a look, or be raised. Each is an error that says what
@@ -550,8 +552,8 @@ that?</p></li>
 </div>
 </article>
 <nav class="pager bottom">
-<a class="prev" href="memory.html" rel="previous">← <span class="number">30</span> Memory</a>
-<a class="next" href="firmware.html" rel="next"><span class="number">32</span> Firmware →</a>
+<a class="prev" href="memory.html" rel="previous">← <span class="number">31</span> Memory</a>
+<a class="next" href="firmware.html" rel="next"><span class="number">33</span> Firmware →</a>
 </nav>
 <footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
 </main>

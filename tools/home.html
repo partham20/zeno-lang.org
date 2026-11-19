@@ -215,7 +215,7 @@ led on</code></pre>
       <li><!--ICON:alert--><h3>Errors as values</h3><p><code>--firmware</code> turns every error into a return value the caller tests. No <code>setjmp</code>.</p></li>
       <li><!--ICON:zap--><h3>No garbage collector</h3><p><code>--no-collector</code> leaves it out. Every value has one owner and is freed on a line you can point to.</p></li>
       <li><!--ICON:pool--><h3>One fixed pool</h3><p>No <code>malloc</code>. Lists and objects live in one array whose size you choose.</p></li>
-      <li><!--ICON:chip-pin--><h3>Four C functions to a board</h3><p>A compiled program meets real hardware through four functions you write once.</p></li>
+      <li><!--ICON:chip-pin--><h3>One step to a board</h3><p><code>zeno build --board</code> runs the board's own compiler, and the program meets the hardware through a few C functions written once. <code>hello</code> is 936 bytes of flash on an emulated Cortex-M3.</p></li>
     </ul>
 
     <figure class="window report">
@@ -225,7 +225,7 @@ pool: 25384 bytes taken, in a pool of 32768
 text: at most 53 bytes in use at once, in a room of 1024</code></pre>
     </figure>
     <p class="aside">That program makes 2.6 MB of values over its run and never holds more than 13 KB at once.</p>
-    <p class="after"><a href="/docs/firmware/">How the firmware build works</a></p>
+    <p class="after"><a href="/docs/firmware/">How the firmware build works</a> · <a href="/docs/board-build/">Building for a board</a></p>
   </div>
 </section>
 
@@ -291,7 +291,7 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
       <li class="done"><span class="pin"><!--ICON:package--></span><b>Library and modules</b><span>Files, input, maths, dictionaries, programs in many files.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><!--ICON:loop--></span><b>Speed</b><span>Builds as fast as C and Rust, and a choice of how memory is freed.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><!--ICON:copies--></span><b>Other languages</b><span>The program written in <!--TARGET-COUNT-RELEASED--> other languages, from JavaScript to Rust.</span><small>Works today</small></li>
-      <li class="next"><span class="pin"><!--ICON:globe--></span><b>Hardware and servers</b><span>Reading real pins, <code>async</code> and C interop.</span><small>Next</small></li>
+      <li class="next"><span class="pin"><!--ICON:globe--></span><b>Real boards and servers</b><span>A program tried on real hardware, then tasks and <code>async</code>.</span><small>Next</small></li>
     </ol>
     <p class="after"><a href="/roadmap/">The full roadmap</a></p>
   </div>
@@ -301,7 +301,7 @@ text: at most 53 bytes in use at once, in a room of 1024</code></pre>
   <div class="wrap start">
     <div>
       <h2>Run it yourself.</h2>
-      <p>Zeno 0.5 is out, open source under the MIT licence. One line installs it on macOS and Linux, and <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.6.0/zeno-0.6.0-windows-setup.exe">a setup program</a> on Windows. Or try it first in the <a href="/playground/">playground</a>.</p>
+      <p>Zeno 0.7 is out, open source under the MIT licence. One line installs it on macOS and Linux, and <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.7.0/zeno-0.7.0-windows-setup.exe">a setup program</a> on Windows. Or try it first in the <a href="/playground/">playground</a>.</p>
       <div class="actions">
         <a class="button" href="/learn/#install">Install and first steps</a>
         <a class="button ghost" href="/examples/">Browse the examples</a>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>29 Compiling · The Zeno Book</title>
+  <title>30 Compiling · The Zeno Book</title>
   <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,7 +91,7 @@
   </style>
   <link rel="stylesheet" href="book.css">
 <meta property="og:site_name" content="Zeno">
-<meta property="og:title" content="29 Compiling · The Zeno Book">
+<meta property="og:title" content="30 Compiling · The Zeno Book">
 <meta property="og:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://zeno-lang.org/book/compiling.html">
@@ -103,7 +103,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="The Zeno Book: the whole language, in one book.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="29 Compiling · The Zeno Book">
+<meta name="twitter:title" content="30 Compiling · The Zeno Book">
 <meta name="twitter:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
 <meta name="twitter:image" content="https://zeno-lang.org/og/book.png">
 <meta name="twitter:image:alt" content="The Zeno Book: the whole language, in one book.">
@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.6</span>
+  <span class="version">Zeno 0.7</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -174,41 +174,43 @@ class="number">21</span> Programs in Several Files</a></li>
 class="number">22</span> Packages</a></li>
 <li><a href="other-languages.html" id="toc-ch-other-languages"><span
 class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">24</span> Reading and Writing</a></li>
+class="number">25</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">25</span> Mathematics</a></li>
+class="number">26</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">26</span> Testing</a></li>
+class="number">27</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">27</span> The Tools</a></li>
+class="number">28</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">28</span> The Board</a></li>
+class="number">29</span> The Board</a></li>
 <li><a class="here" href="compiling.html" id="toc-ch-compiling"><span
-class="number">29</span> Compiling</a></li>
+class="number">30</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">30</span> Memory</a></li>
+class="number">31</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">31</span> Ownership</a></li>
+class="number">32</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">32</span> Firmware</a></li>
+class="number">33</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">33</span> Building with No Collector</a></li>
+class="number">34</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">34</span> Unsafe Code</a></li>
+class="number">35</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">35</span> A Program in a Web Page</a></li>
+class="number">36</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">36</span> Inside Zeno</a></li>
+class="number">37</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">37</span> Why Zeno Is as It Is</a></li>
+class="number">38</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -228,18 +230,18 @@ class="number">G</span> What Zeno Does Not Have Yet</a></li>
 </aside>
 <main>
 <nav class="pager top">
-<a class="prev" href="board.html" rel="previous">← <span class="number">28</span> The Board</a>
-<a class="next" href="memory.html" rel="next"><span class="number">30</span> Memory →</a>
+<a class="prev" href="board.html" rel="previous">← <span class="number">29</span> The Board</a>
+<a class="next" href="memory.html" rel="next"><span class="number">31</span> Memory →</a>
 </nav>
 <article>
 <h2 class="chapter unnumbered" id="ch-compiling"><span
-class="number">29</span> Compiling</h2>
+class="number">30</span> Compiling</h2>
 <p><code>zeno run</code> reads a program and does what it says, a piece
 at a time. <code>zeno build</code> turns the same program into C, and
 the machine’s C compiler turns that into a program of its own: no Zeno
 needed to run it, and many times faster. The C can also be compiled for
 a microcontroller, which is where Zeno is going.</p>
-<h3 class="unnumbered" id="zeno-build"><span class="number">29.1</span>
+<h3 class="unnumbered" id="zeno-build"><span class="number">30.1</span>
 zeno build</h3>
 <div class="zenofile">
 <p>primes.zeno</p>
@@ -278,7 +280,7 @@ computer this book was built on, <code>zeno run</code> takes about two
 seconds over it, <code>zeno run --vm</code> about one, and
 <code>./primes</code> a fiftieth of a second.</p>
 <h3 class="unnumbered" id="reading-the-c"><span
-class="number">29.2</span> Reading the C</h3>
+class="number">30.2</span> Reading the C</h3>
 <p>The C file is kept, and it is meant to be read beside the Zeno. Here
 is <code>is_prime</code>:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build primes.zeno &gt; /dev/null
@@ -300,10 +302,11 @@ static bool z_is_prime(int64_t z2_n) {
 <code>int64_t</code>. <code>d * d</code> is <code>zeno_mul</code>, which
 checks for overflow with the compiler’s own built-in and raises an
 <code>OverflowError</code> with the line and column (the two numbers
-after the operands) when the answer does not fit. In front of the
-program stands Zeno’s runtime, a small C library for text, lists, errors
-and <code>print</code>, pasted into every file so that the C needs
-nothing else to compile.</p>
+after the operands) when the answer does not fit. A C compiler that is
+neither GCC nor Clang has no such built-in, and gets the same check
+written out in plain C. In front of the program stands Zeno’s runtime, a
+small C library for text, lists, errors and <code>print</code>, pasted
+into every file so that the C needs nothing else to compile.</p>
 <div class="why">
 <p>C runs on every processor there is, and every microcontroller vendor
 ships a C compiler for its chips. Writing C first gave Zeno all of them
@@ -311,7 +314,7 @@ at once, and C that a person can read is a C that a person can check.
 (Decisions 5.5 and 5.5b.)</p>
 </div>
 <h3 class="unnumbered" id="build-agrees-with-run"><span
-class="number">29.3</span> Build agrees with run</h3>
+class="number">30.3</span> Build agrees with run</h3>
 <p>A program must print the same whichever way it is run:
 <code>zeno run</code>, <code>zeno run --vm</code>, a C build, an LLVM
 build, a firmware build. Errors included: an uncaught error gives the
@@ -325,7 +328,7 @@ where firmware is tried, it must mean exactly what the compiled program
 means. (Decision 5.5d.)</p>
 </div>
 <h3 class="unnumbered" id="a-build-is-strict"><span
-class="number">29.4</span> A build is strict</h3>
+class="number">30.4</span> A build is strict</h3>
 <p><code>zeno build</code> always checks in strict mode: every type must
 be known, because a compiled program has no tags to carry them (<a
 href="types.html#ch-types">Types, Written and Worked Out</a>). A
@@ -347,7 +350,7 @@ error: strict mode: the parameter `x` of `same` needs a type. It could not be wo
   | ^
 
 1 error found. Nothing was built.</code></pre>
-<h3 class="unnumbered" id="the-options"><span class="number">29.5</span>
+<h3 class="unnumbered" id="the-options"><span class="number">30.5</span>
 The options</h3>
 <div class="center">
 <table>
@@ -406,12 +409,12 @@ $ ./lists
 memory: 12 blocks made (16388 bytes), at most 12320 bytes in use at once, 0 collections, 8 blocks freed without the collector</code></pre>
 <p><a href="memory.html#ch-memory">Memory</a> explains the
 report.</p>
-<h3 class="unnumbered" id="the-least-c"><span class="number">29.6</span>
+<h3 class="unnumbered" id="the-least-c"><span class="number">30.6</span>
 The least C</h3>
 <p>The C that <code>zeno build</code> writes keeps every promise Zeno
 makes, and that takes room. Each sum is checked, each index is checked,
 each error can say its line, and the whole runtime stands in front of
-the program in case it is needed: about 3,000 lines of C for a program
+the program in case it is needed: about 4,500 lines of C for a program
 of one line. Once a program is correct, <code>--minimal</code> writes
 the other kind of C: the least that runs it, close to what a person
 would write by hand.</p>
@@ -536,7 +539,7 @@ two builds, and the one that checks is the one you get without asking.
 table and the sizes.)</p>
 </div>
 <h3 class="unnumbered" id="through-llvm"><span
-class="number">29.7</span> Through LLVM</h3>
+class="number">30.7</span> Through LLVM</h3>
 <p><code>zeno build --llvm</code> writes the program in LLVM’s
 intermediate language, the one Clang, Rust and Swift compile through,
 and hands it to <code>clang</code>. The program is the same, and prints
@@ -552,35 +555,92 @@ brings its own optimiser and every processor it knows. <a
 href="inside.html#ch-inside">Inside Zeno</a> shows a piece of
 it.</p>
 <h3 class="unnumbered" id="for-another-processor"><span
-class="number">29.8</span> For another processor</h3>
-<p><code>zeno build</code> compiles for the computer it runs on. For a
-microcontroller, take the C file it wrote and give it to the
-microcontroller’s own C compiler, with the board’s header (<a
-href="firmware.html#ch-firmware">Firmware</a>):</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --firmware --no-collector blink.zeno
-$ arm-none-eabi-gcc -O2 -DZENO_BOARD=&#39;&quot;nucleo.h&quot;&#39; -c blink.c</code></pre>
+class="number">30.8</span> For another processor</h3>
+<p><code>zeno build</code> compiles for the computer it runs on. A
+microcontroller has a C compiler of its own, flags that say which
+processor it is, a file that runs before <code>main</code>, and a linker
+script that says where its flash and RAM are. Those four are the same
+for every program on one board, so they are written down once, in a
+folder, and <code>--board</code> names the folder:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --board boards/qemu-cortex-m3 blink.zeno
+Wrote blink.c
+Built blink.elf for the board in `boards/qemu-cortex-m3`.
+Run it with: qemu-system-arm -M lm3s6965evb -nographic -kernel blink.elf</code></pre>
+<p>The folder has a file called <code>zeno.board</code>, read as a
+<code>zeno.package</code> is. Each word in quotes is one word of the
+command the compiler is given:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>about &quot;An ARM Cortex-M3 that QEMU emulates&quot;
+
+compiler &quot;arm-none-eabi-gcc&quot;
+flags &quot;-mcpu=cortex-m3&quot; &quot;-mthumb&quot;
+sources &quot;startup.c&quot; &quot;system.c&quot;
+script &quot;link.ld&quot;
+link &quot;-nostartfiles&quot; &quot;-Wl,--gc-sections&quot;
+run &quot;qemu-system-arm&quot; &quot;-M&quot; &quot;lm3s6965evb&quot; &quot;-nographic&quot; &quot;-kernel&quot;</code></pre>
+<p>(The board’s real <code>run</code> line has one more word,
+<code>"-semihosting"</code>, which lets the program tell QEMU that it
+has ended.)</p>
+<p><code>compiler</code> is the one line a board must have.
+<code>header</code> names the header with the board’s own functions (<a
+href="firmware.html#ch-firmware">Firmware</a>); a board without one,
+like this one, has the simulated pins. <code>zeno build</code> shows the
+<code>run</code> command and does not run it: on a real board it writes
+to the chip.</p>
+<p>The program is built as <code>--no-collector</code> builds it,
+because the garbage collector takes its memory 64 KB at a time and this
+chip has 64 KB in all. <code>--minimal</code>, <code>--release</code>,
+<code>--fast</code> and <code>--memory</code> go with
+<code>--board</code>.</p>
+<p>The board in the example comes with Zeno, in its repository, and
+needs no hardware: QEMU emulates an ARM Cortex-M3 with 256 KB of flash
+and 64 KB of RAM. Every example in this book that a build with no
+collector accepts is built for it and compared with the same program on
+a computer, each time the compiler changes. No program of Zeno’s has run
+on a real board yet.</p>
+<p>Beside it is a second folder for the same chip,
+<code>boards/lm3s6965evb</code>, which has a <code>header</code> line.
+There a pin is a bit of one of the chip’s ports and not a line of text,
+and <code>print</code> goes out of the chip’s serial port through four
+functions of the header (<a href="board.html#ch-board">The
+Board</a>), with no <code>printf</code> and no <code>exit</code> under
+the program:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --board boards/qemu-cortex-m3 hello.zeno
+$ arm-none-eabi-size hello.elf
+   text    data     bss     dec     hex filename
+   8096    1376     380    9852    267c hello.elf
+$ zeno build --board boards/lm3s6965evb hello.zeno
+$ arm-none-eabi-size hello.elf
+   text    data     bss     dec     hex filename
+    920      16       4     940     3ac hello.elf</code></pre>
+<p>A number with a fraction is made into text by Zeno’s own runtime on
+both boards, with whole numbers. The C library’s <code>snprintf</code>
+would be 28 KB of this chip’s flash, and the runtime’s digits are 1 to
+4.</p>
 <div class="why">
 <p>Building C for a target is a job the target’s own tools already do
 well, with the flags, linker scripts and start-up code that only they
-know. Zeno’s part ends at a C file that compiles anywhere. (Decision
-5.12c.)</p>
+know. So Zeno copies none of them. A board’s folder names the tools an
+engineer already has, and Zeno types the one long command that was typed
+by hand before. The flags are in a folder of the board’s and not in the
+program’s package, because one program is built for two boards and one
+board runs many programs. (Decisions 5.12c and 51; new in 0.7.)</p>
 </div>
 <h3 class="unnumbered" id="what-does-not-compile-yet"><span
-class="number">29.9</span> What does not compile yet</h3>
+class="number">30.9</span> What does not compile yet</h3>
 <p>Nearly the whole language compiles. A few corners do not, and
 <code>zeno build</code> names each one and points at the line, while
 <code>zeno run</code> still runs the program:</p>
 <div class="zenofile">
 <p>inner.zeno</p>
 </div>
-<div class="sourceCode" id="cb12" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">2</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> inner()</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
+<div class="sourceCode" id="cb14" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">2</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> inner()</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build inner.zeno
 error: `zeno build` cannot compile a function inside a function or block yet. `zeno run` can still run this program
  --&gt; inner.zeno:2:5
@@ -590,8 +650,15 @@ error: `zeno build` cannot compile a function inside a function or block yet. `z
 <p>A function written with no name,
 <code>let inner = function() { ... }</code>, does compile. <a
 href="limits.html#app-limits">Appendix G</a> has the full list.</p>
+<p>A program that uses the library of another language through
+<code>import python</code> or one of its like is refused too, because a
+built program must run where that language may not be (<a
+href="other-languages.html#ch-other-languages">Libraries of Other
+Languages</a>). A library of C is the other way round: a build calls it
+directly and links it in, on a board as well (<a
+href="c-libraries.html#ch-c-libraries">Libraries of C</a>).</p>
 <h3 class="unnumbered" id="in-another-language-new-in-0.5"><span
-class="number">29.10</span> In another language (new in 0.5)</h3>
+class="number">30.10</span> In another language (new in 0.5)</h3>
 <p><code>zeno build --target</code> writes the program in another
 language: a file you can read, keep, and run with that language’s own
 tools. The languages are <code>js</code> (JavaScript, for Node),
@@ -604,13 +671,13 @@ Rust). Zeno 0.5.2 added four: <code>lua</code>, <code>ruby</code>,
 <div class="zenofile">
 <p>area.zeno</p>
 </div>
-<div class="sourceCode" id="cb14" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> math</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> area(r: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> math.pi * r * r</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>print(area(<span class="dv">2.0</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb16" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> math</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> area(r: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> math.pi * r * r</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>print(area(<span class="dv">2.0</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --target js area.zeno
 Wrote area.js. Run it with `node area.js`
 $ node area.js
@@ -686,8 +753,8 @@ the two with the Python.</p></li>
 </div>
 </article>
 <nav class="pager bottom">
-<a class="prev" href="board.html" rel="previous">← <span class="number">28</span> The Board</a>
-<a class="next" href="memory.html" rel="next"><span class="number">30</span> Memory →</a>
+<a class="prev" href="board.html" rel="previous">← <span class="number">29</span> The Board</a>
+<a class="next" href="memory.html" rel="next"><span class="number">31</span> Memory →</a>
 </nav>
 <footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
 </main>

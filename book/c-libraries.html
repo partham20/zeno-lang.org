@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>24 Libraries of C · The Zeno Book</title>
+  <meta name="description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="book.css">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="24 Libraries of C · The Zeno Book">
+<meta property="og:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/book/c-libraries.html">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/book.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/book.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Zeno Book: the whole language, in one book.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="24 Libraries of C · The Zeno Book">
+<meta name="twitter:description" content="The Zeno Book: the whole Zeno programming language, from the first program to the last corner.">
+<meta name="twitter:image" content="https://zeno-lang.org/og/book.png">
+<meta name="twitter:image:alt" content="The Zeno Book: the whole language, in one book.">
+<link rel="canonical" href="https://zeno-lang.org/book/c-libraries.html">
+</head>
+<body>
+<header class="bar">
+  <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
+  <a class="brand" href="index.html">The Zeno Book</a>
+  <span class="version">Zeno 0.7</span>
+  <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
+</header>
+<div class="layout">
+<aside class="sidebar"><ul>
+<li><a href="preface.html" id="toc-ch-preface">Preface</a></li>
+<li><a href="starting.html" id="toc-starting">Starting</a>
+<ul>
+<li><a href="getting-zeno.html" id="toc-ch-getting-zeno"><span
+class="number">1</span> Getting Zeno</a></li>
+<li><a href="first-program.html" id="toc-ch-first-program"><span
+class="number">2</span> A First Program</a></li>
+<li><a href="tour.html" id="toc-ch-tour"><span
+class="number">3</span> A Tour of Zeno</a></li>
+</ul></li>
+<li><a href="the-language.html" id="toc-the-language">The Language</a>
+<ul>
+<li><a href="values.html" id="toc-ch-values"><span
+class="number">4</span> Values and Variables</a></li>
+<li><a href="numbers.html" id="toc-ch-numbers"><span
+class="number">5</span> Numbers and Operators</a></li>
+<li><a href="text.html" id="toc-ch-text"><span
+class="number">6</span> Text</a></li>
+<li><a href="control-flow.html" id="toc-ch-control-flow"><span
+class="number">7</span> Deciding and Repeating</a></li>
+<li><a href="functions.html" id="toc-ch-functions"><span
+class="number">8</span> Functions</a></li>
+<li><a href="lists.html" id="toc-ch-lists"><span
+class="number">9</span> Lists</a></li>
+<li><a href="dicts.html" id="toc-ch-dicts"><span
+class="number">10</span> Dicts</a></li>
+<li><a href="classes.html" id="toc-ch-classes"><span
+class="number">11</span> Classes</a></li>
+<li><a href="enums.html" id="toc-ch-enums"><span
+class="number">12</span> Enums and match</a></li>
+<li><a href="none.html" id="toc-ch-none"><span
+class="number">13</span> Values That May Be Missing</a></li>
+<li><a href="errors.html" id="toc-ch-errors"><span
+class="number">14</span> When Things Go Wrong</a></li>
+<li><a href="function-values.html" id="toc-ch-function-values"><span
+class="number">15</span> Functions as Values</a></li>
+</ul></li>
+<li><a href="growing-programs.html" id="toc-growing-programs">Growing
+Programs</a>
+<ul>
+<li><a href="types.html" id="toc-ch-types"><span
+class="number">16</span> Types, Written and Worked Out</a></li>
+<li><a href="units.html" id="toc-ch-units"><span
+class="number">17</span> Numbers with Units</a></li>
+<li><a href="sized-numbers.html" id="toc-ch-sized-numbers"><span
+class="number">18</span> Sized Numbers and Bits</a></li>
+<li><a href="generics.html" id="toc-ch-generics"><span
+class="number">19</span> Generics</a></li>
+<li><a href="interfaces.html" id="toc-ch-interfaces"><span
+class="number">20</span> Interfaces</a></li>
+<li><a href="modules.html" id="toc-ch-modules"><span
+class="number">21</span> Programs in Several Files</a></li>
+<li><a href="packages.html" id="toc-ch-packages"><span
+class="number">22</span> Packages</a></li>
+<li><a href="other-languages.html" id="toc-ch-other-languages"><span
+class="number">23</span> Libraries of Other Languages</a></li>
+<li><a class="here" href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
+<li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
+class="number">25</span> Reading and Writing</a></li>
+<li><a href="math.html" id="toc-ch-math"><span
+class="number">26</span> Mathematics</a></li>
+<li><a href="testing.html" id="toc-ch-testing"><span
+class="number">27</span> Testing</a></li>
+<li><a href="tools.html" id="toc-ch-tools"><span
+class="number">28</span> The Tools</a></li>
+</ul></li>
+<li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
+a Machine</a>
+<ul>
+<li><a href="board.html" id="toc-ch-board"><span
+class="number">29</span> The Board</a></li>
+<li><a href="compiling.html" id="toc-ch-compiling"><span
+class="number">30</span> Compiling</a></li>
+<li><a href="memory.html" id="toc-ch-memory"><span
+class="number">31</span> Memory</a></li>
+<li><a href="ownership.html" id="toc-ch-ownership"><span
+class="number">32</span> Ownership</a></li>
+<li><a href="firmware.html" id="toc-ch-firmware"><span
+class="number">33</span> Firmware</a></li>
+<li><a href="no-collector.html" id="toc-ch-no-collector"><span
+class="number">34</span> Building with No Collector</a></li>
+<li><a href="unsafe.html" id="toc-ch-unsafe"><span
+class="number">35</span> Unsafe Code</a></li>
+<li><a href="web.html" id="toc-ch-web"><span
+class="number">36</span> A Program in a Web Page</a></li>
+</ul></li>
+<li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
+<ul>
+<li><a href="inside.html" id="toc-ch-inside"><span
+class="number">37</span> Inside Zeno</a></li>
+<li><a href="design.html" id="toc-ch-design"><span
+class="number">38</span> Why Zeno Is as It Is</a></li>
+<li><a href="keywords.html" id="toc-app-keywords"><span
+class="number">A</span> Keywords</a></li>
+<li><a href="operators.html" id="toc-app-operators"><span
+class="number">B</span> Operators</a></li>
+<li><a href="library.html" id="toc-app-library"><span
+class="number">C</span> The Library at a Glance</a></li>
+<li><a href="unit-table.html" id="toc-app-unit-table"><span
+class="number">D</span> Units at a Glance</a></li>
+<li><a href="commands.html" id="toc-app-commands"><span
+class="number">E</span> The zeno Command</a></li>
+<li><a href="error-kinds.html" id="toc-app-error-kinds"><span
+class="number">F</span> Kinds of Error</a></li>
+<li><a href="limits.html" id="toc-app-limits"><span
+class="number">G</span> What Zeno Does Not Have Yet</a></li>
+</ul></li>
+</ul>
+</aside>
+<main>
+<nav class="pager top">
+<a class="prev" href="other-languages.html" rel="previous">← <span class="number">23</span> Libraries of Other Languages</a>
+<a class="next" href="reading-writing.html" rel="next"><span class="number">25</span> Reading and Writing →</a>
+</nav>
+<article>
+<h2 class="chapter unnumbered" id="ch-c-libraries"><span
+class="number">24</span> Libraries of C</h2>
+<p>Most of the code a computer runs is C, or is reached through C: the
+library of the system, zlib, SQLite, a vendor’s driver, and the code a
+board’s firmware already has. Go and Rust can both make a library that C
+can call. Since 0.6 a Zeno program can call any of them, as they
+are:</p>
+<div class="zenofile">
+<p>maths.zeno</p>
+</div>
+<div class="sourceCode" id="cb1" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> c</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> m = c.library(<span class="st">&quot;m&quot;</span>, [<span class="st">&quot;double hypot(double x, double y);&quot;</span>, <span class="st">&quot;double frexp(double x, int *exponent);&quot;</span>])</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> exponent = [<span class="dv">0</span>]</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(m.hypot(<span class="dv">3.0</span>, <span class="dv">4.0</span>), m.frexp(<span class="dv">8.0</span>, exponent), exponent)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>5.0 0.5 [4]</code></pre>
+<p><code>c.library</code> takes two things: the library, and the
+functions of it that the program uses, declared as C declares them. The
+declarations are the lines a header has, copied as they are. From there,
+each function is called as a function of Zeno is.</p>
+<p>This is not the bridge of the last chapter. A value of Python stays
+in Python, and Zeno asks for each field of it. C has no such values: a
+function of C takes numbers, text and pointers, and gives one back. So
+the checker reads the declarations and checks every call before the
+program runs, and <code>zeno build</code> calls the function directly,
+with nothing in between. That is what firmware needs.</p>
+<div class="note">
+<p>Nothing changes for a program that does not say
+<code>import c</code>. What C needs is started by the first
+<code>c.library</code> that runs, and a program that imports
+<code>c</code> and never calls it starts nothing.</p>
+</div>
+<h3 class="unnumbered" id="what-it-needs-1"><span
+class="number">24.1</span> What it needs</h3>
+<p>A C compiler: <code>cc</code>, <code>gcc</code> or
+<code>clang</code>, the first that is installed, or the one
+<code>CC</code> names, as for <code>zeno build</code>. Under
+<code>zeno run</code>, the first time a program reaches a
+<code>c.library</code> Zeno writes a small file of C for the functions
+it declares and builds it with the library. That takes about half a
+second, and is kept: the next run starts at once. It is built again when
+the declarations change, or a file of the library does.</p>
+<p>The library itself has to be there with what building with it needs.
+On Debian and Ubuntu that is the package whose name ends in
+<code>-dev</code>: <code>zlib1g-dev</code> for zlib,
+<code>libsqlite3-dev</code> for SQLite.</p>
+<h3 class="unnumbered" id="naming-the-library"><span
+class="number">24.2</span> Naming the library</h3>
+<p>The first thing given is one text, or a list of them:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Given</th>
+<th style="text-align: left;">What it is</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>"z"</code></td>
+<td style="text-align: left;">a library of the system, by its name:
+<code>-lz</code>, as C is built with it</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>"crc.c"</code></td>
+<td style="text-align: left;">a file of C, built with the rest</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>"libtemp.so"</code></td>
+<td style="text-align: left;">a library that was built already:
+<code>.so</code>, <code>.a</code>, <code>.o</code>, <code>.dylib</code>,
+<code>.dll</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>"-DSTEP=3"</code></td>
+<td style="text-align: left;">anything that starts with <code>-</code>
+goes to the compiler as it is</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>none</code></td>
+<td style="text-align: left;">nothing more: for the C library every
+program has (<code>strlen</code>, <code>abs</code>)</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>A file is found from the folder of the program, wherever the program
+is started from, and so is a header it includes.</p>
+<div class="zenofile">
+<p>libc.zeno</p>
+</div>
+<div class="sourceCode" id="cb3" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> c</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> libc = c.library(<span class="cn">none</span>, [</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;size_t strlen(const char *text);&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;int abs(int n);&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;char *getenv(const char *name);&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>print(libc.strlen(<span class="st">&quot;zeno&quot;</span>), libc.abs(-<span class="dv">7</span>), libc.getenv(<span class="st">&quot;NO_SUCH_NAME&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>4 7 none</code></pre>
+<p>A library that is not there is a <code>FileError</code>, which a
+program can catch. The message asks if it is installed, with what
+building with it needs.</p>
+<h3 class="unnumbered" id="declaring-the-functions"><span
+class="number">24.3</span> Declaring the functions</h3>
+<p>The second thing given is the declarations: one text, or a list of
+texts, each declaration ending with <code>;</code>. They are C, and only
+the functions the program uses are needed.</p>
+<ul>
+<li><p>A line that starts with <code>#</code>, such as
+<code>#include &lt;zlib.h&gt;</code>, is given to C as it is. With the
+header included, the compiler checks each declaration against it, and a
+type the header names (<code>uLong</code>, <code>Bytef</code>) is
+known.</p></li>
+<li><p>A <code>typedef</code>, a <code>struct</code>, a
+<code>union</code> or an <code>enum</code> is given to C as it is
+too.</p></li>
+<li><p><code>int8_t</code> to <code>uint64_t</code>, <code>size_t</code>
+and <code>bool</code> can be used with no
+<code>#include</code>.</p></li>
+<li><p>A declaration with no <code>(</code> is a value: a constant or a
+macro of a header, a constant of an <code>enum</code>, or a variable. It
+has a section below.</p></li>
+</ul>
+<p>When the library and its declarations are written out in the program
+as texts, which is nearly always, Zeno knows every function before the
+program runs, and checks each call as it checks a call of a function of
+Zeno:</p>
+<div class="zenofile">
+<p>wrong.zeno</p>
+</div>
+<div class="sourceCode" id="cb5" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> c</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> m = c.library(<span class="st">&quot;m&quot;</span>, [<span class="st">&quot;double hypot(double x, double y);&quot;</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>print(m.hypot(<span class="st">&quot;3&quot;</span>, <span class="dv">4.0</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>print(m.cube(<span class="dv">3.0</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno check wrong.zeno
+error: the 1st parameter of `hypot` (`double`) should be float, but this is str
+ --&gt; wrong.zeno:4:15
+  |
+4 | print(m.hypot(&quot;3&quot;, 4.0))
+  |               ^
+
+error: the library `m` has no `cube` among what is declared for it. Declared: hypot
+ --&gt; wrong.zeno:5:7
+  |
+5 | print(m.cube(3.0))
+  |       ^
+
+2 errors found. Nothing was run.</code></pre>
+<p>A type that only a header names (<code>uLong</code>,
+<code>HAL_StatusTypeDef</code>) is taken to be a whole number, as nearly
+all such names are, unless it is one of the names headers give floats
+(<code>float32_t</code>). The C compiler sees the real type, and says so
+if the two disagree. A declaration that names a function the library
+does not have is an error when <code>c.library</code> is called, and not
+at the first call.</p>
+<div class="why">
+<p>C has no way to ask a library what its functions take: a library
+knows the names of its functions and nothing of their types. That is why
+the program declares them. And Zeno does not read a header by itself,
+because a header is written for a C compiler: it is full of macros, and
+means something different on each machine. So the declarations are
+handed to the C compiler, which is there already wherever
+<code>zeno build</code> is used, and it works out what
+<code>uLong</code> or <code>size_t</code> is on this machine. (Decisions
+44.1 and 44.3.)</p>
+</div>
+<h3 class="unnumbered" id="values-go-across"><span
+class="number">24.4</span> Values go across</h3>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">C</th>
+<th style="text-align: left;">Zeno</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>int</code>, <code>uint8_t</code>,
+<code>long</code>, <code>size_t</code> and their like</td>
+<td style="text-align: left;"><code>int</code>, checked to fit: an
+<code>OverflowError</code> if it does not</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>uint64_t</code> above the top of
+<code>int</code></td>
+<td style="text-align: left;"><code>u64</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>float</code>,
+<code>double</code></td>
+<td style="text-align: left;"><code>float</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>bool</code>, <code>_Bool</code></td>
+<td style="text-align: left;"><code>bool</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>const char *</code> given</td>
+<td style="text-align: left;">a <code>str</code>, lent for the call,
+with the <code>\0</code> C expects</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>char *</code> given back</td>
+<td style="text-align: left;">a <code>str or none</code>, copied</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a pointer to numbers, given</td>
+<td style="text-align: left;">a list, lent for the call: copied in, and
+back after</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">any other pointer given back</td>
+<td style="text-align: left;">a C pointer <code>or none</code>: given
+back to C, never looked inside</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>NULL</code></td>
+<td style="text-align: left;"><code>none</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>void</code></td>
+<td style="text-align: left;"><code>none</code></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>A list for a pointer is lent.</strong> Its items are copied
+into memory of the type the pointer is to, the function is called, and
+the items are copied back into the list afterwards, so a function that
+fills a buffer fills the list. That is how <code>frexp</code> gave its
+exponent in the first program. A pointer to <code>const</code> is not
+copied back: the function promised not to change it.</p>
+<p><strong>A pointer that C gives back is kept as it is.</strong> It can
+be given back to C, compared with <code>==</code>, tested for
+<code>none</code> and printed, and that is all. This is how a library
+that hands out a handle (<code>FILE *</code>, <code>sqlite3 *</code>, a
+driver’s context) is used. A function that gives a handle back through a
+pointer to a pointer (<code>sqlite3 **db</code>) is given a list of one
+<code>none</code>, and finds the handle in it afterwards.</p>
+<p>Zeno never frees memory that C gave it. A library that says the
+caller frees what it returns has a function to do it, and the program
+calls that, as it would in C.</p>
+<h3 class="unnumbered" id="a-library-of-your-own"><span
+class="number">24.5</span> A library of your own</h3>
+<p>Here is a small driver as a board’s firmware might have it: a header
+and a file of C. Both lie beside the program.</p>
+<div class="zenofile">
+<p>sensor.h</p>
+</div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>#include &lt;stddef.h&gt;
+#include &lt;stdint.h&gt;
+
+#define SENSOR_CHANNELS 4
+
+typedef enum { SENSOR_OK, SENSOR_BUSY } sensor_status;
+typedef struct sensor sensor;
+
+sensor *sensor_open(uint8_t channel);
+sensor_status sensor_read(sensor *s, uint16_t *samples, size_t count);
+uint16_t sensor_crc(const uint8_t *data, size_t length);
+void sensor_close(sensor *s);</code></pre>
+<div class="zenofile">
+<p>sensor.c</p>
+</div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>#include &quot;sensor.h&quot;
+#include &lt;stdlib.h&gt;
+
+struct sensor { uint8_t channel; uint16_t next; };
+
+sensor *sensor_open(uint8_t channel) {
+    if (channel &gt;= SENSOR_CHANNELS) return NULL;
+    sensor *s = malloc(sizeof *s);
+    s-&gt;channel = channel;
+    s-&gt;next = 0;
+    return s;
+}
+
+sensor_status sensor_read(sensor *s, uint16_t *samples, size_t count) {
+    for (size_t i = 0; i &lt; count; i++) {
+        samples[i] = (uint16_t)(s-&gt;channel * 100 + s-&gt;next++);
+    }
+    return SENSOR_OK;
+}
+
+uint16_t sensor_crc(const uint8_t *data, size_t length) {
+    uint16_t crc = 0xFFFF;
+    for (size_t i = 0; i &lt; length; i++) {
+        crc ^= data[i];
+        for (int bit = 0; bit &lt; 8; bit++) {
+            crc = (crc &amp; 1) ? (uint16_t)((crc &gt;&gt; 1) ^ 0xA001) : (uint16_t)(crc &gt;&gt; 1);
+        }
+    }
+    return crc;
+}
+
+void sensor_close(sensor *s) { free(s); }</code></pre>
+<div class="zenofile">
+<p>read.zeno</p>
+</div>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> c</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> sensor = c.library(<span class="st">&quot;sensor.c&quot;</span>, [</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;#include \&quot;sensor.h\&quot;&quot;</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sensor *sensor_open(uint8_t channel);&quot;</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sensor_status sensor_read(sensor *s, uint16_t *samples, size_t count);&quot;</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;uint16_t sensor_crc(const uint8_t *data, size_t length);&quot;</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;void sensor_close(sensor *s);&quot;</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;int SENSOR_CHANNELS;&quot;</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;sensor_status SENSOR_OK;&quot;</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>print(sensor.SENSOR_CHANNELS, sensor.sensor_open(<span class="dv">9</span>))</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> s = sensor.sensor_open(<span class="dv">2</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> samples = [<span class="dv">0</span>] * <span class="dv">4</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> sensor.sensor_read(s, samples, len(samples)) == sensor.SENSOR_OK {</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    print(samples)</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>sensor.sensor_close(s)</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> frame: <span class="dt">list</span>[<span class="dt">u8</span>] = [<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">107</span>, <span class="dv">0</span>, <span class="dv">3</span>]</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>print(sensor.sensor_crc(frame, len(frame)))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>4 none
+[200, 201, 202, 203]
+6004</code></pre>
+<p><code>sensor_open(9)</code> gave <code>NULL</code>, which is
+<code>none</code>. <code>s</code> is the handle: Zeno never looks inside
+it, and hands it back. <code>samples</code> was lent and filled.
+<code>frame</code> is a <code>list[u8]</code> (<a
+href="sized-numbers.html#ch-sized-numbers">Sized Numbers</a>), which
+is what bytes are in Zeno.</p>
+<h3 class="unnumbered" id="values-a-header-names"><span
+class="number">24.6</span> Values a header names</h3>
+<p>The last two declarations of that program have no <code>(</code>, and
+each names a value. <code>SENSOR_CHANNELS</code> is a macro, and
+<code>SENSOR_OK</code> a constant of an <code>enum</code>. Each is read
+by its name, as C reads it, every time the program reads it. C cannot
+declare a macro, so the value is not declared again: the header has it,
+and the declaration only tells Zeno its type.</p>
+<p>That is how the names of a vendor’s HAL are used:</p>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> hal = c.library(<span class="st">&quot;hal.c&quot;</span>, [</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;#include \&quot;stm32f4xx_hal.h\&quot;&quot;</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;void HAL_GPIO_WritePin(GPIO_TypeDef *port, uint16_t pin, GPIO_PinState state);&quot;</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;GPIO_TypeDef *GPIOA;&quot;</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;uint16_t GPIO_PIN_5;&quot;</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;GPIO_PinState GPIO_PIN_SET;&quot;</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>])</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>hal.HAL_GPIO_WritePin(hal.GPIOA, hal.GPIO_PIN_5, hal.GPIO_PIN_SET)</span></code></pre></div>
+<p>A variable that only the library’s own file of C has, with no header,
+is declared with <code>extern</code>, as C would declare it:
+<code>"extern uint32_t uptime_ms;"</code>.</p>
+<h3 class="unnumbered" id="zeno-build-c-calls-c"><span
+class="number">24.7</span> zeno build: C calls C</h3>
+<p><code>zeno build</code> writes C, so a function of a library is
+called there as C calls it, with no helper beside the program. The
+library is built in with the program: a file of C is compiled with it,
+and a library is linked.</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build read.zeno
+Wrote read.c
+Built read. Run it with ./read
+$ ./read
+4 none
+[200, 201, 202, 203]
+6004
+$ zeno build --no-collector --minimal read.zeno
+Wrote read.c
+Built read. Run it with ./read
+$ ./read
+4 none
+[200, 201, 202, 203]
+6004
+$ grep -c &quot;&quot; read.c
+466
+$ grep &quot;sensor_close(&quot; read.c
+void sensor_close(sensor *s);
+    sensor_close(((sensor *)(z_s)));</code></pre>
+<p>Every build does it: a plain one, <code>--firmware</code>,
+<code>--no-collector</code>, <code>--owned</code> and
+<code>--minimal</code> (<a
+href="compiling.html#ch-compiling">Compiling</a>). The last lines
+above are the whole of the minimal build’s C counted, and the two lines
+of it that have <code>sensor_close</code>: the declaration, as the
+program gave it, and the call.</p>
+<p>A built program prints what <code>zeno run</code> prints, and a
+number that does not fit stops it with the same
+<code>OverflowError</code>:</p>
+<div class="zenofile">
+<p>channel.zeno</p>
+</div>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> c</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> sensor = c.library(<span class="st">&quot;sensor.c&quot;</span>, [<span class="st">&quot;#include \&quot;sensor.h\&quot;&quot;</span>, <span class="st">&quot;sensor *sensor_open(uint8_t channel);&quot;</span>])</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> channel <span class="kw">in</span> [<span class="dv">2</span>, <span class="dv">300</span>] {</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    print(sensor.sensor_open(channel) <span class="kw">is</span> <span class="cn">none</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno run channel.zeno
+false
+error: uncaught OverflowError: the 1st parameter of `sensor_open` (`uint8_t`) holds 0 to 255, and this is 300
+ --&gt; channel.zeno:5:11
+  |
+5 |     print(sensor.sensor_open(channel) is none)
+  |           ^
+$ zeno build channel.zeno
+Wrote channel.c
+Built channel. Run it with ./channel
+$ ./channel
+false
+error: uncaught OverflowError: the 1st parameter of `sensor_open` (`uint8_t`) holds 0 to 255, and this is 300
+ --&gt; channel.zeno:5:11</code></pre>
+<p>A <code>--minimal</code> build does not check this, as it checks
+nothing.</p>
+<p>Three things to know about a build:</p>
+<ul>
+<li><p><strong>A <code>list[u8]</code> is handed over where it
+is</strong>, with no copy, to a function that takes bytes, and what C
+writes there is what the list holds afterwards. Any other list is copied
+in and back, as under <code>zeno run</code>.</p></li>
+<li><p><strong>The library and its declarations must be written
+out</strong> in the program as texts, so that they are known while it
+builds.</p></li>
+<li><p><strong>A file of C cannot have the name the build gives the
+program’s own C</strong>: <code>read.c</code> for
+<code>read.zeno</code>. The build says so, and writes nothing.</p></li>
+</ul>
+<p><code>zeno build --llvm</code> and <code>--target</code> do not take
+<code>import c</code> yet.</p>
+<div class="note">
+<p>This was used on Linux x86-64: the system’s maths library, zlib,
+SQLite, a file of C beside the program, and libraries of Go and Rust.
+The tests also run it on Windows (MinGW gcc) and on macOS (Apple clang),
+with a file of C and the maths library. It has not been run with a
+cross-compiler or on a board.</p>
+</div>
+<h3 class="unnumbered" id="libraries-of-go-and-rust"><span
+class="number">24.8</span> Libraries of Go and Rust</h3>
+<p>Go and Rust each build a library that C can call, and
+<code>c.library</code> takes that library. The build is done by their
+own tools.</p>
+<p><strong>Rust</strong>: mark each function
+<code>#[no_mangle] pub extern "C"</code>, and build it as a
+<code>cdylib</code> (a <code>.so</code>) or a <code>staticlib</code> (a
+<code>.a</code>). With Cargo, that is
+<code>crate-type = ["cdylib"]</code> under <code>[lib]</code> in
+<code>Cargo.toml</code>.</p>
+<div class="zenofile">
+<p>filter.rs</p>
+</div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>#[no_mangle]
+pub extern &quot;C&quot; fn average(values: *const f64, count: usize) -&gt; f64 {
+    let values = unsafe { std::slice::from_raw_parts(values, count) };
+    values.iter().sum::&lt;f64&gt;() / count as f64
+}</code></pre>
+<div class="zenofile">
+<p>average.zeno</p>
+</div>
+<div class="sourceCode" id="cb16" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> c</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> filter = c.library(<span class="st">&quot;libfilter.so&quot;</span>, <span class="st">&quot;double average(const double *values, size_t count);&quot;</span>)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> readings = [<span class="dv">20.0</span>, <span class="dv">22.0</span>, <span class="dv">21.0</span>, <span class="dv">25.0</span>]</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>print(filter.average(readings, len(readings)))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ rustc -O --crate-type cdylib filter.rs -o libfilter.so
+$ zeno run average.zeno
+22.0</code></pre>
+<p><strong>Go</strong>: mark each function <code>//export</code>, and
+build with the mode <code>c-shared</code> (a <code>.so</code>) or
+<code>c-archive</code> (a <code>.a</code>). Go writes
+<code>libtemp.h</code> beside the library, with the declarations.</p>
+<div class="zenofile">
+<p>temp.go</p>
+</div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>package main
+
+import &quot;C&quot;
+
+//export Celsius
+func Celsius(f float64) float64 { return (f - 32) * 5 / 9 }
+
+func main() {}</code></pre>
+<div class="zenofile">
+<p>temp.zeno</p>
+</div>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> c</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> temp = c.library(<span class="st">&quot;libtemp.so&quot;</span>, <span class="st">&quot;double Celsius(double f);&quot;</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>print(temp.Celsius(<span class="dv">98.6</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ go build -buildmode=c-shared -o libtemp.so temp.go
+$ zeno run temp.zeno
+37.0</code></pre>
+<p>There is no <code>import cpp</code>. A library of C++ is used through
+C, as Go and Rust are: one with <code>extern "C"</code> functions is a
+library of C (decision 44.12).</p>
+<h3 class="unnumbered" id="when-c-goes-wrong"><span
+class="number">24.9</span> When C goes wrong</h3>
+<p>A mistake Zeno can see before the program runs is found then: a wrong
+argument, a function that is not declared, a declaration Zeno cannot
+take, such as a function with <code>...</code>. A number that does not
+fit is found as the program runs.</p>
+<p>A mistake inside C, such as reading memory that is not there, is
+another matter. Under <code>zeno run</code> C runs beside Zeno, so the
+program stops with an error at the line that called it, and Zeno itself
+does not crash; <code>try</code> cannot catch it. In a built program C
+is the program, and it stops as a program of C does.</p>
+<p>Text that C gives back is bytes. A byte there that is not part of a
+character of UTF-8 is shown as <code>\u{fffd}</code> by
+<code>zeno run</code>; a built program prints the bytes as they are.</p>
+<h3 class="unnumbered" id="what-is-not-there-yet-1"><span
+class="number">24.10</span> What is not there yet</h3>
+<ul>
+<li><p><strong>The address of a variable</strong>
+(<code>&amp;huart2</code>, a handle of a HAL that the vendor’s code
+defines). Write a function of C that gives it:<br />
+<code>UART_HandleTypeDef *uart2(void) { return &amp;huart2; }</code></p></li>
+<li><p><strong>A function of Zeno given to C</strong>, as a
+callback.</p></li>
+<li><p><strong>A struct given or given back whole</strong>, not through
+a pointer.</p></li>
+<li><p><strong>A function that takes <code>...</code></strong>, such as
+<code>printf</code>.</p></li>
+<li><p><strong>Reading the declarations from a header by
+itself.</strong> They are copied by hand for now, and only the ones used
+are needed.</p></li>
+<li><p><strong>A function of a library kept as a value</strong> is
+refused by a build: <code>let f = m.hypot</code> runs under
+<code>zeno run</code> only.</p></li>
+<li><p><strong><code>zeno build –llvm</code></strong>, and the other
+languages of <code>--target</code>.</p></li>
+</ul>
+<h3 class="unnumbered" id="how-it-is-built-1"><span
+class="number">24.11</span> How it is built</h3>
+<p>Under <code>zeno run</code>, Zeno reads the declarations and writes a
+small file of C with a function for each, which takes its arguments from
+a table of numbers and calls the real one. The C compiler builds that
+with the library. The result is loaded by a small helper written in C,
+which runs beside the program and is spoken to as the helpers of the
+other languages are (<a
+href="other-languages.html#ch-other-languages">Libraries of Other
+Languages</a>). A fault in C stops the helper and not Zeno.</p>
+<p>Under <code>zeno build</code> there is no helper. The declarations go
+into the program’s C as they were written, each call is a call, and a
+number is checked to fit before it is given. The example
+<code>examples/modbus.zeno</code> makes a request of Modbus RTU with the
+checksum written in C (<code>examples/crc.c</code>), and it is built for
+both of the emulated boards with the rest of the examples (<a
+href="board.html#ch-board">The Board</a>). The reasons are chapter
+44 of <code>docs/decisions.md</code>.</p>
+<h3 class="unnumbered" id="things-to-try-1"><span
+class="number">24.12</span> Things to try</h3>
+<ol>
+<li><p>Run the first program of this chapter. Then give
+<code>hypot</code> a str and run <code>zeno check</code>. Who found the
+mistake, Zeno or the C compiler?</p></li>
+<li><p>Declare <code>"double cbrt(double x);"</code> and print
+<code>m.cbrt(27.0)</code> under <code>zeno run</code>, and then built.
+The two can differ in the last digit. Which one did the C compiler work
+out by itself, before the program ran?</p></li>
+<li><p>Add <code>uint16_t sensor_peek(const sensor *s);</code> to the
+driver of this chapter, and call it from Zeno.</p></li>
+<li><p>Give <code>sensor_read</code> a list of three floats. What does
+the checker say?</p></li>
+<li><p>Build <code>read.zeno</code> with <code>--minimal</code> and find
+the call of <code>sensor_crc</code> in <code>read.c</code>. Where is the
+list’s copy?</p></li>
+<li><p>Call <code>crc32</code> of zlib on a file read with
+<code>files.read_bytes</code>.</p></li>
+<li><p>Write a function in Go that formats a number with
+<code>strconv.FormatFloat</code>, and call it from Zeno. What does Go
+give back, and who frees it?</p></li>
+</ol>
+</article>
+<nav class="pager bottom">
+<a class="prev" href="other-languages.html" rel="previous">← <span class="number">23</span> Libraries of Other Languages</a>
+<a class="next" href="reading-writing.html" rel="next"><span class="number">25</span> Reading and Writing →</a>
+</nav>
+<footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
+</main>
+</div>
+</body>
+</html>

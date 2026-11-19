@@ -468,7 +468,7 @@ led on</code></pre>
       <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l9 16H3z"/><path d="M12 10v4M12 17.2v.1"/></svg><h3>Errors as values</h3><p><code>--firmware</code> turns every error into a return value the caller tests. No <code>setjmp</code>.</p></li>
       <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 3L5 13.5h6L10 21l8-10.5h-6z"/></svg><h3>No garbage collector</h3><p><code>--no-collector</code> leaves it out. Every value has one owner and is freed on a line you can point to.</p></li>
       <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="4" width="17" height="16" rx="2.5"/><path d="M3.5 10h17M3.5 15h17M10 4v16"/></svg><h3>One fixed pool</h3><p>No <code>malloc</code>. Lists and objects live in one array whose size you choose.</p></li>
-      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg><h3>Four C functions to a board</h3><p>A compiled program meets real hardware through four functions you write once.</p></li>
+      <li><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4"/></svg><h3>One step to a board</h3><p><code>zeno build --board</code> runs the board's own compiler, and the program meets the hardware through a few C functions written once. <code>hello</code> is 936 bytes of flash on an emulated Cortex-M3.</p></li>
     </ul>
 
     <figure class="window report">
@@ -478,7 +478,7 @@ pool: 25384 bytes taken, in a pool of 32768
 text: at most 53 bytes in use at once, in a room of 1024</code></pre>
     </figure>
     <p class="aside">That program makes 2.6 MB of values over its run and never holds more than 13 KB at once.</p>
-    <p class="after"><a href="/docs/firmware/">How the firmware build works</a></p>
+    <p class="after"><a href="/docs/firmware/">How the firmware build works</a> · <a href="/docs/board-build/">Building for a board</a></p>
   </div>
 </section>
 
@@ -557,7 +557,7 @@ Z.start(["area.zeno"], function main() {
       <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg></span><b>Library and modules</b><span>Files, input, maths, dictionaries, programs in many files.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 3l3 3-3 3"/><path d="M20 6H9a5 5 0 0 0-5 5v1M7 21l-3-3 3-3"/><path d="M4 18h11a5 5 0 0 0 5-5v-1"/></svg></span><b>Speed</b><span>Builds as fast as C and Rust, and a choice of how memory is freed.</span><small>Works today</small></li>
       <li class="done"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6.5A2.5 2.5 0 0 0 13.5 4h-7A2.5 2.5 0 0 0 4 6.5v7A2.5 2.5 0 0 0 6.5 16H8"/></svg></span><b>Other languages</b><span>The program written in fifteen other languages, from JavaScript to Rust.</span><small>Works today</small></li>
-      <li class="next"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 3.5 5.5 3.5 8.5s-1 6-3.5 8.5c-2.5-2.5-3.5-5.5-3.5-8.5s1-6 3.5-8.5z"/></svg></span><b>Hardware and servers</b><span>Reading real pins, <code>async</code> and C interop.</span><small>Next</small></li>
+      <li class="next"><span class="pin"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.5 3.5 5.5 3.5 8.5s-1 6-3.5 8.5c-2.5-2.5-3.5-5.5-3.5-8.5s1-6 3.5-8.5z"/></svg></span><b>Real boards and servers</b><span>A program tried on real hardware, then tasks and <code>async</code>.</span><small>Next</small></li>
     </ol>
     <p class="after"><a href="/roadmap/">The full roadmap</a></p>
   </div>
@@ -567,7 +567,7 @@ Z.start(["area.zeno"], function main() {
   <div class="wrap start">
     <div>
       <h2>Run it yourself.</h2>
-      <p>Zeno 0.5 is out, open source under the MIT licence. One line installs it on macOS and Linux, and <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.6.0/zeno-0.6.0-windows-setup.exe">a setup program</a> on Windows. Or try it first in the <a href="/playground/">playground</a>.</p>
+      <p>Zeno 0.7 is out, open source under the MIT licence. One line installs it on macOS and Linux, and <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.7.0/zeno-0.7.0-windows-setup.exe">a setup program</a> on Windows. Or try it first in the <a href="/playground/">playground</a>.</p>
       <div class="actions">
         <a class="button" href="/learn/#install">Install and first steps</a>
         <a class="button ghost" href="/examples/">Browse the examples</a>

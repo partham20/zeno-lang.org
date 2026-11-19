@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.6</span>
+  <span class="version">Zeno 0.7</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -110,41 +110,43 @@ class="number">21</span> Programs in Several Files</a></li>
 class="number">22</span> Packages</a></li>
 <li><a href="other-languages.html" id="toc-ch-other-languages"><span
 class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">24</span> Reading and Writing</a></li>
+class="number">25</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">25</span> Mathematics</a></li>
+class="number">26</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">26</span> Testing</a></li>
+class="number">27</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">27</span> The Tools</a></li>
+class="number">28</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">28</span> The Board</a></li>
+class="number">29</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">29</span> Compiling</a></li>
+class="number">30</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">30</span> Memory</a></li>
+class="number">31</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">31</span> Ownership</a></li>
+class="number">32</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">32</span> Firmware</a></li>
+class="number">33</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">33</span> Building with No Collector</a></li>
+class="number">34</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">34</span> Unsafe Code</a></li>
+class="number">35</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">35</span> A Program in a Web Page</a></li>
+class="number">36</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">36</span> Inside Zeno</a></li>
+class="number">37</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">37</span> Why Zeno Is as It Is</a></li>
+class="number">38</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -381,12 +383,23 @@ check of any kind, only the parts of the runtime the program uses,
 href="compiling.html#ch-compiling">Compiling</a>; new in 0.5.2)</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;"><code>--board &lt;folder&gt;</code></td>
+<td style="text-align: left;"><code>build</code></td>
+<td style="text-align: left;">build for a board in one step: the
+<code>zeno.board</code> in the folder names the board’s C compiler,
+flags, start-up files and linker script, and the program comes out as
+<code>name.elf</code>. Built with no collector. Goes with
+<code>--minimal</code>, <code>--release</code>, <code>--fast</code> and
+<code>--memory</code> (<a
+href="compiling.html#ch-compiling">Compiling</a>; new in 0.7)</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>--llvm</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">write LLVM IR in place of C and hand it to
 <code>clang</code>. Goes with the three options around it</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--web</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">write a web page that runs the program:
@@ -394,7 +407,7 @@ href="compiling.html#ch-compiling">Compiling</a>; new in 0.5.2)</td>
 inside, as <code>name.web.html</code> (<a href="web.html#ch-web">A
 Program in a Web Page</a>). Goes with no other build option</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>--target</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">write the program in another language:
@@ -405,24 +418,24 @@ href="compiling.html#ch-compiling">Compiling</a>; new in 0.5), and
 since 0.5.2 <code>lua</code>, <code>ruby</code>, <code>dart</code> and
 <code>kotlin</code></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--memory</code></td>
 <td style="text-align: left;"><code>build</code></td>
 <td style="text-align: left;">the program reports, as it ends, how much
 memory it used (<a href="memory.html#ch-memory">Memory</a>)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>--check</code></td>
 <td style="text-align: left;"><code>format</code></td>
 <td style="text-align: left;">change nothing; name the files that are
 not laid out, and fail if there are any</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>--package</code></td>
 <td style="text-align: left;"><code>new</code></td>
 <td style="text-align: left;">make a package, not a program</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>--update</code></td>
 <td style="text-align: left;"><code>fetch</code></td>
 <td style="text-align: left;">look every version up again, and not at
@@ -441,9 +454,8 @@ so <code>zeno run f.zeno &gt; out.txt</code> keeps only what the program
 printed.</p>
 <h3 class="unnumbered" id="telling-the-c-compiler"><span
 class="number">E.4</span> Telling the C compiler</h3>
-<p>A build writes C, and two names can be set when that C is compiled,
-with <code>-D</code> on the <code>cc</code> or <code>clang</code>
-line:</p>
+<p>A build writes C, and these names can be set when that C is compiled,
+with <code>-D</code> on the line of the C compiler:</p>
 <table>
 <thead>
 <tr class="header">
@@ -460,15 +472,73 @@ program, in place of the simulated one:
 href="firmware.html#ch-firmware">Firmware</a>)</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><code>ZENO_BOARD_PRINTS</code></td>
+<td style="text-align: left;">said by such a header, with
+<code>#define</code>, when it brings the four functions that print,
+warn, read and stop in place of the C library (<a
+href="firmware.html#ch-firmware">Firmware</a>)</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><code>ZENO_POOL</code></td>
 <td style="text-align: left;">the size of the pool in bytes for a build
 with no collector, 32 768 unless set:
 <code>-DZENO_POOL=25384</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>ZENO_TEXT_ROOM</code></td>
 <td style="text-align: left;">the size of the text room in bytes, for
 the same build</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>ZENO_PLAIN_C</code></td>
+<td style="text-align: left;">asks GCC or Clang for the checks written
+in plain C, which every other C compiler gets unasked (<a
+href="firmware.html#ch-firmware">Firmware</a>; new in 0.7)</td>
+</tr>
+</tbody>
+</table>
+<h3 class="unnumbered" id="names-in-the-environment"><span
+class="number">E.5</span> Names in the environment</h3>
+<p>Zeno finds the other programs it needs by their usual names. A name
+in the environment says where another one is:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">What it names</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>CC</code></td>
+<td style="text-align: left;">the C compiler of <code>zeno build</code>
+and of <code>import c</code>, in place of <code>cc</code>,
+<code>gcc</code> or <code>clang</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ZENO_PYTHON</code>,
+<code>ZENO_NODE</code></td>
+<td style="text-align: left;">the Python or the Node that
+<code>import python</code> or <code>import node</code> starts (<a
+href="other-languages.html#ch-other-languages">Libraries of Other
+Languages</a>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>ZENO_JAVA</code>,
+<code>ZENO_RUBY</code></td>
+<td style="text-align: left;">the same for <code>import java</code> and
+<code>import ruby</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ZENO_PHP</code>,
+<code>ZENO_LUA</code></td>
+<td style="text-align: left;">and for <code>import php</code> and
+<code>import lua</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>ZENO_DOTNET</code></td>
+<td style="text-align: left;">the <code>dotnet</code> of
+<code>import csharp</code></td>
 </tr>
 </tbody>
 </table>

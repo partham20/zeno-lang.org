@@ -52,12 +52,12 @@
 <div class="doc-layout wide-toc">
 <aside class="doc-nav decisions-nav" aria-label="History">
   <h4>Contents</h4>
-  <ul><li><a href="#the-releases">The releases</a></li><li><a href="#zeno-010">Zeno 0.1.0</a></li><li><a href="#zeno-020">Zeno 0.2.0</a></li><li><a href="#zeno-030">Zeno 0.3.0</a></li><li><a href="#zeno-040">Zeno 0.4.0</a></li><li><a href="#zeno-050">Zeno 0.5.0</a></li><li><a href="#zeno-051">Zeno 0.5.1</a></li><li><a href="#zeno-052">Zeno 0.5.2</a></li><li><a href="#zeno-060">Zeno 0.6.0</a></li><li><a href="#unreleased">Unreleased</a></li></ul>
+  <ul><li><a href="#the-releases">The releases</a></li><li><a href="#zeno-010">Zeno 0.1.0</a></li><li><a href="#zeno-020">Zeno 0.2.0</a></li><li><a href="#zeno-030">Zeno 0.3.0</a></li><li><a href="#zeno-040">Zeno 0.4.0</a></li><li><a href="#zeno-050">Zeno 0.5.0</a></li><li><a href="#zeno-051">Zeno 0.5.1</a></li><li><a href="#zeno-052">Zeno 0.5.2</a></li><li><a href="#zeno-060">Zeno 0.6.0</a></li><li><a href="#zeno-070">Zeno 0.7.0</a></li><li><a href="#unreleased">Unreleased</a></li></ul>
 </aside>
 <article class="prose history">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>History</p>
   <h1>How Zeno was built</h1>
-  <p class="lede">319 commits and 8 releases so far, from the first file to what is on main today.</p>
+  <p class="lede">337 commits and 9 releases so far, from the first file to what is on main today.</p>
   <p>This page lists every commit in the Zeno repository, oldest first, under
 the release it went into. Read from the top, it is the story of how the
 language was built, from an empty folder on 14 November 2026 to what is on
@@ -80,7 +80,8 @@ to be built is in <a href="/docs/missing/"><code>docs/missing.md</code></a>.</p>
 <li><a href="#zeno-051"><strong>Zeno 0.5.1</strong></a>, 17 November 2026, 6 commits: the VM as fast as it was</li>
 <li><a href="#zeno-052"><strong>Zeno 0.5.2</strong></a>, 18 November 2026, 41 commits: four more targets, a registry, and the libraries of other languages</li>
 <li><a href="#zeno-060"><strong>Zeno 0.6.0</strong></a>, 19 November 2026, 33 commits: the release for firmware, and the libraries of five more languages</li>
-<li><a href="#unreleased"><strong>Unreleased</strong></a>, on <code>main</code> now, 2 commits: what has come since 0.6.0</li>
+<li><a href="#zeno-070"><strong>Zeno 0.7.0</strong></a>, 19 November 2026, 18 commits: from a <code>.zeno</code> file to a chip in one step</li>
+<li><a href="#unreleased"><strong>Unreleased</strong></a>, on <code>main</code> now, 2 commits: what has come since 0.7.0</li>
 </ul>
 <h2 id="zeno-010">Zeno 0.1.0</h2>
 <p class="when">Released 15 November 2026 · 156 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.1.0">the release on GitHub</a></p>
@@ -591,13 +592,55 @@ runs as fast as it did in 0.5.2.</p>
 <li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4268b0896c8048e1243213df8d4b1909117a76aa"><code>4268b08</code></a><span>The version is 0.6.0, with its release notes.</span></li>
 <li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/356e780568da6234f3de1967104de5fd68c0f00d"><code>356e780</code></a><span>Book: rebuilt for Zeno 0.6. <strong>This commit is Zeno 0.6.0.</strong></span></li>
 </ul>
-<h2 id="unreleased">Unreleased</h2>
-<p class="when">Not in a release yet · 2 commits · 18 to 19 November 2026</p>
-<p>What is on <code>main</code> since 0.6.0 was released.</p>
+<h2 id="zeno-070">Zeno 0.7.0</h2>
+<p class="when">Released 19 November 2026 · 18 commits · <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.7.0">the release on GitHub</a></p>
+<p>0.7.0 is the second release for firmware. The board module gets the three
+things it lacked: a PWM signal, a steady beat, and edges counted by an
+interrupt. <code>zeno build --board</code> runs the board's own compiler, a board can
+print and stop by itself with no C library under the program, a float is
+made into text by Zeno's own runtime, and the C of a build can be read by a
+C compiler that is neither GCC nor Clang. <code>hello</code> takes 936 bytes of flash
+on an ARM Cortex-M3. All of it was tried on two boards that QEMU emulates,
+and none of it on a real one yet. The book has a new chapter on libraries
+of C. This ends the eighth of the fourteen items of <code>docs/missing.md</code>.</p>
 <ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/8d44bb10b792f1bc60d33284b7cf85dac4d4238d"><code>8d44bb1</code></a><span>The Homebrew, pacman and winget recipes for 0.6.0, with its checksums.</span></li>
 <li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/40ae73a158ab3d10ba2475fcfd55ca5824f41243"><code>40ae73a</code></a><span><code>HISTORY.md</code>, this page: every commit under its release, written by <code>tools/history.py</code> from git and a file of notes. The website shows it at <code>/history/</code>.</span></li>
 </ul>
-  <div class="source"><p>This file is written by <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history.py"><code>tools/history.py</code></a> from the commits themselves and the notes in <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history-notes.txt"><code>tools/history-notes.txt</code></a>. It lists 319 commits, up to <code>40ae73a</code> of 18 November 2026. A commit that only brings this file or its notes up to date is not listed.</p><p>This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/HISTORY.md">HISTORY.md</a> in the language repository.</p></div>
+<h3 id="a-pwm-signal-a-steady-beat-and-interrupts">A PWM signal, a steady beat, and interrupts</h3>
+<p class="when">18 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/7703e4781178a61495a07c2f057d2c018b7b8eb3"><code>7703e47</code></a><span>A PWM signal on a board: <code>pwm_pin(9, 1 kHz)</code> makes a pin that goes on and off at a frequency, and <code>duty(0.25)</code> says for how much of each turn it is on.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/38894099c5cf1b04adc614803a5e04f1544a6636"><code>3889409</code></a><span>A steady beat on a board: <code>ticker(10 ms).wait()</code> waits for the next beat, so a loop keeps its pace however long its work took.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/fb95f78a0c8037a3fb78f70525bd1235cd6a4f5d"><code>fb95f78</code></a><span>Interrupts on a board: <code>button.interrupt(falling)</code> counts the edges of an input as they happen, and <code>wait()</code> sleeps until one comes.</span></li>
+</ul>
+<h3 id="one-step-to-a-board">One step to a board</h3>
+<p class="when">18 to 19 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/fc034c1d4845e67a8aa32b1bc30c4278912d1133"><code>fc034c1</code></a><span><code>zeno build --board boards/qemu-cortex-m3 blink.zeno</code> runs the board's own compiler. A board is a folder with a <code>zeno.board</code> file, and every example is run on an emulated ARM Cortex-M3.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/ec52d5e4cd6843c52f4b3d2274877530ee0c19e7"><code>ec52d5e</code></a><span>A board that prints, reads and stops by itself: its header says <code>#define ZENO_BOARD_PRINTS</code> and brings four functions, and nothing of the program goes through the C library. A second board, <code>boards/lm3s6965evb</code>, drives the chip's own registers.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/85e8b0cc58300f9c4b24dc21d581b75df5488ddd"><code>85e8b0c</code></a><span>The README says that the five stages since 0.6.0 came after it.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/906865c41d083f2703fd78acb33de2dd4e3fe131"><code>906865c</code></a><span>Two chapters of the decisions had the number 49. The history's is now 54.</span></li>
+</ul>
+<h3 id="a-float-with-no-c-library-and-plain-c">A float with no C library, and plain C</h3>
+<p class="when">19 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/767b985b4f9b3f118806eee6bfbe550cdd157fec"><code>767b985</code></a><span>A float is made into text, and text into a float, by the runtime itself, with whole numbers and exactly. On a Cortex-M3 that is 4 KB of flash where <code>snprintf</code> and <code>strtod</code> were 28.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/e4bac948964a949ca2e8f5056013d15ddb27bf66"><code>e4bac94</code></a><span>The benchmark figures of 0.6.0.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/eeea2b4f0f08a96c2cc3f80407b971ba1ac02b47"><code>eeea2b4</code></a><span>The C++ and Lua targets printed 46 powers of two with 17 digits. They print 16, as <code>zeno run</code> does.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d0bd086de01522de6658f3f47ff55ddf6e892433"><code>d0bd086</code></a><span>The version on <code>main</code> is 0.7.0, and its release notes are begun.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/eb3c486a67e0c61417eee1c58c15b8abe90f5b7c"><code>eb3c486</code></a><span>Every check that asked GCC or Clang for a built-in is written a second time in plain C, so a C compiler that is neither can build a program. tcc builds every example.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/39cef6a63a16ad7acf65c45a228f8c9d97a4200c"><code>39cef6a</code></a><span>The table of sizes on the page about minimal builds, measured again.</span></li>
+</ul>
+<h3 id="ready-for-070">Ready for 0.7.0</h3>
+<p class="when">19 November 2026</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/4d2fd314a98b86839c89a417c55df8d4a69c1a9f"><code>4d2fd31</code></a><span>The book for 0.7: Ruby, PHP, Lua and C# in the chapter on the libraries of other languages, and a new chapter on libraries of C.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/951c66600a40978d3e1de3d81537e5e8900092fb"><code>951c666</code></a><span>The version is 0.7.0, with its release notes. GCC and Clang get the top of the program as 0.6.0 gave it to them, so a built program runs the instructions it ran before, and the interpreter keeps the board behind a pointer, as the VM does.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/17453fdb4bca357fefe0ba582a17960516eedee0"><code>17453fd</code></a><span>Three tests of the last two stages failed in a debug build or on Windows, by their own arithmetic and line ends. They are mended. Nothing of Zeno itself changed. <strong>This commit is Zeno 0.7.0.</strong></span></li>
+</ul>
+<h2 id="unreleased">Unreleased</h2>
+<p class="when">Not in a release yet · 2 commits · 19 November 2026</p>
+<p>What is on <code>main</code> since 0.7.0 was released.</p>
+<ul class="commits"><li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/fdf8c2330e0f775090e1486b61ea4f574cbac26c"><code>fdf8c23</code></a><span>The Homebrew, pacman and winget recipes for 0.7.0, with its checksums.</span></li>
+<li><a class="commit" href="https://github.com/zeno-src/zeno-lang/commit/d4f3faa07c57c8c78f2f2b0326d41453f08c69c4"><code>d4f3faa</code></a><span>The benchmark figures of 0.7.0.</span></li>
+</ul>
+  <div class="source"><p>This file is written by <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history.py"><code>tools/history.py</code></a> from the commits themselves and the notes in <a href="https://github.com/zeno-src/zeno-lang/blob/main/tools/history-notes.txt"><code>tools/history-notes.txt</code></a>. It lists 337 commits, up to <code>d4f3faa</code> of 19 November 2026. A commit that only brings this file or its notes up to date is not listed.</p><p>This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/HISTORY.md">HISTORY.md</a> in the language repository.</p></div>
 </article>
 </div>
 </main>

@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.6</span>
+  <span class="version">Zeno 0.7</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -110,41 +110,43 @@ class="number">21</span> Programs in Several Files</a></li>
 class="number">22</span> Packages</a></li>
 <li><a href="other-languages.html" id="toc-ch-other-languages"><span
 class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">24</span> Reading and Writing</a></li>
+class="number">25</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">25</span> Mathematics</a></li>
+class="number">26</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">26</span> Testing</a></li>
+class="number">27</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">27</span> The Tools</a></li>
+class="number">28</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">28</span> The Board</a></li>
+class="number">29</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">29</span> Compiling</a></li>
+class="number">30</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">30</span> Memory</a></li>
+class="number">31</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">31</span> Ownership</a></li>
+class="number">32</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">32</span> Firmware</a></li>
+class="number">33</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">33</span> Building with No Collector</a></li>
+class="number">34</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">34</span> Unsafe Code</a></li>
+class="number">35</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">35</span> A Program in a Web Page</a></li>
+class="number">36</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">36</span> Inside Zeno</a></li>
+class="number">37</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">37</span> Why Zeno Is as It Is</a></li>
+class="number">38</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -193,7 +195,7 @@ between</td>
 <code>input(question)</code></td>
 <td style="text-align: left;">the next line typed, or <code>none</code>
 at the end (<a
-href="reading-writing.html#ch-reading-writing">23</a>)</td>
+href="reading-writing.html#ch-reading-writing">25</a>)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>len(x)</code></td>
@@ -220,7 +222,7 @@ href="control-flow.html#ch-control-flow">7</a>)</td>
 <tr class="odd">
 <td style="text-align: left;"><code>abs(x)</code></td>
 <td style="text-align: left;"><code>x</code> without its sign (<a
-href="math.html#ch-math">24</a>)</td>
+href="math.html#ch-math">26</a>)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>min(...)</code>,
@@ -250,7 +252,7 @@ failing</td>
 <td style="text-align: left;"><code>allocate(T, n)</code>,
 <code>free(p)</code></td>
 <td style="text-align: left;">memory by hand (<a
-href="unsafe.html#ch-unsafe">33</a>)</td>
+href="unsafe.html#ch-unsafe">35</a>)</td>
 </tr>
 </tbody>
 </table>
@@ -430,7 +432,7 @@ stores</td>
 <tbody>
 <tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import math</code> (<a
-href="math.html#ch-math">24</a>)</td>
+href="math.html#ch-math">26</a>)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>pi</code>, <code>e</code></td>
@@ -520,7 +522,7 @@ time</td>
 </tr>
 <tr class="even">
 <td colspan="2" style="text-align: left;"><code>import board</code> (<a
-href="board.html#ch-board">27</a>)</td>
+href="board.html#ch-board">29</a>)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>led</code></td>
@@ -541,32 +543,71 @@ href="board.html#ch-board">27</a>)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>input_pin(n)</code>,
-<code>input_pin(n, pull_up)</code>, <code>pull_down</code></td>
+<code>input_pin(n, pull_up)</code></td>
 <td style="text-align: left;">a pin the program reads</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;"><code>pull_up</code>,
+<code>pull_down</code></td>
+<td style="text-align: left;">what holds an input when nothing drives
+it</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;"><code>b.is_high()</code>,
 <code>is_low()</code>, <code>number</code></td>
 <td style="text-align: left;">what an <code>InputPin</code> does</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code>analog_pin(n)</code></td>
 <td style="text-align: left;">a pin whose voltage is read</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>a.voltage()</code>,
 <code>count()</code>, <code>max_count</code>, <code>number</code></td>
 <td style="text-align: left;">what an <code>AnalogPin</code> does</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;"><code>pwm_pin(n, 1 kHz)</code></td>
+<td style="text-align: left;">a pin switched at that frequency</td>
+</tr>
 <tr class="odd">
+<td style="text-align: left;"><code>w.duty(share)</code>,
+<code>pulse(time)</code>, <code>number</code></td>
+<td style="text-align: left;">what a <code>PwmPin</code> does</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ticker(10 ms)</code></td>
+<td style="text-align: left;">a steady beat</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>t.wait()</code>,
+<code>ticks()</code>, <code>restart()</code>, <code>period</code></td>
+<td style="text-align: left;">what a <code>Ticker</code> does</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>b.interrupt(falling)</code>,
+<code>rising</code>, <code>either</code></td>
+<td style="text-align: left;">the edges of an input, counted by the
+board</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>i.wait()</code>,
+<code>edges()</code>, <code>number</code></td>
+<td style="text-align: left;">what an <code>Interrupt</code> does</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;"><code>serial(n, 115200 baud)</code></td>
 <td style="text-align: left;">a serial port</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code>s.write(text)</code>,
-<code>write_bytes(bytes)</code>, <code>read_byte()</code>,
+<code>write_bytes(bytes)</code></td>
+<td style="text-align: left;">what a <code>Serial</code> sends</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>s.read_byte()</code>,
 <code>has_byte()</code></td>
-<td style="text-align: left;">what a <code>Serial</code> does</td>
+<td style="text-align: left;">and what it reads</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>r.read()</code>,
@@ -576,7 +617,7 @@ href="board.html#ch-board">27</a>)</td>
 </tr>
 <tr class="even">
 <td colspan="2" style="text-align: left;"><code>import files</code> (<a
-href="reading-writing.html#ch-reading-writing">23</a>)</td>
+href="reading-writing.html#ch-reading-writing">25</a>)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>read(path)</code></td>
@@ -607,7 +648,7 @@ an item</td>
 </tr>
 <tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import program</code>
-(<a href="reading-writing.html#ch-reading-writing">23</a>)</td>
+(<a href="reading-writing.html#ch-reading-writing">25</a>)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>arguments()</code></td>
@@ -629,7 +670,7 @@ to 255; <code>ValueError</code> outside</td>
 </tr>
 <tr class="even">
 <td colspan="2" style="text-align: left;"><code>import json</code> (<a
-href="reading-writing.html#ch-reading-writing">23</a>)</td>
+href="reading-writing.html#ch-reading-writing">25</a>)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>parse(text)</code></td>
@@ -643,7 +684,7 @@ JSON on one line</td>
 </tr>
 <tr class="odd">
 <td colspan="2" style="text-align: left;"><code>import web</code> (<a
-href="web.html#ch-web">34</a>)</td>
+href="web.html#ch-web">36</a>)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>element(selector)</code></td>
@@ -763,6 +804,94 @@ circle</td>
 <tr class="even">
 <td style="text-align: left;"><code>e.erase()</code></td>
 <td style="text-align: left;">the canvas is empty again</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h3 class="unnumbered" id="the-libraries-of-other-languages">The
+libraries of other languages</h3>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Is</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td colspan="2" style="text-align: left;"><code>import c</code> (<a
+href="c-libraries.html#ch-c-libraries">24</a>)</td>
+</tr>
+<tr class="even">
+<td
+style="text-align: left;"><code>library(what, declarations)</code></td>
+<td style="text-align: left;">a library of C, of Go or of Rust, with the
+functions the program declares</td>
+</tr>
+<tr class="odd">
+<td colspan="2" style="text-align: left;"><code>import python</code> and
+the six like it (<a
+href="other-languages.html#ch-other-languages">23</a>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>python.module(name)</code></td>
+<td style="text-align: left;">a module of Python</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>node.module(name)</code>,
+<code>global(name)</code></td>
+<td style="text-align: left;">a module, a global of JavaScript</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>node.new(Class, ...)</code></td>
+<td style="text-align: left;">a new object of JavaScript</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>java.type(name)</code>,
+<code>jar(path)</code></td>
+<td style="text-align: left;">a class of Java; where a jar is</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ruby.require(name)</code></td>
+<td style="text-align: left;">loads a library of Ruby</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>ruby.constant(name)</code>,
+<code>symbol(name)</code></td>
+<td style="text-align: left;">a constant of Ruby; a symbol</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>php.type(name)</code>,
+<code>callable(name)</code></td>
+<td style="text-align: left;">a class, a function of PHP</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>php.constant(name)</code></td>
+<td style="text-align: left;">a constant of PHP</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>php.require(path)</code>,
+<code>variable(value)</code></td>
+<td style="text-align: left;">reads a file of PHP; a variable for a
+function to change</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>lua.require(name)</code>,
+<code>global(name)</code></td>
+<td style="text-align: left;">a module of Lua; what Lua has
+everywhere</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>csharp.type(name)</code>,
+<code>assembly(path)</code></td>
+<td style="text-align: left;">a type of .NET; where a <code>.dll</code>
+is</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>copy(value)</code></td>
+<td style="text-align: left;">in each of the seven: a collection there,
+as a list or a dict of Zeno</td>
 </tr>
 </tbody>
 </table>

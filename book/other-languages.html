@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.6</span>
+  <span class="version">Zeno 0.7</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -174,41 +174,43 @@ class="number">21</span> Programs in Several Files</a></li>
 class="number">22</span> Packages</a></li>
 <li><a class="here" href="other-languages.html" id="toc-ch-other-languages"><span
 class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">24</span> Reading and Writing</a></li>
+class="number">25</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">25</span> Mathematics</a></li>
+class="number">26</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">26</span> Testing</a></li>
+class="number">27</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">27</span> The Tools</a></li>
+class="number">28</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">28</span> The Board</a></li>
+class="number">29</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">29</span> Compiling</a></li>
+class="number">30</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">30</span> Memory</a></li>
+class="number">31</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">31</span> Ownership</a></li>
+class="number">32</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">32</span> Firmware</a></li>
+class="number">33</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">33</span> Building with No Collector</a></li>
+class="number">34</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">34</span> Unsafe Code</a></li>
+class="number">35</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">35</span> A Program in a Web Page</a></li>
+class="number">36</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">36</span> Inside Zeno</a></li>
+class="number">37</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">37</span> Why Zeno Is as It Is</a></li>
+class="number">38</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -229,7 +231,7 @@ class="number">G</span> What Zeno Does Not Have Yet</a></li>
 <main>
 <nav class="pager top">
 <a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
-<a class="next" href="reading-writing.html" rel="next"><span class="number">24</span> Reading and Writing →</a>
+<a class="next" href="c-libraries.html" rel="next"><span class="number">24</span> Libraries of C →</a>
 </nav>
 <article>
 <h2 class="chapter unnumbered" id="ch-other-languages"><span
@@ -237,8 +239,8 @@ class="number">23</span> Libraries of Other Languages</h2>
 <p>A package of Zeno is written in Zeno. Most of the libraries in the
 world are not: Python has one for nearly everything, npm has more
 packages than any other place, and Java has a very large library of its
-own and a jar for whatever else. Since 0.5.2 a Zeno program can use all
-three as they are, with one line at the top:</p>
+own and a jar for whatever else. A Zeno program can use them as they
+are, with one line at the top:</p>
 <div class="zenofile">
 <p>mean.zeno</p>
 </div>
@@ -253,8 +255,13 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 <code>import statistics</code> is in Python. What it gives is the
 module, and from there the program is written as it would be in Python:
 a dot for what the module has, brackets for a call.</p>
-<p>The three work the same way, and this chapter takes Python first,
-then says what is different about JavaScript and Java.</p>
+<p>Seven languages are reached this way. Python, JavaScript and Java
+came with 0.5.2, and Ruby, PHP, Lua and C# with 0.6. They all work the
+same way, so this chapter takes Python first, and then says what is
+different about each of the others. C is the eighth, and it is reached
+in another way, because a library of C can be built into the program: it
+has the next chapter (<a
+href="c-libraries.html#ch-c-libraries">Libraries of C</a>).</p>
 <div class="center">
 <table>
 <thead>
@@ -279,6 +286,30 @@ then says what is different about JavaScript and Java.</p>
 <td style="text-align: left;"><code>import java</code></td>
 <td style="text-align: left;"><code>java.type(name)</code>,
 <code>java.jar(path)</code> and <code>java.copy(value)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>import ruby</code></td>
+<td style="text-align: left;"><code>ruby.require(name)</code>,
+<code>ruby.constant(name)</code>, <code>ruby.symbol(name)</code> and
+<code>ruby.copy(value)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>import php</code></td>
+<td style="text-align: left;"><code>php.type(name)</code>,
+<code>php.callable(name)</code>, <code>php.constant(name)</code>,
+<code>php.require(path)</code>, <code>php.variable(value)</code> and
+<code>php.copy(value)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>import lua</code></td>
+<td style="text-align: left;"><code>lua.require(name)</code>,
+<code>lua.global(name)</code> and <code>lua.copy(value)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>import csharp</code></td>
+<td style="text-align: left;"><code>csharp.type(name)</code>,
+<code>csharp.assembly(path)</code> and
+<code>csharp.copy(value)</code></td>
 </tr>
 </tbody>
 </table>
@@ -325,6 +356,32 @@ names another</td>
 <td style="text-align: left;"><code>java</code>, then in
 <code>JAVA_HOME</code>; <code>ZENO_JAVA</code> names another</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;"><code>ruby</code></td>
+<td style="text-align: left;">Ruby 3</td>
+<td style="text-align: left;"><code>ruby</code>; <code>ZENO_RUBY</code>
+names another</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>php</code></td>
+<td style="text-align: left;">PHP 8 or later</td>
+<td style="text-align: left;"><code>php</code>; <code>ZENO_PHP</code>
+names another</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>lua</code></td>
+<td style="text-align: left;">Lua 5.1 to 5.4, or LuaJIT</td>
+<td style="text-align: left;"><code>lua</code>, then
+<code>lua5.4</code>, then <code>luajit</code>; <code>ZENO_LUA</code>
+names another</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>csharp</code></td>
+<td style="text-align: left;">the .NET SDK, 6 or later</td>
+<td style="text-align: left;"><code>dotnet</code>, then in
+<code>DOTNET_ROOT</code>, then in <code>~/.dotnet</code>;
+<code>ZENO_DOTNET</code> names another</td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -334,7 +391,9 @@ look for it if the program were written in it and lay in the same place:
 so a <code>helper.py</code> beside the program is
 <code>python.module("helper")</code>, and an npm package is installed
 with <code>npm install</code> in the folder of the program. The program
-can then be run from anywhere.</p>
+can then be run from anywhere. A gem of Ruby, a package of Composer, a
+rock of Lua and a package of NuGet are each found the same way, and the
+section of each language says where.</p>
 <h3 class="unnumbered" id="values-go-across-in-two-ways"><span
 class="number">23.2</span> Values go across in two ways</h3>
 <p><strong><code>none</code>, a bool, a number and a str go as
@@ -541,14 +600,50 @@ a <code>FileError</code>; <code>IndexOutOfBoundsException</code> is an
 <code>IndexError</code>; <code>IllegalArgumentException</code> is a
 <code>ValueError</code></td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Ruby</td>
+<td style="text-align: left;"><code>Errno::...</code> and
+<code>IOError</code> are a <code>FileError</code>;
+<code>ArgumentError</code> is a <code>ValueError</code>;
+<code>IndexError</code> and <code>StopIteration</code> are an
+<code>IndexError</code>; <code>KeyError</code> and
+<code>ZeroDivisionError</code> are the kind of the same name</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PHP</td>
+<td style="text-align: left;">a warning or an exception that says a file
+could not be used is a <code>FileError</code>; <code>ValueError</code>,
+<code>InvalidArgumentException</code>, <code>DomainException</code> and
+<code>JsonException</code> are a <code>ValueError</code>;
+<code>OutOfBoundsException</code> and <code>OutOfRangeException</code>
+are an <code>IndexError</code>; <code>DivisionByZeroError</code> is a
+<code>ZeroDivisionError</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lua</td>
+<td style="text-align: left;"><code>nil</code>, a message and a number
+of the system, which is how Lua’s functions for files fail, is a
+<code>FileError</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C#</td>
+<td style="text-align: left;"><code>IOException</code> and those under
+it are a <code>FileError</code>; <code>KeyNotFoundException</code> is a
+<code>KeyError</code>; <code>IndexOutOfRangeException</code> and
+<code>ArgumentOutOfRangeException</code> are an <code>IndexError</code>;
+<code>ArgumentException</code> and <code>FormatException</code> are a
+<code>ValueError</code>; <code>DivideByZeroException</code> and
+<code>OverflowException</code> are the kinds of nearly the same
+name</td>
+</tr>
 </tbody>
 </table>
 </div>
 <p>Anything else is an <code>Error</code>. Two things can go wrong
 before any library is reached, and both are a <code>FileError</code>:
-there is no Python (or Node, or Java) to run, or it has no module of
-that name. The message says which one Zeno found, and where it
-looked.</p>
+there is no Python (or Node, or Java, or any other of them) to run, or
+it has no module of that name. The message says which one Zeno found,
+and where it looked.</p>
 <div class="zenofile">
 <p>missing.zeno</p>
 </div>
@@ -576,7 +671,7 @@ Zeno where it lands, and from there on it is checked:</p>
 <div class="sourceCode" id="cb17" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> title: <span class="dt">str</span> = about[<span class="st">&quot;title&quot;</span>]       <span class="co"># checked when it happens</span></span></code></pre></div>
 <p>For the same reason <code>zeno check --strict</code> refuses a
-program that imports one of the three.</p>
+program that imports one of the seven.</p>
 <h3 class="unnumbered" id="javascript"><span class="number">23.6</span>
 JavaScript</h3>
 <p><code>node.module(name)</code> is what <code>require(name)</code> is
@@ -734,23 +829,501 @@ the type of what it was given.</p>
 number 30 out of a list of numbers, write
 <code>list.remove(list.indexOf(30))</code>.</p>
 </div>
+<h3 class="unnumbered" id="ruby"><span class="number">23.8</span>
+Ruby</h3>
+<p>Ruby brings a library with <code>require</code>, and what the library
+brings is a constant: a class, a module, or a plain value whose name
+begins with a capital letter. So Zeno has both:</p>
+<div class="zenofile">
+<p>weekday.zeno</p>
+</div>
+<div class="sourceCode" id="cb26" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ruby</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>ruby.require(<span class="st">&quot;date&quot;</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Date = ruby.constant(<span class="st">&quot;Date&quot;</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = Date.new(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>print(day.strftime(<span class="st">&quot;%A&quot;</span>), day.year() + <span class="dv">1</span>, day.next_month())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Wednesday 2027 2026-12-18</code></pre>
+<p><code>ruby.constant</code> takes the name as Ruby writes it, with
+<code>::</code> for what is inside something else
+(<code>"Net::HTTP"</code>). <code>Math</code>, <code>Kernel</code>,
+<code>File</code>, <code>Time</code>, <code>Array</code> and
+<code>Hash</code> are there with no <code>require</code>. An object is
+made as Ruby makes it, with <code>.new(...)</code>. A gem is installed
+with <code>gem install</code> and then required by its name; a file
+<code>helper.rb</code> beside the program is
+<code>ruby.require("helper")</code>; and a program that wants exactly
+the gems of the <code>Gemfile</code> beside it says
+<code>ruby.require("bundler/setup")</code> first, as a program of Ruby
+does.</p>
+<p>What is different from Python:</p>
+<ul>
+<li><p><strong>A call has brackets.</strong> In Ruby
+<code>words.size</code> is a call. In Zeno a call has brackets, always,
+and that holds here: <code>words.size()</code>. Without them the program
+has the method, to be called later, as it would have a method of
+Zeno.</p></li>
+<li><p><strong>A name Zeno cannot write goes through
+<code>send</code>.</strong> Ruby’s own <code>send</code> calls a method
+by its name as text. That is the way to every name that ends in
+<code>?</code> or <code>!</code>, to every operator, and to the names
+that are words of Zeno.</p></li>
+<li><p><strong>What Ruby writes with no object in front</strong> is a
+method of <code>Kernel</code>: <code>format</code>, <code>rand</code>,
+<code>Integer("42")</code>.</p></li>
+<li><p><strong>Named arguments are keyword arguments.</strong>
+<code>name=value</code> in a call is <code>name: value</code> in
+Ruby.</p></li>
+<li><p><strong>A symbol stays in Ruby.</strong> <code>:up</code> is not
+the text <code>"up"</code> there, and a Hash that has the key
+<code>:up</code> does not have the key <code>"up"</code>.
+<code>ruby.symbol("up")</code> makes one.</p></li>
+<li><p><strong>An Integer of Ruby has no largest value.</strong> One
+that fits 64 bits is an int. A larger one stays in Ruby, prints in full,
+and can be used there.</p></li>
+</ul>
+<div class="zenofile">
+<p>words.zeno</p>
+</div>
+<div class="sourceCode" id="cb28" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ruby</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> words = ruby.constant(<span class="st">&quot;Array&quot;</span>).new()</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>words.push(<span class="st">&quot;pear&quot;</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>words.push(<span class="st">&quot;apple&quot;</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>print(words.size(), words.sort(), words.sort().first(), words.join(<span class="st">&quot; and &quot;</span>))</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>print(words.send(<span class="st">&quot;empty?&quot;</span>), words.send(<span class="st">&quot;include?&quot;</span>, <span class="st">&quot;pear&quot;</span>), words.send(<span class="st">&quot;class&quot;</span>))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>print(words.size)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Kernel = ruby.constant(<span class="st">&quot;Kernel&quot;</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>print(Kernel.format(<span class="st">&quot;%05.1f&quot;</span>, <span class="dv">3.14159</span>), Kernel.send(<span class="st">&quot;Integer&quot;</span>, <span class="st">&quot;ff&quot;</span>, <span class="dv">16</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2 [&quot;apple&quot;, &quot;pear&quot;] apple pear and apple
+false true Array
+method `size` of an Array. In Zeno a call has brackets: `.size()`
+003.1 255</code></pre>
+<p><code>Integer</code> in the last line begins with a capital letter,
+so after a dot it would be read as the constant, the class
+<code>Integer</code>. <code>send</code> says that the method is meant. A
+name that only lacks its <code>?</code> is pointed out:</p>
+<div class="zenofile">
+<p>frozen.zeno</p>
+</div>
+<div class="sourceCode" id="cb30" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ruby</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>print(ruby.constant(<span class="st">&quot;Array&quot;</span>).new().frozen())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught Error: an Array has no method `frozen`. It has `frozen?`, which is written `.send(&quot;frozen?&quot;)` in Zeno
+ --&gt; frozen.zeno:3:7
+  |
+3 | print(ruby.constant(&quot;Array&quot;).new().frozen())
+  |       ^</code></pre>
+<p>An Array or a Hash of Ruby stays in Ruby, as a list of Python does,
+and <code>ruby.copy</code> makes a list or a dict of it. A copy is plain
+data, so a symbol in it is copied as its name:</p>
+<div class="zenofile">
+<p>ages.zeno</p>
+</div>
+<div class="sourceCode" id="cb32" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> ruby</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ages = ruby.constant(<span class="st">&quot;Hash&quot;</span>).new()</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>ages[<span class="st">&quot;ann&quot;</span>] = <span class="dv">31</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>ages[ruby.symbol(<span class="st">&quot;bob&quot;</span>)] = <span class="dv">40</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>print(len(ages), ages[<span class="st">&quot;ann&quot;</span>], ages[ruby.symbol(<span class="st">&quot;bob&quot;</span>)], ages[<span class="st">&quot;bob&quot;</span>], <span class="st">&quot;ann&quot;</span> <span class="kw">in</span> ages)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> copy = ruby.copy(ages)</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>print(copy, copy[<span class="st">&quot;bob&quot;</span>] + <span class="dv">1</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Point = ruby.constant(<span class="st">&quot;Struct&quot;</span>).new(ruby.symbol(<span class="st">&quot;x&quot;</span>), ruby.symbol(<span class="st">&quot;y&quot;</span>), keyword_init=<span class="cn">true</span>)</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> point = Point.new(x=<span class="dv">1</span>, y=<span class="dv">2</span>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>point.x = <span class="dv">10</span></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>print(point.x() + point.y(), point == Point.new(x=<span class="dv">10</span>, y=<span class="dv">2</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2 31 40 none true
+[&quot;ann&quot;: 31, &quot;bob&quot;: 40] 41
+12 true</code></pre>
+<p><code>ages["bob"]</code> is <code>none</code>: the key is the symbol,
+and Ruby gives <code>nil</code> for a key a Hash does not have.</p>
+<div class="note">
+<p>Much of Ruby is written with blocks: <code>items.map { ... }</code>,
+<code>File.open(name) { ... }</code>. A function of Zeno cannot be the
+block yet, and Zeno says so at the line. Most of them have another form:
+a <code>for</code> loop of Zeno goes through anything that has
+<code>each</code>, and <code>File.read</code> and
+<code>File.write</code> need no block.</p>
+</div>
+<h3 class="unnumbered" id="php"><span class="number">23.9</span>
+PHP</h3>
+<p>PHP keeps three things apart that Zeno reaches by name: its classes,
+its functions and its constants.</p>
+<div class="zenofile">
+<p>date.zeno</p>
+</div>
+<div class="sourceCode" id="cb34" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> php</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> DateTime = php.type(<span class="st">&quot;DateTime&quot;</span>)</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = DateTime(<span class="st">&quot;2026-11-18&quot;</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>print(day.format(<span class="st">&quot;l&quot;</span>), php.callable(<span class="st">&quot;ucwords&quot;</span>)(<span class="st">&quot;hello from zeno&quot;</span>), php.constant(<span class="st">&quot;PHP_INT_MAX&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Wednesday Hello From Zeno 9223372036854775807</code></pre>
+<p><code>php.type("DateTime")</code> is the class, and calling it is
+what <code>new DateTime(...)</code> is in PHP.
+<code>php.callable("ucwords")</code> is the function
+<code>ucwords</code> as a value, which is called with brackets as any
+function is. A dot stands where PHP writes <code>-&gt;</code> or
+<code>::</code>, so <code>DateTime.ATOM</code> is the constant of the
+class. A class is named with its namespace, and <code>\</code> is
+written <code>\\</code> in a str of Zeno:
+<code>php.type("Carbon\\Carbon")</code>.</p>
+<p>A package from Composer is looked for where PHP would find it:
+<code>vendor/autoload.php</code> in the folder of the <code>.zeno</code>
+file, then in each folder above. So <code>composer require</code> is run
+in the folder of the program. A file of PHP beside the program is read
+with <code>php.require("helper.php")</code>.</p>
+<p>What is different from Python:</p>
+<ul>
+<li><p><strong>An array comes across whole.</strong> An array of PHP is
+a value, as a list or a dict of Zeno is, and not an object that lives
+somewhere. So an array that PHP gives is a list of Zeno where its keys
+are 0, 1, 2 and so on, and a dict for any other. Only an object stays in
+PHP.</p></li>
+<li><p><strong>Named arguments are PHP’s own</strong>, by the name of
+the parameter.</p></li>
+<li><p><strong>A warning is an error.</strong> In PHP
+<code>file_get_contents</code> of a file that is not there prints a
+warning and gives <code>false</code>, and a program would go on with the
+<code>false</code>. In Zeno it is a <code>FileError</code>.</p></li>
+<li><p><strong>A function that changes what it is given needs a
+variable.</strong> <code>sort</code> and <code>preg_match</code> write
+into their argument (PHP writes <code>&amp;$array</code>). Given a list
+of Zeno they would change a copy that nobody sees, so they are given
+<code>php.variable(value)</code>, and its <code>.value</code> is what it
+holds after the call.</p></li>
+</ul>
+<div class="zenofile">
+<p>parts.zeno</p>
+</div>
+<div class="sourceCode" id="cb36" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> php</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> parts = php.callable(<span class="st">&quot;explode&quot;</span>)(<span class="st">&quot;,&quot;</span>, <span class="st">&quot;pear,apple,fig&quot;</span>)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>parts.append(<span class="st">&quot;plum&quot;</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>print(parts, len(parts), php.callable(<span class="st">&quot;implode&quot;</span>)(<span class="st">&quot; and &quot;</span>, parts))</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>print(php.callable(<span class="st">&quot;array_flip&quot;</span>)(parts), php.callable(<span class="st">&quot;array_sum&quot;</span>)([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3.5</span>]))</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>print(php.callable(<span class="st">&quot;number_format&quot;</span>)(<span class="dv">1234567.891</span>, <span class="dv">2</span>, thousands_separator=<span class="st">&quot; &quot;</span>))</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> found = php.variable()</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> php.callable(<span class="st">&quot;preg_match&quot;</span>)(<span class="st">&quot;/(\\d+)-(\\d+)/&quot;</span>, <span class="st">&quot;tel 12-34&quot;</span>, found) == <span class="dv">1</span> {</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>    print(found.value, found.value[<span class="dv">1</span>] + found.value[<span class="dv">2</span>])</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> numbers = php.variable([<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>php.callable(<span class="st">&quot;sort&quot;</span>)(numbers)</span>
+<span id="cb36-15"><a href="#cb36-15" aria-hidden="true" tabindex="-1"></a>print(numbers.value)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;pear&quot;, &quot;apple&quot;, &quot;fig&quot;, &quot;plum&quot;] 4 pear and apple and fig and plum
+[&quot;pear&quot;: 0, &quot;apple&quot;: 1, &quot;fig&quot;: 2, &quot;plum&quot;: 3] 6.5
+1 234 567.89
+[&quot;12-34&quot;, &quot;12&quot;, &quot;34&quot;] 1234
+[1, 2, 3]</code></pre>
+<p><code>parts</code> is a list of Zeno, and <code>append</code> is
+Zeno’s. Given a plain list, <code>sort</code> is not called at all:</p>
+<div class="zenofile">
+<p>sort.zeno</p>
+</div>
+<div class="sourceCode" id="cb38" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> php</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>php.callable(<span class="st">&quot;sort&quot;</span>)([<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>])</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: uncaught Error: `sort` changes its `array` (PHP writes `&amp;$array`), so it needs a variable of PHP to change: `php.variable(value)`
+ --&gt; sort.zeno:3:1
+  |
+3 | php.callable(&quot;sort&quot;)([3, 1, 2])
+  | ^</code></pre>
+<p>An object stays in PHP, and <code>php.copy</code> makes a list or a
+dict of what <code>foreach</code> goes through, or of an object that
+only holds values:</p>
+<div class="zenofile">
+<p>object.zeno</p>
+</div>
+<div class="sourceCode" id="cb40" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> php</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> DateTime = php.type(<span class="st">&quot;DateTime&quot;</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> utc = php.type(<span class="st">&quot;DateTimeZone&quot;</span>)(<span class="st">&quot;UTC&quot;</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = DateTime(<span class="st">&quot;2026-11-18&quot;</span>, utc)</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>day.modify(<span class="st">&quot;+1 month&quot;</span>)</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>print(day.format(<span class="st">&quot;Y-m-d&quot;</span>), DateTime.ATOM, day == DateTime(<span class="st">&quot;2026-12-18&quot;</span>, utc))</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> thing = php.callable(<span class="st">&quot;json_decode&quot;</span>)(<span class="st">&quot;{\&quot;name\&quot;: \&quot;pen\&quot;, \&quot;tags\&quot;: [\&quot;a\&quot;, \&quot;b\&quot;]}&quot;</span>)</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>thing.name = thing.name + <span class="st">&quot;cil&quot;</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>print(thing.name, thing.tags, php.copy(thing))</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>    php.callable(<span class="st">&quot;file_get_contents&quot;</span>)(<span class="st">&quot;/no/such/file&quot;</span>)</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> FileError <span class="kw">as</span> error {</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    print(error.message)</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2026-12-18 Y-m-d\TH:i:sP true
+pencil [&quot;a&quot;, &quot;b&quot;] [&quot;name&quot;: &quot;pencil&quot;, &quot;tags&quot;: [&quot;a&quot;, &quot;b&quot;]]
+file_get_contents(/no/such/file): Failed to open stream: No such file or directory</code></pre>
+<h3 class="unnumbered" id="lua"><span class="number">23.10</span>
+Lua</h3>
+<p>Lua is small, and is everywhere a program is put inside another
+program. What every program of Lua has, <code>string</code>,
+<code>table</code>, <code>math</code>, <code>os</code> and
+<code>io</code>, is given by <code>lua.global</code>, and a module by
+<code>lua.require</code>:</p>
+<div class="zenofile">
+<p>format.zeno</p>
+</div>
+<div class="sourceCode" id="cb42" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> lua</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> string = lua.global(<span class="st">&quot;string&quot;</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>print(string.format(<span class="st">&quot;%-6s|%5.2f&quot;</span>, <span class="st">&quot;pi&quot;</span>, <span class="dv">3.14159</span>), string.rep(<span class="st">&quot;ab&quot;</span>, <span class="dv">3</span>), string.upper(<span class="st">&quot;zeno&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>pi    | 3.14 ababab ZENO</code></pre>
+<p>A module from LuaRocks is installed for the Lua that Zeno starts
+(<code>luarocks install</code>), and a file <code>shapes.lua</code>
+beside the program is <code>lua.require("shapes")</code>. A table, a
+function and a userdata stay in Lua; <code>lua.copy</code> makes a list
+of a table whose keys are 1, 2 and so on, and a dict of any other.</p>
+<p>What is different from Python:</p>
+<ul>
+<li><p><strong>Several values are a list.</strong> A function of Lua can
+give several values. One value is that value, none is <code>none</code>,
+and several are a list of Zeno, in order.</p></li>
+<li><p><strong><code>nil</code> and a message is an error.</strong> Most
+functions of Lua say they failed by giving <code>nil</code> and then
+why. Zeno raises that as an <code>Error</code> with the message. Lua has
+no kinds of error, so every error of Lua is an <code>Error</code>, but
+for the <code>FileError</code> of the table above.</p></li>
+<li><p><strong>Lua counts from 1.</strong> A table stays in Lua, and its
+items are where Lua has them: <code>t[1]</code> is the first. The list
+that <code>lua.copy</code> makes counts from 0, as every list of Zeno
+does.</p></li>
+<li><p><strong>One dot for a method and a function.</strong> Lua writes
+<code>object:name(x)</code> to call a method and
+<code>module.name(x)</code> to call a function. Zeno has one dot, and
+gives the object to a function that was written as a method: one whose
+first parameter is called <code>self</code>, or one the table has from
+its metatable. The name in brackets, <code>p["length"](p)</code>, is
+what the table holds, and nothing is given to it.</p></li>
+<li><p><strong>Named arguments are the options.</strong> Lua has none.
+What a library of Lua takes instead is a table of options, last, and
+that is what named arguments become.</p></li>
+<li><p><strong>One kind of number before 5.3.</strong> On Lua 5.3 and
+later a number knows if it is an int or a float. On 5.1, 5.2 and LuaJIT
+every number is a float, and a whole one arrives as an int.</p></li>
+</ul>
+<div class="zenofile">
+<p>values.zeno</p>
+</div>
+<div class="sourceCode" id="cb44" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> lua</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> string = lua.global(<span class="st">&quot;string&quot;</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>print(string.find(<span class="st">&quot;hello&quot;</span>, <span class="st">&quot;l&quot;</span>), string.gsub(<span class="st">&quot;hello&quot;</span>, <span class="st">&quot;l&quot;</span>, <span class="st">&quot;L&quot;</span>), string.find(<span class="st">&quot;hello&quot;</span>, <span class="st">&quot;z&quot;</span>))</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> table = lua.global(<span class="st">&quot;table&quot;</span>)</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> t = table.pack(<span class="dv">30</span>, <span class="dv">10</span>, <span class="dv">20</span>)</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>t.n = <span class="cn">none</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>table.sort(t)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>print(t, t[<span class="dv">1</span>], len(t), <span class="dv">10</span> <span class="kw">in</span> t, lua.copy(t), lua.copy(t)[<span class="dv">0</span>])</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>    lua.global(<span class="st">&quot;io&quot;</span>).open(<span class="st">&quot;/no/such/file&quot;</span>)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> FileError <span class="kw">as</span> error {</span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a>    print(error.message)</span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[3, 3] [&quot;heLLo&quot;, 2] none
+{10, 20, 30} 10 3 true [10, 20, 30] 10
+/no/such/file: No such file or directory</code></pre>
+<p>A module of your own shows the dot and the options. This file lies
+beside the program:</p>
+<div class="zenofile">
+<p>shapes.lua</p>
+</div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>local shapes = {}
+
+local Point = {}
+Point.__index = Point
+Point.__tostring = function(p) return &quot;Point(&quot; .. p.x .. &quot;, &quot; .. p.y .. &quot;)&quot; end
+
+function shapes.Point(x, y)
+    return setmetatable({x = x, y = y}, Point)
+end
+
+function Point:length()
+    return math.sqrt(self.x * self.x + self.y * self.y)
+end
+
+function shapes.greet(name, options)
+    options = options or {}
+    local said = {}
+    for i = 1, options.times or 1 do
+        said[i] = &quot;hello &quot; .. name
+    end
+    local all = table.concat(said, &quot;, &quot;)
+    if options.loud then
+        return all:upper()
+    end
+    return all
+end
+
+return shapes</code></pre>
+<div class="zenofile">
+<p>shapes.zeno</p>
+</div>
+<div class="sourceCode" id="cb47" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> lua</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> shapes = lua.require(<span class="st">&quot;shapes&quot;</span>)</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> p = shapes.Point(<span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>print(p, p.length(), p.x)</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>print(shapes.greet(<span class="st">&quot;ann&quot;</span>, times=<span class="dv">2</span>, loud=<span class="cn">true</span>))</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> word <span class="kw">in</span> lua.global(<span class="st">&quot;string&quot;</span>).gmatch(<span class="st">&quot;one two three&quot;</span>, <span class="st">&quot;%a+&quot;</span>) {</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    print(word)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Point(3, 4) 5.0 3
+HELLO ANN, HELLO ANN
+one
+two
+three</code></pre>
+<p><code>p.length()</code> is Lua’s <code>p:length()</code>, and the two
+named arguments of <code>greet</code> arrived as one table,
+<code>{times = 2, loud = true}</code>. A <code>for</code> over a
+function of Lua takes what it gives until it gives <code>nil</code>,
+which is how Lua’s own <code>for</code> goes through
+<code>gmatch</code>.</p>
+<div class="note">
+<p>On Windows Lua also needs LuaSocket
+(<code>luarocks install luasocket</code>), because Lua comes with no way
+to talk to another program there. That was not tried: no Lua with
+LuaSocket was there to try it with.</p>
+</div>
+<h3 class="unnumbered" id="c-and-.net"><span class="number">23.11</span>
+C# and .NET</h3>
+<p>.NET is what C# runs on, and F# and Visual Basic too.
+<code>csharp.type</code> gives a type by its name with its namespace,
+and calling a type makes an object, as <code>new</code> does in C#:</p>
+<div class="zenofile">
+<p>builder.zeno</p>
+</div>
+<div class="sourceCode" id="cb49" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> csharp</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> Builder = csharp.type(<span class="st">&quot;System.Text.StringBuilder&quot;</span>)</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = Builder(<span class="st">&quot;Zeno&quot;</span>)</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>text.Append(<span class="st">&quot; and .NET &quot;</span>).Append(<span class="dv">8</span>)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>print(text, text.Length, csharp.type(<span class="st">&quot;System.Math&quot;</span>).Round(<span class="dv">3.14159</span>, <span class="dv">2</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>Zeno and .NET 8 15 3.14</code></pre>
+<p>It is the closest of the seven to Java. A type is named as C# names
+it: with its namespace; without one where a new program of C# needs no
+<code>using</code> (<code>"File"</code>, <code>"Math"</code>,
+<code>"Task"</code>); with C#’s own words (<code>"int"</code>,
+<code>"string"</code>); and made of others,
+<code>"List&lt;int&gt;"</code>,
+<code>"Dictionary&lt;string, List&lt;int&gt;&gt;"</code>,
+<code>"int[]"</code>.</p>
+<div class="zenofile">
+<p>collections.zeno</p>
+</div>
+<div class="sourceCode" id="cb51" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> csharp</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> <span class="dt">list</span> = csharp.type(<span class="st">&quot;List&lt;int&gt;&quot;</span>)()</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="dt">list</span>.AddRange([<span class="dv">30</span>, <span class="dv">10</span>, <span class="dv">20</span>])</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="dt">list</span>.Sort()</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>print(<span class="dt">list</span>, <span class="dt">list</span>[<span class="dv">0</span>], len(<span class="dt">list</span>), <span class="dv">10</span> <span class="kw">in</span> <span class="dt">list</span>, csharp.copy(<span class="dt">list</span>))</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ages = csharp.type(<span class="st">&quot;Dictionary&lt;string, int&gt;&quot;</span>)()</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>ages[<span class="st">&quot;ann&quot;</span>] = <span class="dv">31</span></span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>ages[<span class="st">&quot;bob&quot;</span>] = <span class="dv">40</span></span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>print(ages, ages[<span class="st">&quot;ann&quot;</span>], <span class="st">&quot;bob&quot;</span> <span class="kw">in</span> ages, csharp.copy(ages))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[10, 20, 30] 10 3 true [10, 20, 30]
+{&quot;ann&quot;: 31, &quot;bob&quot;: 40} 31 true [&quot;ann&quot;: 31, &quot;bob&quot;: 40]</code></pre>
+<p>What is different from Python:</p>
+<ul>
+<li><p><strong>It needs the SDK.</strong> The runtime of .NET alone runs
+programs but cannot build them, and the first run on a computer builds
+Zeno’s own part on the .NET side with <code>dotnet build</code>. That
+takes some seconds, once. Every later run starts in a tenth of a
+second.</p></li>
+<li><p><strong>Of several methods, the arguments choose.</strong> C# can
+have several methods of one name. The one called is the one the
+arguments fit, as C# chooses it: an int of Zeno fits an <code>int</code>
+before a <code>long</code>, and both before a <code>double</code>. When
+two fit as well, Zeno does not guess, and the error says which
+two.</p></li>
+<li><p><strong>A named argument goes to the parameter of that
+name</strong>, as in C#. The names are those the method gives its
+parameters.</p></li>
+<li><p><strong>A <code>Task</code> is waited for.</strong> A method that
+gives a <code>Task</code> is one that takes time, and the call gives
+what the task gives when it is done: <code>none</code> for a plain
+<code>Task</code>.</p></li>
+<li><p><strong>A package of NuGet is added to a project beside the
+program.</strong> Two commands of <code>dotnet</code>, shown below the
+program that follows, make the project and add a package to it. Zeno
+reads from the project where NuGet keeps each
+<code>.dll</code>.</p></li>
+<li><p><strong>A <code>.dll</code> of your own</strong> is loaded with
+<code>csharp.assembly(path)</code>, which also takes a folder for every
+<code>.dll</code> in it, counted from the folder of the
+program.</p></li>
+</ul>
+<div class="zenofile">
+<p>methods.zeno</p>
+</div>
+<div class="sourceCode" id="cb53" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> csharp</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> math = csharp.type(<span class="st">&quot;System.Math&quot;</span>)</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>print(math.Max(<span class="dv">3</span>, <span class="dv">7</span>), math.Max(<span class="dv">2</span>, <span class="dv">3.5</span>), math.Round(<span class="dv">2.567</span>, digits=<span class="dv">1</span>))</span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = csharp.type(<span class="st">&quot;string&quot;</span>)</span>
+<span id="cb53-6"><a href="#cb53-6" aria-hidden="true" tabindex="-1"></a>print(text.Join(<span class="st">&quot;-&quot;</span>, [<span class="st">&quot;a&quot;</span>, <span class="st">&quot;b&quot;</span>]), text.Join(<span class="st">&quot;+&quot;</span>, <span class="st">&quot;x&quot;</span>, <span class="st">&quot;y&quot;</span>, <span class="st">&quot;z&quot;</span>))</span>
+<span id="cb53-7"><a href="#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-8"><a href="#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = csharp.type(<span class="st">&quot;DateTime&quot;</span>)(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
+<span id="cb53-9"><a href="#cb53-9" aria-hidden="true" tabindex="-1"></a>print(day.DayOfWeek, day.AddDays(<span class="dv">10</span>).ToString(<span class="st">&quot;yyyy-MM-dd&quot;</span>), day.DayOfWeek == csharp.type(<span class="st">&quot;DayOfWeek&quot;</span>).Wednesday)</span>
+<span id="cb53-10"><a href="#cb53-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-11"><a href="#cb53-11" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> task = csharp.type(<span class="st">&quot;Task&quot;</span>)</span>
+<span id="cb53-12"><a href="#cb53-12" aria-hidden="true" tabindex="-1"></a>print(task.FromResult(<span class="dv">7</span>), task.Delay(<span class="dv">10</span>))</span>
+<span id="cb53-13"><a href="#cb53-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-14"><a href="#cb53-14" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb53-15"><a href="#cb53-15" aria-hidden="true" tabindex="-1"></a>    csharp.type(<span class="st">&quot;Convert&quot;</span>).ToInt32(<span class="st">&quot;twelve&quot;</span>)</span>
+<span id="cb53-16"><a href="#cb53-16" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> error {</span>
+<span id="cb53-17"><a href="#cb53-17" aria-hidden="true" tabindex="-1"></a>    print(error.message)</span>
+<span id="cb53-18"><a href="#cb53-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>7 3.5 2.6
+a-b x+y+z
+Wednesday 2026-11-28 true
+7 none
+FormatException: The input string &#39;twelve&#39; was not in a correct format.</code></pre>
+<p><code>math.Max(3, 7)</code> and <code>math.Max(2, 3.5)</code> are two
+different methods of .NET, and so are the two <code>Join</code>. An enum
+of .NET, such as the day of the week, stays there and prints as its
+name.</p>
+<p>These are the two commands that make a project in the folder of the
+program and add a package of NuGet to it. After them,
+<code>csharp.type("Humanizer.NumberToWordsExtension")</code> is
+there:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>dotnet new classlib -n libraries -o .
+dotnet add package Humanizer.Core</code></pre>
 <h3 class="unnumbered" id="more-than-one-in-a-program"><span
-class="number">23.8</span> More than one in a program</h3>
-<p>A program can import all three. Each value stays where it was made. A
-str or a number that one gave can be passed to another, because by then
-it is a value of Zeno; a value that stayed in one cannot be given to
-another, and Zeno says so at the line:</p>
+class="number">23.12</span> More than one in a program</h3>
+<p>A program can import several of them. Each value stays where it was
+made. A str or a number that one gave can be passed to another, because
+by then it is a value of Zeno; a value that stayed in one cannot be
+given to another, and Zeno says so at the line:</p>
 <div class="zenofile">
 <p>both.zeno</p>
 </div>
-<div class="sourceCode" id="cb26" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> node</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = python.module(<span class="st">&quot;datetime&quot;</span>).date(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> JSON = node.global(<span class="st">&quot;JSON&quot;</span>)</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>print(JSON.stringify(day.isoformat()))</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>print(JSON.stringify(day))</span></code></pre></div>
+<div class="sourceCode" id="cb56" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> python</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> node</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = python.module(<span class="st">&quot;datetime&quot;</span>).date(<span class="dv">2026</span>, <span class="dv">11</span>, <span class="dv">18</span>)</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> JSON = node.global(<span class="st">&quot;JSON&quot;</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>print(JSON.stringify(day.isoformat()))</span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>print(JSON.stringify(day))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>&quot;2026-11-18&quot;
 error: a Python value cannot be given to JavaScript. Each stays where it was made
  --&gt; both.zeno:7:7
@@ -761,12 +1334,12 @@ error: a Python value cannot be given to JavaScript. Each stays where it was mad
 gave a str of Zeno. The <code>copy</code> of each module makes a list or
 a dict of Zeno, and that can go anywhere.</p>
 <h3 class="unnumbered" id="a-name-that-is-a-word-of-zeno"><span
-class="number">23.9</span> A name that is a word of Zeno</h3>
+class="number">23.13</span> A name that is a word of Zeno</h3>
 <p>Python has <code>re.match</code>, JavaScript has
 <code>Array.from</code>, and Java has <code>System.in</code>;
 <code>match</code>, <code>from</code> and <code>in</code> are words of
 Zeno, so none of them parses after a dot. Each language has its own way
-around it:</p>
+around it, and in most of them it is the name in brackets:</p>
 <div class="center">
 <table>
 <thead>
@@ -791,30 +1364,60 @@ brackets are a dot there</td>
 <td style="text-align: left;"><code>System["in"]</code>,
 <code>LocalDate["from"](other)</code></td>
 </tr>
+<tr class="even">
+<td style="text-align: left;">Ruby</td>
+<td style="text-align: left;"><code>thing.send("class")</code>,
+<code>thing.send("in?", list)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PHP</td>
+<td style="text-align: left;"><code>Size["from"]("l")</code>,
+<code>thing["for"]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Lua</td>
+<td
+style="text-align: left;"><code>string["match"](text, pattern)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">C#</td>
+<td style="text-align: left;"><code>thing["match"]</code>: on a type,
+and on an object with no items of its own, the name in brackets is the
+name after a dot</td>
+</tr>
 </tbody>
 </table>
 </div>
 <h3 class="unnumbered" id="what-is-not-there-yet"><span
-class="number">23.10</span> What is not there yet</h3>
+class="number">23.14</span> What is not there yet</h3>
 <ul>
 <li><p><strong>A function of Zeno cannot be given to another
 language.</strong> A library that calls back, for progress, a sort key,
 an event or a request to a server, cannot call into Zeno yet, and Zeno
 says so at the line. Much of Node gives a promise instead, and that
-works.</p></li>
+works. A block of Ruby is such a function too, and so are the lambdas of
+LINQ in C#.</p></li>
+<li><p><strong>What a method of C# puts back in an <code>out</code> or
+<code>ref</code> parameter</strong> is not seen, and an extension method
+is called on its class and not on the value.</p></li>
 <li><p><strong>A loop takes everything first.</strong>
 <code>for line in thing</code> asks for all the items, then loops. Over
 something that never ends, it never begins.</p></li>
 <li><p><strong>A class of Zeno cannot extend a class of Java</strong>,
-or be one of its interfaces.</p></li>
+of Ruby or of any other, or be one of its interfaces.</p></li>
 <li><p><strong>Built programs.</strong> <code>zeno run</code> and
-<code>zeno test</code> have all three, with and without
+<code>zeno test</code> have all seven, with and without
 <code>--vm</code>. <code>zeno build</code>, in every form and for every
 target, refuses them, because a built program must run where the other
-language may not be.</p></li>
+language may not be. C is the one that a build takes (<a
+href="c-libraries.html#ch-c-libraries">Libraries of C</a>).</p></li>
+<li><p><strong>Where they were tried.</strong> All seven were used on
+Linux. The tests also run Python, Node, Java and Ruby on Windows and
+macOS, and the others there only as far as the machine has
+them.</p></li>
 </ul>
 <h3 class="unnumbered" id="how-it-is-built"><span
-class="number">23.11</span> How it is built</h3>
+class="number">23.15</span> How it is built</h3>
 <p>The other language runs as a program of its own, beside Zeno. A small
 helper for it is part of the <code>zeno</code> file, and the first call
 starts the language with it. Zeno opens a socket that only this computer
@@ -835,11 +1438,16 @@ Zeno has let go of since the last one. In Zeno the value is one more
 kind of <code>Value</code>, which holds the number, and the operations
 that both engines share (a field, an item, <code>len</code>,
 <code>==</code>) ask over the socket when they meet it. Nothing on
-Zeno’s side knows Python but the name of the helper, so JavaScript and
-Java are each another helper that speaks the same lines. The reasons are
-chapters 26, 28 and 29 of <code>docs/decisions.md</code>.</p>
+Zeno’s side knows Python but the name of the helper, so each of the
+other six is another helper that speaks the same lines. Two of them are
+not quite like the rest. Lua comes with no sockets, so on Linux and
+macOS its helper talks through two named pipes that Zeno makes for it,
+and on Windows through LuaSocket. And the helper of .NET is a small
+program of C# that <code>dotnet build</code> makes on the first run and
+keeps in the folder for what can be made again. The reasons are chapters
+26, 28, 29 and 37 to 40 of <code>docs/decisions.md</code>.</p>
 <h3 class="unnumbered" id="things-to-try"><span
-class="number">23.12</span> Things to try</h3>
+class="number">23.16</span> Things to try</h3>
 <ol>
 <li><p>Run the first program of this chapter. Then misspell
 <code>statistics</code> and read the message. Which Python does it
@@ -857,11 +1465,26 @@ What do the checker and the program say?</p></li>
 <li><p>With Java, call
 <code>java.type("java.util.ArrayList")().get(3)</code> inside a
 <code>try</code>. Which kind of error catches it?</p></li>
+<li><p>With Ruby, make a Hash with the key
+<code>ruby.symbol("name")</code>, and read it with <code>"name"</code>.
+Then read it from <code>ruby.copy</code> of the Hash. Why does one find
+it and not the other?</p></li>
+<li><p>With PHP, call <code>php.callable("str_replace")</code> to change
+every <code>a</code> in a word to <code>o</code>. Then ask it how many
+it changed: its fourth parameter is written
+<code>&amp;$count</code>.</p></li>
+<li><p>With Lua, take <code>os</code> and <code>string</code> with
+<code>lua.global</code>. Print <code>os.date("%A")</code>, and then
+<code>string.byte("abc", 1, 3)</code>. Which of the two is a list, and
+where does it count from?</p></li>
+<li><p>With C#, make a <code>csharp.type("List&lt;string&gt;")()</code>,
+add three names and call <code>Sort()</code>. Then give <code>Add</code>
+a number and read the error.</p></li>
 </ol>
 </article>
 <nav class="pager bottom">
 <a class="prev" href="packages.html" rel="previous">← <span class="number">22</span> Packages</a>
-<a class="next" href="reading-writing.html" rel="next"><span class="number">24</span> Reading and Writing →</a>
+<a class="next" href="c-libraries.html" rel="next"><span class="number">24</span> Libraries of C →</a>
 </nav>
 <footer>Every program in this book was run with Zeno while the book was built. Every journey is halfway done. Forever.</footer>
 </main>

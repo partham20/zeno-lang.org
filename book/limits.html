@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.6</span>
+  <span class="version">Zeno 0.7</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -110,41 +110,43 @@ class="number">21</span> Programs in Several Files</a></li>
 class="number">22</span> Packages</a></li>
 <li><a href="other-languages.html" id="toc-ch-other-languages"><span
 class="number">23</span> Libraries of Other Languages</a></li>
+<li><a href="c-libraries.html" id="toc-ch-c-libraries"><span
+class="number">24</span> Libraries of C</a></li>
 <li><a href="reading-writing.html" id="toc-ch-reading-writing"><span
-class="number">24</span> Reading and Writing</a></li>
+class="number">25</span> Reading and Writing</a></li>
 <li><a href="math.html" id="toc-ch-math"><span
-class="number">25</span> Mathematics</a></li>
+class="number">26</span> Mathematics</a></li>
 <li><a href="testing.html" id="toc-ch-testing"><span
-class="number">26</span> Testing</a></li>
+class="number">27</span> Testing</a></li>
 <li><a href="tools.html" id="toc-ch-tools"><span
-class="number">27</span> The Tools</a></li>
+class="number">28</span> The Tools</a></li>
 </ul></li>
 <li><a href="zeno-on-a-machine.html" id="toc-zeno-on-a-machine">Zeno on
 a Machine</a>
 <ul>
 <li><a href="board.html" id="toc-ch-board"><span
-class="number">28</span> The Board</a></li>
+class="number">29</span> The Board</a></li>
 <li><a href="compiling.html" id="toc-ch-compiling"><span
-class="number">29</span> Compiling</a></li>
+class="number">30</span> Compiling</a></li>
 <li><a href="memory.html" id="toc-ch-memory"><span
-class="number">30</span> Memory</a></li>
+class="number">31</span> Memory</a></li>
 <li><a href="ownership.html" id="toc-ch-ownership"><span
-class="number">31</span> Ownership</a></li>
+class="number">32</span> Ownership</a></li>
 <li><a href="firmware.html" id="toc-ch-firmware"><span
-class="number">32</span> Firmware</a></li>
+class="number">33</span> Firmware</a></li>
 <li><a href="no-collector.html" id="toc-ch-no-collector"><span
-class="number">33</span> Building with No Collector</a></li>
+class="number">34</span> Building with No Collector</a></li>
 <li><a href="unsafe.html" id="toc-ch-unsafe"><span
-class="number">34</span> Unsafe Code</a></li>
+class="number">35</span> Unsafe Code</a></li>
 <li><a href="web.html" id="toc-ch-web"><span
-class="number">35</span> A Program in a Web Page</a></li>
+class="number">36</span> A Program in a Web Page</a></li>
 </ul></li>
 <li><a href="inside-zeno.html" id="toc-inside-zeno">Inside Zeno</a>
 <ul>
 <li><a href="inside.html" id="toc-ch-inside"><span
-class="number">36</span> Inside Zeno</a></li>
+class="number">37</span> Inside Zeno</a></li>
 <li><a href="design.html" id="toc-ch-design"><span
-class="number">37</span> Why Zeno Is as It Is</a></li>
+class="number">38</span> Why Zeno Is as It Is</a></li>
 <li><a href="keywords.html" id="toc-app-keywords"><span
 class="number">A</span> Keywords</a></li>
 <li><a href="operators.html" id="toc-app-operators"><span
@@ -183,10 +185,14 @@ On a board</h3>
 <dt>Inputs.</dt>
 <dd>
 <p>A pin can be read (<code>input_pin</code>, 45), a serial port used
-(<code>serial</code>, 46) and a voltage read (<code>analog_pin</code>,
-47), but nothing presses a button or feeds a voltage under
-<code>zeno run</code> (45.5), and none of it has been tried on a real
-board. PWM, interrupts and timers are still to come.</p>
+(<code>serial</code>, 46), a voltage read (<code>analog_pin</code>, 47)
+and a PWM signal made (<code>pwm_pin</code>, 48), but nothing presses a
+button or feeds a voltage under <code>zeno run</code> (45.5), and none
+of it has been tried on a real board. A PWM pin cannot be asked its duty
+or given a new frequency (48.6). A board keeps sixteen tickers and none
+is given back (<code>ticker</code>, 49.5). An interrupt counts edges
+(<code>interrupt</code>, 50), and no function of the program runs inside
+one (50.3); nor can a program wait for the first of several.</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="numbers"><span class="number">G.2</span>
@@ -248,7 +254,36 @@ the machine: a program gets the same numbers on every run until it calls
 <code>random.seed</code> (33.8).</p>
 </dd>
 </dl>
-<h3 class="unnumbered" id="builds"><span class="number">G.5</span>
+<h3 class="unnumbered" id="libraries-of-other-languages"><span
+class="number">G.5</span> Libraries of other languages</h3>
+<dl>
+<dt>A function of Zeno cannot be given to another language</dt>
+<dd>
+<p>: not as a callback of C, a block of Ruby, a lambda of LINQ or a sort
+key of Python (26.12, 44.9).</p>
+</dd>
+<dt>The seven that run beside Zeno</dt>
+<dd>
+<p>(<code>import python</code> and its like) are for
+<code>zeno run</code> and <code>zeno test</code>. Every build refuses
+them (26.12).</p>
+</dd>
+<dt>From C:</dt>
+<dd>
+<p>a struct given whole, a function with <code>...</code>, the address
+of a variable, and declarations read from a header by themselves are not
+there (44.9). <code>--llvm</code> and <code>--target</code> refuse
+<code>import c</code>, and it has not been run with a cross-compiler’s
+own libraries or on a board.</p>
+</dd>
+<dt>A call the C compiler can work out.</dt>
+<dd>
+<p>A built program’s <code>m.cbrt(27.0)</code> is worked out by GCC
+before the program runs, rounded exactly, where <code>zeno run</code>
+asks the library: the two can differ in the last digit.</p>
+</dd>
+</dl>
+<h3 class="unnumbered" id="builds"><span class="number">G.6</span>
 Builds</h3>
 <dl>
 <dt>A named function inside a function</dt>
@@ -260,15 +295,32 @@ at the top, or as a function value.</p>
 <dd>
 <p>A build compiles the whole program at once (7.11).</p>
 </dd>
-<dt>Another processor in one step.</dt>
+<dt>A board by its name.</dt>
 <dd>
-<p>A build writes C for the C compiler you name; compiling for a board
-is a second step on the <code>cc</code> line.</p>
+<p><code>zeno build --board</code> takes the folder of a board, which
+today is in a copy of Zeno’s repository or written by you; it does not
+load the program onto the board, and a build for a board has no
+collector (51.9). The two boards that come with Zeno are one emulated
+chip.</p>
 </dd>
-<dt>GCC and Clang built-ins.</dt>
+<dt><code>–memory</code> on a board that prints by itself.</dt>
 <dd>
-<p>Checked arithmetic uses them, so the C wants one of those two
-compilers (5.5e).</p>
+<p>The report is written as the C library ends a program, and such a
+board has no C library under the program (52.8).</p>
+</dd>
+<dt>A NaN with decimals in a minimal build for a computer.</dt>
+<dd>
+<p>There <code>{x:.2f}</code> is <code>printf</code>’s own, so a float
+that is not a number is shown as the C library writes it,
+<code>nan</code>. Every other build prints <code>NaN</code>, as
+<code>zeno run</code> does (53.8).</p>
+</dd>
+<dt>A compiler that is neither GCC nor Clang.</dt>
+<dd>
+<p>It gets the checks in plain C (chapter 55), and tcc builds every
+example so. No program has been built by IAR’s, Keil’s or a chip maker’s
+compiler. A firmware build with a collector cannot be built by such a
+compiler, and its C says so (55.5).</p>
 </dd>
 <dt><code>setjmp</code> in an ordinary build.</dt>
 <dd>
@@ -277,7 +329,7 @@ does not use it at all (5.11l, 12.8).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="firmware-and-no-collector"><span
-class="number">G.6</span> Firmware and no collector</h3>
+class="number">G.7</span> Firmware and no collector</h3>
 <dl>
 <dt>A raising function as a value.</dt>
 <dd>
@@ -309,7 +361,7 @@ with a case for the missing value is the answer (5.16h).</p>
 blocks are not filled with a pattern to catch their use (5.9k).</p>
 </dd>
 </dl>
-<h3 class="unnumbered" id="interfaces"><span class="number">G.7</span>
+<h3 class="unnumbered" id="interfaces"><span class="number">G.8</span>
 Interfaces</h3>
 <dl>
 <dt>Functions of an interface</dt>
@@ -322,7 +374,7 @@ private (10.5).</p>
 <p>and an interface with type parameters of its own (10.10).</p>
 </dd>
 </dl>
-<h3 class="unnumbered" id="the-web"><span class="number">G.8</span> The
+<h3 class="unnumbered" id="the-web"><span class="number">G.9</span> The
 web</h3>
 <dl>
 <dt>Only what the module has.</dt>
@@ -351,7 +403,7 @@ fast, is left for later (14.1).</p>
 in compiled programs (18.5).</p>
 </dd>
 </dl>
-<h3 class="unnumbered" id="tools"><span class="number">G.9</span>
+<h3 class="unnumbered" id="tools"><span class="number">G.10</span>
 Tools</h3>
 <dl>
 <dt>Going to a field.</dt>
@@ -365,7 +417,7 @@ where it was declared (17.4).</p>
 <code>assert</code> takes no message, and is only for tests (10.21).</p>
 </dd>
 </dl>
-<h3 class="unnumbered" id="not-limits"><span class="number">G.10</span>
+<h3 class="unnumbered" id="not-limits"><span class="number">G.11</span>
 Not limits</h3>
 <p>Three things are not on this list, because they are decided: Zeno has
 no inheritance, no second way to write a function, and no second name
