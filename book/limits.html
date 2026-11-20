@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -225,23 +225,45 @@ Types</h3>
 <p>Only <code>or none</code> can follow a type: <code>int or str</code>
 is refused (1.13). An enum that carries data does the same work.</p>
 </dd>
-<dt>Generic interfaces and bounds.</dt>
+<dt>One bound for a type.</dt>
 <dd>
-<p>An interface cannot take a type parameter, so a generic function
-cannot ask that its <code>T</code> has a method (3.16d).</p>
+<p>A type parameter asks for at most one interface, such as
+<code>[T is Ordered]</code>, not two at once, and a class cannot be
+<code>Ordered</code> until it can say what <code>&lt;</code> means for
+its objects (58.3).</p>
 </dd>
-<dt>Generic enums.</dt>
+<dt>A generic as a value.</dt>
 <dd>
-<p>An enum cannot take a type parameter, and a generic function cannot
-be kept as a value (3.16e).</p>
+<p>A generic function, or a case of a generic enum, cannot be kept as a
+value, a method cannot have type parameters of its own, and the types
+cannot be written at a call (3.16e, 58.1).</p>
+</dd>
+<dt>Several values in a <code>for</code></dt>
+<dd>
+<p>(<code>for q, r in pairs()</code>), and a default for one of several
+results (57.6).</p>
+</dd>
+<dt>A resource lives only in a <code>let</code> or a parameter:</dt>
+<dd>
+<p>not in a field, a list, a dict, <code>or none</code>, an enum or a
+type parameter, and a <code>release</code> cannot raise (59.2).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="the-library"><span class="number">G.4</span>
 The library</h3>
 <dl>
+<dt>A file’s name on Windows.</dt>
+<dd>
+<p>In a program built through C or LLVM on Windows, a file’s name goes
+through the system’s code page, as <code>fopen</code> takes it, so a
+name with letters that page lacks cannot be opened there;
+<code>zeno run</code> takes any name (59.20).</p>
+</dd>
 <dt>Files in pieces.</dt>
 <dd>
-<p>A file is read whole, or as a list of lines (6.12, 6.20).</p>
+<p>A reader cannot go back or say where in the file it is, does not wait
+for a file to grow, and reads only UTF-8; each <code>write</code> goes
+to the system at once (59.6).</p>
 </dd>
 <dt>The methods of text and lists written in Zeno.</dt>
 <dd>
@@ -286,11 +308,6 @@ asks the library: the two can differ in the last digit.</p>
 <h3 class="unnumbered" id="builds"><span class="number">G.6</span>
 Builds</h3>
 <dl>
-<dt>A named function inside a function</dt>
-<dd>
-<p>runs under <code>zeno run</code>, but is refused by a build. Write it
-at the top, or as a function value.</p>
-</dd>
 <dt>One file at a time.</dt>
 <dd>
 <p>A build compiles the whole program at once (7.11).</p>
@@ -331,34 +348,19 @@ does not use it at all (5.11l, 12.8).</p>
 <h3 class="unnumbered" id="firmware-and-no-collector"><span
 class="number">G.7</span> Firmware and no collector</h3>
 <dl>
-<dt>A raising function as a value.</dt>
+<dt>What a build with no collector refuses by design.</dt>
 <dd>
-<p>In a firmware build, a function that says <code>raises</code> cannot
-be passed around, because a function type does not say whether it raises
-(5.5l).</p>
+<p>Replacing what a field holds through a parameter that only looks,
+taking an item out of a list a <code>for</code> walks (5.15e), keeping
+an item that <code>[ ]</code> only looks at, and a kept function that
+uses a <code>var</code> from outside it. Each is refused with the
+reason, and the table of <code>docs/no-collector.md</code> lists them
+all (56.17).</p>
 </dd>
-<dt>Lists of maybe.</dt>
+<dt>Swapping two items a list owns,</dt>
 <dd>
-<p><code>list[int or none]</code> is refused with no collector; an enum
-with a case for the missing value is the answer (5.16h).</p>
-</dd>
-<dt>Dicts of lists or objects</dt>
-<dd>
-<p>with no collector (10.14).</p>
-</dd>
-<dt>Some moves of an owned value</dt>
-<dd>
-<p>that have no rule yet for what is left behind (5.8i, 5.15e,
-5.17d).</p>
-</dd>
-<dt><code>raise e</code> with no collector,</dt>
-<dd>
-<p>raising again an error that was caught (5.9d).</p>
-</dd>
-<dt>The pool’s size</dt>
-<dd>
-<p>is set on the C compiler’s line, not in the program (5.9j); spare
-blocks are not filled with a pattern to catch their use (5.9k).</p>
+<p><code>xs[i], xs[j] = xs[j], xs[i]</code> on a list of lists or
+objects with no collector: each item is only looked at there (57.6).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="interfaces"><span class="number">G.8</span>
@@ -366,12 +368,12 @@ Interfaces</h3>
 <dl>
 <dt>Functions of an interface</dt>
 <dd>
-<p>have no defaults for parameters, no type parameters, and cannot be
-private (10.5).</p>
+<p>have no type parameters and cannot be private (10.5), and a default
+for one of their parameters is a plain value (58.20).</p>
 </dd>
-<dt>An owned class as an interface,</dt>
+<dt>An interface that is another interface</dt>
 <dd>
-<p>and an interface with type parameters of its own (10.10).</p>
+<p>(10.10, 58.23).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="the-web"><span class="number">G.9</span> The
@@ -411,10 +413,9 @@ Tools</h3>
 <p>The language server shows the type of a field, but cannot yet jump to
 where it was declared (17.4).</p>
 </dd>
-<dt>Tests of a compiled program.</dt>
+<dt><code>assert</code> is only for tests</dt>
 <dd>
-<p><code>zeno test</code> runs tests under the interpreter only.
-<code>assert</code> takes no message, and is only for tests (10.21).</p>
+<p>(10.21).</p>
 </dd>
 </dl>
 <h3 class="unnumbered" id="not-limits"><span class="number">G.11</span>

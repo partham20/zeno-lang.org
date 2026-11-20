@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -434,9 +434,10 @@ built-ins for checked arithmetic (built with
 <code>-DZENO_PLAIN_C</code>, the checks are plain C). Taking memory from
 the heap, which MISRA also bans, is answered by
 <code>--no-collector</code>, in the next chapter. None of these is
-hidden, and each is a later piece of work. A function that can raise
-cannot yet be passed around as a value in a firmware build, because a
-function type does not say whether it raises.</p>
+hidden, and each is a later piece of work. A function that can raise is
+passed around as a value like any other, since 0.8.0: its type says so,
+<code>function(str) -&gt; int raises ValueError</code>, and every call
+through it is tested.</p>
 <div class="summary">
 <p><code>zeno build --firmware</code> carries errors the program raises
 as return values, tested after each call, with no <code>setjmp</code>.

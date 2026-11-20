@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -460,14 +460,97 @@ scope</em>, is the one nearly every modern language follows, and it lets
 the compiler decide once which variables a function must take with it.
 (Decisions 3.6c and 3.6d.)</p>
 </div>
+<h3 class="unnumbered" id="a-function-that-raises"><span
+class="number">15.6</span> A function that raises</h3>
+<p>A function that can raise says so in its heading, and its type says
+so too, after what it gives back:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> parse(text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> text == <span class="st">&quot;x&quot;</span> {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;not a number: x&quot;</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">int</span>(text)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> total(texts: <span class="dt">list</span>[<span class="dt">str</span>], convert: <span class="kw">function</span>(<span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> text <span class="kw">in</span> texts {</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        sum += convert(text)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>print(total([<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;3&quot;</span>], parse))</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    print(total([<span class="st">&quot;4&quot;</span>, <span class="st">&quot;x&quot;</span>], parse))</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;caught:&quot;</span>, e)</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>6
+caught: not a number: x</code></pre>
+<p>A function fits <code>raises ValueError</code> if
+<code>except ValueError</code> would catch everything it raises, so one
+that raises nothing fits as well. Where the type says nothing,
+<code>zeno run</code> and an ordinary build let a raising function in,
+as they always did. A firmware build holds it, because there the error
+travels as a value that each call through the type has to test:</p>
+<div class="zenofile">
+<p>apply.zeno</p>
+</div>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> parse(text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dt">int</span>(text)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> apply(f: <span class="kw">function</span>(<span class="dt">str</span>) -&gt; <span class="dt">int</span>, text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> f(text)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>print(apply(parse, <span class="st">&quot;3&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --firmware apply.zeno
+error: `f` of `apply` should be function(str) -&gt; int, which raises nothing, but this function can raise ValueError. In a firmware build a call through a function type raises only what the type says: write `raises ValueError` after what it returns, or build without `--firmware`
+ --&gt; apply.zeno:7:13
+  |
+7 | print(apply(parse, &quot;3&quot;))
+  |             ^
+
+1 error found. Nothing was built.</code></pre>
+<div class="why">
+<p>A call through a function value is checked as a call of the function
+is: <code>total</code> must say that it raises <code>ValueError</code>
+or catch it. That works only if the type carries the kind of error, as
+Java’s <code>throws</code> does on a method. It is also what a firmware
+build needs to know to test every call through the value. (Decisions
+56.1 to 56.5; new in 0.8.)</p>
+</div>
+<h3 class="unnumbered" id="a-method-as-a-value"><span
+class="number">15.7</span> A method as a value</h3>
+<p>A method written without the brackets of a call is a function, with
+its object already in it:</p>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Counter {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    count: <span class="dt">int</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> bump(<span class="kw">self</span>, by: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.count += by</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">self</span>.count</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> c = Counter(<span class="dv">0</span>)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> step = c.bump</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>print(step(<span class="dv">5</span>), step(<span class="dv">1</span>), [<span class="dv">1</span>, <span class="dv">2</span>].map(c.bump), c.count)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>5 6 [7, 9] 9</code></pre>
+<p>Its type is the method’s, without <code>self</code>:
+<code>c.bump</code> is a <code>function(int) -&gt; int</code>. It holds
+the object that <code>c</code> held on that line, so a <code>var</code>
+given another object later does not change it. (Decision 56.9; it builds
+since 0.8.)</p>
 <h3 class="unnumbered"
 id="calling-something-that-is-not-a-function"><span
-class="number">15.6</span> Calling something that is not a function</h3>
+class="number">15.8</span> Calling something that is not a function</h3>
 <p>Only a function can be called, and the checker knows which names hold
 one:</p>
-<div class="sourceCode" id="cb17" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> speed = <span class="dv">5</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>speed()</span></code></pre></div>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> speed = <span class="dv">5</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>speed()</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: int cannot be called
  --&gt; main.zeno:2:1
   |
@@ -480,9 +563,10 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 type is written <code>function(int, str) -&gt; bool</code>. A function
 with no name is written <code>function(n) { return n * 2 }</code>.
 Functions can be passed, stored in lists and dicts, and given back by
-other functions. A function given back keeps the variables around it,
-the variables themselves and not copies, as they were in sight where it
-was written.</p>
+other functions. A type can say what its function raises, and a method
+without its brackets is a function with its object in it. A function
+given back keeps the variables around it, the variables themselves and
+not copies, as they were in sight where it was written.</p>
 </div>
 <div class="tryit">
 <ol>

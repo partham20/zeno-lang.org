@@ -1,5 +1,151 @@
 [
  {
+  "tag": "v0.8.0",
+  "name": "Zeno 0.8.0",
+  "date": "2026-11-20",
+  "url": "https://github.com/zeno-src/zeno-lang/releases/tag/v0.8.0",
+  "assets": [
+   {
+    "name": "install.sh",
+    "size": 11459,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/install.sh",
+    "sha256": "28231934e9b88d4e8f6893b6e22f1c22b8afa84616c38a4ba91d46a06f4ff628"
+   },
+   {
+    "name": "SHA256SUMS.txt",
+    "size": 2031,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/SHA256SUMS.txt",
+    "sha256": "60616d84fd9df8f1d1b4d81603a3659829352166b78b13592f9bd4a41773ca4e"
+   },
+   {
+    "name": "zeno-0.8.0-aarch64.flatpak",
+    "size": 3013384,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-aarch64.flatpak",
+    "sha256": "62bd901c235e542547ecf7bff0aa3c91b8aad04a97e019f77a287cb9fcbb2e21"
+   },
+   {
+    "name": "zeno-0.8.0-linux-arm64.tar.gz",
+    "size": 4335418,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-linux-arm64.tar.gz",
+    "sha256": "34eb14e1461a525ce452f4e0fddbb778c605c49c3cb8164c14ab38e07a013a72"
+   },
+   {
+    "name": "zeno-0.8.0-linux-armv6.tar.gz",
+    "size": 4449219,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-linux-armv6.tar.gz",
+    "sha256": "ca5f6ba89722c4972419b39183eef0ed99a1e105439c61606258a47505622e1f"
+   },
+   {
+    "name": "zeno-0.8.0-linux-armv7.tar.gz",
+    "size": 4400260,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-linux-armv7.tar.gz",
+    "sha256": "25bf471dea69f5ce6c4b548daade74b40af717df682899ab6662804dcb45895e"
+   },
+   {
+    "name": "zeno-0.8.0-linux-x86.tar.gz",
+    "size": 4623761,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-linux-x86.tar.gz",
+    "sha256": "589aa65e1d5a5f7e78f322961cbf71883cc64d9c5a40c0f2b897b32da090db09"
+   },
+   {
+    "name": "zeno-0.8.0-linux-x86_64.tar.gz",
+    "size": 4550363,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-linux-x86_64.tar.gz",
+    "sha256": "5ca168e629e436c174bfe60cbaa08ae8bc24c093cfba13992aaa83ec1ff4f1f6"
+   },
+   {
+    "name": "zeno-0.8.0-macos-arm64.tar.gz",
+    "size": 4246739,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-macos-arm64.tar.gz",
+    "sha256": "4dac6bc12db09e251dba2fe473c1a3a76282db66e1dd17f7498c1b81e6c07b17"
+   },
+   {
+    "name": "zeno-0.8.0-macos-x86_64.tar.gz",
+    "size": 4426247,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-macos-x86_64.tar.gz",
+    "sha256": "fe924d82c2704a9e1e1c94738ccfd42bc2eea9befe743393eed703de7c565991"
+   },
+   {
+    "name": "zeno-0.8.0-windows-arm64.zip",
+    "size": 4415810,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-windows-arm64.zip",
+    "sha256": "7636e0fce7baebad708ee1479084294ba1d19884b3dee76dbeb47eda7df4619b"
+   },
+   {
+    "name": "zeno-0.8.0-windows-setup.exe",
+    "size": 8300184,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-windows-setup.exe",
+    "sha256": "2159fe9efb8eef7aba8aa39234c216b9a8277c9e9c18161644afb2d3c16be3aa"
+   },
+   {
+    "name": "zeno-0.8.0-windows-x86.zip",
+    "size": 4430610,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-windows-x86.zip",
+    "sha256": "21f8b72bcf5d4fec68e63e0c730cf22a730fa52f26204ba52f0b538a3078e4d8"
+   },
+   {
+    "name": "zeno-0.8.0-windows-x86_64.zip",
+    "size": 4590736,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-windows-x86_64.zip",
+    "sha256": "0389f4d73a46047f4311f9b4e8b5bcb08737d1204a93541dda014489da2fc407"
+   },
+   {
+    "name": "zeno-0.8.0-x86_64.flatpak",
+    "size": 3289320,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-x86_64.flatpak",
+    "sha256": "ddb3f5b4d433664ab157c2e7933cc7317dc138a4128f8043ace71de216c8ea44"
+   },
+   {
+    "name": "zeno-lang-bin-0.8.0-1-x86_64.pkg.tar.zst",
+    "size": 4437364,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-lang-bin-0.8.0-1-x86_64.pkg.tar.zst",
+    "sha256": "ab6cc0dde5d9d1af3270c2d60883e8610b554c126584f89edaa993740e825d49"
+   },
+   {
+    "name": "zeno_0.8.0_amd64.deb",
+    "size": 3462838,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno_0.8.0_amd64.deb",
+    "sha256": "fa45227a4bfca4b938d524226fd67874adf140a3eb2b5ea72bfbe1800c985d3f"
+   },
+   {
+    "name": "zeno_0.8.0_amd64.snap",
+    "size": 4083712,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno_0.8.0_amd64.snap",
+    "sha256": "33bdf517ce7c13458b984503b3223b27333aca232970b54f647bc3154540b6f7"
+   },
+   {
+    "name": "zeno_0.8.0_arm64.deb",
+    "size": 3322068,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno_0.8.0_arm64.deb",
+    "sha256": "f73ae6b101ea31b333a2fddb7c8551d4db4635639dc2e55a0b18743b55cfca63"
+   },
+   {
+    "name": "zeno_0.8.0_arm64.snap",
+    "size": 3772416,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno_0.8.0_arm64.snap",
+    "sha256": "fb22be03c8717d789611c2e4d218a0632290f6510c52d9718bdf3184e5797906"
+   },
+   {
+    "name": "zeno_0.8.0_armhf.deb",
+    "size": 3444808,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno_0.8.0_armhf.deb",
+    "sha256": "2ef818fafd03408d617580d56dc6f5a4bded7f45c5e3e9d598c7919f404a828b"
+   },
+   {
+    "name": "zeno_0.8.0_armhf.snap",
+    "size": 3817472,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno_0.8.0_armhf.snap",
+    "sha256": "7e78b8d469a7ccecd01bbd1b40b412ace4951a42e8ba601e8efc3c99c6290870"
+   },
+   {
+    "name": "zeno_0.8.0_i386.deb",
+    "size": 3678840,
+    "url": "https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno_0.8.0_i386.deb",
+    "sha256": "cae7dea5eac45d13204f5c4753025d3f58b6001f492d5cb2e5e492b4be17ad95"
+   }
+  ]
+ },
+ {
   "tag": "v0.7.0",
   "name": "Zeno 0.7.0",
   "date": "2026-11-19",

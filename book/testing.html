@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -334,35 +334,96 @@ can show the values. Zeno has the comparison in front of it, so the one
 and <code>raise</code> say what is wrong and to whom, and can be caught.
 A failed <code>assert</code> is not an error of the program, so
 <code>except Error</code> does not catch it.</p>
+<h3 class="unnumbered" id="a-message-for-a-failure"><span
+class="number">27.3</span> A message for a failure</h3>
+<p>When the two sides of a comparison do not say why they matter, an
+<code>assert</code> can say it, after a comma:</p>
+<div class="zenofile">
+<p>smooth.zeno</p>
+</div>
+<div class="sourceCode" id="cb6" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> smooth(readings: <span class="dt">list</span>[<span class="dt">float</span>]) -&gt; <span class="dt">list</span>[<span class="dt">float</span>] {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> result: <span class="dt">list</span>[<span class="dt">float</span>] = []</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> index <span class="kw">in</span> range(<span class="dv">1</span>, len(readings)) {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        result.append((readings[index - <span class="dv">1</span>] + readings[index]) / <span class="dv">2.0</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> result</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;smoothing gives one value for each reading&quot;</span> {</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> readings = [<span class="dv">20.0</span>, <span class="dv">22.0</span>, <span class="dv">21.0</span>]</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> smoothed = smooth(readings)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> len(smoothed) == len(readings), <span class="st">f&quot;the readings gave {smoothed}&quot;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test smooth.zeno
+smooth.zeno
+  FAILED  smoothing gives one value for each reading
+
+FAILED: smoothing gives one value for each reading
+error: the readings gave [21.0, 21.5]
+this is false. The left of `==` is 2, and the right is 3
+  --&gt; smooth.zeno:12:12
+   |
+12 |     assert len(smoothed) == len(readings), f&quot;the readings gave {smoothed}&quot;
+   |            ^
+
+
+1 test: 0 passed, 1 failed.</code></pre>
+<p>The text is printed on a line of its own, above the line that says
+what was false, which stays. Here the sides say only that 2 is not 3;
+the text shows the list that came back, and that the first reading has
+no value of its own. A condition that is not a comparison, such as
+<code>assert heater.is_on()</code>, shows no values at all, and there
+the text is the only way to say more than “this is false”.</p>
+<p>What comes after the comma must be text, and only one text: when
+<code>total</code> is an <code>int</code>,
+<code>assert total == 6, total</code> is refused, and
+<code>f"the total was {total}"</code> is what to write. An f-string
+makes anything text, so nothing is lost. The text is worked out only
+when the <code>assert</code> fails, so a passing test does not pay for
+it, and it can use what is only there when something has gone wrong.
+<code>assert raises</code> takes no text: its failure already says what
+was wanted and what came.</p>
+<div class="why">
+<p>The test’s name and the two sides of a comparison say most of what a
+message would say, which is why the first versions of Zeno had none.
+What they cannot say is why the values matter, in the words of the thing
+being tested, and a condition with no comparison in it says nothing but
+that it is false. The comma is how Python writes it, so most readers
+have seen it, and after the one expression of an <code>assert</code> it
+can mean nothing else. <code>assert c else "text"</code> would make
+<code>else</code> begin a value, and <code>assert(c, "text")</code>
+would read as a call. (Decision 60.1.)</p>
+</div>
 <h3 class="unnumbered" id="testing-that-something-fails"><span
-class="number">27.3</span> Testing that something fails</h3>
+class="number">27.4</span> Testing that something fails</h3>
 <p>Fault paths are half of what firmware has to get right.
 <code>assert raises</code> checks that a block raises an error of a
 kind:</p>
 <div class="zenofile">
 <p>speed.zeno</p>
 </div>
-<div class="sourceCode" id="cb6" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> check_speed(speed: <span class="dt">int</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> speed &lt; <span class="dv">0</span> <span class="kw">or</span> speed &gt; <span class="dv">100</span> {</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">f&quot;a speed is 0 to 100, and {speed} is not&quot;</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> speed</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;speeds in range are kept&quot;</span> {</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> check_speed(<span class="dv">0</span>) == <span class="dv">0</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> check_speed(<span class="dv">100</span>) == <span class="dv">100</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;speeds out of range are refused&quot;</span> {</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> <span class="kw">raises</span> ValueError {</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        check_speed(<span class="dv">101</span>)</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> <span class="kw">raises</span> ValueError {</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        check_speed(-<span class="dv">1</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb8" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> check_speed(speed: <span class="dt">int</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> speed &lt; <span class="dv">0</span> <span class="kw">or</span> speed &gt; <span class="dv">100</span> {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">f&quot;a speed is 0 to 100, and {speed} is not&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> speed</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;speeds in range are kept&quot;</span> {</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> check_speed(<span class="dv">0</span>) == <span class="dv">0</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> check_speed(<span class="dv">100</span>) == <span class="dv">100</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;speeds out of range are refused&quot;</span> {</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        check_speed(<span class="dv">101</span>)</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        check_speed(-<span class="dv">1</span>)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test speed.zeno
 speed.zeno
   ok      speeds in range are kept
@@ -373,7 +434,7 @@ speed.zeno
 and says which. To take an error of any kind, name <code>Error</code>:
 <code>assert raises Error</code>.</p>
 <h3 class="unnumbered" id="where-tests-go"><span
-class="number">27.4</span> Where tests go</h3>
+class="number">27.5</span> Where tests go</h3>
 <p>A test can stand in the file it tests, and then it sees what is
 private to that file, which is usually where the things worth testing
 are. A file of tests alone, such as <code>ring_test.zeno</code>
@@ -412,7 +473,7 @@ private. <code>test</code> is not even a reserved word:
 so programs keep the name for their own use. (Decision 10.16.)</p>
 </div>
 <h3 class="unnumbered" id="testing-code-that-uses-the-board"><span
-class="number">27.5</span> Testing code that uses the board</h3>
+class="number">27.6</span> Testing code that uses the board</h3>
 <p>Code that drives hardware can be tested on a computer too, because
 <code>zeno run</code> simulates the board: a pin remembers whether it is
 on, and a register remembers what was written to it (<a
@@ -421,31 +482,31 @@ and then ask it:</p>
 <div class="zenofile">
 <p>heater.zeno</p>
 </div>
-<div class="sourceCode" id="cb9" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> pin</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> heater = pin(<span class="dv">5</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> control(temperature: <span class="dt">float</span>) {</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> temperature &lt; <span class="dv">19.0</span> {</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        heater.on()</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">else</span> <span class="kw">if</span> temperature &gt; <span class="dv">21.0</span> {</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        heater.off()</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;the heater comes on when it is cold&quot;</span> {</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">15.0</span>)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> heater.is_on()</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;it stays on until it is warm&quot;</span> {</span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">15.0</span>)</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">20.0</span>)</span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> heater.is_on()</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">22.0</span>)</span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> <span class="kw">not</span> heater.is_on()</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">from</span> board <span class="kw">import</span> pin</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> heater = pin(<span class="dv">5</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> control(temperature: <span class="dt">float</span>) {</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> temperature &lt; <span class="dv">19.0</span> {</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        heater.on()</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">else</span> <span class="kw">if</span> temperature &gt; <span class="dv">21.0</span> {</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        heater.off()</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;the heater comes on when it is cold&quot;</span> {</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">15.0</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> heater.is_on()</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;it stays on until it is warm&quot;</span> {</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">15.0</span>)</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">20.0</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> heater.is_on()</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    control(<span class="dv">22.0</span>)</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> <span class="kw">not</span> heater.is_on()</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test heater.zeno
 heater.zeno
 pin 5 on
@@ -456,20 +517,100 @@ pin 5 off
 2 tests: 2 passed, 0 failed.</code></pre>
 <p>The simulated board says each change of a pin as it happens, which is
 why <code>pin 5 on</code> appears among the results.</p>
+<h3 class="unnumbered" id="tests-of-the-compiled-program"><span
+class="number">27.7</span> Tests of the compiled program</h3>
+<p><code>zeno test</code> runs the tests in the interpreter. The program
+that goes onto a board is another thing: the one C or LLVM makes of it,
+perhaps with no collector, and with numbers of a fixed width (<a
+href="compiling.html#ch-compiling">Compiling</a>).
+<code>zeno test --build</code> compiles each file with its tests in it,
+as <code>zeno build</code> would, runs that program, and prints what
+<code>zeno test</code> prints, line for line:</p>
+<div class="zenofile">
+<p>total.zeno</p>
+</div>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> total(values: <span class="dt">list</span>[<span class="dt">int</span>]) -&gt; <span class="dt">int</span> {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> value <span class="kw">in</span> values {</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>        sum += value</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;three numbers add up&quot;</span> {</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> total([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]) == <span class="dv">6</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>test <span class="st">&quot;a list counted twice&quot;</span> {</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> values = [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> again = values</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">assert</span> total(values) + total(again) == <span class="dv">12</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test --build total.zeno
+total.zeno
+  ok      three numbers add up
+  ok      a list counted twice
+
+2 tests: 2 passed, 0 failed.</code></pre>
+<p>It takes what <code>zeno build</code> takes, such as
+<code>--firmware</code>, <code>--no-collector</code>,
+<code>--llvm</code>, <code>--release</code> and <code>--board</code>, so
+a test is held to the rules of the build it is for. The second test
+gives one list two names. The interpreter lets it, and so does an
+ordinary build. With no collector a list has one owner (<a
+href="no-collector.html#ch-no-collector">Building with No
+Collector</a>), so <code>let again = values</code> gives it away, and
+the test is refused as the program would be:</p>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno test --build --firmware --no-collector total.zeno
+error: `values` was given away on line 15 and holds nothing now. Use it before it goes, or give it only to what looks: a parameter without `take`
+  --&gt; total.zeno:16:18
+   |
+16 |     assert total(values) + total(again) == 12
+   |                  ^
+
+1 error found. No test of total.zeno was run.
+
+No tests were run.
+1 file could not be run.</code></pre>
+<p>A test that passes under <code>zeno test</code> and fails here says
+where the interpreter and the build part. With <code>--board</code> the
+command writes the test program for the board, such as
+<code>total-tests.elf</code>, and the board prints the same lines and
+the totals itself.</p>
+<p>A few things differ on purpose. A fault of a firmware build, such as
+an index out of range, stops the program, as it stops any firmware
+program; the command names the test it was in and says how many after it
+were not run. And an <code>assert</code> must stand in the test itself,
+not in a function written inside the test: a failed <code>assert</code>
+leaves its test as <code>return</code> would, and from inside another
+function it would leave the wrong one.</p>
+<div class="why">
+<p>A test the programmer writes was run only in the interpreter, but the
+program that is trusted on the board is the compiled one. The two are
+meant to agree, and Zeno’s own examples are run both ways to check it,
+but the place to find out where a program’s own code parts is its own
+tests. <code>zeno test</code> without <code>--build</code> is what it
+was, and a program built with <code>zeno build</code> has not one line
+more for the tests. (Decision 60.2.)</p>
+</div>
 <h3 class="unnumbered" id="what-tests-leave-out"><span
-class="number">27.6</span> What tests leave out</h3>
-<p>In version 0.1 there is no message after an <code>assert</code> (the
-test’s name and the values shown already say most of it), no
-<code>assert</code> outside a test, no code run before and after each
-test (a function that builds what the tests need does that), and no
-running of tests in a compiled program. (Decisions 10.21 and 17.5.)</p>
+class="number">27.8</span> What tests leave out</h3>
+<p>There is no <code>assert</code> outside a test, and no code run
+before and after each test (a function that builds what the tests need
+does that). Tests do not run side by side. Under <code>--build</code> an
+<code>assert</code> cannot stand in a function written inside a test,
+and the command does not read the totals back from a board: the board
+prints them. (Decisions 10.21, 17.5 and 60.2.)</p>
 <div class="summary">
 <p><code>test "what it checks" { ... }</code> stands at the top of a
 file. <code>assert condition</code> fails the test when the condition is
-false, and shows both sides of a comparison.
+false, and shows both sides of a comparison;
+<code>assert condition, "text"</code> prints the text as well.
 <code>assert raises Kind { ... }</code> checks that a block raises.
 <code>zeno test</code> runs a file, a folder or the folder it is in, and
-fails if any test fails. Builds leave tests out.</p>
+fails if any test fails. <code>zeno test --build</code> runs the tests
+in the compiled program. Builds leave tests out.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -484,6 +625,11 @@ again. Then add a test for an empty list. What should
 and read the failure.</p></li>
 <li><p>Make a test in one file change a <code>var</code> at the top of
 the file, and see the next test find it changed.</p></li>
+<li><p>Give the failing <code>assert</code> of <code>average</code> a
+message that names the list. Then run the tests of <code>total</code>
+with <code>zeno test --build --firmware</code>, and with
+<code>--no-collector</code> as well, and change the second test so that
+it passes there.</p></li>
 </ol>
 </div>
 </article>

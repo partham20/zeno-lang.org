@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -309,9 +309,10 @@ so.</p>
 <h4 class="unnumbered"
 id="the-class-has-every-function-of-the-interface-written-the-same-way">The
 class has every function of the interface, written the same way</h4>
-<p>: the same parameter names, the same types, the same result. It may
-have more of its own. A missing function, or one written differently, is
-reported at the class:</p>
+<p>: the same parameter names, the same types, the same result, and the
+same defaults, if the interface has any (below). It may have more of its
+own. A missing function, or one written differently, is reported at the
+class:</p>
 <div class="sourceCode" id="cb3" data-language="Zeno"
 style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Shape {</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span></span>
@@ -356,33 +357,115 @@ is found out far away, at some call that passes it. With
 <code>is Shape</code> the promise is written where the reader of the
 class sees it, and it is checked there. (Decision 10.4.)</p>
 </div>
+<h3 class="unnumbered" id="a-default-for-a-parameter"><span
+class="number">20.3</span> A default for a parameter</h3>
+<p>A parameter of an interface’s function can have a default, as a
+parameter of any function can (<a
+href="functions.html#ch-functions">Functions</a>). Each class writes
+the same default, so a call that leaves it out means the same through
+the interface and on the object:</p>
+<div class="zenofile">
+<p>motors.zeno</p>
+</div>
+<div class="sourceCode" id="cb7" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Motor {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> spin(<span class="kw">self</span>, speed: <span class="dt">int</span> = <span class="dv">1000</span>, wait: ms = <span class="dv">5</span> ms)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Fan <span class="kw">is</span> Motor {</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> spin(<span class="kw">self</span>, speed: <span class="dt">int</span> = <span class="dv">1000</span>, wait: ms = <span class="dv">5</span> ms) {</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;fan at&quot;</span>, speed, <span class="st">&quot;after&quot;</span>, wait)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Pump <span class="kw">is</span> Motor {</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> spin(<span class="kw">self</span>, speed: <span class="dt">int</span> = <span class="dv">1_000</span>, wait: ms = <span class="dv">5</span> ms) {</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;pump at&quot;</span>, speed, <span class="st">&quot;after&quot;</span>, wait)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> start(motors: <span class="dt">list</span>[Motor]) {</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> motor <span class="kw">in</span> motors {</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        motor.spin()</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        motor.spin(wait=<span class="dv">20</span> ms)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>start([Fan(), Pump()])</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>Fan().spin(<span class="dv">400</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>fan at 1000 after 5 ms
+fan at 1000 after 20 ms
+pump at 1000 after 5 ms
+pump at 1000 after 20 ms
+fan at 400 after 5 ms</code></pre>
+<p>“The same” is the same value: <code>1_000</code> and
+<code>1000</code> are the same, and so is a case of an enum written
+bare, <code>Fast</code>, and with its enum’s name,
+<code>Mode.Fast</code>. A class that writes another value, or none, is
+refused at the class, with both defaults:</p>
+<div class="sourceCode" id="cb9" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Motor {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> spin(<span class="kw">self</span>, speed: <span class="dt">int</span> = <span class="dv">1000</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Fan <span class="kw">is</span> Motor {</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> spin(<span class="kw">self</span>, speed: <span class="dt">int</span> = <span class="dv">2000</span>) {</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;fan at&quot;</span>, speed)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `spin` of `Fan` gives `speed` the default `2000`, on line 6, and `Motor` gives it `1000`, on line 2. Write the same default in both, so that a call through a `Motor` and a call on a `Fan` mean the same
+ --&gt; main.zeno:5:1
+  |
+5 | class Fan is Motor {
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<p>A default in an interface is a plain value: a number, text that is
+not an f-string, <code>true</code>, <code>false</code>,
+<code>none</code>, a quantity such as <code>5 ms</code>, or a case of an
+enum that carries nothing. A sum such as <code>2 * 500</code>, or a
+call, is refused where it is written.</p>
+<p>Where the interface writes no default, a class may still have one of
+its own. A call on the object can leave that argument out, but a call
+through the interface must give it, so the two cannot mean different
+things without the reader seeing it.</p>
+<div class="why">
+<p><code>motor.spin()</code> is one line that runs a different class
+each time. If each class filled in its own default, the line would mean
+a different speed for each motor, and nothing on the line or in the
+interface would say so. With one value written in both places, the
+interface tells the whole truth. Only a plain value is allowed so that
+“the same” has one meaning, which the reader can check by eye:
+<code>2 * 3</code> and <code>6</code> would need working out. (Decision
+58.20.)</p>
+</div>
 <h3 class="unnumbered" id="where-an-interface-goes"><span
-class="number">20.3</span> Where an interface goes</h3>
+class="number">20.4</span> Where an interface goes</h3>
 <p>An object of a class goes wherever one of its interfaces is wanted: a
 variable, a parameter, a result, a field, and each of those with
 <code>or none</code>.</p>
 <p>A list of the class does not go where a list of the interface is
 wanted, because whoever held it as a <code>list[Shape]</code> could then
 append a <code>Square</code> to a list of circles:</p>
-<div class="sourceCode" id="cb7" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Shape {</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Circle <span class="kw">is</span> Shape {</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    radius: <span class="dt">float</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span> {</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">3.0</span> * <span class="kw">self</span>.radius * <span class="kw">self</span>.radius</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> total(shapes: <span class="dt">list</span>[Shape]) -&gt; <span class="dt">float</span> {</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0.0</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> shape <span class="kw">in</span> shapes {</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        sum += shape.area()</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> circles = [Circle(<span class="dv">1.0</span>), Circle(<span class="dv">2.0</span>)]</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>print(total(circles))</span></code></pre></div>
+<div class="sourceCode" id="cb11" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Shape {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Circle <span class="kw">is</span> Shape {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    radius: <span class="dt">float</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">3.0</span> * <span class="kw">self</span>.radius * <span class="kw">self</span>.radius</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> total(shapes: <span class="dt">list</span>[Shape]) -&gt; <span class="dt">float</span> {</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0.0</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> shape <span class="kw">in</span> shapes {</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        sum += shape.area()</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> circles = [Circle(<span class="dv">1.0</span>), Circle(<span class="dv">2.0</span>)]</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>print(total(circles))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `shapes` of `total` should be list[Shape], but this is list[Circle]. Whoever holds it as a list of Shape could append another class to it. Say what the list holds where it is made, as in `let items: list[Shape] = [...]`
   --&gt; main.zeno:18:13
    |
@@ -397,22 +480,22 @@ made, by writing <code>list[Shape]</code> as the type of
 wants. (Decision 10.7.)</p>
 <h3 class="unnumbered"
 id="through-an-interface-only-its-functions"><span
-class="number">20.4</span> Through an interface, only its functions</h3>
+class="number">20.5</span> Through an interface, only its functions</h3>
 <p>Through an interface, only the interface’s functions can be used. Not
 the fields, not the class’s other functions, and there is no way back
 from the interface to the class:</p>
-<div class="sourceCode" id="cb9" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Shape {</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Circle <span class="kw">is</span> Shape {</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    radius: <span class="dt">float</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span> {</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">3.0</span> * <span class="kw">self</span>.radius * <span class="kw">self</span>.radius</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> s: Shape = Circle(<span class="dv">1.0</span>)</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>print(s.radius)</span></code></pre></div>
+<div class="sourceCode" id="cb13" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Shape {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Circle <span class="kw">is</span> Shape {</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    radius: <span class="dt">float</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">3.0</span> * <span class="kw">self</span>.radius * <span class="kw">self</span>.radius</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> s: Shape = Circle(<span class="dv">1.0</span>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>print(s.radius)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `radius` is not a function of the interface `Shape`, which has `area`. What else this object has depends on its class, and that is only known when the program runs. Give `Shape` a function for it
   --&gt; main.zeno:11:7
    |
@@ -431,64 +514,64 @@ classes are a fixed list known in advance, an enum and
 <code>match</code> say that directly. (Decision 10.8.)</p>
 </div>
 <h3 class="unnumbered" id="errors-through-an-interface"><span
-class="number">20.5</span> Errors through an interface</h3>
+class="number">20.6</span> Errors through an interface</h3>
 <p>An interface function can say what it raises. A class may raise less
 than the interface says, never more, because whoever calls it through
 the interface would not know:</p>
-<div class="sourceCode" id="cb11" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Full {</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    waiting: <span class="dt">int</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Port {</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> send(<span class="kw">self</span>, text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> Full</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> name(<span class="kw">self</span>) -&gt; <span class="dt">str</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Uart <span class="kw">is</span> Port {</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    speed: <span class="dt">int</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    queued: <span class="dt">int</span> = <span class="dv">0</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> send(<span class="kw">self</span>, text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> Full {</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="kw">self</span>.queued &gt;= <span class="dv">2</span> {</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>            <span class="kw">raise</span> Full(<span class="kw">self</span>.queued)</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.queued += <span class="dv">1</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> len(text)</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> name(<span class="kw">self</span>) -&gt; <span class="dt">str</span> {</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">f&quot;uart at {self.speed}&quot;</span></span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MemoryLog <span class="kw">is</span> Port {</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>    lines: <span class="dt">list</span>[<span class="dt">str</span>] = []</span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> send(<span class="kw">self</span>, text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> {</span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.lines.append(text)</span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> len(text)</span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> name(<span class="kw">self</span>) -&gt; <span class="dt">str</span> {</span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;memory log&quot;</span></span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> report(port: Port, text: <span class="dt">str</span>) {</span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>        print(port.name(), <span class="st">&quot;sent&quot;</span>, port.send(text))</span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> Full <span class="kw">as</span> f {</span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>        print(port.name(), <span class="st">&quot;is full with&quot;</span>, f.waiting)</span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ports: <span class="dt">list</span>[Port] = [Uart(<span class="dv">9600</span>), MemoryLog()]</span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> turn <span class="kw">in</span> range(<span class="dv">3</span>) {</span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> port <span class="kw">in</span> ports {</span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>        report(port, <span class="st">&quot;hello&quot;</span>)</span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Full {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    waiting: <span class="dt">int</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Port {</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> send(<span class="kw">self</span>, text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> Full</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> name(<span class="kw">self</span>) -&gt; <span class="dt">str</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Uart <span class="kw">is</span> Port {</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    speed: <span class="dt">int</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    queued: <span class="dt">int</span> = <span class="dv">0</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> send(<span class="kw">self</span>, text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> Full {</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="kw">self</span>.queued &gt;= <span class="dv">2</span> {</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>            <span class="kw">raise</span> Full(<span class="kw">self</span>.queued)</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.queued += <span class="dv">1</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> len(text)</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> name(<span class="kw">self</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">f&quot;uart at {self.speed}&quot;</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MemoryLog <span class="kw">is</span> Port {</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    lines: <span class="dt">list</span>[<span class="dt">str</span>] = []</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> send(<span class="kw">self</span>, text: <span class="dt">str</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.lines.append(text)</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> len(text)</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> name(<span class="kw">self</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;memory log&quot;</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> report(port: Port, text: <span class="dt">str</span>) {</span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>        print(port.name(), <span class="st">&quot;sent&quot;</span>, port.send(text))</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> Full <span class="kw">as</span> f {</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>        print(port.name(), <span class="st">&quot;is full with&quot;</span>, f.waiting)</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> ports: <span class="dt">list</span>[Port] = [Uart(<span class="dv">9600</span>), MemoryLog()]</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> turn <span class="kw">in</span> range(<span class="dv">3</span>) {</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> port <span class="kw">in</span> ports {</span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>        report(port, <span class="st">&quot;hello&quot;</span>)</span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>uart at 9600 sent 5
 memory log sent 5
 uart at 9600 sent 5
@@ -498,8 +581,127 @@ memory log sent 5</code></pre>
 <p><code>MemoryLog</code> never fills up and raises nothing, and that is
 fine. A class whose <code>send</code> raised something <code>Port</code>
 does not list would be refused at the class.</p>
+<h3 class="unnumbered" id="interfaces-and-owners"><span
+class="number">20.7</span> Interfaces and owners</h3>
+<p>Some lists and objects have one owner, which frees them when it is
+done with them: those of an <code>owned class</code> in any program, and
+every one in a program built with no collector (<a
+href="ownership.html#ch-ownership">Ownership</a>, <a
+href="no-collector.html#ch-no-collector">Building with No
+Collector</a>). Two things about interfaces follow from that.</p>
+<h4 class="unnumbered"
+id="a-function-that-takes-out-what-its-object-owns">A function that
+takes out what its object owns</h4>
+<p>can stand for one of an interface. Here <code>take_last</code> of a
+<code>Stack</code> takes a task out of the stack’s own list:</p>
+<div class="zenofile">
+<p>pile.zeno</p>
+</div>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Task {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    name: <span class="dt">str</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Pile {</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> take_last(<span class="kw">self</span>) -&gt; Task</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> size(<span class="kw">self</span>) -&gt; <span class="dt">int</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Stack <span class="kw">is</span> Pile {</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>    tasks: <span class="dt">list</span>[Task]</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> take_last(<span class="kw">self</span>) -&gt; Task {</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">self</span>.tasks.pop()</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> size(<span class="kw">self</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> len(<span class="kw">self</span>.tasks)</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> drain(pile: <span class="kw">take</span> Pile) {</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> pile.size() &gt; <span class="dv">0</span> {</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        print(pile.take_last().name)</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>drain(Stack([Task(<span class="st">&quot;wash&quot;</span>), Task(<span class="st">&quot;dry&quot;</span>)]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --no-collector pile.zeno
+Wrote pile.c
+Built pile. Run it with ./pile
+$ ./pile
+dry
+wash</code></pre>
+<p>A call through the interface is then held to the same rule as a call
+on the object: only the owner may make it. <code>drain</code> takes the
+pile, so it is the owner. A function that was only lent the pile may not
+take anything out of it, since whoever lent it may still be using what
+is inside:</p>
+<div class="zenofile">
+<p>pile.zeno</p>
+</div>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> peek(pile: Pile) -&gt; <span class="dt">str</span> {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> pile.take_last().name</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --no-collector pile.zeno
+error: only the owner can call `take_last`, which takes out or replaces something the object owns (`Stack` is a `Pile`, and its `take_last` does): somebody else may have been lent it. Here `pile` only looks at it
+  --&gt; pile.zeno:29:12
+   |
+29 |     return pile.take_last().name
+   |            ^
+
+1 error found. Nothing was built.</code></pre>
+<p>Nothing is written on the interface’s function to say so. It takes
+out if the function of any class that is the interface does, and the
+checker reads the whole program to find out. So one class that takes out
+makes every call of <code>take_last</code> through a <code>Pile</code> a
+call for the owner, even for a pile whose class takes nothing: the
+caller cannot know which class it has. (Decision 58.21.)</p>
+<h4 class="unnumbered" id="an-owned-interface">An owned interface</h4>
+<p>is to an interface what an <code>owned class</code> is to a class:
+each object that is one has one owner, with a collector too. Only an
+<code>owned class</code> can be one, and an <code>owned class</code> can
+only be an owned interface:</p>
+<div class="zenofile">
+<p>shapes.zeno</p>
+</div>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">owned</span> <span class="kw">interface</span> Shape {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="kw">owned</span> <span class="kw">class</span> Circle <span class="kw">is</span> Shape {</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    radius: <span class="dt">float</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">3.0</span> * <span class="kw">self</span>.radius * <span class="kw">self</span>.radius</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> shapes: <span class="kw">owned</span> <span class="dt">list</span>[Shape] = [Circle(<span class="dv">1.0</span>), Circle(<span class="dv">2.0</span>)]</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> last = shapes.pop()</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>print(last.area(), len(shapes))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>12.0 1</code></pre>
+<p>A list of them is an <code>owned list</code>, a parameter only looks
+at one unless it says <code>take</code>, and a field that holds one is
+in an <code>owned class</code>, as for any owned value. An
+<code>owned class</code> that says it is a plain interface, or a plain
+class that says it is an owned one, is refused at the class, and the
+message says which word to write.</p>
+<div class="why">
+<p>With a collector, an object seen through a plain interface is shared:
+it can be copied anywhere. An owned object put there would be an owned
+thing inside a shared one, and its owner could free it while a copy was
+still in use. <code>owned interface</code> says on the interface’s first
+line, where its reader looks, which kind its objects are, with a word
+the language already has. Working it out from the classes would let one
+new class change every use of the interface. With no collector every
+object has one owner already, so there the word is allowed and says
+nothing new. (Decision 58.22.)</p>
+</div>
 <h3 class="unnumbered" id="no-parent-classes-1"><span
-class="number">20.6</span> No parent classes</h3>
+class="number">20.8</span> No parent classes</h3>
 <p>There is no inheritance in Zeno: a class cannot be another class,
 only interfaces. What two classes share is declared as an interface that
 both are (<a href="classes.html#ch-classes">Classes</a>).</p>
@@ -510,7 +712,7 @@ looks like in memory, what happens when two parents have the same field.
 None of them is needed to write <code>total</code>. (Decision 10.4.)</p>
 </div>
 <h3 class="unnumbered" id="what-it-costs"><span
-class="number">20.7</span> What it costs</h3>
+class="number">20.9</span> What it costs</h3>
 <p>In a compiled program, each object carries a small number saying
 which class it is, and a call through an interface is a
 <code>switch</code> on that number to the class’s function. There are no
@@ -522,7 +724,11 @@ interfaces it is with <code>class Name is Interface</code>, and must
 have each function written the same way. An object goes where its
 interface is wanted, a list of it only where the list was made as one.
 Through an interface only its functions are there. A class may raise
-less than its interface says, never more.</p>
+less than its interface says, never more. A default on an interface’s
+parameter is a plain value, and each class writes the same one. A
+function that takes out what its object owns can stand for one of an
+interface, and a call through it is then for the owner. Each object of
+an <code>owned interface</code> has one owner.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -538,6 +744,13 @@ sensor.</p></li>
 is.</p></li>
 <li><p>Make <code>MemoryLog.send</code> raise a <code>ValueError</code>
 for an empty text, and read the message.</p></li>
+<li><p>Give <code>Port.send</code> a parameter
+<code>wait: ms = 10 ms</code>. Which classes must change, and what does
+the message say to a class that writes
+<code>wait: ms = 20 ms</code>?</p></li>
+<li><p>Add a <code>Queue</code> to <code>pile.zeno</code> whose
+<code>take_last</code> takes the first task,
+<code>self.tasks.pop(0)</code>, and drain one of each.</p></li>
 </ol>
 </div>
 </article>

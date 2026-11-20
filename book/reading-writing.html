@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -314,6 +314,33 @@ style="text-align: left;"><code>program.environment(name)</code></td>
 style="text-align: left;"><code>files.write_bytes(path, bytes)</code></td>
 <td style="text-align: left;">nothing</td>
 </tr>
+<tr class="odd">
+<td style="text-align: left;">list a folder</td>
+<td style="text-align: left;"><code>files.list(folder)</code></td>
+<td style="text-align: left;"><code>list[str]</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">make a folder</td>
+<td style="text-align: left;"><code>files.make_folder(path)</code></td>
+<td style="text-align: left;">nothing</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">put a path together</td>
+<td
+style="text-align: left;"><code>files.join(first, second)</code></td>
+<td style="text-align: left;"><code>str</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">read a file in pieces</td>
+<td style="text-align: left;"><code>files.read_from(path)</code></td>
+<td style="text-align: left;"><code>files.Reader</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">write a file in pieces</td>
+<td style="text-align: left;"><code>files.write_to(path)</code>,
+<code>files.append_to(path)</code></td>
+<td style="text-align: left;"><code>files.Writer</code></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -478,9 +505,10 @@ knows both kinds of line end, so a file from Windows reads the same.</p>
 <p>Opening and closing is a pair that every program must get right on
 every path, errors included, and a file left open is a classic leak.
 Reading and writing whole files covers what most programs do, with no
-pair to get wrong. Reading a large file in pieces needs an open file
-with an owner, and waits for a program that needs it. (Decisions 6.12
-and 6.13.)</p>
+pair to get wrong. A large file, read in pieces, needs a file that stays
+open; that is the next section but one, where the pair is kept by the
+end of a block and not by the program. (Decisions 6.12, 6.13 and
+59.6.)</p>
 </div>
 <h4 class="unnumbered" id="when-a-file-cannot-be-used">When a file
 cannot be used</h4>
@@ -586,46 +614,264 @@ could hold anything. Write <code>[u8(n) for n in numbers]</code> to say
 where the check is made. The errors are those of
 <code>files.read</code>: no file, or one that cannot be read. (Decision
 36.1.)</p>
+<h3 class="unnumbered" id="folders"><span class="number">25.6</span>
+Folders</h3>
+<p><code>files.make_folder</code> makes a folder, and every folder above
+it that is not there yet. <code>files.list</code> gives the names in a
+folder, and <code>files.join</code> puts a folder and a name together
+into a path:</p>
+<div class="zenofile">
+<p>logs.zeno</p>
+</div>
+<div class="sourceCode" id="cb18" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> day = <span class="st">&quot;logs/2026/november&quot;</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>files.make_folder(day)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>files.make_folder(day)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>files.write(files.join(day, <span class="st">&quot;20.txt&quot;</span>), <span class="st">&quot;temp 23.5\n&quot;</span>)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>files.write(files.join(day, <span class="st">&quot;9.txt&quot;</span>), <span class="st">&quot;temp 21.0\n&quot;</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>files.write(files.join(<span class="st">&quot;logs/2026&quot;</span>, <span class="st">&quot;Notes.txt&quot;</span>), <span class="st">&quot;calibrated\n&quot;</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>print(files.<span class="dt">list</span>(<span class="st">&quot;logs/2026&quot;</span>))</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> name <span class="kw">in</span> files.<span class="dt">list</span>(day) {</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> path = files.join(day, name)</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    print(path, files.read(path).strip())</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>[&quot;Notes.txt&quot;, &quot;november&quot;]
+logs/2026/november/20.txt temp 23.5
+logs/2026/november/9.txt temp 21.0</code></pre>
+<p>Making a folder that is already there is no error: what counts is
+that there is a folder at the path at the end. So a program can make its
+folders each time it starts, without asking first. Something else in the
+way, such as a file, is a <code>FileError</code>.</p>
+<p><code>files.list</code> gives the names of everything in the folder,
+files and folders alike, as a <code>list[str]</code>. A name is only the
+last part of the path, <code>"20.txt"</code> and not
+<code>"logs/2026/november/20.txt"</code>, and <code>files.join</code>
+puts the two back together. To tell a folder from a file, ask
+<code>files.exists</code>, which is true only for a file.</p>
+<p>The list is sorted in the order <code>&lt;</code> gives two texts, by
+the numbers of the characters. So <code>"20.txt"</code> comes before
+<code>"9.txt"</code>, since the character <code>2</code> comes before
+<code>9</code>, and <code>"Notes.txt"</code> before
+<code>"november"</code>, since capitals come before small letters. A
+program that wants another order sorts the list itself.</p>
+<div class="why">
+<p>A system gives the names in a folder in an order of its own, and not
+the same one on Linux, on Windows or on a board’s card. A program that
+printed them as they came would print something different from one
+machine to the next, and a test of it could not be written once. The
+order a person would sort in, with <code>"9"</code> before
+<code>"10"</code>, depends on a language and on the machine’s settings.
+The order of <code>&lt;</code> is the same everywhere. (Decision
+59.20.)</p>
+</div>
+<p><code>files.join</code> puts one <code>/</code> between the two
+parts, whatever their ends hold. An empty first part is no folder, and
+the second comes back as it is:</p>
+<div class="zenofile">
+<p>paths.zeno</p>
+</div>
+<div class="sourceCode" id="cb20" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>print(files.join(<span class="st">&quot;logs&quot;</span>, <span class="st">&quot;today.txt&quot;</span>))</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>print(files.join(<span class="st">&quot;logs/&quot;</span>, <span class="st">&quot;/today.txt&quot;</span>))</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>print(files.join(<span class="st">&quot;&quot;</span>, <span class="st">&quot;today.txt&quot;</span>))</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    print(files.<span class="dt">list</span>(<span class="st">&quot;no-such-folder&quot;</span>))</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> FileError <span class="kw">as</span> e {</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    print(e.message)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>files.write(<span class="st">&quot;notes.txt&quot;</span>, <span class="st">&quot;&quot;</span>)</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>    files.make_folder(<span class="st">&quot;notes.txt/old&quot;</span>)</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> FileError <span class="kw">as</span> e {</span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    print(e.message)</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>files.remove(<span class="st">&quot;notes.txt&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>logs/today.txt
+logs/today.txt
+today.txt
+there is no folder `no-such-folder`
+cannot make the folder `notes.txt/old`</code></pre>
+<p>The path uses <code>/</code> on Windows too, which every system Zeno
+runs on takes, so a program that prints a path prints the same text on
+every machine. <code>join</code> does not look at the disk, and takes
+two parts only: for three, write
+<code>files.join(files.join(a, b), c)</code>. A board has no folders, so
+there <code>files.list</code> and <code>files.make_folder</code> raise a
+<code>FileError</code>, which the program can catch;
+<code>files.join</code> works anywhere. There is no way yet to remove a
+folder. (Decisions 59.21 to 59.23.)</p>
+<h3 class="unnumbered" id="a-file-in-pieces"><span
+class="number">25.7</span> A file in pieces</h3>
+<p><code>files.read</code> reads a whole file into one text. A log of a
+gigabyte, or a file that grows while the program runs, wants a line or a
+few bytes at a time. <code>files.read_from</code> opens a file to be
+read in pieces, and <code>files.write_to</code> one to be written
+so:</p>
+<div class="zenofile">
+<p>errors.zeno</p>
+</div>
+<div class="sourceCode" id="cb22" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>files.write(<span class="st">&quot;big.log&quot;</span>, <span class="st">&quot;boot\nerror: no card\nready\nerror: low battery\n&quot;</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> source = files.read_from(<span class="st">&quot;big.log&quot;</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> errors = files.write_to(<span class="st">&quot;errors.log&quot;</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> line <span class="kw">in</span> source {</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> line.starts_with(<span class="st">&quot;error&quot;</span>) {</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        errors.write(line + <span class="st">&quot;\n&quot;</span>)</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>print(files.read(<span class="st">&quot;errors.log&quot;</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: no card
+error: low battery</code></pre>
+<p><code>errors.log</code> was read while <code>errors</code> was still
+open, and it held both lines already: every <code>write</code> hands its
+text to the system before it gives back, so a write that cannot be done
+is a <code>FileError</code> at that <code>write</code>, where it can be
+caught. There is no <code>close</code>. A <code>files.Reader</code> and
+a <code>files.Writer</code> are resources (<a
+href="ownership.html#ch-ownership">Ownership</a>), so the file is
+closed when the <code>let</code> that holds it, or the parameter that
+took it, ends: at the end of its block, at <code>return</code> or
+<code>break</code>, or as an error goes past. Here that is the end of
+the program.</p>
+<p>What a reader and a writer can do:</p>
+<div class="center">
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Write</th>
+<th style="text-align: left;">Does</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>reader.read_line()</code></td>
+<td style="text-align: left;">the next line without its line end, or
+<code>none</code> after the last</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>reader.read_bytes(count)</code></td>
+<td style="text-align: left;">up to <code>count</code> bytes, as a
+<code>list[u8]</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>for line in reader</code></td>
+<td style="text-align: left;">each line in turn</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>writer.write(text)</code></td>
+<td style="text-align: left;">writes the text, and adds no line end</td>
+</tr>
+<tr class="odd">
+<td
+style="text-align: left;"><code>writer.write_bytes(bytes)</code></td>
+<td style="text-align: left;">writes the bytes</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><code>files.append_to</code> writes after what the file already
+holds, and makes the file if it is not there. A line ends at
+<code>"\n"</code>, and a <code>"\r"</code> just before it goes with it,
+as <code>lines()</code> reads it. In a <code>for</code> the loop holds
+one line at a time, and after a <code>break</code> the reader goes on
+from where it stopped. The reader must have a name:
+<code>for line in files.read_from(path)</code> is refused, because
+nothing would own the file to close it.</p>
+<p>The end of a file is where it ends at that moment. A read that found
+the end looks again the next time, so a reader follows a file that this
+program, or another, is still writing:</p>
+<div class="zenofile">
+<p>grow.zeno</p>
+</div>
+<div class="sourceCode" id="cb24" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> out = files.write_to(<span class="st">&quot;grow.log&quot;</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> source = files.read_from(<span class="st">&quot;grow.log&quot;</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>print(source.read_line())</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>out.write(<span class="st">&quot;one\n&quot;</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>out.write(<span class="st">&quot;two, still being written&quot;</span>)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>print(source.read_line())</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>print(source.read_line())</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>print(source.read_line())</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>none
+one
+two, still being written
+none</code></pre>
+<p>What is there without a line end is given as a line, as the last line
+of any file is. The reader does not wait for more: when nothing new is
+there it gives <code>none</code>, and the program decides when to look
+again.</p>
+<p>A program cannot make a reader itself,
+<code>files.Reader(...)</code>, nor read from a writer or close either
+by hand; to close one sooner, give it to a function that takes it. With
+no collector a line is built in the text room, as <code>input()</code>
+builds one, so a line longer than the room stops the program with the
+room’s message; <code>read_bytes</code> takes its list from the pool
+instead. A <code>FileError</code> that nothing catches names a line of
+<code>library/files.zeno</code>, where the reader is written in Zeno,
+and its message names the file.</p>
+<div class="why">
+<p>An open file is the pair this chapter kept away from: open and close,
+right on every path. A resource keeps the pair for the program: the
+close is at the end of the block that holds the file, which the reader
+can see, and an error cannot jump over it. Writing each piece through to
+the system at once means an error comes at the <code>write</code> that
+caused it, where the program can catch it, and not at a close where it
+would have nowhere to go. The reader and writer are written in Zeno over
+six small built-ins, so a program that never reads a file in pieces
+carries none of it. (Decisions 59.6 and 59.7; new in 0.8.)</p>
+</div>
 <h3 class="unnumbered" id="a-worked-example-a-log-book"><span
-class="number">25.6</span> A worked example: a log book</h3>
+class="number">25.8</span> A worked example: a log book</h3>
 <p>This program keeps a log of readings in a file. Each run adds the
 readings given on the command line, then prints every reading so far and
 their average:</p>
 <div class="zenofile">
 <p>logbook.zeno</p>
 </div>
-<div class="sourceCode" id="cb18" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> path = <span class="st">&quot;readings.txt&quot;</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> word <span class="kw">in</span> program.arguments() {</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> value = <span class="dt">float</span>(word)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>        files.append(path, <span class="st">f&quot;{value}\n&quot;</span>)</span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError {</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;skipped:&quot;</span>, word)</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> values: <span class="dt">list</span>[<span class="dt">float</span>] = []</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> files.exists(path) {</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> line <span class="kw">in</span> files.read(path).lines() {</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        values.append(<span class="dt">float</span>(line))</span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>print(len(values), <span class="st">&quot;readings:&quot;</span>, values)</span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> len(values) &gt; <span class="dv">0</span> {</span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;average {sum(values) / float(len(values)):.2f}&quot;</span>)</span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb26" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> files</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> program</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> path = <span class="st">&quot;readings.txt&quot;</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> word <span class="kw">in</span> program.arguments() {</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">try</span> {</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">let</span> value = <span class="dt">float</span>(word)</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>        files.append(path, <span class="st">f&quot;{value}\n&quot;</span>)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>    } <span class="kw">except</span> ValueError {</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;skipped:&quot;</span>, word)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> values: <span class="dt">list</span>[<span class="dt">float</span>] = []</span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> files.exists(path) {</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> line <span class="kw">in</span> files.read(path).lines() {</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>        values.append(<span class="dt">float</span>(line))</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>print(len(values), <span class="st">&quot;readings:&quot;</span>, values)</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> len(values) &gt; <span class="dv">0</span> {</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">f&quot;average {sum(values) / float(len(values)):.2f}&quot;</span>)</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno run logbook.zeno 21.5 22.0
 2 readings: [21.5, 22.0]
 average 21.75
 $ zeno run logbook.zeno 23.5
 3 readings: [21.5, 22.0, 23.5]
 average 22.33</code></pre>
-<h3 class="unnumbered" id="json"><span class="number">25.7</span>
+<h3 class="unnumbered" id="json"><span class="number">25.9</span>
 JSON</h3>
 <p>Programs hand each other text in one format more than any other:
 <em>JSON</em>. A server answers in it, and a program keeps its settings
@@ -636,17 +882,17 @@ one line.</p>
 <div class="zenofile">
 <p>settings.zeno</p>
 </div>
-<div class="sourceCode" id="cb20" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = <span class="st">&quot;{\&quot;name\&quot;: \&quot;pump 2\&quot;, \&quot;limit\&quot;: 80, \&quot;alarms\&quot;: [\&quot;high\&quot;, \&quot;dry\&quot;]}&quot;</span></span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> settings = json.parse(text)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name: <span class="dt">str</span> = settings[<span class="st">&quot;name&quot;</span>]</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> limit: <span class="dt">int</span> = settings[<span class="st">&quot;limit&quot;</span>]</span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>print(name, limit + <span class="dv">5</span>)</span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> alarm <span class="kw">in</span> settings[<span class="st">&quot;alarms&quot;</span>] {</span>
-<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    print(alarm.upper())</span>
-<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb28" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = <span class="st">&quot;{\&quot;name\&quot;: \&quot;pump 2\&quot;, \&quot;limit\&quot;: 80, \&quot;alarms\&quot;: [\&quot;high\&quot;, \&quot;dry\&quot;]}&quot;</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> settings = json.parse(text)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> name: <span class="dt">str</span> = settings[<span class="st">&quot;name&quot;</span>]</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> limit: <span class="dt">int</span> = settings[<span class="st">&quot;limit&quot;</span>]</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>print(name, limit + <span class="dv">5</span>)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> alarm <span class="kw">in</span> settings[<span class="st">&quot;alarms&quot;</span>] {</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    print(alarm.upper())</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>pump 2 85
 HIGH
 DRY</code></pre>
@@ -674,22 +920,22 @@ a class says which, and the checker holds every object to it.</p>
 <div class="zenofile">
 <p>order.zeno</p>
 </div>
-<div class="sourceCode" id="cb22" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Line {</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    item: <span class="dt">str</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    count: <span class="dt">int</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Order {</span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    who: <span class="dt">str</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    lines: <span class="dt">list</span>[Line]</span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    note: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>print(json.write(Order(<span class="st">&quot;Ada&quot;</span>, [Line(<span class="st">&quot;tea&quot;</span>, <span class="dv">2</span>), Line(<span class="st">&quot;milk&quot;</span>, <span class="dv">1</span>)], <span class="cn">none</span>)))</span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>print(json.write([<span class="st">&quot;volts&quot;</span>: <span class="dv">3.3</span>, <span class="st">&quot;amps&quot;</span>: <span class="dv">0.5</span>]))</span></code></pre></div>
+<div class="sourceCode" id="cb30" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> json</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Line {</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    item: <span class="dt">str</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    count: <span class="dt">int</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Order {</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    who: <span class="dt">str</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    lines: <span class="dt">list</span>[Line]</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    note: <span class="dt">str</span> <span class="kw">or</span> <span class="cn">none</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>print(json.write(Order(<span class="st">&quot;Ada&quot;</span>, [Line(<span class="st">&quot;tea&quot;</span>, <span class="dv">2</span>), Line(<span class="st">&quot;milk&quot;</span>, <span class="dv">1</span>)], <span class="cn">none</span>)))</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>print(json.write([<span class="st">&quot;volts&quot;</span>: <span class="dv">3.3</span>, <span class="st">&quot;amps&quot;</span>: <span class="dv">0.5</span>]))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>{&quot;who&quot;:&quot;Ada&quot;,&quot;lines&quot;:[{&quot;item&quot;:&quot;tea&quot;,&quot;count&quot;:2},{&quot;item&quot;:&quot;milk&quot;,&quot;count&quot;:1}],&quot;note&quot;:null}
 {&quot;volts&quot;:3.3,&quot;amps&quot;:0.5}</code></pre>
 <p>A quantity is refused, because JSON has no units and a reader could
@@ -705,8 +951,13 @@ gives <code>none</code> when there are no more.
 and every one but <code>exists</code> may raise a
 <code>FileError</code>, which can always be caught.
 <code>files.read_bytes</code> and <code>write_bytes</code> work on a
-file as its bytes, in a <code>list[u8]</code>. <code>json.parse</code>
-and <code>json.write</code> read and write JSON.</p>
+file as its bytes, in a <code>list[u8]</code>. <code>files.list</code>
+gives the names in a folder, sorted, and <code>files.make_folder</code>
+makes one; <code>files.join</code> puts a path together.
+<code>files.read_from</code>, <code>write_to</code> and
+<code>append_to</code> open a file to be read or written in pieces, and
+it is closed when its owner ends. <code>json.parse</code> and
+<code>json.write</code> read and write JSON.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -721,6 +972,9 @@ back, and prints it. What should the first run do?</p></li>
 message. Then read it with <code>files.read_bytes</code>, and print its
 first eight bytes. A PNG begins
 <code>137, 80, 78, 71, 13, 10, 26, 10</code>.</p></li>
+<li><p>Write <code>tree.zeno</code>, which prints the names in a folder,
+and the names inside each folder in it, indented. Tell a folder from a
+file with <code>files.exists</code>.</p></li>
 <li><p>Keep the counter as JSON instead, <code>{"runs": 3}</code>, with
 <code>json.parse</code> and <code>json.write</code>.</p></li>
 </ol>

@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -342,29 +342,82 @@ whatever was lying in a register. In Python it returns
 <code>None</code>, which then fails somewhere else. Here it is an error
 at the function. (Decision 3.13.)</p>
 </div>
-<h3 class="unnumbered" id="default-values"><span
-class="number">8.4</span> Default values</h3>
-<p>A parameter can have a default, used when the call leaves it out:</p>
+<h3 class="unnumbered" id="several-values-from-one-function"><span
+class="number">8.4</span> Several values from one function</h3>
+<p>A function can give back two things at once: a quotient and a
+remainder, a reading and whether it can be trusted. The heading names
+their types in brackets after <code>-&gt;</code>, <code>return</code>
+gives them with commas, and the caller receives each with a name of its
+own:</p>
 <div class="sourceCode" id="cb13" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> greet(who: <span class="dt">str</span>, excited: <span class="dt">bool</span> = <span class="cn">false</span>) -&gt; <span class="dt">str</span> {</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> excited {</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">f&quot;Hello, {who}!&quot;</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="st">f&quot;Hello, {who}.&quot;</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>}</span>
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> divide(a: <span class="dt">int</span>, b: <span class="dt">int</span>) -&gt; (<span class="dt">int</span>, <span class="dt">int</span>) {</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> a // b, a % b</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> quotient, remainder = divide(<span class="dv">17</span>, <span class="dv">5</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>print(quotient, remainder)</span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>print(greet(<span class="st">&quot;Ada&quot;</span>))</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>print(greet(<span class="st">&quot;Ada&quot;</span>, <span class="cn">true</span>))</span></code></pre></div>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> _, left_over = divide(<span class="dv">9</span>, <span class="dv">4</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>print(left_over)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>3 2
+1</code></pre>
+<p>Every value is received; <code>_</code> receives one and drops it, so
+a reader sees that it was dropped on purpose. Places that already exist
+can receive too, and everything on the right is worked out before
+anything on the left changes, which makes a swap one line:</p>
+<div class="sourceCode" id="cb15" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> low = <span class="dv">9</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> high = <span class="dv">2</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>low, high = high, low</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>print(low, high)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>2 9</code></pre>
+<p>Several values are not one value. They cannot be kept in one
+variable, put in a list or printed together:</p>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> divide(a: <span class="dt">int</span>, b: <span class="dt">int</span>) -&gt; (<span class="dt">int</span>, <span class="dt">int</span>) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> a // b, a % b</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> both = divide(<span class="dv">17</span>, <span class="dv">5</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `divide` gives 2 values. Receive each: `let a, b = divide(...)`. To keep them together, declare a class
+ --&gt; main.zeno:5:12
+  |
+5 | let both = divide(17, 5)
+  |            ^
+
+1 error found. Nothing was run.</code></pre>
+<div class="why">
+<p>Python and Rust give back a tuple, a value that can then be kept and
+passed around, read as <code>reading[1]</code>. That is a second way to
+write a class whose parts have no names, and <code>reading.status</code>
+says more than <code>reading[1]</code>. What is wanted is to hand back
+two things at once, which needs no new kind of value: this is Go’s way.
+To keep the values together, declare a class. (Chapter 57 of the
+decisions.)</p>
+</div>
+<h3 class="unnumbered" id="default-values"><span
+class="number">8.5</span> Default values</h3>
+<p>A parameter can have a default, used when the call leaves it out:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> greet(who: <span class="dt">str</span>, excited: <span class="dt">bool</span> = <span class="cn">false</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> excited {</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">f&quot;Hello, {who}!&quot;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="st">f&quot;Hello, {who}.&quot;</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>print(greet(<span class="st">&quot;Ada&quot;</span>))</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>print(greet(<span class="st">&quot;Ada&quot;</span>, <span class="cn">true</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>Hello, Ada.
 Hello, Ada!</code></pre>
 <p>A default is worked out afresh on every call, so a default list is a
 new empty list each time:</p>
-<div class="sourceCode" id="cb15" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> with_one(items: <span class="dt">list</span>[<span class="dt">int</span>] = []) -&gt; <span class="dt">list</span>[<span class="dt">int</span>] {</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    items.append(<span class="dv">1</span>)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> items</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>print(with_one(), with_one())</span></code></pre></div>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> with_one(items: <span class="dt">list</span>[<span class="dt">int</span>] = []) -&gt; <span class="dt">list</span>[<span class="dt">int</span>] {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    items.append(<span class="dv">1</span>)</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> items</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>print(with_one(), with_one())</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>[1] [1]</code></pre>
 <div class="why">
 <p>In Python, <code>def add(item, to=[])</code> makes the list once, and
@@ -373,27 +426,27 @@ is one of the most reported surprises in that language. (Decision
 3.5.)</p>
 </div>
 <h3 class="unnumbered" id="named-arguments"><span
-class="number">8.5</span> Named arguments</h3>
+class="number">8.6</span> Named arguments</h3>
 <p>Any argument can be given by the name of its parameter, which makes a
 call readable without looking the function up:</p>
-<div class="sourceCode" id="cb17" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> set_timer(millis: <span class="dt">int</span>, repeat: <span class="dt">bool</span>, start_now: <span class="dt">bool</span>) {</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    print(millis, repeat, start_now)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>set_timer(<span class="dv">500</span>, <span class="cn">true</span>, <span class="cn">false</span>)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>set_timer(millis=<span class="dv">500</span>, repeat=<span class="cn">true</span>, start_now=<span class="cn">false</span>)</span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>set_timer(<span class="dv">500</span>, repeat=<span class="cn">true</span>, start_now=<span class="cn">false</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> set_timer(millis: <span class="dt">int</span>, repeat: <span class="dt">bool</span>, start_now: <span class="dt">bool</span>) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    print(millis, repeat, start_now)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>set_timer(<span class="dv">500</span>, <span class="cn">true</span>, <span class="cn">false</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>set_timer(millis=<span class="dv">500</span>, repeat=<span class="cn">true</span>, start_now=<span class="cn">false</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>set_timer(<span class="dv">500</span>, repeat=<span class="cn">true</span>, start_now=<span class="cn">false</span>)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>500 true false
 500 true false
 500 true false</code></pre>
 <p>Plain arguments come first and named ones after them. A name that is
 not a parameter, or a parameter given twice, is a mistake:</p>
-<div class="sourceCode" id="cb19" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> move(x: <span class="dt">int</span>, y: <span class="dt">int</span>) {</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    print(x, y)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>move(<span class="dv">1</span>, z=<span class="dv">2</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> move(x: <span class="dt">int</span>, y: <span class="dt">int</span>) {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    print(x, y)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>move(<span class="dv">1</span>, z=<span class="dv">2</span>)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `move` needs a value for `y`
  --&gt; main.zeno:4:1
   |
@@ -408,16 +461,16 @@ error: `move` has no argument named `z`
 
 2 errors found. Nothing was run.</code></pre>
 <h3 class="unnumbered" id="parameters-do-not-change"><span
-class="number">8.6</span> Parameters do not change</h3>
+class="number">8.7</span> Parameters do not change</h3>
 <p>A parameter holds what the caller passed, all the way through the
 function. It cannot be given another value; if the function needs a
 changing value, it makes a <code>var</code> of its own:</p>
-<div class="sourceCode" id="cb21" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> count_down(start: <span class="dt">int</span>) {</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> start &gt; <span class="dv">0</span> {</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>        start -= <span class="dv">1</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> count_down(start: <span class="dt">int</span>) {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> start &gt; <span class="dv">0</span> {</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>        start -= <span class="dv">1</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `start` cannot be changed. Declare it with `var` to allow that
  --&gt; main.zeno:3:9
   |
@@ -425,15 +478,15 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
   |         ^
 
 1 error found. Nothing was run.</code></pre>
-<div class="sourceCode" id="cb23" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> count_down(start: <span class="dt">int</span>) {</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> n = start</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> n &gt; <span class="dv">0</span> {</span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        print(n)</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>        n -= <span class="dv">1</span></span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>count_down(<span class="dv">3</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> count_down(start: <span class="dt">int</span>) {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> n = start</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> n &gt; <span class="dv">0</span> {</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>        print(n)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        n -= <span class="dv">1</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>count_down(<span class="dv">3</span>)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>3
 2
 1</code></pre>
@@ -443,79 +496,79 @@ caller sees the change. <a href="lists.html#ch-lists">Lists</a>
 returns to this.</p>
 <h3 class="unnumbered"
 id="calling-a-function-above-where-it-is-written"><span
-class="number">8.7</span> Calling a function above where it is
+class="number">8.8</span> Calling a function above where it is
 written</h3>
 <p>A function can be used anywhere in its file, above or below the place
 it is declared. That lets a file read from the top, with the main logic
 first and the helpers below:</p>
-<div class="sourceCode" id="cb25" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>print(fahrenheit(<span class="dv">100.0</span>))</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> fahrenheit(celsius: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
-<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> celsius * <span class="dv">1.8</span> + <span class="dv">32.0</span></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>print(fahrenheit(<span class="dv">100.0</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> fahrenheit(celsius: <span class="dt">float</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> celsius * <span class="dv">1.8</span> + <span class="dv">32.0</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>212.0</code></pre>
 <p>The same goes for classes and enums. Variables are different: a
 <code>let</code> or <code>var</code> exists only from its line on.</p>
 <h3 class="unnumbered" id="functions-that-call-themselves"><span
-class="number">8.8</span> Functions that call themselves</h3>
+class="number">8.9</span> Functions that call themselves</h3>
 <p>A function may call itself. This is called <em>recursion</em>, and it
 suits problems that contain smaller copies of themselves:</p>
-<div class="sourceCode" id="cb27" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> factorial(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &lt;= <span class="dv">1</span> {</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">1</span></span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * factorial(n - <span class="dv">1</span>)</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> fib(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &lt; <span class="dv">2</span> {</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> n</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> fib(n - <span class="dv">1</span>) + fib(n - <span class="dv">2</span>)</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>print(factorial(<span class="dv">20</span>), fib(<span class="dv">20</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb33" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> factorial(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &lt;= <span class="dv">1</span> {</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">1</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> n * factorial(n - <span class="dv">1</span>)</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> fib(n: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> n &lt; <span class="dv">2</span> {</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> n</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> fib(n - <span class="dv">1</span>) + fib(n - <span class="dv">2</span>)</span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>print(factorial(<span class="dv">20</span>), fib(<span class="dv">20</span>))</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>2432902008176640000 6765</code></pre>
 <h3 class="unnumbered" id="functions-inside-functions"><span
-class="number">8.9</span> Functions inside functions</h3>
+class="number">8.10</span> Functions inside functions</h3>
 <p>A function can be declared inside another. It is then a name of that
 block, like a variable, and can use the variables that were declared
 above it in the blocks around it:</p>
-<div class="sourceCode" id="cb29" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> report(readings: <span class="dt">list</span>[<span class="dt">float</span>]) {</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> limit = <span class="dv">25.0</span></span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> flag(r: <span class="dt">float</span>) -&gt; <span class="dt">str</span> {</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> r &gt; limit {</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="st">&quot;high&quot;</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ok&quot;</span></span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> r <span class="kw">in</span> readings {</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>        print(r, flag(r))</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>report([<span class="dv">21.0</span>, <span class="dv">27.5</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb35" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> report(readings: <span class="dt">list</span>[<span class="dt">float</span>]) {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> limit = <span class="dv">25.0</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> flag(r: <span class="dt">float</span>) -&gt; <span class="dt">str</span> {</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> r &gt; limit {</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="st">&quot;high&quot;</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="st">&quot;ok&quot;</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> r <span class="kw">in</span> readings {</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>        print(r, flag(r))</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>report([<span class="dv">21.0</span>, <span class="dv">27.5</span>])</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>21.0 ok
 27.5 high</code></pre>
 <p>What such a function can see is fixed by where it is written: the
 variables above it, never one declared further down. A function used
 before a variable it needs has been declared is refused, with the
 reason:</p>
-<div class="sourceCode" id="cb31" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
-<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> result = inner()</span>
-<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> base = <span class="dv">5</span></span>
-<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
-<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> base * <span class="dv">2</span></span>
-<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> result</span>
-<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
+<div class="sourceCode" id="cb37" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> result = inner()</span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> base = <span class="dv">5</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> base * <span class="dv">2</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> result</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `base` is declared further down than the first use of `inner`, which needs it. Use `inner` below the line that declares `base`
  --&gt; main.zeno:5:16
   |
@@ -533,9 +586,11 @@ Values</a>.</p>
 <code>function name(parameters) -&gt; type</code>, and a body. Types can
 be written or left out. A function that promises a value must return one
 on every path, and one that promises nothing returns <code>none</code>.
-Defaults are worked out on every call, arguments can be named,
-parameters never change, and functions can be called from above where
-they are written, call themselves, and live inside other functions.</p>
+A function can give several values, <code>-&gt; (int, int)</code>,
+received by as many names. Defaults are worked out on every call,
+arguments can be named, parameters never change, and functions can be
+called from above where they are written, call themselves, and live
+inside other functions.</p>
 </div>
 <div class="tryit">
 <ol>

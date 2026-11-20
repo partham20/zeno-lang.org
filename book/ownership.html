@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -522,19 +522,168 @@ values are a choice made where it pays, and shared values stay the easy
 default. (Decisions 5.8 and 5.15, and the audit, which made looking the
 default.)</p>
 </div>
+<h3 class="unnumbered" id="taking-a-value-out-of-a-field"><span
+class="number">32.5</span> Taking a value out of a field</h3>
+<p>Reading a field only looks, so an object could not hand on what one
+of its fields holds: giving it away would leave nothing in the field.
+<code>take</code> in front of a field or an item gives what is there and
+leaves <code>none</code> in its place, so the field’s type must say it
+may be <code>none</code>:</p>
+<div class="sourceCode" id="cb16" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">owned</span> <span class="kw">class</span> Buffer {</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    bytes: <span class="dt">list</span>[<span class="dt">int</span>]</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">owned</span> <span class="kw">class</span> Uart {</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    filling: Buffer <span class="kw">or</span> <span class="cn">none</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> hand_on(<span class="kw">self</span>) -&gt; Buffer <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">take</span> <span class="kw">self</span>.filling</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> send(buffer: <span class="kw">take</span> Buffer) -&gt; <span class="dt">int</span> {</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> len(buffer.bytes)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> uart = Uart(Buffer([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>]))</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> full = uart.hand_on()</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>print(uart.filling <span class="kw">is</span> <span class="cn">none</span>)</span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="kw">if</span> full <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    print(send(full))</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>true
+3</code></pre>
+<div class="why">
+<p>A list could always give an item away with <code>pop()</code>, and a
+field had nothing like it. <code>take</code> is the word a parameter
+already uses for the same act, and writing it at the place makes the
+hole visible: the type says <code>or none</code>, and the next reader of
+the field must test it. (Decision 56.10; new in 0.8.)</p>
+</div>
+<h3 class="unnumbered" id="cleaning-up-when-a-block-ends"><span
+class="number">32.6</span> Cleaning up when a block ends</h3>
+<p>Some things have a second half that must happen on every way out of a
+block: a chip-select line goes high again, a lock is let go, a file is
+closed. An owned class can say so once, by saying it is a
+<code>Resource</code> and writing what putting it back does in
+<code>release</code>:</p>
+<div class="zenofile">
+<p>select.zeno</p>
+</div>
+<div class="sourceCode" id="cb18" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">owned</span> <span class="kw">class</span> Selected <span class="kw">is</span> Resource {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    name: <span class="dt">str</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> release(<span class="kw">self</span>) {</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;deselect&quot;</span>, <span class="kw">self</span>.name)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> read_id(name: <span class="dt">str</span>, fail: <span class="dt">bool</span>) -&gt; <span class="dt">int</span> <span class="kw">raises</span> ValueError {</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> chosen = Selected(name)</span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;select&quot;</span>, chosen.name)</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> fail {</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">raise</span> ValueError(<span class="st">&quot;no answer&quot;</span>)</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="dv">0x9F</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>print(read_id(<span class="st">&quot;flash&quot;</span>, <span class="cn">false</span>))</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="kw">try</span> {</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    print(read_id(<span class="st">&quot;sensor&quot;</span>, <span class="cn">true</span>))</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>} <span class="kw">except</span> ValueError <span class="kw">as</span> e {</span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>    print(<span class="st">&quot;caught:&quot;</span>, e)</span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>select flash
+deselect flash
+159
+select sensor
+deselect sensor
+caught: no answer</code></pre>
+<p><code>release</code> ran on both roads out of <code>read_id</code>:
+after the <code>return</code>, and as the error went past. Nothing was
+written at either. It runs when the owner of the object ends, which is
+when its block is left in any way: by reaching the end, by
+<code>return</code> (once the value returned is worked out),
+<code>break</code> or <code>continue</code>, or by an error passing
+through, which then goes on unchanged. Of two in one block, the one made
+last is put back first, and one made in the body of a loop is put back
+at the end of each turn.</p>
+<p>A resource has one owner, as every owned value does, and the owner
+that has it last puts it back. <code>return</code> gives it to the
+caller, a parameter that says <code>take</code> takes it, and
+<code>let b = a</code> moves it; none of these runs
+<code>release</code>. So to end one sooner, give it to a function that
+takes it. <code>release</code> itself cannot be called by hand: it runs
+once, by itself.</p>
+<p>The top of a file is a block too. What it holds is put back after the
+last line, and before an error that nothing caught is reported. Under
+<code>zeno test</code> the top of the file ends after its last test, so
+the tests can use what the top made. <code>program.exit</code>, and a
+fault that stops a firmware program, end no block and put nothing
+back.</p>
+<p>A resource may live in a <code>let</code> of one name, or in a
+parameter, and nowhere else, since only those have a block whose end is
+the moment. Everything else is refused with a message that says what to
+write: a <code>var</code>, a field, a list or a dict,
+<code>or none</code>, a case of an enum, a type parameter, one of
+several values, a default, a function that is kept, and a call whose
+result nobody keeps. A <code>var</code> is the one people try first:</p>
+<div class="sourceCode" id="cb20" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">owned</span> <span class="kw">class</span> Selected <span class="kw">is</span> Resource {</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    name: <span class="dt">str</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> release(<span class="kw">self</span>) {</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>        print(<span class="st">&quot;deselect&quot;</span>, <span class="kw">self</span>.name)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> chosen = Selected(<span class="st">&quot;flash&quot;</span>)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `chosen` holds a resource, which is released when its owner ends, so the variable cannot be given another value. Declare it with `let`
+ --&gt; main.zeno:9:1
+  |
+9 | var chosen = Selected(&quot;flash&quot;)
+  | ^
+
+1 error found. Nothing was run.</code></pre>
+<p>The class must be an <code>owned class</code>, and
+<code>release</code> takes <code>self</code> alone, gives nothing, and
+may not say <code>raises</code>: at the end of a block an error has
+nowhere to go, so it is caught inside. A resource may be held as the
+interface, <code>let r: Resource = chosen</code>, and its own
+<code>release</code> runs. <code>Resource</code> comes with Zeno, as
+<code>owned interface Resource { function release(self) }</code>, and is
+not a reserved word: a program with a <code>Resource</code> of its own
+means its own, and a program that never writes <code>is Resource</code>
+is built exactly as before.</p>
+<div class="why">
+<p>C has nothing for this, and a missed deselect on one error path is a
+classic firmware fault. C++ and Rust run a destructor when a value’s
+owner ends, and Python and Java have <code>with</code> and
+try-with-resources, which mark the block by hand. Zeno already knows
+where each owned value ends, so it can run the second half there with
+nothing more written at the place. Keeping a resource to a
+<code>let</code> or a parameter means the moment is always the end of a
+block a reader can see; in a list or a field it would be wherever the
+list happened to be freed. (Decisions 59.1 to 59.5; new in 0.8.)</p>
+</div>
 <h3 class="unnumbered" id="what-owned-values-cannot-do"><span
-class="number">32.5</span> What owned values cannot do</h3>
-<p>In version 0.1 an owned value cannot sit in a function type, be taken
-out of a field (that would leave a hole the type does not admit to), be
-replaced through a look, or be raised. Each is an error that says what
-to do instead, and allowing any of them later breaks no program.</p>
+class="number">32.7</span> What owned values cannot do</h3>
+<p>An owned value cannot be replaced through a look, or taken out of a
+field whose type does not say <code>or none</code> (that would leave a
+hole the type does not admit to). Each is an error that says what to do
+instead.</p>
 <div class="summary">
 <p><code>owned class</code> and <code>owned list[T]</code> have one
 owner, and are freed where the owner’s block ends. Storing gives a value
 away; looking is free. A parameter looks unless it says
 <code>take</code>. Owned may hold shared, never the other way. The
 checker follows branches, loops and <code>try</code>, and says where a
-value went when it is used after.</p>
+value went when it is used after. An <code>owned class</code> that
+<code>is Resource</code> has its <code>release</code> run on every way
+out of its owner’s block; it lives only in a <code>let</code> or a
+parameter.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -548,6 +697,10 @@ the message, and say in your own words why it is right.</p></li>
 <li><p>Give an owned value away inside a loop and then
 <code>break</code> on the next line. Why does the checker accept
 that?</p></li>
+<li><p>Make two <code>Selected</code> in one function, and
+<code>return</code> from the middle of it. In which order are they put
+back? Then give one to a function that takes it, and run it
+again.</p></li>
 </ol>
 </div>
 </article>

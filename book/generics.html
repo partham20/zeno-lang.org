@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -419,15 +419,277 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
 
 1 error found. Nothing was run.</code></pre>
 <div class="why">
-<p>A bound, such as "<code>T</code> must be something with
-<code>&gt;</code>", needs a name for "something with <code>&gt;</code>".
-Checking each use instead is what C++ did for thirty years, and it still
-finds every mistake before the program runs, which is the promise that
+<p>Checking each use is what C++ did for thirty years, and it finds
+every mistake before the program runs, which is the promise that
 matters. The note under the error is there so that the message points
-back to the call. (Decision 3.16d.)</p>
+back to the call. A generic may still say what it asks of
+<code>T</code>, which puts the message at the call instead: that is the
+next section. (Decision 3.16d.)</p>
 </div>
+<h3 class="unnumbered" id="saying-what-a-type-must-be"><span
+class="number">19.6</span> Saying what a type must be</h3>
+<p>A type parameter may say what it asks of its type, with
+<code>is</code> and an interface, as a class says what it is. This is
+called a <em>bound</em>:</p>
+<div class="zenofile">
+<p>largest.zeno</p>
+</div>
+<div class="sourceCode" id="cb17" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> largest[T <span class="kw">is</span> Ordered](items: <span class="dt">list</span>[T]) -&gt; T {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> best = items[<span class="dv">0</span>]</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> item <span class="kw">in</span> items {</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> item &gt; best {</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>            best = item</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> best</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>print(largest([<span class="dv">3</span>, <span class="dv">9</span>, <span class="dv">2</span>]), largest([<span class="st">&quot;pear&quot;</span>, <span class="st">&quot;apple&quot;</span>]), largest([<span class="dv">3</span> V, <span class="dv">12</span> V]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>9 pear 12 V</code></pre>
+<p><code>Ordered</code> comes with Zeno. A type is <code>Ordered</code>
+when <code>&lt;</code> works on two of it: every kind of number, a
+quantity, and text. Now a list of points is refused at the call, which
+names the type and what was asked of it, and the body is not even looked
+at:</p>
+<div class="sourceCode" id="cb19" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Point {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    x: <span class="dt">int</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> largest[T <span class="kw">is</span> Ordered](items: <span class="dt">list</span>[T]) -&gt; T {</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> best = items[<span class="dv">0</span>]</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> item <span class="kw">in</span> items {</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> item &gt; best {</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>            best = item</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> best</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>print(largest([Point(<span class="dv">1</span>), Point(<span class="dv">2</span>)]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `Point` is not `Ordered`, which `largest` asks of `T`. `Ordered` is what `&lt;` works on: a number, a quantity or text. A class cannot be `Ordered` yet, since `&lt;` between its objects comes with operators for a class
+  --&gt; main.zeno:14:7
+   |
+14 | print(largest([Point(1), Point(2)]))
+   |       ^
+
+1 error found. Nothing was run.</code></pre>
+<p>A bound can also be an interface of the program’s own (<a
+href="interfaces.html#ch-interfaces">Interfaces</a>). Then
+<code>T</code> is any class that says it is that interface:</p>
+<div class="zenofile">
+<p>shapes.zeno</p>
+</div>
+<div class="sourceCode" id="cb21" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Shape {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Circle <span class="kw">is</span> Shape {</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    radius: <span class="dt">float</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">3.14159</span> * <span class="kw">self</span>.radius * <span class="kw">self</span>.radius</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Square <span class="kw">is</span> Shape {</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    side: <span class="dt">float</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> area(<span class="kw">self</span>) -&gt; <span class="dt">float</span> {</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">self</span>.side * <span class="kw">self</span>.side</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> total[S <span class="kw">is</span> Shape](shapes: <span class="dt">list</span>[S]) -&gt; <span class="dt">float</span> {</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0.0</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> s <span class="kw">in</span> shapes {</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>        sum += s.area()</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> circles = [Circle(<span class="dv">1.0</span>), Circle(<span class="dv">2.0</span>)]</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>print(<span class="st">f&quot;{total(circles):.2f}&quot;</span>)</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>print(total([Square(<span class="dv">2.0</span>), Square(<span class="dv">3.0</span>)]))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>15.71
+13.0</code></pre>
+<p><code>total</code> takes a <code>list[Circle]</code> as it is. A
+function that asked for <code>shapes: list[Shape]</code> would not: a
+list of circles is not a list of shapes, since a square could then be
+put in it. The bound says “a list of one kind of shape”, and each kind
+gets its own copy of <code>total</code>.</p>
+<p>A class and an enum take bounds too, as in
+<code>class Range[T is Ordered]</code>. Each type parameter has at most
+one bound, and a comma always begins the next parameter, so
+<code>[T is Ordered, Shape]</code> would make <code>Shape</code> a
+second type parameter; it is refused with a message that says so. A
+bound is a promise checked at the call, not all that the body may do:
+the body is still checked for each copy, and a generic with no bound
+that uses <code>&gt;</code> is still taken, as before. A generic that
+nothing calls is checked with each bounded parameter standing for its
+interface, so a call of a function the interface does not list is found
+even then. A bound makes no code: the C of a program with bounds is the
+C of the same program without them.</p>
+<div class="why">
+<p>Checking each copy finds every mistake, but it finds it inside the
+generic, in words about <code>&gt;</code> that the caller did not write.
+A bound moves the message to the call and puts the rule in the heading,
+where a reader looks first. It is written with <code>is</code> because a
+class already says what it is that way, and an interface already names a
+set of functions, so nothing new had to be learnt. A class cannot be
+<code>Ordered</code> yet: that waits for a class to say what
+<code>&lt;</code> means for its objects. (Decisions 58.3 to 58.5.)</p>
+</div>
+<h3 class="unnumbered" id="a-generic-enum"><span
+class="number">19.7</span> A generic enum</h3>
+<p>An enum can leave a type open too. The two most used are a value that
+may be missing and a result that may be an error:</p>
+<div class="zenofile">
+<p>maybe.zeno</p>
+</div>
+<div class="sourceCode" id="cb23" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Maybe[T] {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    Nothing</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    Just(value: T)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Result[T, E] {</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    Ok(value: T)</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    Failed(error: E)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> first_even(numbers: <span class="dt">list</span>[<span class="dt">int</span>]) -&gt; Maybe[<span class="dt">int</span>] {</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">for</span> n <span class="kw">in</span> numbers {</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> n % <span class="dv">2</span> == <span class="dv">0</span> {</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> Just(n)</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> Nothing</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> parse_volts(text: <span class="dt">str</span>) -&gt; Result[<span class="dt">float</span>, <span class="dt">str</span>] {</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">if</span> text.ends_with(<span class="st">&quot;V&quot;</span>) {</span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> Ok(<span class="dt">float</span>(text.slice(<span class="dv">0</span>, len(text) - <span class="dv">1</span>)))</span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> Failed(<span class="st">f&quot;no unit in {text}&quot;</span>)</span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> numbers <span class="kw">in</span> [[<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">4</span>], [<span class="dv">5</span>, <span class="dv">7</span>]] {</span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> first_even(numbers) {</span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Just(n) { print(<span class="st">f&quot;found {n}&quot;</span>) }</span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Nothing { print(<span class="st">&quot;none of them&quot;</span>) }</span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-33"><a href="#cb23-33" aria-hidden="true" tabindex="-1"></a><span class="kw">for</span> text <span class="kw">in</span> [<span class="st">&quot;3.3V&quot;</span>, <span class="st">&quot;12&quot;</span>] {</span>
+<span id="cb23-34"><a href="#cb23-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">match</span> parse_volts(text) {</span>
+<span id="cb23-35"><a href="#cb23-35" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Ok(volts) { print(volts * <span class="dv">2.0</span>) }</span>
+<span id="cb23-36"><a href="#cb23-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">case</span> Failed(error) { print(<span class="st">&quot;error:&quot;</span>, error) }</span>
+<span id="cb23-37"><a href="#cb23-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb23-38"><a href="#cb23-38" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>found 4
+none of them
+6.6
+error: no unit in 12</code></pre>
+<p>The rules are those of a generic class. <code>Maybe[int]</code> is a
+type, a copy of the enum with <code>T</code> standing for
+<code>int</code>, and a compiled program has one enum for each copy. Its
+cases are written by their names alone, as the cases of any enum are,
+and their types are worked out where they are used. A case that carries
+a value says what <code>T</code> is by what it carries:
+<code>Just(3)</code> is a <code>Maybe[int]</code>. A case that carries
+nothing says nothing, so <code>Nothing</code> takes its type from the
+place it goes: the type of a variable, a parameter, a field or a list,
+what the function returns, or the other side of <code>==</code>. Where
+nothing says, it is an error that shows what to write:</p>
+<div class="sourceCode" id="cb25" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> Maybe[T] {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    Nothing</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    Just(value: T)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> missing = Nothing</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>error: `Nothing` is a case of the generic enum `Maybe`, and nothing here says which `Maybe` it is. Put it where its type is written, as in `let x: Maybe[int] = Nothing`
+ --&gt; main.zeno:6:15
+  |
+6 | let missing = Nothing
+  |               ^
+
+1 error found. Nothing was run.</code></pre>
+<p><code>Ok(3)</code> says what <code>T</code> is but not
+<code>E</code>, so where the result has no type of its own yet it is
+written <code>let r: Result[int, str] = Ok(3)</code>. A
+<code>match</code> must handle every case, as for any enum. A generic
+enum cannot give its cases numbers, since a case with a number carries
+nothing.</p>
+<div class="why">
+<p><code>T or none</code> already says “a <code>T</code> or nothing”,
+and stays the short way to say it. A generic enum is for the rest: a
+reason with the nothing, two kinds of answer, or an enum that holds
+itself, such as
+<code>enum Chain[T] { End; Link(item: T, rest: Chain[T]) }</code>. It
+needed no new rule, only the rules of a generic class applied to an
+enum. Writing <code>Nothing</code> alone and taking its type from where
+it goes is what lets a case be written as any other enum’s case is.
+(Decisions 58.1 and 58.2.)</p>
+</div>
+<h3 class="unnumbered" id="a-generic-interface"><span
+class="number">19.8</span> A generic interface</h3>
+<p>An interface can have type parameters, and a class says which copy of
+it the class is:</p>
+<div class="zenofile">
+<p>sources.zeno</p>
+</div>
+<div class="sourceCode" id="cb27" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> Source[T] {</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> next(<span class="kw">self</span>) -&gt; T <span class="kw">or</span> <span class="cn">none</span></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Countdown <span class="kw">is</span> Source[<span class="dt">int</span>] {</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    left: <span class="dt">int</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> next(<span class="kw">self</span>) -&gt; <span class="dt">int</span> <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="kw">self</span>.left == <span class="dv">0</span> {</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.left -= <span class="dv">1</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">self</span>.left + <span class="dv">1</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Repeat[T] <span class="kw">is</span> Source[T] {</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    value: T</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    times: <span class="dt">int</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> next(<span class="kw">self</span>) -&gt; T <span class="kw">or</span> <span class="cn">none</span> {</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="kw">self</span>.times == <span class="dv">0</span> {</span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="cn">none</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">self</span>.times -= <span class="dv">1</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">self</span>.value</span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> drain(source: Source[<span class="dt">int</span>]) -&gt; <span class="dt">int</span> {</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> sum = <span class="dv">0</span></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> item = source.next()</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">while</span> item <span class="kw">is</span> <span class="kw">not</span> <span class="cn">none</span> {</span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>        sum += item</span>
+<span id="cb27-33"><a href="#cb27-33" aria-hidden="true" tabindex="-1"></a>        item = source.next()</span>
+<span id="cb27-34"><a href="#cb27-34" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb27-35"><a href="#cb27-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> sum</span>
+<span id="cb27-36"><a href="#cb27-36" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-37"><a href="#cb27-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-38"><a href="#cb27-38" aria-hidden="true" tabindex="-1"></a>print(drain(Countdown(<span class="dv">4</span>)), drain(Repeat(<span class="dv">5</span>, <span class="dv">3</span>)))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>10 15</code></pre>
+<p><code>Source[int]</code> is a copy of the interface, as
+<code>Stack[int]</code> is a copy of a class, and every rule of an
+interface holds for it. <code>Countdown</code> is a
+<code>Source[int]</code>; <code>Repeat[int]</code> is one too, and
+<code>Repeat[str]</code> is a <code>Source[str]</code>. The two copies
+are two interfaces, so a <code>Source[str]</code> does not go where a
+<code>Source[int]</code> is wanted. A copy can be a bound,
+<code>[S is Source[str]]</code>, and an
+<code>owned interface Holder[T]</code> has owned copies. A compiled
+program has one <code>switch</code> for each copy it uses, over the
+classes that are that copy. (Decision 58.6.)</p>
 <h3 class="unnumbered" id="what-a-compiled-program-does"><span
-class="number">19.6</span> What a compiled program does</h3>
+class="number">19.9</span> What a compiled program does</h3>
 <p>In a compiled program each use becomes its own copy:
 <code>largest</code> for ints and <code>largest</code> for text are two
 functions in the C, each as fast as if it had been written by hand.
@@ -437,16 +699,17 @@ microcontroller is flash. That is why an untyped function is not made
 generic by itself: a program asks for copies by writing
 <code>[T]</code>.</p>
 <h3 class="unnumbered" id="what-generics-leave-out"><span
-class="number">19.7</span> What generics leave out</h3>
-<p>In version 0.1, these are refused, each with a message that says so:
-an enum with type parameters, a method with type parameters of its own,
-a generic function kept as a value or passed along, and raising an
-object of a generic class.</p>
-<div class="sourceCode" id="cb17" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> first[T](items: <span class="dt">list</span>[T]) -&gt; T {</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> items[<span class="dv">0</span>]</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> pick = first</span></code></pre></div>
+class="number">19.10</span> What generics leave out</h3>
+<p>These are refused, each with a message that says so: a method with
+type parameters of its own, a generic function or a case of a generic
+enum kept as a value or passed along, the types written at the call
+(there is no <code>first[int](xs)</code>), and raising an object of a
+generic class.</p>
+<div class="sourceCode" id="cb29" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> first[T](items: <span class="dt">list</span>[T]) -&gt; T {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> items[<span class="dv">0</span>]</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> pick = first</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>error: `first` is generic. It can be called, as in `first(...)`, but it cannot be kept as a value or passed along yet
  --&gt; main.zeno:4:12
   |
@@ -454,15 +717,46 @@ style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><sp
   |            ^
 
 1 error found. Nothing was run.</code></pre>
-<p>The commonest generic enum, "a <code>T</code> or nothing", is already
-there: <code>T or none</code>. (Decision 3.16e.)</p>
+<p><code>pick</code> would have to be every copy of <code>first</code>
+at once. A function written where a value goes can stand for one copy:
+<code>function(xs: list[int]) -&gt; int { return first(xs) }</code>.
+(Decisions 3.16e and 58.1.)</p>
+<p>A method of <code>class Box[T]</code> can use <code>T</code>, but
+cannot have a <code>U</code> of its own. The message says what to write
+instead: a function of the file that takes the object first, which does
+the same work and which every build takes:</p>
+<div class="zenofile">
+<p>boxes.zeno</p>
+</div>
+<div class="sourceCode" id="cb31" data-language="Zeno"
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Box[T] {</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>    item: T</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> convert[T, U](box: Box[T], change: <span class="kw">function</span>(T) -&gt; U) -&gt; Box[U] {</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> Box(change(box.item))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> count = Box(<span class="dv">42</span>)</span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> text = convert(count, <span class="kw">function</span>(n: <span class="dt">int</span>) -&gt; <span class="dt">str</span> { <span class="kw">return</span> <span class="st">f&quot;#{n}&quot;</span> })</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>print(text.item)</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>#42</code></pre>
+<p>(Decision 58.7.) And a build cannot tell what <code>T</code> is from
+a list whose items are not all one type, such as
+<code>first([200 ms, 1 s])</code>, since a compiled list has one type;
+<code>zeno run</code> takes it. The message says to write them all in
+one unit, such as <code>ms</code>. (Decision 58.8.)</p>
 <div class="summary">
 <p><code>function name[T](...)</code> and <code>class Name[T]</code>
 leave a type open. Type parameters start with a capital, and are worked
 out at each call from the arguments, from a function argument, or from
 where the result goes, never written at the call. The body is checked
 for every type it is used with, and a compiled program has a copy for
-each.</p>
+each. <code>[T is Ordered]</code> or <code>[S is Shape]</code> says what
+a type must be, and is checked at the call. <code>enum Maybe[T]</code>
+and <code>interface Source[T]</code> leave a type open as a class does;
+a case that carries nothing takes its type from where it goes, and a
+class says which copy of an interface it is.</p>
 </div>
 <div class="tryit">
 <ol>
@@ -477,7 +771,15 @@ it for a ring of <code>u8</code> and a ring of <code>V</code>.</p></li>
 <code>test: function(T) -&gt; bool</code>, and gives how many items pass
 the test.</p></li>
 <li><p>Give <code>largest</code> a list of <code>bool</code> and read
-the message.</p></li>
+the message. Then take <code>is Ordered</code> off its heading and read
+the message again. Where does each one point?</p></li>
+<li><p>Write
+<code>function or_else[T](m: Maybe[T], fallback: T) -&gt; T</code> and
+call it as <code>or_else(Nothing, 5)</code>. What tells
+<code>Nothing</code> which <code>Maybe</code> it is?</p></li>
+<li><p>Write a class <code>Letters is Source[str]</code> that gives the
+letters of a text one by one, and pass it to <code>drain</code>. Read
+the message, then write a <code>drain_text</code> for it.</p></li>
 </ol>
 </div>
 </article>

@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -340,17 +340,16 @@ class="number">38.6</span> What Zeno does not have yet</h3>
 later without changing what any program written now means. The main
 ones:</p>
 <ul>
-<li><p><strong>On a board:</strong> reading a pin, an analogue converter
-or a serial port, interrupts and timers. These must be designed against
-real hardware.</p></li>
+<li><p><strong>On a board:</strong> trying what Zeno has for pins,
+converters, serial ports, interrupts and timers on real hardware, and a
+function of the program run inside an interrupt.</p></li>
 <li><p><strong>Numbers:</strong> units a program names itself.</p></li>
 <li><p><strong>Types:</strong> unions other than <code>or none</code>,
-interfaces with type parameters, and bounds on generics.</p></li>
-<li><p><strong>The library:</strong> reading a file in pieces, folders,
-the time of day.</p></li>
-<li><p><strong>Builds:</strong> compiling for another processor in one
-step, and a few corners such as a named function inside a
-function.</p></li>
+and more than one bound on a type parameter.</p></li>
+<li><p><strong>The library:</strong> the time of day, and going back in
+a file read in pieces.</p></li>
+<li><p><strong>Builds:</strong> loading a program onto a board, and
+compilers other than GCC and Clang tried on real projects.</p></li>
 <li><p><strong>The web:</strong> images on a canvas, touch, and a page
 small and fast enough for a game.</p></li>
 </ul>

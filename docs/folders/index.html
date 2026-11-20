@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folders · Zeno</title>
+<meta name="description" content="A program can now see what is in a folder, make one, and put a path together from its parts:">
+<meta property="og:site_name" content="Zeno">
+<meta property="og:title" content="Folders · Zeno">
+<meta property="og:description" content="A program can now see what is in a folder, make one, and put a path together from its parts:">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://zeno-lang.org/docs/folders/">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:secure_url" content="https://zeno-lang.org/og/home.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Folders · Zeno">
+<meta name="twitter:description" content="A program can now see what is in a folder, make one, and put a path together from its parts:">
+<meta name="twitter:image" content="https://zeno-lang.org/og/home.png">
+<meta name="twitter:image:alt" content="Zeno, a programming language: code that reads like what it means.">
+<meta name="theme-color" content="#f7f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)">
+<link rel="canonical" href="https://zeno-lang.org/docs/folders/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/style.css">
+<script>document.documentElement.classList.add("js"); try { var t = localStorage.getItem("theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}</script>
+</head>
+<body>
+<a class="skip" href="#content">Skip to the content</a>
+<div class="progress" aria-hidden="true"><div class="progress-fill" id="progress"></div></div>
+<header class="nav">
+  <a class="brand" href="/" aria-label="Zeno, home"><svg class="mark" viewBox="-8 -8 291 82" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="15" stroke-linejoin="miter" stroke-miterlimit="3"><polyline points="0,7.5 50,7.5 0,58.5 50,58.5"/><path d="M69.5 33 H120.5 A25.5 25.5 0 1 0 115.09 48.7"/><path d="M148.5 66 V0 M148.5 66 V27.5 A20 20 0 0 1 188.5 27.5 V66"/><path d="M242 7.5 A25.5 25.5 0 1 1 219.48 21.03"/></g><circle class="dot" cx="229.25" cy="10.92" r="7.5"/></svg></a>
+  <nav aria-label="Main"><a href="/learn/">Learn</a><a href="/examples/">Examples</a><a href="/playground/">Playground</a><a href="/packages/">Packages</a><a href="/docs/" aria-current="page">Docs</a><div class="nav-more" id="nav-more"><button type="button" aria-expanded="false" aria-controls="nav-more-list">More<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 9.5L12 15l5.5-5.5"/></svg></button><div class="nav-more-list" id="nav-more-list"><a href="/book/">Book</a><a href="/benchmarks/">Benchmarks</a><a href="/decisions/">Decisions</a><a href="/history/">History</a><a href="/roadmap/">Roadmap</a><a href="/about/">About</a></div></div></nav>
+  <div class="nav-end">
+    <button class="theme" id="theme" type="button" aria-label="Switch between light and dark">
+      <svg class="icon sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg><svg class="icon moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+    </button>
+    <a class="button small ghost nav-gh" href="https://github.com/zeno-src/zeno-lang"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.3-4-2-6-2.5M15 21v-3.5c0-1 .1-1.4-.5-2 2.8-.3 5.5-1.4 5.5-6a4.6 4.6 0 0 0-1.3-3.2 4.3 4.3 0 0 0-.1-3.2s-1.1-.3-3.5 1.3a12 12 0 0 0-6.2 0C6.5 2.8 5.4 3.1 5.4 3.1a4.3 4.3 0 0 0-.1 3.2A4.6 4.6 0 0 0 4 9.5c0 4.6 2.7 5.7 5.5 6-.6.6-.6 1.2-.5 2V21"/></svg>GitHub</a>
+    <a class="button small" href="/download/"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7.5 10.5L12 15l4.5-4.5"/><path d="M4.5 16.5v1.5a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-1.5"/></svg>Download</a>
+  </div>
+</header>
+<main id="content">
+<div class="doc-layout">
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/inputs/">Inputs: a pin the program reads</a><a href="/docs/serial/">A serial port</a><a href="/docs/analog/">Reading a voltage: an analog pin</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><a href="/docs/f32/">f32: a float of 32 bits</a><a href="/docs/u64/">u64: a whole number of 64 bits with no sign</a><a href="/docs/fixed-lists/">A list of a fixed length</a><a href="/docs/bytes/">Bytes from and to a file</a><a href="/docs/enum-numbers/">An enum whose cases stand for numbers</a><a href="/docs/units-made/">Units made of units: V  A is W</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/ending-a-program/">Ending a program, its environment, and the error stream</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><a href="/docs/ruby/">Libraries of Ruby</a><a href="/docs/php/">Libraries of PHP</a><a href="/docs/lua/">Libraries of Lua</a><a href="/docs/csharp/">Libraries of C# and .NET</a><a href="/docs/c/">Libraries of C, Go and Rust</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/board-build/">One step to a board: zeno build --board</a><a href="/docs/dict-owned/">A dict that owns its values</a><a href="/docs/files-in-pieces/">A file in pieces</a><a href="/docs/folders/" aria-current="page">Folders</a><a href="/docs/generic-owned/">A value with one owner in a generic</a><a href="/docs/inner-functions/">A function inside a function, and a default that is worked out</a><a href="/docs/interrupts/">Interrupts: the board counts a pin's edges</a><a href="/docs/kept-functions/">A function that is kept takes what it uses</a><a href="/docs/method-values/">A method used as a value</a><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/none-list/">A list of numbers that may be none, with no collector</a><a href="/docs/plain-c/">A compiler that is neither GCC nor Clang</a><a href="/docs/plan-9-14/">The plan for items 9 to 14</a><a href="/docs/pool-size/">The size of the pool on the command line, and spare blocks that are checked</a><a href="/docs/pwm/">A PWM signal: a pin on for a share of the time</a><a href="/docs/raises-in-types/">raises in a function type</a><a href="/docs/resource/">Cleaning up when a block ends</a><a href="/docs/several-values/">Several values from one function</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a><a href="/docs/take/">take in front of a field or an item</a><a href="/docs/ticker/">A ticker: a steady beat</a></nav>
+<article class="prose">
+  <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
+  <h1>Folders</h1>
+  
+  <p>A program can now see what is in a folder, make one, and put a path
+together from its parts:</p>
+<pre><code class="zeno">import files
+
+files.make_folder("logs/2026/november")
+files.write(files.join("logs/2026/november", "20.txt"), "temp 23.5\n")
+files.write(files.join("logs/2026", "notes.txt"), "calibrated\n")
+
+for name in files.list("logs/2026") {
+    print(name)
+}</code></pre>
+<pre><code>notes.txt
+november</code></pre>
+<p>The same list comes out of <code>zeno run</code>, the VM, every build in C and
+LLVM, and every target, on Linux, macOS and Windows. The decisions are
+59.20 to 59.23 in <a href="/decisions/"><code>decisions.md</code></a>.</p>
+<h2 id="what-was-added">What was added</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Written</th>
+<th>Gives</th>
+<th>Can fail with</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The names in a folder</td>
+<td><code>files.list(folder)</code></td>
+<td><code>list[str]</code>, sorted</td>
+<td><code>FileError</code></td>
+</tr>
+<tr>
+<td>Make a folder, and those above it</td>
+<td><code>files.make_folder(path)</code></td>
+<td>nothing</td>
+<td><code>FileError</code></td>
+</tr>
+<tr>
+<td>Two parts of a path</td>
+<td><code>files.join(first, second)</code></td>
+<td><code>str</code></td>
+<td>never</td>
+</tr>
+</tbody>
+</table>
+<h2 id="fileslistfolder"><code>files.list(folder)</code></h2>
+<p>The names of everything in the folder, files and folders alike, with
+no <code>.</code> and no <code>..</code>. A name is the last part of the path only:
+<code>files.list("logs")</code> gives <code>"notes.txt"</code>, not <code>"logs/notes.txt"</code>, and
+<code>files.join</code> puts them back together.</p>
+<p><strong>The list is sorted by the numbers of the characters</strong>, which is the
+order <code>&lt;</code> gives two texts in Zeno. Digits come before capitals, and
+capitals before small letters, and a name with a character from
+beyond the first 65,536 comes after one without:</p>
+<pre><code>["10", "9", "C.txt", "_", "a", "a b", "a.txt", "b.txt", "z", "~", "é", "ｚ", "😀"]</code></pre>
+<p>The system gives the names in an order of its own, which is not the
+same from Linux to Windows, nor from one disk to another. Sorting them
+means a program that lists a folder prints the same thing everywhere,
+and a test of it can be written once. Every list is a new one: a
+program can sort it again, or change it, and the next call still gives
+the folder as it is.</p>
+<h3 id="what-can-go-wrong">What can go wrong</h3>
+<table>
+<thead>
+<tr>
+<th>What happened</th>
+<th>The message of the <code>FileError</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Nothing is at the path, or the path is <code>""</code></td>
+<td><code>there is no folder `logs`</code></td>
+</tr>
+<tr>
+<td>It is a file, or the system will not let it be read</td>
+<td><code>cannot list the folder `logs`</code></td>
+</tr>
+<tr>
+<td>A name in it is not UTF-8</td>
+<td><code>the folder `logs` holds a name that is not text</code></td>
+</tr>
+</tbody>
+</table>
+<p>An empty path is no folder. Several systems take <code>""</code> for the folder
+the program was started in, and some do not; <code>"."</code> says that in every
+one.</p>
+<h2 id="filesmake_folderpath"><code>files.make_folder(path)</code></h2>
+<p>Makes the folder and every folder above it that is not there yet, as
+<code>mkdir -p</code> does. <strong>It worked if there is a folder at the path at the
+end</strong>, so making one that is already there is no error, and a program
+can call it every time it starts. Anything that is not a folder in
+the way is: <code>cannot make the folder `notes.txt/old`</code>, and so is an
+empty path.</p>
+<h2 id="filesjoinfirst-second"><code>files.join(first, second)</code></h2>
+<pre><code class="zeno">files.join("logs", "today.txt")    # "logs/today.txt"
+files.join("logs/", "today.txt")   # "logs/today.txt"
+files.join("logs", "/today.txt")   # "logs/today.txt"
+files.join("logs/", "/today.txt")  # "logs/today.txt"
+files.join("", "today.txt")        # "today.txt"
+files.join("logs", "")             # "logs/"</code></pre>
+<p>What it does is small. Where neither part has a <code>/</code> at the end that
+meets the other, it puts one between them; where one has, it puts in
+none; where both have, it drops the one at the start of the second.
+That is all: <code>files.join("a//", "b")</code> is <code>"a//b"</code>, since the first
+part's own <code>//</code> is left as it is, and <code>files.join("logs", "")</code> is
+<code>"logs/"</code>, a folder with nothing named in it yet. A first part that is
+empty is no folder at all, and the second comes back as it is. Every system Zeno runs
+on takes <code>/</code> in a path, Windows too, so the path is the same text
+everywhere. It does no more than that: it does not look at the disk,
+and does not take out <code>..</code> or a <code>/</code> that is doubled inside a part.</p>
+<p><code>join</code> is written in Zeno, in <a href="https://github.com/zeno-src/zeno-lang/blob/main/library/files.zeno"><code>library/files.zeno</code></a>,
+as <code>math.hypot</code> is (chapter 33). A program that calls it gets it, and
+one that does not gets nothing.</p>
+<h2 id="on-a-board">On a board</h2>
+<p>A board has no folders. <code>files.list</code> and <code>files.make_folder</code> raise a
+<code>FileError</code> there, which the program can catch, as <code>files.read</code> does
+for a file. <code>files.join</code> works, since it is arithmetic on text.</p>
+<h2 id="what-it-costs-a-program-that-does-not-use-it">What it costs a program that does not use it</h2>
+<p>Nothing. The C for listing and making a folder is a piece of the
+runtime (decision 56.19), written into a program only if it calls
+<code>files.list</code> or <code>files.make_folder</code>, through C and LLVM alike. A
+program that calls neither is built into the same C, IR and bytecode
+as before, to the byte.</p>
+<h2 id="the-files">The files</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>src/builtins.rs</code></td>
+<td><code>list</code> and <code>make_folder</code> for <code>zeno run</code> and the VM</td>
+</tr>
+<tr>
+<td><code>src/checker.rs</code></td>
+<td>Their types, and that both raise <code>FileError</code></td>
+</tr>
+<tr>
+<td><code>library/files.zeno</code></td>
+<td><code>join</code></td>
+</tr>
+<tr>
+<td><code>src/runtime.c</code></td>
+<td>The two pieces <code>ZENO_FILES_LIST</code> and <code>ZENO_FILES_MAKE_FOLDER</code>, with POSIX and Windows inside each</td>
+</tr>
+<tr>
+<td><code>src/emit_c.rs</code>, <code>src/emit_llvm.rs</code></td>
+<td>A call of each, in every kind of build</td>
+</tr>
+<tr>
+<td><code>src/runtime.*</code></td>
+<td>Both for each target</td>
+</tr>
+<tr>
+<td><code>tools/targets/edge-folders.zeno</code></td>
+<td>A folder of names that sort differently in every language's own order, and every error</td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-it-does-not-do">What it does not do</h2>
+<ul>
+<li><strong>Remove a folder.</strong> Left for later (<a href="/docs/plan-9-14/"><code>plan-9-14.md</code></a>,
+  after item 12).</li>
+<li><strong>Say what a name is.</strong> <code>files.list</code> does not say which names are
+  folders. <code>files.exists(path)</code> is true for a file only, so it tells
+  the two apart.</li>
+<li><strong>A name that is not UTF-8, on the JVM, .NET and Dart.</strong> Those
+  languages turn such a name into text of their own before a program
+  sees it, so the Java, Kotlin, C# and Dart targets give a changed name
+  where every other engine raises a <code>FileError</code>.</li>
+<li><strong>A name that is not ASCII, in Java where the system's language
+  setting is not UTF-8.</strong> With no <code>LANG</code> set, or <code>LC_ALL=C</code>, the JVM
+  reads <code>é</code> in a name as <code>?</code>, so the Java and Kotlin targets list a
+  name that <code>files.read</code> cannot open. Set <code>LC_ALL=C.UTF-8</code>, or any
+  UTF-8 setting, and they list it as every other engine does.</li>
+<li><strong>Tell apart two names that differ only in case, on a disk that does
+  not.</strong> Zeno lists what the disk holds. On Windows and macOS, as they
+  are set up out of the box, <code>files.write("b.txt", ...)</code> and
+  <code>files.write("B.txt", ...)</code> write one file, and the folder holds one
+  name.</li>
+<li><strong>A name that is not ASCII, in a C or LLVM build on Windows, made by
+  another program.</strong> A build reads and writes a file through the C
+  library's <code>fopen</code>, which takes a name through the machine's code
+  page, and <code>files.list</code> and <code>files.make_folder</code> take names the same
+  way, so what the program writes it lists and reads back by the same
+  name. A name the code page cannot hold, made by <code>zeno run</code> or another
+  program, is listed with question marks, and does not open.</li>
+<li><strong>Lua without LuaFileSystem on Windows.</strong> Lua itself cannot see into
+  a folder; the Lua target uses LuaFileSystem where it is installed,
+  and <code>find</code> and <code>mkdir -p</code> where there is a POSIX shell.</li>
+</ul>
+<h2 id="how-it-is-tested">How it is tested</h2>
+<ul>
+<li><code>folders_are_the_same_in_every_build</code> (<code>emit_c.rs</code>): one program
+  through the interpreter, the VM, and C and LLVM with a collector,
+  <code>--firmware</code> and <code>--no-collector</code>, with 0 blocks left in the last.</li>
+<li><code>folders_are_only_in_a_program_that_uses_them</code>.</li>
+<li><code>a_folder_is_made_and_listed</code> (<code>interpreter.rs</code>): the exact output,
+  each message, a name that is not UTF-8, and what the checker says.</li>
+<li><code>tools/targets/edge-folders.zeno</code>, run by every target.</li>
+</ul>
+<h2 id="things-to-try">Things to try</h2>
+<ol>
+<li>
+<p>Run the program at the top twice. Why is the second run no error,
+   when <code>files.make_folder</code> is asked for a folder that is there?</p>
+</li>
+<li>
+<p>Make a folder with the files <code>a</code>, <code>B</code>, <code>é</code> and <code>10</code> in it, list it,
+   and say why <code>"10"</code> comes first and <code>"é"</code> last. Then sort the list
+   with <code>.sort()</code> and see that nothing moves.</p>
+</li>
+<li>
+<p>Write <code>tree.zeno</code>: a function that prints a folder's names, and the
+   names inside each folder in it, indented. Tell a folder from a file
+   with <code>files.exists</code>, which is false for a folder. It needs
+   <code>raises FileError</code>: take that off and read what <code>zeno check
+   --strict</code> says.</p>
+</li>
+<li>
+<p>Try <code>files.list("")</code> and <code>files.list(".")</code>. Which decision says why
+   the first is an error?</p>
+</li>
+<li>
+<p>Build <code>tree.zeno</code> with <code>--no-collector --memory</code> and give each list
+   an owner (<code>let names: owned list[str] = files.list(folder)</code>). Is
+   anything left at the end?</p>
+</li>
+<li>
+<p>Print <code>files.join("a/", "/b")</code> and <code>files.join("a//", "b")</code>. Why
+   does <code>join</code> mend the first and leave the second?</p>
+</li>
+</ol>
+  <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/folders.md">docs/folders.md</a> in the language repository.</p>
+  <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/files-in-pieces/"><span>Previous</span>A file in pieces</a><a class="next" href="/docs/generic-owned/"><span>Next</span>A value with one owner in a generic</a></nav>
+</article>
+<aside class="doc-toc"><h4>On this page</h4><ul><li><a href="#what-was-added">What was added</a></li><li><a href="#fileslistfolder">files.list(folder)</a></li><li><a href="#filesmake_folderpath">files.make_folder(path)</a></li><li><a href="#filesjoinfirst-second">files.join(first, second)</a></li><li><a href="#on-a-board">On a board</a></li><li><a href="#what-it-costs-a-program-that-does-not-use-it">What it costs a program that does not use it</a></li><li><a href="#the-files">The files</a></li><li><a href="#what-it-does-not-do">What it does not do</a></li><li><a href="#how-it-is-tested">How it is tested</a></li><li><a href="#things-to-try">Things to try</a></li></ul></aside>
+</div>
+</main>
+<footer class="foot">
+<div class="foot-inner">
+  <div class="chase" aria-hidden="true">
+    <i class="tick" style="left:50%"></i><i class="tick" style="left:75%"></i><i class="tick" style="left:87.5%"></i>
+    <span class="runner" id="runner"></span><svg class="tortoise" viewBox="0 44 128 80" aria-hidden="true"><g transform="translate(0 6)"><clipPath id="tortoise-shell"><path d="M10 82 A44 44 0 0 1 98 82 Z"/></clipPath><g fill="var(--signal)" clip-path="url(#tortoise-shell)"><rect x="10" y="30" width="41.5" height="60"/><rect x="56.5" y="30" width="17" height="60"/><rect x="78.5" y="30" width="19.5" height="60"/></g><path fill="currentColor" fill-rule="evenodd" d="M4 91 L12 87 H98 C98 76 104 69 111 69 C118 69 123 74 123 81 C123 90 115 96 106 96 H12 Z M22 96 H40 V106 a4 4 0 0 1 -4 4 H26 a4 4 0 0 1 -4 -4 Z M70 96 H88 V106 a4 4 0 0 1 -4 4 H74 a4 4 0 0 1 -4 -4 Z M113.5 77.2 a2.7 2.7 0 1 0 0.01 0 Z"/></g></svg>
+  </div>
+  <div class="chase-text"><p>Every journey is halfway done. Forever.</p><span id="chase-count">The runner has closed 0 of 1 halves</span></div>
+  <p class="foot-about">Zeno of Elea said Achilles can never catch the tortoise: first he must cover half the distance, then half of what is left, without end. It suits a compiler that will always be almost finished. The bar at the top of each page works the same way.</p>
+  <div class="foot-links">
+    <div><h4>Learn</h4><a href="/learn/">The guide</a><a href="/download/">Download</a><a href="/examples/">Examples</a><a href="/packages/">Packages</a><a href="/book/">The Zeno Book</a><a href="/book/zeno-book.pdf">The book as a PDF</a></div>
+    <div><h4>Understand</h4><a href="/docs/">How the compiler works</a><a href="/decisions/">Design decisions</a><a href="/history/">History</a><a href="/roadmap/">Roadmap</a></div>
+    <div><h4>Project</h4><a href="/about/">About</a><a href="/privacy/">Privacy</a><a href="https://github.com/zeno-src/zeno-lang">Source on GitHub</a><a href="mailto:contact@zeno-lang.org">contact@zeno-lang.org</a></div>
+  </div>
+  <div class="foot-row"><span>Made by Partha</span><span>Plain HTML, no framework, no build step</span></div>
+</div>
+</footer>
+<script src="/assets/main.js"></script>
+</body>
+</html>

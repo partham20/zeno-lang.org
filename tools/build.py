@@ -600,25 +600,25 @@ def build_examples():
 
 GUIDE = [
     ("install", "Install", None, """
-<p>Zeno 0.7 is out, open source under the MIT licence. Install it with one line on macOS and Linux, or a setup program on Windows. Both put <code>zeno</code> on your <code>PATH</code>, and offer a C compiler and git if the machine has none: <code>zeno build</code> needs the first, <code>zeno fetch</code> the second, and nothing else needs either.</p>
+<p>Zeno 0.8 is out, open source under the MIT licence. Install it with one line on macOS and Linux, or a setup program on Windows. Both put <code>zeno</code> on your <code>PATH</code>, and offer a C compiler and git if the machine has none: <code>zeno build</code> needs the first, <code>zeno fetch</code> the second, and nothing else needs either.</p>
 <h3>macOS and Linux</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="install-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="install-cmd"><code>curl -fsSL https://github.com/zeno-src/zeno-lang/releases/latest/download/install.sh | sh
 zeno new hello
 zeno run hello/main.zeno</code></pre></figure>
 <h3>Windows</h3>
-<p>Download <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.7.0/zeno-0.7.0-windows-setup.exe">zeno-0.7.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
+<p>Download <a href="https://github.com/zeno-src/zeno-lang/releases/download/v0.8.0/zeno-0.8.0-windows-setup.exe">zeno-0.8.0-windows-setup.exe</a>, run it and press Next. One file covers x86-64, 32-bit x86 and ARM64. It is not signed, so Windows warns the first time: choose “More info”, then “Run anyway”.</p>
 <h3>With a package manager</h3>
-<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.7.0">release page</a>, and a Homebrew tap:</p>
+<p>There are packages for apt, pacman, snap and flatpak, installed from the file on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.8.0">release page</a>, and a Homebrew tap:</p>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="pkg-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
-<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.7.0_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
-sudo pacman -U zeno-lang-bin-0.7.0-1-x86_64.pkg.tar.zst  # Arch, Manjaro
-sudo snap install --classic --dangerous zeno_0.7.0_amd64.snap
-flatpak install --user zeno-0.7.0-x86_64.flatpak
+<pre id="pkg-cmd"><code>sudo apt install ./zeno_0.8.0_amd64.deb                  # Debian, Ubuntu, Raspberry Pi OS
+sudo pacman -U zeno-lang-bin-0.8.0-1-x86_64.pkg.tar.zst  # Arch, Manjaro
+sudo snap install --classic --dangerous zeno_0.8.0_amd64.snap
+flatpak install --user zeno-0.8.0-x86_64.flatpak
 
 brew tap zeno-src/zeno-lang https://github.com/zeno-src/zeno-lang
 brew install zeno-src/zeno-lang/zeno                   # macOS and Linux</code></pre></figure>
-<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.7.0">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
+<p>The <code>.deb</code> is also there for <code>arm64</code>, <code>armhf</code> and <code>i386</code>, the snap for <code>arm64</code> and <code>armhf</code>, and the flatpak for <code>aarch64</code>. Plain archives for ten kinds of machine, with <code>SHA256SUMS.txt</code>, are on the <a href="https://github.com/zeno-src/zeno-lang/releases/tag/v0.8.0">release page</a>. <a href="/docs/install/">How the installers work</a> and <a href="/docs/packages/">what each package is</a> are in the docs.</p>
 <h3>From source</h3>
 <figure class="window shell"><figcaption><!--ICON:terminal--><span class="file">Terminal</span><button class="copy" type="button" data-copy="src-cmd"><!--ICON:copy--><span>Copy</span></button></figcaption>
 <pre id="src-cmd"><code>git clone https://github.com/zeno-src/zeno-lang
@@ -805,14 +805,16 @@ DONE = [
     ("A board that prints by itself (0.7)", "A board's header brings four functions, and nothing of the program goes through the C library: <code>hello</code> in 936 bytes of flash.", "board"),
     ("A float with no C library (0.7)", "A number with a fraction is made into text, and read from text, by Zeno itself, with whole numbers and exactly. It saves 28 KB of flash on a Cortex-M3.", "firmware"),
     ("A C compiler that is neither GCC nor Clang (0.7)", "The few things a build asked of GCC and Clang by name are written a second time in plain C. tcc builds every example.", "plain-c"),
+    ("More with no collector (0.8)", "<code>raises</code> in a function type, a function that is kept, a method as a value, <code>take</code> in front of a field, a dict that owns its values and a function inside a function, in every build. What is still refused is in one table.", "no-collector"),
+    ("Several values (0.8)", "<code>-&gt; (int, str)</code>, <code>let q, r = divide(7, 2)</code> and <code>a, b = b, a</code>, in every engine, build and target.", "several-values"),
+    ("Generic enums and interfaces, and bounds (0.8)", "<code>enum Maybe[T]</code>, <code>interface Source[T]</code>, and <code>largest[T is Ordered]</code>, which says what a type must be.", "generics"),
+    ("Cleaning up when a block ends (0.8)", "An <code>owned class</code> that <code>is Resource</code> has its <code>release</code> run on every way out of the block that holds it.", "resource"),
+    ("Folders and files in pieces (0.8)", "<code>files.list</code>, <code>files.make_folder</code> and <code>files.join</code>, and a file read line by line with <code>files.read_from</code> and written with <code>files.write_to</code>.", "files-in-pieces"),
+    ("Tests of a compiled program (0.8)", "<code>zeno test --build</code> runs a program's tests in the program C or LLVM makes of it, and an <code>assert</code> can say why it matters.", "testing"),
 ]
 NEXT = [
     ("Next", "On a real board", "Everything the board module has was tried on two emulated boards. No program of Zeno's has run on real hardware yet."),
-    ("Next", "More with no collector", "What a build with no collector still refuses, and <code>raises</code> in the type of a function."),
-    ("Planned", "Several return values", "A function that gives two things back, taken apart where it is called."),
-    ("Planned", "Generic enums and interfaces", "<code>enum Maybe[T]</code>, interfaces with a type of their own, and bounds on a type."),
-    ("Planned", "Cleaning up at the end of a block", "A file or a port closed where its block ends, and files read in pieces."),
-    ("Planned", "Tools", "Lines of the program in a debugger, tests of a compiled program, completion in the editor, and a prompt to try things at."),
+    ("Planned", "Tools", "Lines of the program in a debugger, completion and rename in the editor, and a prompt to try things at."),
     ("Planned", "Tasks, async and await", "Several things at once: servers and networking."),
     ("Planned", "Called from C", "A Zeno function handed to C, and to the other languages, for callbacks."),
 ]
@@ -825,7 +827,7 @@ def build_roadmap():
         f'<li class="{s.split()[0].lower()}">{icon("clock" if s in ("In progress", "Next") else "map")}<i>{s}</i><b>{t}</b><span>{d}</span></li>'
         for s, t, d in NEXT)
     body = page_head("Roadmap", "Where Zeno stands",
-                     "Zeno 0.7 is out: a program is built for a board in one step, reads the board and calls C, zeno build --target writes it in fifteen other languages, zeno build --fast makes it as fast as C and Rust, and a program can choose how its memory is freed. "
+                     "Zeno 0.8 is out: a function gives several values, enums and interfaces take a type, a block puts back what it opened, and a program is built for a board in one step, reads the board and calls C; zeno build --target writes it in fifteen other languages, zeno build --fast makes it as fast as C and Rust, and a program can choose how its memory is freed. "
                      "The goal is one language for every job you would reach for C, C++, Python, JavaScript, Java or Rust to do. "
                      "Each use case arrives with a piece of the compiler. This is the order they have come in, and the order the rest will.", "map") + f"""
 <div class="roadmap">
@@ -855,7 +857,7 @@ def build_about():
 <h2>The name</h2>
 <p>Zeno of Elea argued that Achilles can never catch a tortoise: before he reaches it he must cover half the distance, then half of what is left, forever. The quantum Zeno effect says a system watched closely enough never changes. Both suit a compiler that will always be almost finished. The bar at the top of every page closes half the distance that is left as you scroll, and never arrives.</p>
 <h2>Status</h2>
-<p>Zeno 0.7 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM, to a web page and to fifteen other languages, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
+<p>Zeno 0.8 is released, with installers for Windows, macOS and Linux, and the code is open source under the MIT licence. It runs programs, checks them, and compiles them to C, to LLVM, to a web page and to fifteen other languages, has a standard library, programs in many files, packages, tests, a formatter and a language server. Version 0.1 means every open question about the language has an answer, though a change can still come before 1.0. It is a language to read, learn from and experiment with. See the <a href="/roadmap/">roadmap</a>.</p>
 <h2>The code</h2>
 <p>The compiler is plain Rust with no dependencies, about {lines_of_code()} lines with its C runtime, in <a href="{GITHUB}">zeno-src/zeno-lang</a>, under the MIT licence. This website is plain HTML, CSS and a little JavaScript, built by a short script that runs every sample through Zeno.</p>
 <h2 id="contact">Contact</h2>

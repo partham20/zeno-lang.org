@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -631,25 +631,28 @@ class="number">30.9</span> What does not compile yet</h3>
 <code>zeno build</code> names each one and points at the line, while
 <code>zeno run</code> still runs the program:</p>
 <div class="zenofile">
-<p>inner.zeno</p>
+<p>named.zeno</p>
 </div>
 <div class="sourceCode" id="cb14" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> outer() -&gt; <span class="dt">int</span> {</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">function</span> inner() -&gt; <span class="dt">int</span> {</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dv">2</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> inner()</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>print(outer())</span></code></pre></div>
-<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build inner.zeno
-error: `zeno build` cannot compile a function inside a function or block yet. `zeno run` can still run this program
- --&gt; inner.zeno:2:5
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> area(width: <span class="dt">int</span>, height: <span class="dt">int</span>) -&gt; <span class="dt">int</span> {</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> width * height</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> measure = area</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>print(measure(height = <span class="dv">2</span>, width = <span class="dv">3</span>))</span></code></pre></div>
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build named.zeno
+error: `zeno build` cannot compile named arguments to a function held in a variable yet. `zeno run` can still run this program
+ --&gt; named.zeno:5:7
   |
-2 |     function inner() -&gt; int {
-  |     ^</code></pre>
-<p>A function written with no name,
-<code>let inner = function() { ... }</code>, does compile. <a
-href="limits.html#app-limits">Appendix G</a> has the full list.</p>
+5 | print(measure(height = 2, width = 3))
+  |       ^</code></pre>
+<p>The type of a function value has no names for its parameters, so a
+build cannot know which argument is which; <code>zeno run</code> reads
+them off the function the variable holds. Passing them in order builds.
+The table in <code>docs/compiler.md</code> lists every such corner with
+its reason, and a test holds the compilers to it. Since 0.8.0 a function
+with a name written inside another, a default worked out at the call, a
+method used as a value and a function value that raises all build; <a
+href="limits.html#app-limits">Appendix G</a> has what is left.</p>
 <p>A program that uses the library of another language through
 <code>import python</code> or one of its like is refused too, because a
 built program must run where that language may not be (<a

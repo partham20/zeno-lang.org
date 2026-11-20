@@ -50,7 +50,7 @@
 </header>
 <main id="content">
 <div class="doc-layout">
-<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/" aria-current="page">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/inputs/">Inputs: a pin the program reads</a><a href="/docs/serial/">A serial port</a><a href="/docs/analog/">Reading a voltage: an analog pin</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><a href="/docs/f32/">f32: a float of 32 bits</a><a href="/docs/u64/">u64: a whole number of 64 bits with no sign</a><a href="/docs/fixed-lists/">A list of a fixed length</a><a href="/docs/bytes/">Bytes from and to a file</a><a href="/docs/enum-numbers/">An enum whose cases stand for numbers</a><a href="/docs/units-made/">Units made of units: V  A is W</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/ending-a-program/">Ending a program, its environment, and the error stream</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><a href="/docs/ruby/">Libraries of Ruby</a><a href="/docs/php/">Libraries of PHP</a><a href="/docs/lua/">Libraries of Lua</a><a href="/docs/csharp/">Libraries of C# and .NET</a><a href="/docs/c/">Libraries of C, Go and Rust</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/board-build/">One step to a board: zeno build --board</a><a href="/docs/interrupts/">Interrupts: the board counts a pin's edges</a><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/plain-c/">A compiler that is neither GCC nor Clang</a><a href="/docs/pwm/">A PWM signal: a pin on for a share of the time</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a><a href="/docs/ticker/">A ticker: a steady beat</a></nav>
+<nav class="doc-nav" aria-label="Docs"><h4>The front end</h4><a href="/docs/lexer/">How the lexer works</a><a href="/docs/parser/">How the parser works</a><a href="/docs/checker/">How the type checker works</a><h4>The engines</h4><a href="/docs/interpreter/">How the interpreter works</a><a href="/docs/vm/">How the bytecode VM works</a><a href="/docs/compiler/" aria-current="page">How compiling to C works</a><a href="/docs/llvm/">How the LLVM backend works</a><a href="/docs/minimal/">The least C: zeno build --minimal</a><h4>Memory</h4><a href="/docs/memory/">How memory is managed</a><a href="/docs/ownership/">Owned values: memory freed at a line you can point to</a><a href="/docs/no-collector/">A build with no collector</a><a href="/docs/pool/">The memory pool</a><a href="/docs/text/">Text that is kept</a><a href="/docs/temporaries/">What a statement owns</a><a href="/docs/one-owner/">One owner</a><a href="/docs/enums-and-none/">Enum values and none, with one owner</a><a href="/docs/functions-and-errors/">Functions and errors, with one owner</a><a href="/docs/memory-modes/">Choosing how memory is freed</a><h4>Firmware and hardware</h4><a href="/docs/firmware/">How a firmware build handles errors</a><a href="/docs/board/">How the board and the clock work</a><a href="/docs/inputs/">Inputs: a pin the program reads</a><a href="/docs/serial/">A serial port</a><a href="/docs/analog/">Reading a voltage: an analog pin</a><a href="/docs/sized-ints/">How the bit operators and the sized whole numbers work</a><a href="/docs/f32/">f32: a float of 32 bits</a><a href="/docs/u64/">u64: a whole number of 64 bits with no sign</a><a href="/docs/fixed-lists/">A list of a fixed length</a><a href="/docs/bytes/">Bytes from and to a file</a><a href="/docs/enum-numbers/">An enum whose cases stand for numbers</a><a href="/docs/units-made/">Units made of units: V  A is W</a><h4>The type system</h4><a href="/docs/generics/">How generics work</a><a href="/docs/interfaces/">Interfaces</a><a href="/docs/private/">private</a><h4>Memory by hand</h4><a href="/docs/unsafe/">Memory by hand: unsafe { }, pointers and registers</a><h4>The standard library</h4><a href="/docs/library/">The standard library, part 1: text and lists</a><a href="/docs/reading-and-writing/">The standard library, part 2: reading and writing</a><a href="/docs/running-programs/">Starting another program</a><a href="/docs/ending-a-program/">Ending a program, its environment, and the error stream</a><a href="/docs/math/">The standard library, part 3: more of math</a><a href="/docs/library-in-zeno/">A library written in Zeno: math.hypot, and the module random</a><a href="/docs/dict/">The standard library, part 4: a dictionary</a><a href="/docs/json/">JSON: text that other programs read and write</a><h4>Programs in many files</h4><a href="/docs/modules/">Programs in several files</a><a href="/docs/using-packages/">Using packages: modules from another folder</a><a href="/docs/registry/">The registry: a package by its name</a><h4>The web</h4><a href="/docs/web/">How a Zeno program runs in a web page</a><a href="/docs/playground/">The playground: Zeno in a page, with nothing installed</a><h4>Other languages</h4><a href="/docs/targets/">Targets: a Zeno program written in another language</a><a href="/docs/python/">Libraries of Python</a><a href="/docs/node/">Libraries of JavaScript</a><a href="/docs/java/">Libraries of Java</a><a href="/docs/ruby/">Libraries of Ruby</a><a href="/docs/php/">Libraries of PHP</a><a href="/docs/lua/">Libraries of Lua</a><a href="/docs/csharp/">Libraries of C# and .NET</a><a href="/docs/c/">Libraries of C, Go and Rust</a><h4>Tools</h4><a href="/docs/install/">Installing Zeno: a setup program, and one line</a><a href="/docs/packages/">Packages: Zeno for apt, pacman, snap, flatpak, Homebrew and winget</a><a href="/docs/release/">Releasing Zeno: one zeno for each kind of machine</a><a href="/docs/new/">Starting a program: zeno new</a><a href="/docs/testing/">Tests: test, assert and zeno test</a><a href="/docs/format/">The formatter</a><a href="/docs/lsp/">The language server</a><h4>The audit and 0.1</h4><a href="/docs/audit/">The audit: unambiguous and intuitive</a><a href="/docs/gaps/">The gaps programs ran into: +=, and a format on a quantity</a><a href="/docs/version-0.1/">Zeno 0.1: what is in it, and what is not</a><a href="/docs/found-by-the-book/">What writing the book found</a><h4>More</h4><a href="/docs/board-build/">One step to a board: zeno build --board</a><a href="/docs/dict-owned/">A dict that owns its values</a><a href="/docs/files-in-pieces/">A file in pieces</a><a href="/docs/folders/">Folders</a><a href="/docs/generic-owned/">A value with one owner in a generic</a><a href="/docs/inner-functions/">A function inside a function, and a default that is worked out</a><a href="/docs/interrupts/">Interrupts: the board counts a pin's edges</a><a href="/docs/kept-functions/">A function that is kept takes what it uses</a><a href="/docs/method-values/">A method used as a value</a><a href="/docs/missing/">What Zeno does not have yet, and what to do about each</a><a href="/docs/none-list/">A list of numbers that may be none, with no collector</a><a href="/docs/plain-c/">A compiler that is neither GCC nor Clang</a><a href="/docs/plan-9-14/">The plan for items 9 to 14</a><a href="/docs/pool-size/">The size of the pool on the command line, and spare blocks that are checked</a><a href="/docs/pwm/">A PWM signal: a pin on for a share of the time</a><a href="/docs/raises-in-types/">raises in a function type</a><a href="/docs/resource/">Cleaning up when a block ends</a><a href="/docs/several-values/">Several values from one function</a><a href="/docs/stores/">Stores: where each package manager looks for Zeno</a><a href="/docs/take/">take in front of a field or an item</a><a href="/docs/ticker/">A ticker: a steady beat</a></nav>
 <article class="prose">
   <p class="eyebrow"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5zM20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg><a href="/docs/">Docs</a></p>
   <h1>How compiling to C works</h1>
@@ -88,15 +88,104 @@ indexing, <code>append</code>, <code>pop</code>, <code>+</code>, <code>in</code>
 (<a href="/docs/ownership/"><code>docs/ownership.md</code></a>).</p>
 <p>Every program in <code>examples/</code> builds. <code>blink.zeno</code> and <code>signal.zeno</code> run on
 a simulated board (<a href="/docs/board/"><code>docs/board.md</code></a>).</p>
+<p>Since 0.8.0 that includes a function with a name written inside a
+function, and a default that is more than a literal
+(<a href="/docs/inner-functions/"><code>inner-functions.md</code></a>).</p>
 <p>A few things are left. <code>zeno build</code> names each one and points at the line:</p>
-<pre class="out"><code>error: `zeno build` cannot compile a function inside a function or block yet. `zeno run` can still run this program</code></pre>
-<ul>
-<li>A <strong>named</strong> function, class or enum declared inside a function. (Write
-  <code>let helper = function(n) { ... }</code> instead: that one compiles.)</li>
-<li>A default value that is not a plain literal or <code>[]</code>:
-  <code>function f(at = now())</code>.</li>
-<li>A method taken off an object without calling it: <code>let f = point.length</code>.</li>
-</ul>
+<pre class="out"><code>error: `zeno build` cannot compile named arguments to a function held in a variable yet. `zeno run` can still run this program</code></pre>
+<p>Each of the two compilers has a little over a hundred places that
+refuse. Nearly all of them are guards: the checker refuses such a
+program first, with a message of its own, so the compiler's is never
+seen. These are the ones a program that <code>zeno run</code> runs can reach,
+through C and through LLVM alike, each with its reason:</p>
+<table>
+<thead>
+<tr>
+<th>Refused</th>
+<th>Why</th>
+<th>Instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A class or an enum inside a function or a block</td>
+<td>a type of C or of the IR is written once, at the top of the file, and these would need a name of their own and the variables around them</td>
+<td>write it at the top of the file</td>
+</tr>
+<tr>
+<td>A generic function inside a function</td>
+<td>a copy is made of a generic for each type it is used with, at the top of the file</td>
+<td>write it at the top of the file</td>
+</tr>
+<tr>
+<td>Two functions inside a function that call each other and use variables around them</td>
+<td>each is a closure that must be made before the other (56.16)</td>
+<td>give one to the other as a parameter</td>
+</tr>
+<tr>
+<td>A default that is more than a literal, on a function inside a function that uses variables around it</td>
+<td>the call goes through a function value, which carries no defaults (56.16)</td>
+<td>give the argument at the call</td>
+</tr>
+<tr>
+<td>Named arguments to a function held in a variable: <code>f(a = 1)</code></td>
+<td>the type of a function value has no names for its parameters; <code>zeno run</code> reads them off the function it holds at the call</td>
+<td>pass the arguments in order</td>
+</tr>
+<tr>
+<td>A built-in function used as a value: <code>xs.map(str)</code></td>
+<td>a built-in is written in place for the types it is given, and is no function that a value can point at</td>
+<td><code>xs.map(function(n) { return str(n) })</code></td>
+</tr>
+<tr>
+<td>A method that comes with Zeno used as a value: <code>xs.append</code></td>
+<td>the same</td>
+<td>a function written where a value goes</td>
+</tr>
+<tr>
+<td>A method of an object that no variable holds, or of a copy of a generic class, used as a value</td>
+<td>56.9, 56.18</td>
+<td>put the object in a <code>let</code>; call the method in a function written where a value goes</td>
+</tr>
+<tr>
+<td>A list whose items are not all one type: <code>[1, "a"]</code>, <code>[200 ms, 1 s]</code>, also given to a generic, <code>first([1, 2.5])</code></td>
+<td>a build gives every item one type of C; <code>zeno run</code> checks types as it goes, and keeps each quantity in its own unit (58.8)</td>
+<td>one type, one unit (<code>[200 ms, 1000 ms]</code>), or an enum with a case for each</td>
+</tr>
+<tr>
+<td>A variable that only ever holds <code>none</code>, and <code>print([])</code> or <code>[none]</code> alone</td>
+<td>a build needs a type, and nothing gives one</td>
+<td>write the type: <code>x: int or none</code>, <code>let items: list[int] = []</code></td>
+</tr>
+<tr>
+<td>A u64 that may be <code>none</code>: <code>u64 or none</code></td>
+<td>a value that may be <code>none</code> and is not a pointer is a pair of a flag and the value, and a build has these pairs for an int, a float and a bool only (56.19)</td>
+<td>an <code>int or none</code>, or a u64 with a value set aside to mean nothing</td>
+</tr>
+<tr>
+<td>A dict of objects of an <code>owned class</code>, in a build with a collector</td>
+<td>with a collector a dict is shared, and cannot be the one owner of an object (56.12)</td>
+<td>a plain <code>class</code>, or <code>--no-collector</code>, where a dict owns its values</td>
+</tr>
+<tr>
+<td><code>program.run</code></td>
+<td>starting another program is not written for C yet</td>
+<td><code>zeno run</code></td>
+</tr>
+</tbody>
+</table>
+<p><code>tools/refused.py</code> looks for a row that is missing here: it builds
+several hundred small programs, one operation on one type, with both
+compilers, and fails on a refusal that this table and the one of
+<a href="/docs/no-collector/"><code>no-collector.md</code></a> do not list (decision 56.19).</p>
+<p>A build for a board, with no collector, or with <code>--minimal</code> refuses a
+few more on purpose, each with its reason in
+<a href="/docs/no-collector/"><code>no-collector.md</code></a>, <a href="/docs/firmware/"><code>firmware.md</code></a> and
+<a href="/docs/minimal/"><code>minimal.md</code></a>. A function of a library of C has limits of
+its own (<a href="/docs/c/"><code>c.md</code></a>).
+<code>zeno test --build</code>, which builds a program with its tests in it,
+refuses one thing more: an <code>assert</code> in a function written inside a
+test (<a href="/docs/testing/"><code>testing.md</code></a>, decision 60.2).</p>
 <h2 id="where-the-types-come-from">Where the types come from</h2>
 <p>C wants a type on everything. Zeno lets you write none:</p>
 <p><pre><code class="zeno">function average_gap(limit) {
@@ -471,8 +560,8 @@ without data do not allocate at all, and the collector never runs.</p>
    variable in <code>read_all</code> became <code>volatile</code>, and why that one?</li>
 <li>In the same file, find the struct that <code>in_range</code> packs <code>low</code> and <code>high</code>
    into. Then find the box that <code>counter</code> keeps <code>count</code> in.</li>
-<li>Make a named function inside a function compile. Start with the easy
-   half: one that is only used below the line it is written on.</li>
+<li>Make two functions inside a function that call each other and use a
+   variable around them compile (56.16). What has to be made first?</li>
 </ol>
   <p class="source">This page is <a href="https://github.com/zeno-src/zeno-lang/blob/main/docs/compiler.md">docs/compiler.md</a> in the language repository.</p>
   <nav class="pager" aria-label="Previous and next"><a class="prev" href="/docs/vm/"><span>Previous</span>How the bytecode VM works</a><a class="next" href="/docs/llvm/"><span>Next</span>How the LLVM backend works</a></nav>

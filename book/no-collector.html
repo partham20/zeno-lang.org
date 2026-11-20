@@ -113,7 +113,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -389,11 +389,18 @@ for the board:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --no-collector --memory buffer.zeno
 $ ./buffer | grep pool
 pool: 25384 bytes taken, in a pool of 32768
-$ cc -O2 -DZENO_POOL=25384 -o buffer buffer.c -lm</code></pre>
-<p>It is exact for that run. A program whose lists depend on its input
-needs the report from its worst input, and some room on top. A full pool
-is a fault: the program stops with
-<code>the memory pool is full</code>.</p>
+$ zeno build --no-collector --pool 25384 buffer.zeno</code></pre>
+<p><code>--pool</code> sets the size of the pool and
+<code>--text-room</code> that of the text room; both go into the C as it
+is written, so a board’s own compiler needs no flag for them (new in
+0.8; before, they were given to the C compiler as
+<code>-DZENO_POOL=</code>). It is exact for that run. A program whose
+lists depend on its input needs the report from its worst input, and
+some room on top. A full pool is a fault: the program stops with
+<code>the memory pool is full</code>. With <code>--memory</code>, a
+block given back is filled with a pattern, and a write to it after that
+stops the program and says so, which finds a use after a free that would
+otherwise go unseen (56.15).</p>
 <h4 class="unnumbered" id="the-text-room">The text room</h4>
 <p>Firmware prints, and <code>print(f"sent {count} samples")</code>
 builds text that must live somewhere for a moment. It lives in the
@@ -411,24 +418,39 @@ refuses it, with the line and what to write instead:</p>
 away;</p></li>
 <li><p>a function that uses a <code>var</code> of the function around
 it, because the two would share it;</p></li>
-<li><p>keeping a function that uses a list or object from outside
-it;</p></li>
-<li><p>a list or object as what a type parameter stands for, and a list
-of <code>int or none</code>, which are limits of version 0.1.</p></li>
+<li><p>keeping an item of a list of lists or of objects, which
+<code>[ ]</code> only looks at, and returning or keeping what a
+parameter only looks at;</p></li>
+<li><p>taking an item out of a list while a <code>for</code> walks
+it.</p></li>
 </ul>
 <div class="zenofile">
 <p>items.zeno</p>
 </div>
 <div class="sourceCode" id="cb6" data-language="Zeno"
-style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> readings: <span class="dt">list</span>[<span class="dt">int</span> <span class="kw">or</span> <span class="cn">none</span>] = [<span class="dv">1</span>, <span class="cn">none</span>, <span class="dv">3</span>]</span></code></pre></div>
+style="zenostyle"><pre class="sourceCode Zeno"><code class="sourceCode zeno"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">var</span> grid = [[<span class="dv">1</span>, <span class="dv">2</span>], [<span class="dv">3</span>, <span class="dv">4</span>]]</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> row = grid[<span class="dv">0</span>]</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>print(row)</span></code></pre></div>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno build --no-collector items.zeno
-error: a list of numbers that may be `none` keeps each item in a small block of its own, and `zeno build --no-collector` leaves the collector out, so nothing would free them. Make it a list of an enum that has one case for a missing value and one case that carries the number, say `Missing` and `Value(n: int)`. docs/no-collector.md lists what such a build accepts
- --&gt; items.zeno:1:35
+error: this item is an owned list[int], which has one owner: the list. `[ ]` only looks at it. Use it where it is, pass it to a parameter that looks, or take it out with `pop()`
+ --&gt; items.zeno:2:11
   |
-1 | var readings: list[int or none] = [1, none, 3]
-  |                                   ^</code></pre>
-<p>The answer the message gives is an enum with a case for the missing
-value, which costs nothing for the case that carries nothing.</p>
+2 | let row = grid[0]
+  |           ^
+
+1 error found. Nothing was built.</code></pre>
+<p>The message says what to write instead: use the row where it is, pass
+it to a parameter that looks, or take it out of the list with
+<code>pop()</code>. The whole list, each row with its reason, is in
+<code>docs/no-collector.md</code>, and a test holds both compilers to
+it, so a refusal that is not in the table fails the test (56.17).</p>
+<p>Since 0.8 much that was refused here builds: a function that is kept
+takes the lists and objects it uses (56.8); a list or an object can be
+what a type parameter stands for (56.11); a dict owns the lists and
+objects it holds (56.12); <code>list[int or none]</code> keeps each
+number in a small block of its own (56.14); and <code>take</code> takes
+a value out of a field or an item, leaving <code>none</code> (56.10, in
+<a href="ownership.html#ch-ownership">Ownership</a>).</p>
 <p>That is the whole idea of the build. It does not find leaks while the
 program runs. It refuses to build a program that could have one.</p>
 <h3 class="unnumbered" id="the-tour"><span class="number">34.6</span>

@@ -49,7 +49,7 @@
 <header class="bar">
   <button class="menu" aria-label="Contents" onclick="document.body.classList.toggle('open')">☰</button>
   <a class="brand" href="index.html">The Zeno Book</a>
-  <span class="version">Zeno 0.7</span>
+  <span class="version">Zeno 0.8</span>
   <a class="site" href="https://zeno-lang.org">zeno-lang.org</a>
 </header>
 <div class="layout">
@@ -181,7 +181,7 @@ building it from its source. The first two take a minute and need
 nothing installed. The third needs Rust, and gives you the compiler’s
 source to read beside <a href="inside.html#ch-inside">Inside
 Zeno</a>.</p>
-<p>Zeno 0.7.0 is the current release, and everything below installs it.
+<p>Zeno 0.8.0 is the current release, and everything below installs it.
 Its files are on the releases page of the repository:</p>
 <div class="center">
 <p><a href="https://github.com/zeno-src/zeno-lang/releases/latest"
@@ -190,7 +190,7 @@ class="uri">https://github.com/zeno-src/zeno-lang/releases/latest</a></p>
 <h3 class="unnumbered" id="the-installers"><span
 class="number">1.1</span> The installers</h3>
 <h4 class="unnumbered" id="on-windows">On Windows</h4>
-<p>Download <code>zeno-0.7.0-windows-setup.exe</code> from the releases
+<p>Download <code>zeno-0.8.0-windows-setup.exe</code> from the releases
 page, run it, and press <em>Next</em>.</p>
 <p>It is the same file for every Windows machine: it holds the
 <code>zeno.exe</code> for x86-64, 32-bit x86 and ARM, and installs the
@@ -237,10 +237,10 @@ snap, a flatpak, a formula for Homebrew, and the files winget reads.
 Each puts <code>zeno</code> and <code>zeno.wasm</code> where that system
 keeps programs, and each removes them again the usual way.</p>
 <p>Each installs from its file, downloaded from the releases page:</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>sudo apt install ./zeno_0.7.0_amd64.deb                     # Debian, Ubuntu, Raspberry Pi OS
-sudo pacman -U zeno-lang-bin-0.7.0-1-x86_64.pkg.tar.zst          # Arch
-sudo snap install --classic --dangerous zeno_0.7.0_amd64.snap
-flatpak install --user zeno-0.7.0-x86_64.flatpak</code></pre>
+<pre class="Output" data-language="Output" style="outputstyle"><code>sudo apt install ./zeno_0.8.0_amd64.deb                     # Debian, Ubuntu, Raspberry Pi OS
+sudo pacman -U zeno-lang-bin-0.8.0-1-x86_64.pkg.tar.zst          # Arch
+sudo snap install --classic --dangerous zeno_0.8.0_amd64.snap
+flatpak install --user zeno-0.8.0-x86_64.flatpak</code></pre>
 <p>The <code>.deb</code> comes for <code>amd64</code>,
 <code>arm64</code>, <code>armhf</code> (any Raspberry Pi with a 32-bit
 system) and <code>i386</code>, and apt installs a C compiler and git
@@ -284,54 +284,54 @@ file for your machine from the same releases page:</p>
 <td style="text-align: left;">Linux on most PCs and servers
 (x86-64)</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-linux-x86_64.tar.gz</code></td>
+style="text-align: left;"><code>zeno-0.8.0-linux-x86_64.tar.gz</code></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Linux on 32-bit x86</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-linux-x86.tar.gz</code></td>
+style="text-align: left;"><code>zeno-0.8.0-linux-x86.tar.gz</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Raspberry Pi 3, 4 or 5 with a 64-bit
 system, and ARM servers</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-linux-arm64.tar.gz</code></td>
+style="text-align: left;"><code>zeno-0.8.0-linux-arm64.tar.gz</code></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Raspberry Pi 2 or later with a 32-bit
 system (ARMv7)</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-linux-armv7.tar.gz</code></td>
+style="text-align: left;"><code>zeno-0.8.0-linux-armv7.tar.gz</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Raspberry Pi 1 or Zero (ARMv6)</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-linux-armv6.tar.gz</code></td>
+style="text-align: left;"><code>zeno-0.8.0-linux-armv6.tar.gz</code></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Mac with Apple silicon (M1 and later)</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-macos-arm64.tar.gz</code></td>
+style="text-align: left;"><code>zeno-0.8.0-macos-arm64.tar.gz</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Mac with an Intel processor</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-macos-x86_64.tar.gz</code></td>
+style="text-align: left;"><code>zeno-0.8.0-macos-x86_64.tar.gz</code></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Windows on most PCs (x86-64)</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-windows-x86_64.zip</code></td>
+style="text-align: left;"><code>zeno-0.8.0-windows-x86_64.zip</code></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Windows on 32-bit x86</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-windows-x86.zip</code></td>
+style="text-align: left;"><code>zeno-0.8.0-windows-x86.zip</code></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Windows on ARM</td>
 <td
-style="text-align: left;"><code>zeno-0.7.0-windows-arm64.zip</code></td>
+style="text-align: left;"><code>zeno-0.8.0-windows-arm64.zip</code></td>
 </tr>
 </tbody>
 </table>
@@ -346,11 +346,11 @@ the Raspberry Pi</h4>
 <p>Unpack the file, and copy <code>zeno</code> into a folder that is on
 your <code>PATH</code>. <code>~/.local/bin</code> is one on most
 systems, and needs no <code>sudo</code>:</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>$ tar -xzf zeno-0.7.0-linux-x86_64.tar.gz
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ tar -xzf zeno-0.8.0-linux-x86_64.tar.gz
 $ mkdir -p ~/.local/bin
-$ cp zeno-0.7.0-linux-x86_64/zeno* ~/.local/bin/
+$ cp zeno-0.8.0-linux-x86_64/zeno* ~/.local/bin/
 $ zeno --version
-zeno 0.7.0</code></pre>
+zeno 0.8.0</code></pre>
 <p>If the shell says <code>zeno: command not found</code>, that folder
 is not on your <code>PATH</code> yet. Add the line
 <code>export PATH="$HOME/.local/bin:$PATH"</code> to
@@ -361,8 +361,8 @@ old or new.</p>
 <h4 class="unnumbered" id="on-macos">On macOS</h4>
 <p>The same steps work in the Terminal, with <code>/usr/local/bin</code>
 as the folder:</p>
-<pre class="Output" data-language="Output" style="outputstyle"><code>$ tar -xzf zeno-0.7.0-macos-arm64.tar.gz
-$ sudo cp zeno-0.7.0-macos-arm64/zeno* /usr/local/bin/
+<pre class="Output" data-language="Output" style="outputstyle"><code>$ tar -xzf zeno-0.8.0-macos-arm64.tar.gz
+$ sudo cp zeno-0.8.0-macos-arm64/zeno* /usr/local/bin/
 $ xattr -d com.apple.quarantine /usr/local/bin/zeno
 $ zeno --version</code></pre>
 <p>The <code>xattr</code> line is needed once. A program downloaded with
@@ -379,7 +379,7 @@ account</em>, select <code>Path</code>, press <em>Edit</em> and
 <em>New</em>, and type the folder. A new Command Prompt or PowerShell
 window then finds it:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>&gt; zeno --version
-zeno 0.7.0</code></pre>
+zeno 0.8.0</code></pre>
 <p>Windows may warn that the program is from an unknown publisher, for
 the same reason as on macOS. <em>More info</em>, then <em>Run
 anyway</em>, lets it start.</p>
@@ -389,7 +389,7 @@ download</h4>
 with the fingerprint of each one. To be sure that the file you have is
 the one that was built:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ sha256sum --check --ignore-missing SHA256SUMS.txt
-zeno-0.7.0-linux-x86_64.tar.gz: OK</code></pre>
+zeno-0.8.0-linux-x86_64.tar.gz: OK</code></pre>
 <p>On macOS the command is <code>shasum -a 256 -c</code>, and in
 PowerShell <code>Get-FileHash</code> prints a file’s fingerprint to
 compare by eye.</p>
@@ -440,7 +440,7 @@ compiler, built for a browser:</p>
 cargo build --release --target wasm32-unknown-unknown</code></pre>
 <p>Check that it works:</p>
 <pre class="Output" data-language="Output" style="outputstyle"><code>$ zeno --version
-zeno 0.7.0</code></pre>
+zeno 0.8.0</code></pre>
 <p>If you want to be sure that the compiler you built is a good one, run
 its own tests. There are several hundred of them, and each program in
 them is run by every engine and built every way Zeno can build it:</p>
